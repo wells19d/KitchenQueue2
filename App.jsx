@@ -1,5 +1,5 @@
 //* App.jsx
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   ScrollView,
   StatusBar,
@@ -19,10 +19,31 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {initializeApp, getApps} from '@react-native-firebase/app';
 
 function Section({children, title}) {
   const isIoS = Platform.OS === 'ios';
   console.log('isIoS', isIoS);
+
+  useEffect(() => {
+    if (getApps().length === 0) {
+      initializeApp()
+        .then(() => {
+          console.log('🔥 Firebase Initialized');
+        })
+        .catch(err => {
+          console.error('🔥 Firebase Init Error:', err);
+        });
+    } else {
+      console.log('🔥 Firebase Already Initialized');
+    }
+
+    console.log(
+      'Detected Firebase Apps:',
+      getApps().map(app => app.name),
+    );
+  }, []);
+
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
