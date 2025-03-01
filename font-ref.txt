@@ -1,0 +1,60 @@
+fonts are
+BananaChips-Regular.otf
+Cherry-Blossom.otf
+Montserrat-Black.ttf
+Montserrat-BlackItalic.ttf
+Montserrat-Bold.ttf
+Montserrat-BoldItalic.ttf
+Montserrat-ExtraBold.ttf
+Montserrat-ExtraBoldItalic.ttf
+Montserrat-ExtraLight.ttf
+Montserrat-ExtraLightItalic.ttf
+Montserrat-Italic.ttf
+Montserrat-Light.ttf
+Montserrat-LightItalic.ttf
+Montserrat-Medium.ttf
+Montserrat-MediumItalic.ttf
+Montserrat-Regular.ttf
+Montserrat-SemiBold.ttf
+Montserrat-SemiBoldItalic.ttf
+Montserrat-Thin.ttf
+Montserrat-ThinItalic.ttf
+
+These are the fonts in based by fontWeight I'll be using
+w1 = 100
+w2 = 200
+and so on.
+
+{title: 'Montserrat-Thin', type: 'w1'},
+    {
+      title: 'Montserrat-ExtraLight',
+      type: 'w2',
+    },
+    {
+      title: 'Montserrat-Light',
+      type: 'w3',
+    },
+    {
+      title: 'Montserrat-Regular',
+      type: 'w4',
+    },
+    {
+      title: 'Montserrat-Medium',
+      type: 'w5',
+    },
+    {
+      title: 'Montserrat-SemiBold',
+      type: 'w6',
+    },
+    {
+      title: 'Montserrat-Bold',
+      type: 'w7',
+    },
+    {
+      title: 'Montserrat-ExtraBold',
+      type: 'w8',
+    },
+    {
+      title: 'Montserrat-Black',
+      type: 'w9',
+    },

@@ -1,9 +1,8 @@
-/**
- * @format
- */
-
-import {AppRegistry} from 'react-native';
+//*index.js
+import {AppRegistry, LogBox} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
+
+LogBox.ignoreAllLogs(true);
 
 AppRegistry.registerComponent(appName, () => App);

@@ -1,10 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
+//* App.jsx
 import React from 'react';
 import {
   ScrollView,
@@ -13,6 +7,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Platform,
 } from 'react-native';
 
 import {
@@ -23,7 +18,11 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 function Section({children, title}) {
+  const isIoS = Platform.OS === 'ios';
+  console.log('isIoS', isIoS);
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -33,6 +32,7 @@ function Section({children, title}) {
           {
             color: isDarkMode ? Colors.white : Colors.black,
           },
+          {fontFamily: 'Montserrat-SemiBold'},
         ]}>
         {title}
       </Text>
@@ -42,9 +42,11 @@ function Section({children, title}) {
           {
             color: isDarkMode ? Colors.light : Colors.dark,
           },
+          {fontFamily: 'Montserrat-Medium'},
         ]}>
         {children}
       </Text>
+      <Icon name="star" size={40} color="gold" />
     </View>
   );
 }
@@ -101,15 +103,13 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 24,
-    fontWeight: '600',
   },
   sectionDescription: {
     marginTop: 8,
     fontSize: 18,
-    fontWeight: '400',
   },
   highlight: {
-    fontWeight: '700',
+    // fontWeight: '700',
   },
 });
 
