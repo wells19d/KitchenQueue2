@@ -6,14 +6,18 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
-    "start": "react-native start",
     "start-clean": "react-native start --reset-cache",
     "pod-clean": "cd ios && pod install --repo-update && cd ..",
     "gradle-clean": "cd android && ./gradlew clean && cd ..",
+    "clean-project": "rm -rf node_modules && yarn install && yarn pod-clean && yarn gradle-clean",
+    "clean-and-start": "rm -rf node_modules && yarn install && yarn pod-clean && yarn gradle-clean && yarn start-clean",
     "open-studio": "open -a 'Android Studio'",
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-firebase/app": "^21.11.0",
+    "@react-native-firebase/auth": "^21.11.0",
+    "@react-native-firebase/firestore": "^21.11.0",
     "react": "19.0.0",
     "react-native": "0.78.0",
     "react-native-vector-icons": "^10.2.0"

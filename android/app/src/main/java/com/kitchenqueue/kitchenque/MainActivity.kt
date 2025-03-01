@@ -1,4 +1,4 @@
-package com.kitchenqueue
+package com.kitchenqueue.kitchenque
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
