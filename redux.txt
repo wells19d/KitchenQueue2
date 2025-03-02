@@ -1,0 +1,1728 @@
+// reducers
+//*_root.reducer.jsx
+
+import {combineReducers} from 'redux';
+import userReducer from './user.reducer';
+import profileReducer from './profile.reducer';
+import accountReducer from './account.reducer';
+import shoppingReducer from './shopCart.reducer';
+import cupboardReducer from './cupboard.reducer';
+import deviceReducer from './device.reducer';
+import invitesReducer from './invites.reducer';
+import edamamReducer from './edamam.reducer';
+
+const rootReducer = combineReducers({
+  user: userReducer,
+  profile: profileReducer,
+  account: accountReducer,
+  shopping: shoppingReducer,
+  cupboard: cupboardReducer,
+  deviceInfo: deviceReducer,
+  invites: invitesReducer,
+  edamam: edamamReducer,
+});
+
+export default rootReducer;
+
+//*account.reducer.jsx
+const initialState = {
+  account: null,
+  allowedProfiles: [],
+  error: null,
+};
+
+const accountReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'SET_ACCOUNT':
+      return {...state, account: action.payload};
+    case 'ACCOUNT_CREATE_SUCCESS':
+      return {...state, account: action.payload, error: null};
+    case 'ACCOUNT_CREATE_FAILURE':
+      return {...state, error: action.payload};
+    case 'ACCOUNT_FETCH_FAILED':
+      return {...state, error: action.payload};
+    case 'SET_ALLOWED_PROFILES':
+      return {...state, allowedProfiles: action.payload};
+    case 'FETCH_ALLOWED_PROFILES_FAILED':
+      return {...state, error: action.payload};
+    case 'RESET_ACCOUNT_STATE':
+      return initialState;
+    case 'RESET_ALL_STATE':
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+export default accountReducer;
+
+//*cupboard.reducer.jsx
+const initialState = {
+  cupboard: null,
+  loading: false,
+  error: null,
+};
+
+const cupboardReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'FETCH_CUPBOARD':
+      return {...state, loading: true, error: null};
+    case 'SET_CUPBOARD':
+      return {...state, cupboard: action.payload, loading: false, error: null};
+    case 'CUPBOARD_FETCH_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    case 'ADD_ITEM_TO_CUPBOARD':
+      return {...state, loading: true, error: null};
+    case 'CUPBOARD_ADD_ITEM_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    case 'UPDATE_ITEM_IN_CUPBOARD':
+      return {...state, loading: true, error: null};
+    case 'CUPBOARD_UPDATE_ITEM_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    case 'DELETE_ITEM_FROM_CUPBOARD':
+      return {...state, loading: true, error: null};
+    case 'CUPBOARD_DELETE_ITEM_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    case 'BATCH_ADD_TO_CUPBOARD':
+      return {...state, loading: true, error: null};
+    case 'CUPBOARD_BATCH_ADD_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    case 'RESET_CUPBOARD_STATE':
+      return initialState;
+    case 'RESET_ALL_STATE':
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+export default cupboardReducer;
+
+//*device.reducer.jsx
+const initialState = {
+  deviceInfo: null,
+  error: null,
+};
+
+const deviceReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'SET_DEVICE_INFO':
+      return {...state, deviceInfo: action.payload, error: null};
+    case 'DEVICE_INFO_FETCH_FAILED':
+      return {...state, error: action.payload};
+    case 'RESET_DEVICE_INFO_STATE':
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+export default deviceReducer;
+
+//* edamam.reducer.jsx
+const initialState = {
+  foodData: null,
+  error: null,
+  loading: false,
+};
+
+const edamamReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'FETCH_FOOD_DATA':
+      return {...state, loading: true, error: null};
+
+    case 'SET_FOOD_DATA':
+      return {...state, foodData: action.payload, loading: false};
+
+    case 'FOOD_API_FETCH_FAILED':
+      return {...state, error: action.payload, loading: false};
+
+    case 'RESET_FOOD_DATA':
+      return {...initialState};
+    case 'RESET_ALL_STATE':
+      return initialState;
+
+    default:
+      return state;
+  }
+};
+
+export default edamamReducer;
+
+//* invites.reducer.jsx
+const initialState = {
+  existingInvite: null,
+  error: null,
+};
+
+const invitesReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'SET_EXISTING_INVITE':
+      return {
+        ...state,
+        existingInvite: action.payload,
+        error: null,
+      };
+    case 'ADD_INVITE':
+      return {
+        ...state,
+        existingInvite: action.payload,
+        error: null,
+      };
+    case 'UPDATE_INVITE':
+      return {
+        ...state,
+        existingInvite: {
+          ...state.existingInvite,
+          ...action.payload,
+        },
+        error: null,
+      };
+    case 'DELETE_INVITE':
+      return {
+        ...state,
+        existingInvite: null,
+        error: null,
+      };
+    case 'CLEAR_EXISTING_INVITE':
+      return {
+        ...state,
+        existingInvite: null,
+        error: null,
+      };
+    case 'INVITE_ACTION_FAILED':
+      return {
+        ...state,
+        error: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export default invitesReducer;
+
+//*profile.reducer.jsx
+const initialState = {
+  profile: null,
+  error: null,
+};
+
+const profileReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'SET_PROFILE':
+      return {...state, profile: action.payload};
+    case 'PROFILE_CREATE_SUCCESS':
+      return {...state, profile: action.payload, error: null};
+    case 'PROFILE_CREATE_FAILURE':
+      return {...state, error: action.payload};
+    case 'UPDATE_PROFILE_SUCCESS':
+      return {...state, profile: {...state.profile, ...action.payload}};
+    case 'UPDATE_PROFILE_FAILED':
+      return {...state, error: action.payload};
+    case 'PROFILE_FETCH_FAILED':
+      return {...state, error: action.payload};
+    case 'RESET_PROFILE_STATE':
+      return initialState;
+    case 'RESET_ALL_STATE':
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+export default profileReducer;
+
+//*shopping.reducer.jsx
+const initialState = {
+  shopping: null,
+  loading: false,
+  error: null,
+};
+
+const shoppingReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'FETCH_SHOP_CART':
+      return {...state, loading: true, error: null};
+    case 'SET_SHOP_CART':
+      return {...state, shopping: action.payload, loading: false, error: null};
+    case 'SHOP_CART_FETCH_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    case 'ADD_ITEM_TO_SHOP_CART':
+      return {...state, loading: true, error: null};
+    case 'SHOP_CART_ADD_ITEM_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    case 'UPDATE_ITEM_IN_SHOP_CART':
+      return {...state, loading: true, error: null};
+    case 'SHOP_CART_UPDATE_ITEM_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    case 'DELETE_ITEM_FROM_SHOP_CART':
+      return {...state, loading: true, error: null};
+    case 'SHOP_CART_DELETE_ITEM_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    case 'BATCH_TO_SHOP_CART':
+      return {...state, loading: true, error: null};
+    case 'SHOP_CART_BATCH_ADD_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    case 'RESET_SHOPPING_STATE':
+      return initialState;
+    case 'RESET_ALL_STATE':
+      return initialState;
+
+    default:
+      return state;
+  }
+};
+
+export default shoppingReducer;
+
+//*user.reducer.jsx
+const initialState = {
+  data: null,
+  loading: false,
+  error: null,
+  isAuthenticated: false,
+};
+
+const userReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'USER_SIGNUP_REQUEST':
+      return {...state, loading: true, error: null};
+    case 'USER_SIGNUP_SUCCESS':
+      return {
+        ...state,
+        data: action.payload,
+        loading: false,
+        error: null,
+        isAuthenticated: true,
+      };
+    case 'USER_SIGNUP_FAILURE':
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+        isAuthenticated: false,
+      };
+    case 'LOGIN_REQUEST':
+      return {...state, loading: true, error: null};
+    case 'SET_USER':
+      return {
+        ...state,
+        data: action.payload,
+        loading: false,
+        error: null,
+        isAuthenticated: true,
+      };
+    case 'LOGIN_FAILED':
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+        isAuthenticated: false,
+      };
+    case 'UNSET_USER':
+      return {...initialState, loading: false};
+    case 'RESET_USER_STATE':
+      return initialState;
+    case 'RESET_ALL_STATE':
+      return initialState;
+    case 'LOGOUT':
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+export default userReducer;
+
+
+//sagas
+
+//*_root.saga.jsx
+import {all} from 'redux-saga/effects';
+import userSaga from './user.saga';
+import profileSaga from './profile.saga';
+import accountSaga from './account.saga';
+import shoppingSaga from './shopCart.saga';
+import cupboardSaga from './cupboard.saga';
+import deviceSaga from './device.saga';
+import {invitesSaga} from './invites.saga';
+import edamamSaga from './edamam.saga';
+
+export default function* rootSaga() {
+  yield all([
+    userSaga(),
+    profileSaga(),
+    accountSaga(),
+    shoppingSaga(),
+    cupboardSaga(),
+    deviceSaga(),
+    invitesSaga(),
+    edamamSaga(),
+  ]);
+}
+
+//*account.saga.jsx
+import {put, takeLatest, call, all, select} from 'redux-saga/effects';
+import {getFirestore, getDoc, doc} from '@react-native-firebase/firestore';
+import {getApp} from '@react-native-firebase/app';
+
+const db = getFirestore(getApp());
+
+function* fetchAccount(action) {
+  const accountId = action.payload;
+  // console.log('[Saga] Fetching account for ID:', accountId);
+
+  try {
+    const accountRef = doc(db, 'accounts', accountId);
+    const accountDoc = yield call(getDoc, accountRef);
+
+    if (accountDoc.exists) {
+      const accountData = accountDoc.data();
+      // console.log('[Saga] ✅ Account Data:', accountData);
+
+      // 🚀 Get the current profile from Redux
+      const profile = yield select(state => state.profile.profile);
+
+      if (!profile) {
+        // console.log(
+        //   '[Saga] ❌ No profile found in Redux state, skipping account check',
+        // );
+        yield put({type: 'SET_ACCOUNT', payload: null});
+        return;
+      }
+
+      const isAllowed = accountData?.allowedUsers?.includes(profile.id);
+
+      if (isAllowed) {
+        // console.log(
+        //   `[Saga] ✅ Profile ${profile.id} is allowed in account ${accountId}`,
+        // );
+        yield put({
+          type: 'SET_ACCOUNT',
+          payload: {
+            ...accountData,
+            lastUpdated: accountData?.lastUpdated || null,
+            createdOn: accountData?.createdOn || null,
+          },
+        });
+      } else {
+        // console.log(
+        //   `[Saga] ❌ Profile ${profile.id} is NOT allowed in account ${accountId}`,
+        // );
+        yield put({type: 'SET_ACCOUNT', payload: null});
+      }
+    } else {
+      // console.log('[Saga] ❌ No account found');
+      yield put({type: 'SET_ACCOUNT', payload: null});
+    }
+  } catch (error) {
+    // console.error('[Saga] ❌ Fetch Account Error:', error);
+    yield put({type: 'ACCOUNT_FETCH_FAILED', payload: error.message});
+  }
+}
+
+function* fetchAllowedProfiles(action) {
+  const {allowedUsers} = action.payload;
+  try {
+    const profilesPromises = allowedUsers.map(userId =>
+      call(getDoc, doc(db, 'profiles', userId)),
+    );
+
+    const profilesSnapshots = yield all(profilesPromises);
+
+    const allowedProfiles = profilesSnapshots
+      .map(snapshot => {
+        if (!snapshot.exists) return null;
+
+        const profileData = snapshot.data();
+        return {
+          id: snapshot.id,
+          firstName: profileData?.firstName || '',
+          lastName: profileData?.lastName || '',
+          onlineName: profileData?.onlineName || '',
+          email: profileData?.email || '',
+          role: profileData?.role || 'user',
+        };
+      })
+      .filter(Boolean);
+
+    yield put({type: 'SET_ALLOWED_PROFILES', payload: allowedProfiles});
+  } catch (error) {
+    // console.error('[Saga] ❌ Fetch Allowed Profiles Error:', error);
+    yield put({type: 'FETCH_ALLOWED_PROFILES_FAILED', payload: error.message});
+  }
+}
+
+export default function* accountSaga() {
+  yield takeLatest('FETCH_ACCOUNT', fetchAccount);
+  yield takeLatest('FETCH_ALLOWED_PROFILES', fetchAllowedProfiles);
+}
+
+//*cupboard.saga.jsx
+import {put, takeLatest, call} from 'redux-saga/effects';
+import uuid from 'react-native-uuid';
+import Toast from 'react-native-toast-message';
+import {
+  getFirestore,
+  getDoc,
+  updateDoc,
+  doc,
+  writeBatch,
+  serverTimestamp,
+} from '@react-native-firebase/firestore';
+import {getApp} from '@react-native-firebase/app';
+
+const db = getFirestore(getApp());
+
+function* fetchCupboard(action) {
+  const {cupboardID} = action.payload;
+  try {
+    // Reference to the cupboard document using the cupboardID as the document ID
+    const cupboardRef = doc(db, 'cupboards', cupboardID);
+    const cupboardDoc = yield call(getDoc, cupboardRef);
+
+    if (cupboardDoc.exists) {
+      let cupboardData = cupboardDoc.data();
+
+      if (!cupboardData.items) {
+        // Ensure items array is initialized
+        cupboardData = {...cupboardData, items: []};
+
+        yield call(() =>
+          updateDoc(cupboardRef, {
+            items: [],
+            lastUpdated: new Date().toISOString(),
+          }),
+        );
+      }
+
+      let cupboard = {
+        ...cupboardData,
+        lastUpdated: cupboardData?.lastUpdated || null,
+      };
+
+      yield put({type: 'SET_CUPBOARD', payload: cupboard});
+    } else {
+      yield put({type: 'SET_CUPBOARD', payload: null});
+    }
+  } catch (error) {
+    yield put({type: 'CUPBOARD_LOAD_FAILED', payload: error.message});
+  }
+}
+
+function* addItemToCupboard(action) {
+  const {cupboardID, newItem} = action.payload;
+  try {
+    // Reference the cupboard document using cupboardID as the document ID
+    const cupboardRef = doc(db, 'cupboards', cupboardID);
+    const cupboardDoc = yield call(getDoc, cupboardRef);
+
+    if (cupboardDoc.exists) {
+      const cupboardData = cupboardDoc.data();
+
+      // Append new item with a generated UUID and timestamp
+      const updatedItems = [
+        ...(cupboardData.items || []),
+        {...newItem, itemId: uuid.v4(), itemDate: new Date().toISOString()},
+      ];
+
+      // Update Firestore cupboard document with new items array
+      yield call(() =>
+        updateDoc(cupboardRef, {
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        }),
+      );
+
+      // Reload cupboard data
+      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+
+      // Show success toast message
+      Toast.show({
+        type: 'success',
+        text1: 'Item Added',
+        text2: `${newItem.itemName} added to the cupboard.`,
+      });
+    } else {
+      yield put({
+        type: 'CUPBOARD_ADD_ITEM_FAILED',
+        payload: 'Cupboard not found.',
+      });
+
+      Toast.show({
+        type: 'danger',
+        text1: 'Failed to Add Item',
+        text2: 'Cupboard not found. Please try again later.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'CUPBOARD_ADD_ITEM_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Failed to Add Item',
+      text2: `${newItem.itemName} could not be added. Please try again later.`,
+    });
+  }
+}
+
+function* updateItemInCupboard(action) {
+  const {cupboardID, updatedItem} = action.payload;
+  try {
+    // Reference the cupboard document using cupboardID as the document ID
+    const cupboardRef = doc(db, 'cupboards', cupboardID);
+    const cupboardDoc = yield call(getDoc, cupboardRef);
+
+    if (cupboardDoc.exists) {
+      const cupboardData = cupboardDoc.data();
+
+      // Update the correct item in the items array
+      const updatedItems = cupboardData?.items?.map(item =>
+        item.itemId === updatedItem.itemId ? updatedItem : item,
+      );
+
+      // Update Firestore cupboard document with new items array
+      yield call(() =>
+        updateDoc(cupboardRef, {
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        }),
+      );
+
+      // Reload cupboard data
+      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+
+      // Show success toast message
+      Toast.show({
+        type: 'success',
+        text1: 'Item Updated',
+        text2: `${updatedItem.itemName} updated in the cupboard.`,
+      });
+    } else {
+      yield put({
+        type: 'CUPBOARD_UPDATE_ITEM_FAILED',
+        payload: 'Cupboard not found.',
+      });
+
+      Toast.show({
+        type: 'danger',
+        text1: 'Failed to Update Item',
+        text2: 'Cupboard not found. Please try again later.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'CUPBOARD_UPDATE_ITEM_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Failed to Update Item',
+      text2: `${updatedItem.itemName} could not be updated. Please try again later.`,
+    });
+  }
+}
+
+function* deleteItemFromCupboard(action) {
+  const {cupboardID, itemId, itemName} = action.payload;
+  try {
+    // Reference the cupboard document using cupboardID as the document ID
+    const cupboardRef = doc(db, 'cupboards', cupboardID);
+    const cupboardDoc = yield call(getDoc, cupboardRef);
+
+    if (cupboardDoc.exists) {
+      const cupboardData = cupboardDoc.data();
+
+      // Filter out the item to be deleted
+      const updatedItems = cupboardData?.items?.filter(
+        item => item.itemId !== itemId,
+      );
+
+      // Update Firestore cupboard document with the new filtered items array
+      yield call(() =>
+        updateDoc(cupboardRef, {
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        }),
+      );
+
+      // Reload cupboard data
+      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+
+      // Show success toast message
+      Toast.show({
+        type: 'success',
+        text1: 'Item Deleted',
+        text2: `${itemName} removed from the cupboard.`,
+      });
+    } else {
+      yield put({
+        type: 'CUPBOARD_DELETE_ITEM_FAILED',
+        payload: 'Cupboard not found.',
+      });
+
+      Toast.show({
+        type: 'danger',
+        text1: 'Failed to Delete Item',
+        text2: 'Cupboard not found. Please try again later.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'CUPBOARD_DELETE_ITEM_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Failed to Delete Item',
+      text2: `${itemName} could not be removed. Please try again later.`,
+    });
+  }
+}
+
+function* batchToCupboard(action) {
+  const {cupboardID, items} = action.payload;
+
+  try {
+    yield put({type: 'CUPBOARD_BATCH_ADD_START'});
+
+    // Get the cupboard document reference
+    const cupboardRef = doc(db, 'cupboards', cupboardID);
+    const cupboardDoc = yield call(getDoc, cupboardRef);
+
+    if (cupboardDoc.exists) {
+      const cupboardData = cupboardDoc.data();
+
+      // Initialize a Firestore batch
+      const batch = writeBatch(db);
+
+      let updatedItems = [...(cupboardData.items || [])];
+
+      // Add each item in the batch process
+      items.forEach(item => {
+        const {
+          itemName,
+          brandName,
+          description,
+          packageSize,
+          measurement,
+          category,
+          notes,
+        } = item;
+
+        for (let i = 0; i < item.quantity; i++) {
+          const newItem = {
+            itemName: itemName || '',
+            brandName: brandName || '',
+            description: description || '',
+            packageSize: Number(packageSize) || 1,
+            remainingAmount: Number(packageSize) || 1,
+            measurement: measurement || '',
+            category: category || '',
+            notes: notes || '',
+            itemId: uuid.v4(),
+            itemDate: new Date().toISOString(), // ✅ Fix: Ensure consistency with Firestore
+            quantity: 1,
+          };
+
+          updatedItems.push(newItem);
+        }
+      });
+
+      // Queue the cupboard update in the batch
+      batch.update(cupboardRef, {
+        items: updatedItems,
+        lastUpdated: new Date().toISOString(),
+      });
+
+      // Commit the batch
+      yield call(() => batch.commit());
+
+      // Reload cupboard data
+      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+
+      Toast.show({
+        type: 'success',
+        text1: 'Items Added',
+        text2: `Shopping cart items were added to the cupboard.`,
+      });
+
+      yield put({type: 'CUPBOARD_BATCH_ADD_SUCCESS'});
+    } else {
+      yield put({
+        type: 'CUPBOARD_BATCH_ADD_FAILED',
+        payload: 'Cupboard not found.',
+      });
+
+      Toast.show({
+        type: 'danger',
+        text1: 'Batch Add Failed',
+        text2: 'Cupboard not found. Please try again later.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'CUPBOARD_BATCH_ADD_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Batch Add Failed',
+      text2:
+        'Items could not be added to the cupboard. Please try again later.',
+    });
+  }
+}
+
+function* resetCupboard(action) {
+  const {cupboardID} = action.payload;
+  try {
+    // Get cupboard document reference
+    const cupboardRef = doc(db, 'cupboards', cupboardID);
+    const cupboardDoc = yield call(getDoc, cupboardRef);
+
+    if (cupboardDoc.exists) {
+      // Update cupboard to reset items
+      yield call(() =>
+        updateDoc(cupboardRef, {
+          items: [],
+          lastUpdated: new Date().toISOString(),
+        }),
+      );
+
+      // Reload the updated cupboard
+      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+
+      Toast.show({
+        type: 'success',
+        text1: 'Cupboard Reset',
+        text2: 'Your cupboard has been cleared.',
+      });
+    } else {
+      Toast.show({
+        type: 'warning',
+        text1: 'No Cupboard Found',
+        text2: 'Could not find a cupboard to reset.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'CUPBOARD_RESET_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Reset Failed',
+      text2: 'Your cupboard could not be reset. Please try again later.',
+    });
+  }
+}
+
+export default function* cupboardSaga() {
+  yield takeLatest('LOAD_CUPBOARD', fetchCupboard);
+  yield takeLatest('ADD_ITEM_TO_CUPBOARD', addItemToCupboard);
+  yield takeLatest('UPDATE_ITEM_IN_CUPBOARD', updateItemInCupboard);
+  yield takeLatest('DELETE_ITEM_FROM_CUPBOARD', deleteItemFromCupboard);
+  yield takeLatest('BATCH_ADD_TO_CUPBOARD', batchToCupboard);
+  yield takeLatest('RESET_CUPBOARD', resetCupboard);
+}
+
+import {put, takeLatest, call, takeEvery} from 'redux-saga/effects';
+import {
+  getBrand,
+  getDeviceType,
+  isLandscape,
+  getModel,
+  getSystemName,
+  getSystemVersion,
+  hasNotch,
+} from 'react-native-device-info';
+import {Dimensions, PixelRatio} from 'react-native';
+import {eventChannel} from 'redux-saga';
+
+function createDimensionChannel() {
+  return eventChannel(emitter => {
+    const updateDimensions = () => emitter(Dimensions.get('window'));
+    const subscription = Dimensions.addEventListener(
+      'change',
+      updateDimensions,
+    );
+    return () => subscription?.remove();
+  });
+}
+
+function* watchDeviceDimensions() {
+  const channel = createDimensionChannel();
+  try {
+    while (true) {
+      yield takeEvery(channel, fetchDeviceInfo);
+    }
+  } finally {
+    channel.close();
+  }
+}
+
+function* fetchDeviceInfo() {
+  try {
+    const {width, height} = Dimensions.get('window');
+    const pixelRatio = PixelRatio.get();
+    const pixelWidth = width * pixelRatio;
+    const pixelHeight = height * pixelRatio;
+
+    const ratio = (
+      Math.sqrt(Math.pow(pixelWidth, 2) + Math.pow(pixelHeight, 2)) / 100
+    ).toFixed(2);
+
+    const brand = yield call(getBrand);
+    const formattedBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
+
+    // Calculate device size
+    let sizeForDevice = 'xSmall';
+
+    if (pixelWidth >= 1300) {
+      sizeForDevice = 'xLarge'; // Ultra-sized phones
+    } else if (pixelWidth >= 1250) {
+      sizeForDevice = 'large'; // Large phones
+    } else if (pixelWidth >= 1200) {
+      sizeForDevice = 'medium'; // Standard flagships
+    } else if (pixelWidth >= 1000) {
+      sizeForDevice = 'small'; // Smaller phones
+    } else {
+      sizeForDevice = 'xSmall'; // Compact phones
+    }
+
+    const deviceInfo = {
+      dimensions: {
+        height: height.toFixed(0),
+        width: width.toFixed(0),
+      },
+      screen: {
+        pixelHeight: pixelHeight,
+        pixelWidth: pixelWidth,
+        ratio: ratio,
+      },
+      system: {
+        brand: formattedBrand,
+        device: yield call(getDeviceType),
+        deviceSize: sizeForDevice,
+        model: yield call(getModel),
+        os: yield call(getSystemName),
+        version: yield call(getSystemVersion),
+        notch: yield call(hasNotch),
+      },
+      view: yield call(isLandscape) ? 'Landscape' : 'Portrait',
+    };
+
+    yield put({type: 'SET_DEVICE_INFO', payload: deviceInfo});
+  } catch (error) {
+    yield put({type: 'DEVICE_INFO_FETCH_FAILED', payload: error.message});
+  }
+}
+
+export default function* deviceSaga() {
+  yield takeLatest('FETCH_DEVICE_INFO', fetchDeviceInfo);
+  yield watchDeviceDimensions(); // Listens for dimension changes
+}
+
+//* edaman.saga.jsx
+import {takeLatest, call, put} from 'redux-saga/effects';
+import Config from 'react-native-config';
+
+function* fetchFoodData(action) {
+  const {barcode} = action.payload;
+  const appId = Config.EDAMAM_APP_ID;
+  const appKey = Config.EDAMAM_APP_KEY;
+  const url = `https://api.edamam.com/api/food-database/v2/parser?app_id=${appId}&app_key=${appKey}&upc=${barcode}`;
+  try {
+    const response = yield call(fetch, url);
+
+    if (response.ok) {
+      const data = yield response.json();
+
+      if (data.hints && data.hints.length > 0) {
+        yield put({type: 'SET_FOOD_DATA', payload: data});
+      } else {
+        yield put({
+          type: 'FOOD_API_FETCH_FAILED',
+          payload: `No food found for UPC: ${barcode}`,
+        });
+      }
+    } else {
+      yield put({
+        type: 'FOOD_API_FETCH_FAILED',
+        payload: `API error: ${response.status}`,
+      });
+    }
+  } catch (error) {
+    yield put({type: 'FOOD_API_FETCH_FAILED', payload: error.message});
+  }
+}
+
+// Watcher saga for Edamam API actions
+export default function* edamamSaga() {
+  yield takeLatest('FETCH_FOOD_DATA', fetchFoodData);
+}
+
+//* invites.saga.jsx
+import {put, call, takeLatest} from 'redux-saga/effects';
+import {
+  getFirestore,
+  getDoc,
+  updateDoc,
+  doc,
+} from '@react-native-firebase/firestore';
+import {getApp} from '@react-native-firebase/app';
+
+const db = getFirestore(getApp());
+
+function* addInviteSaga(action) {
+  if (!action.payload?.email) {
+    console.error('Email is missing in action payload.');
+    return;
+  }
+  try {
+    const docRef = doc(db, 'accountInvites', 'bGk0rcOM1lpPyV1WdG7c');
+    const docSnapshot = yield call(getDoc, docRef);
+
+    let updatedInvites = [];
+
+    if (docSnapshot.exists) {
+      const docData = docSnapshot.data();
+      updatedInvites = docData.invites
+        ? [...docData.invites, action.payload]
+        : [action.payload];
+    } else {
+      updatedInvites = [action.payload];
+    }
+
+    yield call(() => updateDoc(docRef, {invites: updatedInvites}));
+  } catch (error) {
+    console.error('Failed to add invite:', error);
+  }
+}
+
+function* checkInvitesSaga(action) {
+  try {
+    const docRef = doc(db, 'accountInvites', 'bGk0rcOM1lpPyV1WdG7c');
+    const docSnapshot = yield call(getDoc, docRef);
+
+    if (docSnapshot.exists) {
+      const {invites = []} = docSnapshot.data();
+      const foundInvite = invites.find(
+        invite => invite.email === action.payload.email,
+      );
+
+      if (foundInvite) {
+        action.payload.resolve(foundInvite); // Resolve with the found invite
+        yield put({type: 'SET_EXISTING_INVITE', payload: foundInvite});
+      } else {
+        action.payload.resolve(null); // Resolve with null if no invite found
+        yield put({type: 'INVITE_NOT_FOUND'});
+      }
+    } else {
+      action.payload.resolve(null); // Resolve with null if no doc found
+      yield put({type: 'INVITE_NOT_FOUND'});
+    }
+  } catch (error) {
+    console.error('Error checking invites:', error);
+    action.payload.reject(error); // Reject with the error
+    yield put({type: 'CHECK_INVITES_FAILED', payload: error.message});
+  }
+}
+
+function* updateInviteSaga(action) {
+  if (!action.payload?.email) {
+    console.error('Email is missing in action payload.');
+    return;
+  }
+  try {
+    const docRef = doc(db, 'accountInvites', 'bGk0rcOM1lpPyV1WdG7c');
+    const docSnapshot = yield call(getDoc, docRef);
+
+    if (!docSnapshot.exists) {
+      console.error('Document not found.');
+      return;
+    }
+
+    const {invites = []} = docSnapshot.data();
+    const updatedInvites = invites.map(invite =>
+      invite.email === action.payload.email
+        ? {...invite, toExpire: invite.toExpire || new Date().toISOString()}
+        : invite,
+    );
+
+    yield call(updateDoc, docRef, {invites: updatedInvites});
+    yield put({type: 'INVITE_UPDATED', payload: action.payload.email});
+  } catch (error) {
+    console.error('Failed to update invite:', error);
+    yield put({type: 'UPDATE_INVITE_FAILED', payload: error.message});
+  }
+}
+
+function* deleteInviteSaga(action) {
+  if (!action.payload?.email) {
+    console.error('Email is missing in action payload.');
+    return;
+  }
+  try {
+    const docRef = doc(db, 'accountInvites', 'bGk0rcOM1lpPyV1WdG7c');
+    const docSnapshot = yield call(getDoc, docRef);
+
+    if (!docSnapshot.exists) {
+      console.error('Document not found.');
+      return;
+    }
+
+    const {invites = []} = docSnapshot.data();
+    const updatedInvites = invites.filter(
+      invite => invite.email !== action.payload.email,
+    );
+
+    yield call(updateDoc, docRef, {invites: updatedInvites});
+    yield put({type: 'INVITE_DELETED', payload: action.payload.email});
+  } catch (error) {
+    console.error('Failed to delete invite:', error);
+    yield put({type: 'DELETE_INVITE_FAILED', payload: error.message});
+  }
+}
+
+// Watcher saga
+export function* invitesSaga() {
+  yield takeLatest('ADD_INVITE', addInviteSaga);
+  yield takeLatest('CHECK_INVITES', checkInvitesSaga);
+  yield takeLatest('UPDATE_INVITE', updateInviteSaga);
+  yield takeLatest('DELETE_INVITE', deleteInviteSaga);
+}
+
+//*profile.saga.jsx
+import {put, takeLatest, call} from 'redux-saga/effects';
+import Toast from 'react-native-toast-message';
+import {
+  getFirestore,
+  getDoc,
+  updateDoc,
+  doc,
+  serverTimestamp,
+} from '@react-native-firebase/firestore';
+import {getApp} from '@react-native-firebase/app';
+
+const db = getFirestore(getApp());
+
+function* fetchProfile(action) {
+  const {uid} = action.payload;
+  // console.log('[Saga] Fetching profile for UID:', uid);
+
+  try {
+    const profileRef = doc(db, 'profiles', uid);
+    const profileDoc = yield call(getDoc, profileRef);
+
+    if (profileDoc.exists) {
+      const profileData = profileDoc.data();
+      // console.log('[Saga] ✅ Profile Data:', profileData);
+
+      yield put({type: 'SET_PROFILE', payload: profileData});
+
+      // 🚀 Fetch account **after** profile is set
+      if (profileData?.account) {
+        // console.log(
+        //   `[Saga] 🚀 Dispatching FETCH_ACCOUNT for: ${profileData.account}`,
+        // );
+        yield put({type: 'FETCH_ACCOUNT', payload: profileData.account});
+      }
+    } else {
+      // console.log('[Saga] ❌ No profile found');
+      yield put({type: 'SET_PROFILE', payload: null});
+    }
+  } catch (error) {
+    // console.error('[Saga] ❌ Fetch Profile Error:', error);
+    yield put({type: 'PROFILE_FETCH_FAILED', payload: error.message});
+  }
+}
+
+function* updateProfile(action) {
+  const {userId, updatedData} = action.payload;
+  try {
+    const profileRef = doc(db, 'profiles', userId);
+    const updatedProfile = {
+      ...updatedData,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    yield call(updateDoc, profileRef, updatedProfile);
+    yield put({type: 'UPDATE_PROFILE_SUCCESS', payload: updatedProfile});
+
+    Toast.show({
+      type: 'success',
+      text1: 'Profile Updated',
+      text2: 'Your profile has been updated.',
+    });
+  } catch (error) {
+    // console.error('[Saga] ❌ Update Profile Error:', error);
+    yield put({type: 'UPDATE_PROFILE_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Profile Update Failed',
+      text2: 'Your profile could not be updated.',
+    });
+  }
+}
+
+export default function* profileSaga() {
+  yield takeLatest('FETCH_PROFILE', fetchProfile);
+  yield takeLatest('UPDATE_PROFILE_REQUEST', updateProfile);
+}
+
+//*shopCart.saga.jsx
+import {put, takeLatest, call} from 'redux-saga/effects';
+import uuid from 'react-native-uuid';
+import Toast from 'react-native-toast-message';
+import {
+  getFirestore,
+  getDoc,
+  updateDoc,
+  doc,
+  writeBatch,
+  serverTimestamp,
+} from '@react-native-firebase/firestore';
+import {getApp} from '@react-native-firebase/app';
+
+const db = getFirestore(getApp());
+
+function* fetchShopCart(action) {
+  const {shoppingCartID} = action.payload;
+  try {
+    const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
+    const shopCartDoc = yield call(getDoc, shopCartRef);
+
+    if (shopCartDoc.exists) {
+      let shopCartData = shopCartDoc.data();
+
+      if (!shopCartData.items) {
+        shopCartData = {...shopCartData, items: []};
+
+        yield call(() =>
+          updateDoc(shopCartRef, {
+            items: [],
+            lastUpdated: new Date().toISOString(),
+          }),
+        );
+      }
+
+      let shopCart = {
+        ...shopCartData,
+        lastUpdated: shopCartData?.lastUpdated || null,
+      };
+
+      yield put({type: 'SET_SHOP_CART', payload: shopCart});
+    } else {
+      yield put({type: 'SET_SHOP_CART', payload: null});
+    }
+  } catch (error) {
+    yield put({type: 'SHOP_CART_LOAD_FAILED', payload: error.message});
+  }
+}
+
+function* addItemToShopCart(action) {
+  const {shoppingCartID, newItem} = action.payload;
+  try {
+    // Reference the shopCart document using shoppingCartID as the document ID
+    const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
+    const shopCartDoc = yield call(getDoc, shopCartRef);
+
+    if (shopCartDoc.exists) {
+      const shopCartData = shopCartDoc.data();
+
+      // Append new item with a generated UUID and timestamp
+      const updatedItems = [
+        ...(shopCartData.items || []),
+        {...newItem, itemId: uuid.v4(), itemDate: new Date().toISOString()},
+      ];
+
+      // Update Firestore shopCart document with new items array
+      yield call(() =>
+        updateDoc(shopCartRef, {
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        }),
+      );
+
+      // Reload shopCart data
+      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+
+      // Show success toast message
+      Toast.show({
+        type: 'success',
+        text1: 'Item Added',
+        text2: `${newItem.itemName} added to the shopping list.`,
+      });
+    } else {
+      yield put({
+        type: 'SHOP_CART_ADD_ITEM_FAILED',
+        payload: 'Shopping cart not found.',
+      });
+
+      Toast.show({
+        type: 'danger',
+        text1: 'Failed to Add Item',
+        text2: 'Shopping cart not found. Please try again later.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'SHOP_CART_ADD_ITEM_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Failed to Add Item',
+      text2: `${newItem.itemName} could not be added. Please try again later.`,
+    });
+  }
+}
+
+function* updateItemInShopCart(action) {
+  const {shoppingCartID, updatedItem, updateType} = action.payload;
+  try {
+    // Reference the shopCart document using shoppingCartID as the document ID
+    const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
+    const shopCartDoc = yield call(getDoc, shopCartRef);
+
+    if (shopCartDoc.exists) {
+      const shopCartData = shopCartDoc.data();
+
+      // Update the correct item in the items array
+      const updatedItems = shopCartData?.items?.map(item =>
+        item.itemId === updatedItem.itemId ? updatedItem : item,
+      );
+
+      // Update Firestore shopCart document with new items array
+      yield call(() =>
+        updateDoc(shopCartRef, {
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        }),
+      );
+
+      // Reload shopCart data
+      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+
+      // Handle different update types for toast messages
+      if (updateType === 'toCart') {
+        Toast.show({
+          type: 'success',
+          text1: 'Item Added',
+          text2: `${updatedItem.itemName} moved to the shopping cart.`,
+        });
+      } else if (updateType === 'toList') {
+        Toast.show({
+          type: 'success',
+          text1: 'Item Updated',
+          text2: `${updatedItem.itemName} moved to the shopping list.`,
+        });
+      } else if (updateType === 'toCupboard') {
+        // No toast needed, as the cupboard logic handles it
+      } else {
+        Toast.show({
+          type: 'success',
+          text1: 'Item Updated',
+          text2: `${updatedItem.itemName} updated to the shopping list.`,
+        });
+      }
+    } else {
+      yield put({
+        type: 'SHOP_CART_UPDATE_ITEM_FAILED',
+        payload: 'Shopping cart not found.',
+      });
+
+      Toast.show({
+        type: 'danger',
+        text1: 'Failed to Update Item',
+        text2: 'Shopping cart not found. Please try again later.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'SHOP_CART_UPDATE_ITEM_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Failed to Update Item',
+      text2: `${updatedItem.itemName} could not be updated. Please try again later.`,
+    });
+  }
+}
+
+function* deleteItemFromShopCart(action) {
+  const {shoppingCartID, itemId, itemName} = action.payload;
+  try {
+    // Reference the shopCart document using shoppingCartID as the document ID
+    const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
+    const shopCartDoc = yield call(getDoc, shopCartRef);
+
+    if (shopCartDoc.exists) {
+      const shopCartData = shopCartDoc.data();
+
+      // Remove the specified item from the items array
+      const updatedItems = shopCartData?.items?.filter(
+        item => item.itemId !== itemId,
+      );
+
+      // Update Firestore shopCart document with the new filtered items array
+      yield call(() =>
+        updateDoc(shopCartRef, {
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        }),
+      );
+
+      // Reload shopCart data
+      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+
+      // Show success toast message
+      Toast.show({
+        type: 'success',
+        text1: 'Item Deleted',
+        text2: `${itemName} removed from the shopping cart.`,
+      });
+    } else {
+      yield put({
+        type: 'SHOP_CART_DELETE_ITEM_FAILED',
+        payload: 'Shopping cart not found.',
+      });
+
+      Toast.show({
+        type: 'danger',
+        text1: 'Failed to Delete Item',
+        text2: 'Shopping cart not found. Please try again later.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'SHOP_CART_DELETE_ITEM_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Failed to Delete Item',
+      text2: `${itemName} could not be removed. Please try again later.`,
+    });
+  }
+}
+
+function* deleteListFromShopCart(action) {
+  const {shoppingCartID, items} = action.payload;
+
+  try {
+    // Reference the shopCart document using shoppingCartID as the document ID
+    const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
+    const shopCartDoc = yield call(getDoc, shopCartRef);
+
+    if (shopCartDoc.exists) {
+      const shopCartData = shopCartDoc.data();
+
+      // Remove all items that match those in the `items` list
+      const updatedItems = shopCartData?.items?.filter(
+        item => !items.some(cartItem => cartItem.itemId === item.itemId),
+      );
+
+      // Update Firestore shopCart document with the new filtered items array
+      yield call(() =>
+        updateDoc(shopCartRef, {
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        }),
+      );
+
+      // Reload shopCart data
+      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+    }
+  } catch (error) {
+    yield put({type: 'SHOP_CART_DELETE_LIST_FAILED', payload: error.message});
+  }
+}
+
+function* batchToShopCart(action) {
+  const {shoppingCartID, items} = action.payload;
+
+  try {
+    yield put({type: 'SHOP_CART_BATCH_ADD_START'});
+
+    const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
+    const shopCartDoc = yield call(getDoc, shopCartRef);
+
+    if (shopCartDoc.exists) {
+      const shopCartData = shopCartDoc.data();
+
+      const batch = writeBatch(db);
+
+      let updatedItems = [...(shopCartData.items || [])];
+
+      items.forEach(item => {
+        const {
+          itemName,
+          brandName,
+          description,
+          packageSize,
+          measurement,
+          category,
+          notes,
+        } = item;
+
+        for (let i = 0; i < item.quantity; i++) {
+          const newItem = {
+            itemName: itemName || '',
+            brandName: brandName || '',
+            description: description || '',
+            packageSize: Number(packageSize) || 1,
+            measurement: measurement || '',
+            category: category || '',
+            notes: notes || '',
+            itemId: uuid.v4(),
+            itemDate: new Date().toISOString(), // ✅ Fix: Use Firestore new Date().toISOString()
+            quantity: 1,
+            status: 'shopping-cart',
+          };
+
+          updatedItems.push(newItem);
+        }
+      });
+
+      batch.update(shopCartRef, {
+        items: updatedItems,
+        lastUpdated: new Date().toISOString(),
+      });
+
+      yield call(() => batch.commit());
+
+      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+
+      Toast.show({
+        type: 'success',
+        text1: 'Items Added',
+        text2: `Batch items were added to the shopping cart.`,
+      });
+
+      yield put({type: 'SHOP_CART_BATCH_ADD_SUCCESS'});
+    } else {
+      yield put({
+        type: 'SHOP_CART_BATCH_ADD_FAILED',
+        payload: 'Shopping cart not found.',
+      });
+
+      Toast.show({
+        type: 'danger',
+        text1: 'Batch Add Failed',
+        text2: 'Shopping cart not found. Please try again later.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'SHOP_CART_BATCH_ADD_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Batch Add Failed',
+      text2:
+        'Items could not be added to the shopping cart. Please try again later.',
+    });
+  }
+}
+
+function* resetShopCart(action) {
+  const {shoppingCartID} = action.payload;
+  try {
+    // Reference the shopCart document using shoppingCartID as the document ID
+    const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
+    const shopCartDoc = yield call(getDoc, shopCartRef);
+
+    if (shopCartDoc.exists) {
+      // Update shopCart to reset items
+      yield call(() =>
+        updateDoc(shopCartRef, {
+          items: [],
+          lastUpdated: new Date().toISOString(),
+        }),
+      );
+
+      // Reload the updated shopCart
+      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+
+      Toast.show({
+        type: 'success',
+        text1: 'Shopping List Reset',
+        text2: 'Your shopping list has been cleared.',
+      });
+    } else {
+      Toast.show({
+        type: 'warning',
+        text1: 'No Shopping List Found',
+        text2: 'Could not find a shopping list to reset.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'SHOP_CART_RESET_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Reset Failed',
+      text2: 'Your shopping list could not be reset. Please try again later.',
+    });
+  }
+}
+
+export default function* shopCartSaga() {
+  yield takeLatest('LOAD_SHOP_CART', fetchShopCart);
+  yield takeLatest('ADD_ITEM_TO_SHOP_CART', addItemToShopCart);
+  yield takeLatest('UPDATE_ITEM_IN_SHOP_CART', updateItemInShopCart);
+  yield takeLatest('DELETE_ITEM_FROM_SHOP_CART', deleteItemFromShopCart);
+  yield takeLatest('DELETE_LIST_FROM_SHOP_CART', deleteListFromShopCart);
+  yield takeLatest('BATCH_TO_SHOP_CART', batchToShopCart);
+  yield takeLatest('RESET_SHOP_CART', resetShopCart);
+}
+
+//* user.saga.jsx
+import {put, takeLatest, call} from 'redux-saga/effects';
+import {getAuth} from '@react-native-firebase/auth';
+import {persistor} from '../../../store';
+
+// Initialize Firebase Auth
+const auth = getAuth();
+
+const getErrorMessage = error => {
+  console.log(error.code);
+  switch (error.code) {
+    case 'auth/invalid-credential':
+    case 'auth/wrong-password':
+    case 'auth/user-not-found':
+      return 'The email or password provided is incorrect. Please try again.';
+    case 'auth/user-disabled':
+      return 'The user account has been disabled. Please contact support.';
+    case 'auth/email-already-in-use':
+      return 'The email address is already in use by another account.';
+    case 'auth/invalid-email':
+      return 'The email address is not valid. Please check and try again.';
+    default:
+      return 'An unknown error occurred. Please try again later.';
+  }
+};
+
+function* loginUser(action) {
+  try {
+    const {email, password} = action.payload;
+
+    // Authenticate user
+    const userCredential = yield call(
+      [auth, auth.signInWithEmailAndPassword],
+      email,
+      password,
+    );
+
+    const user = userCredential?.user;
+
+    if (user?.emailVerified) {
+      yield put({type: 'SET_USER', payload: user});
+      yield put({
+        type: 'FETCH_PROFILE',
+        payload: {uid: user?.uid, role: user?.role},
+      });
+    } else {
+      yield put({
+        type: 'LOGIN_FAILED',
+        payload: 'Email is not verified. Please verify your email to log in.',
+      });
+    }
+  } catch (error) {
+    const friendlyMessage = getErrorMessage(error);
+    yield put({type: 'LOGIN_FAILED', payload: friendlyMessage});
+  }
+}
+
+function* logoutUser() {
+  try {
+    yield call([auth, auth.signOut]);
+    yield put({type: 'UNSET_USER'});
+  } catch (error) {
+    const friendlyMessage = getErrorMessage(error);
+    yield put({type: 'LOGOUT_FAILED', payload: friendlyMessage});
+  }
+}
+
+function* logOutAndClear() {
+  try {
+    yield call([auth, auth.signOut]);
+    yield put({type: 'UNSET_USER'});
+    yield put({type: 'RESET_ALL_STATE'});
+    yield call([persistor, persistor.purge]);
+    yield call([persistor, persistor.flush]);
+  } catch (error) {
+    const friendlyMessage = getErrorMessage(error);
+    yield put({type: 'LOGOUT_FAILED', payload: friendlyMessage});
+  }
+}
+
+export default function* userSaga() {
+  yield takeLatest('LOGIN_REQUEST', loginUser);
+  yield takeLatest('LOGOUT', logoutUser);
+  yield takeLatest('LOGOUT_AND_CLEAR', logOutAndClear);
+}
+
+
+//*store.js
+import {createStore, applyMiddleware} from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import {persistStore, persistReducer} from 'redux-persist';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import rootReducer from './src/redux/reducers/_root.reducer';
+import rootSaga from './src/redux/sagas/_root.saga';
+
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+  whitelist: ['user', 'profile', 'account', 'shopping', 'cupboard'],
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+const sagaMiddleware = createSagaMiddleware();
+const store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
+const persistor = persistStore(store);
+
+sagaMiddleware.run(rootSaga);
+
+export {store, persistor};
+
+//* react-native.config.js
+module.exports = {
+  project: {
+    ios: {},
+    android: {},
+  },
+  assets: ['./src/fonts'],
+  dependencies: {
+    'react-native-vector-icons': {
+      platforms: {
+        android: null, // 👈 Tells autolink to ignore it for Android native builds
+      },
+    },
+  },
+};
+
+const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+
+/**
+ * Metro configuration
+ * https://reactnative.dev/docs/metro
+ *
+ * @type {import('@react-native/metro-config').MetroConfig}
+ */
+const config = {};
+
+module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+
+//* bable.config.js
+module.exports = {
+  presets: ['module:@react-native/babel-preset'],
+};
+
+//* app.json
+{
+  "name": "KitchenQueue",
+  "displayName": "KitchenQueue"
+}
