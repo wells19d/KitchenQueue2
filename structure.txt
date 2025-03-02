@@ -1,0 +1,65 @@
+| __tests__
+| .bundle
+| .vscode
+| android
+| ios
+| node_modules
+| src
+|-| components
+|-|-| KQToast.jsx
+|-|-| SplashScreen.jsx
+|-| fonts (already setup)
+|-| hooks
+|-|-| setHapticFeedback.jsx
+|-|-| useHooks.jsx
+|-| images
+|-|-| AppLogo_350.png
+|-|-| AppLogo_1000.png
+|-|-| AppLogo.png
+|-| KQ-UI
+|-| redux
+|-|-| reducers
+|-|-|-| _root.reducer.jsx
+|-|-|-| account.reducer.jsx
+|-|-|-| cupboard.reducer.jsx
+|-|-|-| device.reducer.jsx
+|-|-|-| edamam.reducer.jsx
+|-|-|-| invites.reducer.jsx
+|-|-|-| profile.reducer.jsx
+|-|-|-| shopCart.reducer.jsx
+|-|-|-| user.reducer.jsx
+|-|-| sagas
+|-|-|-| _root.saga.jsx
+|-|-|-| accounts.saga.jsx
+|-|-|-| cupboard.saga.jsx
+|-|-|-| device.saga.jsx
+|-|-|-| edamam.saga.jsx
+|-|-|-| invites.saga.jsx
+|-|-|-| profile.saga.jsx
+|-|-|-| shopCart.saga.jsx
+|-|-|-| user.saga.jsx
+|-| screens
+|-| styles
+|-| utilities
+.eslintrc.js
+.gitignore
+.prettierrc.js
+.watchmanconfig
+app.json
+App.jsx
+bable.config.js
+Export.txt - Custom file for me, used to give you info
+font-ref.txt - Custom file for me
+Gemfile
+index.js
+jest.config.js
+Main.jsx
+metro.config.js
+package.json
+react-native.config.js
+README.md
+redux.txt - Custom file for me, used to give you info
+store.js
+structure.txt - Custom file for me, used to give you info
+tsconfig.json
+yarn.lock
