@@ -11,9 +11,9 @@ import Toast from 'react-native-toast-message';
 import {toastConfig} from './src/components/KQToast';
 import Main from './Main';
 import {initializeApp, getApps} from '@react-native-firebase/app';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 const App = () => {
-  const [bgColor, setBgColor] = useState('#ffffff');
   if (!getApps().length) {
     initializeApp();
   }
@@ -29,7 +29,7 @@ const App = () => {
     return (
       <>
         <SplashScreen />
-        <StatusBar barStyle="light-content" backgroundColor={bgColor} />
+        <StatusBar barStyle="light-content" />
       </>
     );
   }
@@ -37,11 +37,13 @@ const App = () => {
     <Provider store={store}>
       <PersistGate loading={<SplashScreen />} persistor={persistor}>
         <GestureHandlerRootView style={{flex: 1}}>
-          <View style={{flex: 1}}>
-            <StatusBar backgroundColor={bgColor} barStyle="light-content" />
-            <Main bgColor={bgColor} setBgColor={setBgColor} />
-            <Toast config={toastConfig} />
-          </View>
+          <SafeAreaProvider>
+            <View style={{flex: 1}}>
+              <StatusBar barStyle="light-content" />
+              <Main />
+              <Toast config={toastConfig} />
+            </View>
+          </SafeAreaProvider>
         </GestureHandlerRootView>
       </PersistGate>
     </Provider>

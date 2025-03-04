@@ -64,13 +64,13 @@ function* fetchDeviceInfo() {
 
     const deviceInfo = {
       dimensions: {
-        height: height.toFixed(0),
-        width: width.toFixed(0),
+        height: Number(height.toFixed(0)),
+        width: Number(width.toFixed(0)),
       },
       screen: {
         pixelHeight: pixelHeight,
         pixelWidth: pixelWidth,
-        ratio: ratio,
+        ratio: Number(ratio),
       },
       system: {
         brand: formattedBrand,
