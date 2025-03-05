@@ -28,19 +28,19 @@ export const getNavMenuHeight = device => {
 
   switch (deviceSize) {
     case 'xLarge':
-      baseHeight = 110;
+      baseHeight = 90;
       break;
     case 'large':
-      baseHeight = 105;
+      baseHeight = 90;
       break;
     case 'medium':
-      baseHeight = 100;
-      break;
-    case 'small':
       baseHeight = 95;
       break;
+    case 'small':
+      baseHeight = 100;
+      break;
     case 'xSmall':
-      baseHeight = 90;
+      baseHeight = 100;
       break;
     default:
       baseHeight = 90; // Unknown devices default to xSmall
@@ -54,7 +54,7 @@ export const getNavMenuHeight = device => {
 
   // Special adjustment for home button devices
   if (isHomeButton) {
-    baseHeight -= 10;
+    baseHeight -= 30;
   }
 
   return baseHeight;
