@@ -8,7 +8,7 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {StatusBar, View} from 'react-native';
 import SplashScreen from './src/components/SplashScreen';
 import Toast from 'react-native-toast-message';
-import {toastConfig} from './src/components/KQToast';
+import {toastConfig} from './src/KQ-UI/KQToast';
 import Main from './Main';
 import {initializeApp, getApps} from '@react-native-firebase/app';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
