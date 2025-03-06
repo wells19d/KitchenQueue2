@@ -24,7 +24,6 @@ const Main = () => {
   const [headerColor, setHeaderColor] = useState('#319177');
   const [screenLocation, setScreenLocation] = useState('');
   const [bgColor, setBgColor] = useState('#ffffff');
-  const [bottomBgColor, setBottomBgColor] = useState('#f7f7f7');
   const [textColor, setTextColor] = useState('#373d43');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const bottomHeight = getNavMenuHeight(device);
@@ -145,17 +144,12 @@ const Main = () => {
           <Navigation />
         </View>
       </SafeAreaView>
-      <SafeAreaView
-        style={{
-          height: bottomHeight,
-          // backgroundColor: bottomBgColor,
-        }}
-        edges={['bottom']}>
+      <SafeAreaView style={{height: bottomHeight}} edges={['bottom']}>
         <NavMenu
-          bottomBgColor={bottomBgColor}
           bottomHeight={bottomHeight}
           bottomWidth={device?.dimensions?.width}
           toggleMenu={toggleMenu}
+          device={device}
         />
       </SafeAreaView>
     </NavigationContainer>

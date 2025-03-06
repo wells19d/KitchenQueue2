@@ -28,13 +28,13 @@ export const getNavMenuHeight = device => {
 
   switch (deviceSize) {
     case 'xLarge':
-      baseHeight = 90;
+      baseHeight = 100;
       break;
     case 'large':
-      baseHeight = 90;
+      baseHeight = 100;
       break;
     case 'medium':
-      baseHeight = 95;
+      baseHeight = 100;
       break;
     case 'small':
       baseHeight = 100;
@@ -58,4 +58,12 @@ export const getNavMenuHeight = device => {
   }
 
   return baseHeight;
+};
+
+export const getNavBarHeight = (device, baseHeight) => {
+  if (isHBDevice(device?.system?.model)) {
+    return baseHeight;
+  } else {
+    return baseHeight - 20;
+  }
 };

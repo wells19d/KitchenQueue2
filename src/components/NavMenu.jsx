@@ -1,20 +1,18 @@
 //*NavMenu.jsx
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import CurvedBottomBar from './CurvedBottomBar';
 import {Icons} from '../components/IconListRouter';
 import {useNavigation} from '@react-navigation/native';
+import {getNavBarHeight} from '../utilities/deviceUtils';
 
 const NavMenu = props => {
-  const {bottomBgColor, bottomHeight, bottomWidth, toggleMenu} = props;
+  const {bottomHeight, bottomWidth, toggleMenu, device} = props;
   const navigation = useNavigation();
 
-  const MenuButton = () => (
-    <View style={MenuButtonStyles.container}>
-      <TouchableOpacity style={MenuButtonStyles.button} onPress={toggleMenu}>
-        <Icons.Menu size={30} color={'#fff'} />
-      </TouchableOpacity>
-    </View>
+  const navHeight = useMemo(
+    () => getNavBarHeight(device, bottomHeight),
+    [device, bottomHeight],
   );
 
   const userItems = [
@@ -71,9 +69,9 @@ const NavMenu = props => {
     }
   };
 
-  const NavBar = () => (
-    <>
-      <View style={CurvedBarStyles.container}>
+  return (
+    <View style={NavMenuStyles.container}>
+      <View style={{height: navHeight}}>
         <CurvedBottomBar
           height={bottomHeight}
           width={bottomWidth}
@@ -83,57 +81,39 @@ const NavMenu = props => {
           shadowStroke={CurvedBarStyles.shadowStroke}
           shadowStrokeWidth={CurvedBarStyles.shadowStrokeWidth}
         />
+        <View style={MenuButtonStyles.wrapper}>
+          {navItems.map((item, index) => {
+            if (item.id === 'spacer') {
+              return (
+                <View key={index} style={MenuButtonStyles.container}>
+                  <TouchableOpacity
+                    style={MenuButtonStyles.button}
+                    onPress={toggleMenu}>
+                    <Icons.Menu size={30} color={'#fff'} />
+                  </TouchableOpacity>
+                </View>
+              );
+            }
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleNavPress(item)}
+                style={MenuButtonStyles.menuButton}>
+                {item.icon}
+                <Text style={{fontSize: 10}}>{item.title}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
-      <View style={NavMenuStyles.wrapper}>
-        {navItems.map((item, index) => {
-          if (item.id === 'spacer') {
-            return <View key={index} style={{flex: 1}} />; // Open middle space
-          }
-          return (
-            <TouchableOpacity
-              key={index}
-              onPress={() => handleNavPress(item)}
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 3000,
-              }}>
-              {item.icon}
-              <Text style={{fontSize: 10}}>{item.title}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    </>
-  );
-
-  return (
-    <View>
-      <MenuButton />
-      <NavBar />
     </View>
   );
 };
 
 export default NavMenu;
 
-const CurvedBarStyles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    height: '100%',
-    width: '100%',
-    position: 'absolute',
-    zIndex: 2000, // this is the back, comes in from main
-  },
-  fillColor: '#f7f7f7',
-  strokeColor: '#373d4340',
-  strokeWidth: 1.5,
-  shadowStroke: '#373d4320',
-  shadowStrokeWidth: 4,
-});
-
 const NavMenuStyles = StyleSheet.create({
+  container: {flex: 1},
   wrapper: {
     height: '100%',
     width: '100%',
@@ -141,28 +121,34 @@ const NavMenuStyles = StyleSheet.create({
     backgroundColor: 'transparent',
     flexDirection: 'row',
     padding: 5,
-    zIndex: 2200, // this comes in 3rd, to hold the menu items
   },
-  // cellWrapper: {
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   alignContent: 'center',
-  // },
-  // cellContainer: {flexDirection: 'column', padding: 5},
-  // cellTop: {justifyContent: 'flex-end', alignItems: 'center'},
-  // cellBottom: {flex: 1},
-  // cellText: {color: '#000'},
+});
+
+const CurvedBarStyles = StyleSheet.create({
+  fillColor: '#f7f7f7',
+  strokeColor: '#373d4340',
+  strokeWidth: 1.5,
+  shadowStroke: '#373d4320',
+  shadowStrokeWidth: 4,
 });
 
 const MenuButtonStyles = StyleSheet.create({
+  wrapper: {
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    flexDirection: 'row',
+    zIndex: 2000, // Bottom Layer
+  },
   container: {
+    flex: 1,
     height: 65,
     position: 'relative',
     top: -21,
     justifyContent: 'center',
     alignContent: 'center',
     alignItems: 'center',
-    zIndex: 2100, // this comes in second, to hold the center button
+    zIndex: 2100, // Middle Layer
   },
   button: {
     borderWidth: 1,
@@ -174,6 +160,12 @@ const MenuButtonStyles = StyleSheet.create({
     alignItems: 'center',
     borderColor: '#c4c4c480',
     backgroundColor: '#319177',
-    zIndex: 3000, // this comes in last and is the center button
+    zIndex: 2200, // Top Layer
+  },
+  menuButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2200, // Top Layer
   },
 });
