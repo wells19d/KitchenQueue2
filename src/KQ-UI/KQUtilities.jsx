@@ -1,4 +1,4 @@
-//* KQUtilities.js
+//* KQUtilities.jsx
 import {Platform} from 'react-native';
 
 export const useColors = color => {
@@ -33,7 +33,7 @@ const fontLookup = {
   'noto-2': {ios: 'NotoSans', android: 'NotoSans-ExtraLight', weight: 200},
   'noto-3': {ios: 'NotoSans', android: 'NotoSans-Light', weight: 300},
   'noto-4': {ios: 'NotoSans', android: 'NotoSans-Regular', weight: 400},
-  'noto-5': {ios: 'NotoSans', android: 'NotoSans-Medium', weight: 500}, // Default
+  'noto-5': {ios: 'NotoSans', android: 'NotoSans-Medium', weight: 500},
   'noto-6': {ios: 'NotoSans', android: 'NotoSans-SemiBold', weight: 600},
   'noto-7': {ios: 'NotoSans', android: 'NotoSans-Bold', weight: 700},
   'noto-8': {ios: 'NotoSans', android: 'NotoSans-ExtraBold', weight: 800},
@@ -44,11 +44,27 @@ const fontLookup = {
   'mont-2': {ios: 'Montserrat', android: 'Montserrat-ExtraLight', weight: 200},
   'mont-3': {ios: 'Montserrat', android: 'Montserrat-Light', weight: 300},
   'mont-4': {ios: 'Montserrat', android: 'Montserrat-Regular', weight: 400},
-  'mont-5': {ios: 'Montserrat', android: 'Montserrat-Medium', weight: 500}, // Default
+  'mont-5': {ios: 'Montserrat', android: 'Montserrat-Medium', weight: 500},
   'mont-6': {ios: 'Montserrat', android: 'Montserrat-SemiBold', weight: 600},
   'mont-7': {ios: 'Montserrat', android: 'Montserrat-Bold', weight: 700},
   'mont-8': {ios: 'Montserrat', android: 'Montserrat-ExtraBold', weight: 800},
   'mont-9': {ios: 'Montserrat', android: 'Montserrat-Black', weight: 900},
+
+  // OpenSans mappings
+  'open-3': {ios: 'OpenSans-Light', android: 'OpenSans-Light', weight: 300},
+  'open-4': {ios: 'OpenSans-Regular', android: 'OpenSans-Regular', weight: 400},
+  'open-5': {ios: 'OpenSans-Medium', android: 'OpenSans-Medium', weight: 500}, // Default
+  'open-6': {
+    ios: 'OpenSans-SemiBold',
+    android: 'OpenSans-SemiBold',
+    weight: 600,
+  },
+  'open-7': {ios: 'OpenSans-Bold', android: 'OpenSans-Bold', weight: 700},
+  'open-8': {
+    ios: 'OpenSans-ExtraBold',
+    android: 'OpenSans-ExtraBold',
+    weight: 800,
+  },
 
   // Special cases (no weight variations)
   cherry: {
@@ -65,7 +81,7 @@ const fontLookup = {
 };
 
 // Default settings
-const DEFAULT_FONT = 'noto-5';
+const DEFAULT_FONT = 'open-5';
 
 export const useFonts = (font = DEFAULT_FONT) => {
   const normalizedFont = font.trim().toLowerCase();
@@ -76,7 +92,7 @@ export const useFonts = (font = DEFAULT_FONT) => {
     : {fontFamily: fontData.android};
 };
 
-export const useSizes = (size = 'medium', font = 'NotoSans') => {
+export const useSizes = (size = 'medium', font = 'OpenSans') => {
   const sizes = {
     tiny: 12,
     xSmall: 14,

@@ -1,10 +1,11 @@
 //*NavMenu.jsx
 import React, {useMemo} from 'react';
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import CurvedBottomBar from './CurvedBottomBar';
 import {Icons} from '../components/IconListRouter';
 import {useNavigation} from '@react-navigation/native';
 import {getNavBarHeight} from '../utilities/deviceUtils';
+import {Text} from '../KQ-UI/KQText';
 
 const NavMenu = props => {
   const {bottomHeight, bottomWidth, toggleMenu, device} = props;
@@ -100,7 +101,7 @@ const NavMenu = props => {
                 onPress={() => handleNavPress(item)}
                 style={MenuButtonStyles.menuButton}>
                 {item.icon}
-                <Text style={{fontSize: 10}}>{item.title}</Text>
+                <Text size="xSmall">{item.title}</Text>
               </TouchableOpacity>
             );
           })}

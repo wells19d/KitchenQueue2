@@ -42,7 +42,13 @@ const Home = () => {
   );
 
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: bgColor,
+      }}>
       <Row>
         <Cell>
           <TextBefore font="NotoSans-Light" weight={300} text="Noto 300" />
@@ -70,7 +76,7 @@ const Home = () => {
 
       <Row>
         <Cell>
-          <TextBefore font="Montserrat-Light" weight={300} text="Mont 300" />
+          <TextBefore font="Montserrat-Light" weight={200} text="Mont 300" />
         </Cell>
         <Cell>
           <TextAfter font="Mont-3" text="Mont 300" />
@@ -78,7 +84,7 @@ const Home = () => {
       </Row>
       <Row>
         <Cell>
-          <TextBefore font="Montserrat-Medium" weight={500} text="Mont 500" />
+          <TextBefore font="Montserrat-Medium" weight={400} text="Mont 500" />
         </Cell>
         <Cell>
           <TextAfter font="Mont-5" text="Mont 500" />
@@ -90,6 +96,30 @@ const Home = () => {
         </Cell>
         <Cell>
           <TextAfter font="Mont-7" text="Mont 700" />
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>
+          <TextBefore font="OpenSans-Light" weight={300} text="Open 300" />
+        </Cell>
+        <Cell>
+          <TextAfter font="open-3" text="Open 300" />
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>
+          <TextBefore font="OpenSans-Medium" weight={500} text="Open 500" />
+        </Cell>
+        <Cell>
+          <TextAfter font="open-5" text="Open 500" />
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>
+          <TextBefore font="OpenSans-Bold" weight={700} text="Open 700" />
+        </Cell>
+        <Cell>
+          <TextAfter font="open-7" text="Open 700" />
         </Cell>
       </Row>
       <Row>
@@ -118,10 +148,9 @@ const Home = () => {
           <TextAfter font="banana" text="Banana Chips" size={40} />
         </Cell>
       </Row>
-      <Text font="Mont-8" size="giant">
-        Some Stupid Text
+      <Text font="open-6" size="large">
+        The quick brown lazy dog.
       </Text>
-      <Text font="Mont-7">Some Stupid Text</Text>
     </View>
   );
 };

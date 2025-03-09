@@ -728,6 +728,7 @@ export const CMStyles = StyleSheet.create({
   sectionTO: {
     flexDirection: 'row',
     marginVertical: 6,
+    alignItems: 'center',
   },
   sectionIcon: {marginRight: 20},
 });
