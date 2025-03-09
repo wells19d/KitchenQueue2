@@ -14,6 +14,7 @@ import {setHapticFeedback} from './src/hooks/setHapticFeedback';
 import Account from './src/screens/Account/Account';
 import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
+import KQBottomSheet from './src/KQ-UI/KQBottomSheet';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -42,6 +43,18 @@ const Main = () => {
     setIsSheetOpen(prev => !prev);
     useHaptics(profile?.userSettings?.hapticStrength || 'light');
   }, [useHaptics]);
+
+  const BottomMenu = () => (
+    <KQBottomSheet
+      visible={isSheetOpen}
+      onClose={() => setIsSheetOpen(false)}
+      snapPoints={[0.01, 0.95]}>
+      <View>
+        <Text>Test</Text>
+      </View>
+      {/* <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} /> */}
+    </KQBottomSheet>
+  );
 
   const Navigation = () => {
     return (
@@ -142,6 +155,7 @@ const Main = () => {
         edges={['top']}>
         <View style={{flex: 1}}>
           <Navigation />
+          <BottomMenu />
         </View>
       </SafeAreaView>
       <SafeAreaView style={{height: bottomHeight}} edges={['bottom']}>

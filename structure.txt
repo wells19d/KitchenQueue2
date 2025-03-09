@@ -6,7 +6,9 @@
 | node_modules
 | src
 |-| components
-|-|-| KQToast.jsx
+|-|-| CurvedBottomBar.jsx
+|-|-| IconListRouter.jsx
+|-|-| NavMenu.jsx
 |-|-| SplashScreen.jsx
 |-| fonts (already setup)
 |-| hooks
@@ -17,6 +19,10 @@
 |-|-| AppLogo_1000.png
 |-|-| AppLogo.png
 |-| KQ-UI
+|-|-| KQBottomSheet.jsx
+|-|-| KQText.jsx
+|-|-| KQToast.jsx
+|-|-| KQUtilities.jsx
 |-| redux
 |-|-| reducers
 |-|-|-| _root.reducer.jsx
@@ -39,8 +45,18 @@
 |-|-|-| shopCart.saga.jsx
 |-|-|-| user.saga.jsx
 |-| screens
+|-|-| Account
+|-|-|-| Account.jsx
+|-|-| Cupboard
+|-|-|-| Cupboard.jsx
+|-|-| Home
+|-|-|-| Home.jsx
+|-|-| Shopping
+|-|-|-| Shopping.jsx
 |-| styles
+|-|-| Styles.jsx
 |-| utilities
+|-|-| deviceUtils.js
 .eslintrc.js
 .gitignore
 .prettierrc.js

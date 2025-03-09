@@ -1,0 +1,2282 @@
+//* app.json
+{
+  "name": "KitchenQueue",
+  "displayName": "KitchenQueue"
+}
+
+//* bable.config.js
+module.exports = {
+  presets: ['module:@react-native/babel-preset'],
+  plugins: ['react-native-reanimated/plugin'],
+};
+
+//* jest.config.js
+module.exports = {
+  preset: 'react-native',
+};
+
+//* metro.config.js
+const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+
+/**
+ * Metro configuration
+ * https://reactnative.dev/docs/metro
+ *
+ * @type {import('@react-native/metro-config').MetroConfig}
+ */
+const config = {};
+
+module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+
+//* package.json
+{
+  "name": "kitchen-queue",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "lint": "eslint .",
+    "start": "react-native start",
+    "start-clean": "react-native start --reset-cache",
+    "pod-clean": "cd ios && pod install --repo-update && cd ..",
+    "gradle-clean": "cd android && ./gradlew clean && cd ..",
+    "clean-project": "rm -rf node_modules && yarn cache clean && yarn install && yarn pod-clean && yarn gradle-clean",
+    "clean-and-start": "rm -rf node_modules && yarn cache clean && yarn install && yarn pod-clean && yarn gradle-clean && yarn start-clean",
+    "open-studio": "open -a 'Android Studio'",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@dicebear/collection": "9.2.2",
+    "@dicebear/core": "9.2.2",
+    "@react-native-async-storage/async-storage": "2.1.2",
+    "@react-native-clipboard/clipboard": "1.16.2",
+    "@react-native-firebase/app": "^21.12.0",
+    "@react-native-firebase/auth": "^21.12.0",
+    "@react-native-firebase/firestore": "^21.12.0",
+    "@react-navigation/native": "7.0.15",
+    "@react-navigation/native-stack": "7.2.1",
+    "@shopify/flash-list": "1.7.3",
+    "pluralize": "8.0.0",
+    "react": "19.0.0",
+    "react-native": "0.78.0",
+    "react-native-config": "1.5.5",
+    "react-native-device-info": "14.0.4",
+    "react-native-gesture-handler": "2.24.0",
+    "react-native-haptic-feedback": "2.3.3",
+    "react-native-permissions": "5.2.6",
+    "react-native-reanimated": "3.17.1",
+    "react-native-safe-area-context": "^5.3.0",
+    "react-native-screens": "4.9.1",
+    "react-native-svg": "15.11.2",
+    "react-native-toast-message": "2.2.1",
+    "react-native-uuid": "2.0.3",
+    "react-native-vector-icons": "10.2.0",
+    "react-redux": "9.2.0",
+    "redux": "5.0.1",
+    "redux-persist": "6.0.0",
+    "redux-saga": "1.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.9",
+    "@babel/runtime": "^7.26.9",
+    "@react-native-community/cli": "15.1.3",
+    "@react-native-community/cli-platform-android": "15.1.3",
+    "@react-native-community/cli-platform-ios": "15.1.3",
+    "@react-native/babel-preset": "0.78.0",
+    "@react-native/eslint-config": "0.78.0",
+    "@react-native/metro-config": "0.78.0",
+    "@react-native/typescript-config": "0.78.0",
+    "react-test-renderer": "19.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
+
+
+//* react-native.config.js
+module.exports = {
+  project: {
+    ios: {},
+    android: {},
+  },
+  assets: ['./src/fonts'],
+  dependencies: {
+    'react-native-vector-icons': {
+      platforms: {
+        android: null, // 👈 Tells autolink to ignore it for Android native builds
+      },
+    },
+  },
+};
+
+//*store.js
+import {createStore, applyMiddleware} from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import {persistStore, persistReducer} from 'redux-persist';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import rootReducer from './src/redux/reducers/_root.reducer';
+import rootSaga from './src/redux/sagas/_root.saga';
+
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+  whitelist: ['user', 'profile', 'account', 'shopping', 'cupboard'],
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+const sagaMiddleware = createSagaMiddleware();
+const store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
+const persistor = persistStore(store);
+
+sagaMiddleware.run(rootSaga);
+
+export {store, persistor};
+
+//*CurvedBottomBar.jsx
+import React from 'react';
+import Svg, {
+  Path,
+  Defs,
+  Filter,
+  FeOffset,
+  FeGaussianBlur,
+  FeMerge,
+  FeMergeNode,
+} from 'react-native-svg';
+
+const CurvedBottomBar = props => {
+  const {
+    width = width || 500,
+    height = height || 60,
+    fill = fill || '#fff',
+    stroke = stroke || '#373d4370',
+    strokeWidth = strokeWidth || 1,
+    shadowStroke = shadowStroke || '#373d4360',
+    shadowStrokeWidth = shadowStrokeWidth || 2,
+  } = props;
+
+  const startX = 0;
+  const endX = width - 0;
+  const topY = 2;
+  const bottomY = height;
+
+  const leftCurveStartX = width / 2 - 65;
+  const leftCurveEndX = width / 2 - 30;
+  const rightCurveStartX = width / 2 + 30;
+  const rightCurveEndX = width / 2 + 65;
+
+  const d = `
+  M ${startX},${bottomY}
+  L ${startX},20
+  C ${startX},20 ${topY},${topY} 25,${topY}
+  L ${leftCurveStartX},${topY}
+  C ${leftCurveStartX},${topY} ${width / 2 - 40},${topY} ${leftCurveEndX},25
+  C ${width / 2 - 25},38 ${width / 2 - 15},44 ${width / 2},44
+  C ${width / 2 + 15},44 ${width / 2 + 25},38 ${rightCurveStartX},25
+  C ${width / 2 + 40},${topY} ${rightCurveEndX},${topY} ${rightCurveEndX},${topY}
+  L ${endX - 20},${topY}
+  C ${endX - 25},${topY} ${endX - 2},${topY} ${endX},20
+  L ${endX},${bottomY}`;
+
+  return (
+    <Svg width={width} height={height}>
+      <Defs>
+        <Filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <FeOffset dx="0" dy="3" />
+          <FeGaussianBlur stdDeviation="3" result="blurred" />
+          <FeMerge>
+            <FeMergeNode in="blurred" />
+            <FeMergeNode in="SourceGraphic" />
+          </FeMerge>
+        </Filter>
+      </Defs>
+
+      <Path
+        d={d}
+        fill="none"
+        stroke={shadowStroke}
+        strokeWidth={shadowStrokeWidth}
+        filter="url(#shadow)"
+      />
+
+      <Path d={d} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+    </Svg>
+  );
+};
+
+export default CurvedBottomBar;
+
+//*IconListRouter.jsx
+import ADIcons from 'react-native-vector-icons/AntDesign';
+import FAIcons from 'react-native-vector-icons/FontAwesome';
+import FA5Icons from 'react-native-vector-icons/FontAwesome5';
+import MCIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MIIcons from 'react-native-vector-icons/MaterialIcons';
+import IIcons from 'react-native-vector-icons/Ionicons';
+import EIcons from 'react-native-vector-icons/Entypo';
+import FIcons from 'react-native-vector-icons/Fontisto';
+import FEIcons from 'react-native-vector-icons/Feather';
+import SIIcons from 'react-native-vector-icons/SimpleLineIcons';
+import MIcons from 'react-native-vector-icons/MaterialIcons';
+import ZOIcons from 'react-native-vector-icons/Zocial';
+import {Keyboard} from 'react-native';
+
+export const Icons = {
+  Account: props => (
+    <MCIcons name="account-circle" size={20} color="#000" {...props} />
+  ),
+  AddList: props => (
+    <MCIcons name="playlist-plus" size={20} color="#000" {...props} />
+  ),
+  Back: props => (
+    <MIIcons name="arrow-back-ios" size={20} color="#000" {...props} />
+  ),
+  Barcode: props => (
+    <FAIcons name="barcode" size={20} color="#000" {...props} />
+  ),
+  ChevronDown: props => (
+    <FEIcons name="chevron-down" size={20} color="#000" {...props} />
+  ),
+  ChevronUp: props => (
+    <FEIcons name="chevron-up" size={20} color="#000" {...props} />
+  ),
+  CirclePlus: props => (
+    <ADIcons name="pluscircleo" size={20} color="#000" {...props} />
+  ),
+  Close: props => <MCIcons name="close" size={20} color="#000" {...props} />,
+  Cupboards: props => (
+    <MCIcons name="wardrobe" size={20} color="#000" {...props} />
+  ),
+  Edit: props => <MIIcons name="edit-note" size={20} color="#000" {...props} />,
+  Favorite: props => <MCIcons name="star" size={20} color="#000" {...props} />,
+  Filter: props => (
+    <IIcons name="filter-outline" size={20} color="#000" {...props} />
+  ),
+  Forward: props => (
+    <MIIcons name="arrow-forward-ios" size={20} color="#000" {...props} />
+  ),
+  Home: props => <MCIcons name="home" size={20} color="#000" {...props} />,
+  Help: props => (
+    <MCIcons name="help-circle" size={20} color="#000" {...props} />
+  ),
+  Keyboard: props => (
+    <MCIcons name="keyboard-variant" size={20} color="#000" {...props} />
+  ),
+  Menu: props => <FEIcons name="menu" size={20} color="#000" {...props} />,
+  MenuList: props => <MCIcons name="menu" size={20} color="#000" {...props} />,
+  LightOn: props => (
+    <MIIcons name="flashlight-on" size={20} color="#000" {...props} />
+  ),
+  LightOff: props => (
+    <MIIcons name="flashlight-off" size={20} color="#000" {...props} />
+  ),
+  Logout: props => <MIIcons name="logout" size={20} color="#000" {...props} />,
+  Merge: props => (
+    <MCIcons name="set-merge" size={20} color="#000" {...props} />
+  ),
+  Plus: props => <MCIcons name="plus" size={20} color="#000" {...props} />,
+  Profile: props => (
+    <ADIcons name="profile" size={20} color="#000" {...props} />
+  ),
+  Recipe: props => (
+    <MCIcons name="treasure-chest" size={20} color="#000" {...props} />
+  ),
+  Save: props => (
+    <MCIcons name="content-save" size={20} color="#000" {...props} />
+  ),
+  Search: props => <MIIcons name="search" size={20} color="#000" {...props} />,
+  Settings: props => (
+    <FA5Icons name="wrench" size={20} color="#000" {...props} />
+  ),
+  Shopping: props => (
+    <FAIcons name="shopping-cart" size={20} color="#000" {...props} />
+  ),
+  Split: props => (
+    <MCIcons name="set-split" size={20} color="#000" {...props} />
+  ),
+  Wave: props => <MCIcons name="wave" size={20} color="#000" {...props} />,
+  Waves: props => <MCIcons name="waves" size={20} color="#000" {...props} />,
+};
+
+//*NavMenu.jsx
+import React, {useMemo} from 'react';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import CurvedBottomBar from './CurvedBottomBar';
+import {Icons} from '../components/IconListRouter';
+import {useNavigation} from '@react-navigation/native';
+import {getNavBarHeight} from '../utilities/deviceUtils';
+
+const NavMenu = props => {
+  const {bottomHeight, bottomWidth, toggleMenu, device} = props;
+  const navigation = useNavigation();
+
+  const navHeight = useMemo(
+    () => getNavBarHeight(device, bottomHeight),
+    [device, bottomHeight],
+  );
+
+  const userItems = [
+    {
+      id: 'shopping',
+      title: 'Shopping',
+      icon: <Icons.Shopping size={25} color={'#000'} />,
+      screen: 'ShoppingList',
+    },
+    {
+      id: 'cupboard',
+      title: 'Cupboard',
+      icon: <Icons.Cupboards size={25} color={'#000'} />,
+      screen: 'CupboardList',
+    },
+  ];
+
+  const getNavBarLayout = (items = []) => {
+    const requiredItems = [
+      {
+        id: 'home',
+        title: 'Home',
+        icon: <Icons.Home size={27} color={'#000'} />,
+        screen: 'Home',
+      },
+      {
+        id: 'account',
+        title: 'Account',
+        icon: <Icons.Account size={25} color={'#000'} />,
+        screen: 'Account',
+      },
+    ];
+
+    // Combine required and user items, Home first, Account last
+    let allItems = [requiredItems[0], ...items, requiredItems[1]];
+
+    // Ensure odd number of slots (to keep center slot open)
+    if (allItems.length % 2 === 0) {
+      allItems.splice(Math.floor(allItems.length / 2), 0, {id: 'spacer'}); // Center spacer
+    }
+
+    return allItems;
+  };
+
+  const navItems = getNavBarLayout(userItems);
+
+  const handleNavPress = item => {
+    const allowedScreens = ['Home', 'ShoppingList', 'CupboardList', 'Account'];
+
+    if (allowedScreens.includes(item.screen)) {
+      navigation.navigate(item.screen);
+    } else {
+      Alert.alert('Coming Soon', `${item.title} screen not yet available.`);
+    }
+  };
+
+  return (
+    <View style={NavMenuStyles.container}>
+      <View style={{height: navHeight}}>
+        <CurvedBottomBar
+          height={bottomHeight}
+          width={bottomWidth}
+          fill={CurvedBarStyles.fillColor}
+          stroke={CurvedBarStyles.strokeColor}
+          strokeWidth={CurvedBarStyles.strokeWidth}
+          shadowStroke={CurvedBarStyles.shadowStroke}
+          shadowStrokeWidth={CurvedBarStyles.shadowStrokeWidth}
+        />
+        <View style={MenuButtonStyles.wrapper}>
+          {navItems.map((item, index) => {
+            if (item.id === 'spacer') {
+              return (
+                <View key={index} style={MenuButtonStyles.container}>
+                  <TouchableOpacity
+                    style={MenuButtonStyles.button}
+                    onPress={toggleMenu}>
+                    <Icons.Menu size={30} color={'#fff'} />
+                  </TouchableOpacity>
+                </View>
+              );
+            }
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleNavPress(item)}
+                style={MenuButtonStyles.menuButton}>
+                {item.icon}
+                <Text style={{fontSize: 10}}>{item.title}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export default NavMenu;
+
+const NavMenuStyles = StyleSheet.create({
+  container: {flex: 1},
+  wrapper: {
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    padding: 5,
+  },
+});
+
+const CurvedBarStyles = StyleSheet.create({
+  fillColor: '#f7f7f7',
+  strokeColor: '#373d4340',
+  strokeWidth: 1.5,
+  shadowStroke: '#373d4320',
+  shadowStrokeWidth: 4,
+});
+
+const MenuButtonStyles = StyleSheet.create({
+  wrapper: {
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    flexDirection: 'row',
+    zIndex: 2000, // Bottom Layer
+  },
+  container: {
+    flex: 1,
+    height: 65,
+    position: 'relative',
+    top: -21,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    zIndex: 2100, // Middle Layer
+  },
+  button: {
+    borderWidth: 1,
+    height: 55,
+    width: 55,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    borderColor: '#c4c4c480',
+    backgroundColor: '#319177',
+    zIndex: 2200, // Top Layer
+  },
+  menuButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2200, // Top Layer
+  },
+});
+
+//*SplashScreen.jsx
+import React from 'react';
+import {View, Text, StyleSheet, ActivityIndicator, Image} from 'react-native';
+
+const SplashScreen = () => {
+  const logo = require('../images/AppLogo_350.png');
+  return (
+    <View style={styles.container}>
+      <View style={{marginBottom: -24}}>
+        <Image source={logo} style={styles.image} />
+      </View>
+      <View style={{position: 'absolute', top: '44%', left: '50%'}}>
+        <ActivityIndicator size="large" color="#319177" />
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 36,
+    padding: 5,
+    fontFamily: 'Montserrat-Bold',
+  },
+  indicator: {
+    marginVertical: 5,
+    paddingTop: 8,
+    paddingBottom: 5,
+    paddingLeft: 8,
+    paddingRight: 6,
+  },
+  image: {},
+});
+
+export default SplashScreen;
+
+//*setHapticFeedback.jsx
+import HapticFeedback from 'react-native-haptic-feedback';
+
+export const setHapticFeedback = () => {
+  const triggerHaptic = props => {
+    const options = {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    };
+    // console.log('props:', props);
+    switch (props) {
+      case 'off':
+        break;
+      case 'light':
+        HapticFeedback.trigger('impactLight', options);
+        break;
+      case 'medium':
+        HapticFeedback.trigger('impactMedium', options);
+        break;
+      case 'heavy':
+        HapticFeedback.trigger('impactHeavy', options);
+        break;
+      case 'success':
+        HapticFeedback.trigger('notificationSuccess', options);
+        break;
+      case 'warning':
+        HapticFeedback.trigger('notificationWarning', options);
+        break;
+      case 'error':
+        HapticFeedback.trigger('notificationError', options);
+        break;
+      default:
+        HapticFeedback.trigger('impactLight', options);
+        break;
+    }
+  };
+
+  return triggerHaptic;
+};
+
+//*useHooks.jsx
+import {useSelector} from 'react-redux';
+
+export const useDeviceInfo = () => {
+  return useSelector(state => state.deviceInfo?.deviceInfo);
+};
+
+export const useAuth = () => {
+  return useSelector(state => state.user?.isAuthenticated);
+};
+
+export const useUser = () => {
+  return useSelector(state => state.user?.data);
+};
+
+export const useLoginError = () => {
+  return useSelector(state => state.user?.error);
+};
+
+export const useProfile = () => {
+  return useSelector(state => state.profile?.profile);
+};
+
+export const useProfileError = () => {
+  return useSelector(state => state.profile?.error);
+};
+
+export const useAccount = () => {
+  return useSelector(state => state.account?.account);
+};
+
+export const useAccountError = () => {
+  return useSelector(state => state.account?.error);
+};
+
+export const useShoppingCart = () => {
+  return useSelector(state => state.shopping?.shopping);
+};
+
+export const useShoppingCartError = () => {
+  return useSelector(state => state.shopping?.error);
+};
+
+export const useCupboard = () => {
+  return useSelector(state => state.cupboard?.cupboard);
+};
+
+export const useCupboardError = () => {
+  return useSelector(state => state.cupboard?.error);
+};
+
+export const useAllowedProfiles = () => {
+  return useSelector(state => state.account?.allowedProfiles);
+};
+
+export const useExistingInvite = () => {
+  return useSelector(state => state.invites?.existingInvite || null);
+};
+
+export const useFoodData = () => {
+  return useSelector(state => state.edamam?.foodData);
+};
+
+export const useFoodDataError = () => {
+  return useSelector(state => state.edamam?.error);
+};
+
+export const useFoodDataLoading = () => {
+  return useSelector(state => state.edamam?.loading);
+};
+
+//* KQBottomSheet.jsx
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  View,
+  Animated,
+  StyleSheet,
+  Dimensions,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import {PanGestureHandler, State} from 'react-native-gesture-handler';
+import {useDeviceInfo} from '../hooks/useHooks';
+
+const {height} = Dimensions.get('window');
+
+const KQBottomSheet = ({
+  visible,
+  onClose,
+  children,
+  snapPoints = [0.01, 0.9], // Default snap points
+}) => {
+  const translateY = useRef(new Animated.Value(height)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+  const [isFullyVisible, setIsFullyVisible] = useState(visible);
+  const deviceInfo = useDeviceInfo();
+  const [heightMulti, setHeightMulti] = useState(0.78);
+
+  useEffect(() => {
+    if (deviceInfo?.system?.os === 'Android') {
+      setHeightMulti(0.805);
+    }
+  }, [deviceInfo]);
+
+  useEffect(() => {
+    if (visible) {
+      setIsFullyVisible(true); // Ensure component is mounted
+      Animated.parallel([
+        Animated.spring(translateY, {
+          toValue: height * (1 - snapPoints[1]),
+          speed: 7,
+          bounciness: 3,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 250, // Smooth fade-in
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.spring(translateY, {
+          toValue: height, // Move off-screen
+          speed: 5,
+          bounciness: 0,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setTimeout(() => {
+          setIsFullyVisible(false); // Only unmount AFTER animation completes
+        }, 500);
+      });
+    }
+  }, [visible]);
+
+  if (!isFullyVisible) return null; // Prevent rendering when fully hidden
+
+  const handleGesture = event => {
+    const {translationY} = event.nativeEvent;
+
+    if (translationY >= 0) {
+      translateY.setValue(height * (1 - snapPoints[1]) + translationY);
+    }
+  };
+
+  const handleStateChange = event => {
+    const {translationY, velocityY} = event.nativeEvent;
+
+    if (event.nativeEvent.state === State.END) {
+      if (translationY > height * 0.5 || velocityY > 1.5) {
+        Animated.timing(translateY, {
+          toValue: height,
+          duration: 250,
+          useNativeDriver: true,
+        }).start(() => onClose());
+      } else {
+        Animated.spring(translateY, {
+          toValue: height * (1 - snapPoints[1]),
+          speed: 7,
+          bounciness: 3,
+          useNativeDriver: true,
+        }).start();
+      }
+    }
+  };
+
+  return (
+    <TouchableWithoutFeedback
+      onPress={e => {
+        if (e.target === e.currentTarget) {
+          onClose(); // Only close if tapping outside the modal
+        }
+      }}
+      accessible={false} // Prevents interference with child components
+    >
+      <Animated.View style={[styles.overlay, {opacity}]}>
+        <Animated.View
+          style={[
+            styles.sheet,
+            {transform: [{translateY}]},
+            {height: height * heightMulti},
+          ]}>
+          <PanGestureHandler
+            onGestureEvent={handleGesture}
+            onHandlerStateChange={handleStateChange}>
+            <View style={styles.handleContainer}>
+              <View style={styles.handle} />
+            </View>
+          </PanGestureHandler>
+          <View style={styles.viewableArea}>{children}</View>
+        </Animated.View>
+      </Animated.View>
+    </TouchableWithoutFeedback>
+  );
+};
+
+const styles = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  sheet: {
+    width: '100%',
+    height: height,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+  },
+  handleContainer: {
+    alignItems: 'center',
+    paddingTop: 15,
+    paddingBottom: 15,
+  },
+  handle: {
+    width: 40,
+    height: 5,
+    backgroundColor: '#c4c4c4',
+    borderRadius: 10,
+  },
+  viewableArea: {
+    flex: 1,
+    marginHorizontal: 5,
+    // borderWidth: 1,
+  },
+});
+
+export default KQBottomSheet;
+
+//* KQText.jsx
+import React from 'react';
+import {Text as KQText, View} from 'react-native';
+import {useColors, useFonts, useSizes} from './KQUtilities';
+
+export const Text = ({
+  children,
+  style,
+  size = 'medium',
+  kqColor = 'black',
+  font = 'Noto-5',
+  ...props
+}) => {
+  const setColor = useColors(kqColor);
+  const setFont = useFonts(font);
+  const setSize = useSizes(size, font);
+
+  return (
+    <View style={{borderWidth: 1, padding: 0, margin: 0}}>
+      <KQText style={[setColor, setFont, setSize, style]} {...props}>
+        {children}
+      </KQText>
+    </View>
+  );
+};
+
+
+//*KQToast.jsx
+import {BaseToast} from 'react-native-toast-message';
+
+const toastStyles = {
+  baseStyle: {
+    top: 60,
+    minHeight: 75,
+    paddingVertical: 20,
+  },
+  primary: {borderLeftColor: '#44B3B3'},
+  success: {borderLeftColor: '#228B22'},
+  info: {borderLeftColor: '#0077A2'},
+  warning: {borderLeftColor: '#FCC945'},
+  danger: {borderLeftColor: '#fE4949'},
+  dark: {borderLeftColor: '#373d43'},
+  basic: {borderLeftColor: '#C4C4C4'},
+  textStyle1: {
+    fontSize: 16,
+    color: '#000',
+    fontFamily: 'Montserrat-Bold',
+  },
+  textStyle2: {
+    fontSize: 14,
+    color: '#000',
+    fontFamily: 'Montserrat-SemiBold',
+  },
+};
+
+export const toastConfig = {
+  primary: props => (
+    <BaseToast
+      {...props}
+      style={[toastStyles.baseStyle, toastStyles.primary]}
+      text1Style={toastStyles.textStyle1}
+      text2Style={toastStyles.textStyle2}
+      text1NumberOfLines={2}
+      text2NumberOfLines={3}
+      topOffset={100}
+    />
+  ),
+  success: props => (
+    <BaseToast
+      {...props}
+      style={[toastStyles.baseStyle, toastStyles.success]}
+      text1Style={toastStyles.textStyle1}
+      text2Style={toastStyles.textStyle2}
+      text1NumberOfLines={2}
+      text2NumberOfLines={3}
+      topOffset={100}
+    />
+  ),
+  info: props => (
+    <BaseToast
+      {...props}
+      style={[toastStyles.baseStyle, toastStyles.info]}
+      text1Style={toastStyles.textStyle1}
+      text2Style={toastStyles.textStyle2}
+      text1NumberOfLines={2}
+      text2NumberOfLines={3}
+      topOffset={100}
+    />
+  ),
+  warning: props => (
+    <BaseToast
+      {...props}
+      style={[toastStyles.baseStyle, toastStyles.warning]}
+      text1Style={toastStyles.textStyle1}
+      text2Style={toastStyles.textStyle2}
+      text1NumberOfLines={2}
+      text2NumberOfLines={3}
+      topOffset={100}
+    />
+  ),
+  danger: props => (
+    <BaseToast
+      {...props}
+      style={[toastStyles.baseStyle, toastStyles.danger]}
+      text1Style={toastStyles.textStyle1}
+      text2Style={toastStyles.textStyle2}
+      text1NumberOfLines={2}
+      text2NumberOfLines={3}
+      topOffset={100}
+    />
+  ),
+  dark: props => (
+    <BaseToast
+      {...props}
+      style={[toastStyles.baseStyle, toastStyles.dark]}
+      text1Style={toastStyles.textStyle1}
+      text2Style={toastStyles.textStyle2}
+      text1NumberOfLines={2}
+      text2NumberOfLines={3}
+      topOffset={100}
+    />
+  ),
+  basic: props => (
+    <BaseToast
+      {...props}
+      style={[toastStyles.baseStyle, toastStyles.basic]}
+      text1Style={toastStyles.textStyle1}
+      text2Style={toastStyles.textStyle2}
+      text1NumberOfLines={2}
+      text2NumberOfLines={3}
+      topOffset={100}
+    />
+  ),
+};
+
+//* KQUtilities.js
+import {Platform} from 'react-native';
+
+export const useColors = color => {
+  if (!color || typeof color !== 'string') return {color: '#000000'};
+
+  const colors = {
+    black: '#000000',
+    white: '#ffffff',
+    primary: '#319177',
+    success: '#63B76C',
+    info: '#009DC4',
+    warning: '#FCC945',
+    danger: '#DA2C43',
+    dark: '#373d43',
+    basic: '#C4C4C4',
+  };
+
+  const normalizedColor = color.trim().toLowerCase();
+
+  return {
+    color:
+      colors[normalizedColor] ||
+      (/^#([0-9A-F]{3}){1,2}$/i.test(color) || color.includes('rgb')
+        ? color
+        : colors.black),
+  };
+};
+
+const fontLookup = {
+  // NotoSans mappings
+  'noto-1': {ios: 'NotoSans', android: 'NotoSans-Thin', weight: 100},
+  'noto-2': {ios: 'NotoSans', android: 'NotoSans-ExtraLight', weight: 200},
+  'noto-3': {ios: 'NotoSans', android: 'NotoSans-Light', weight: 300},
+  'noto-4': {ios: 'NotoSans', android: 'NotoSans-Regular', weight: 400},
+  'noto-5': {ios: 'NotoSans', android: 'NotoSans-Medium', weight: 500}, // Default
+  'noto-6': {ios: 'NotoSans', android: 'NotoSans-SemiBold', weight: 600},
+  'noto-7': {ios: 'NotoSans', android: 'NotoSans-Bold', weight: 700},
+  'noto-8': {ios: 'NotoSans', android: 'NotoSans-ExtraBold', weight: 800},
+  'noto-9': {ios: 'NotoSans', android: 'NotoSans-Black', weight: 900},
+
+  // Montserrat mappings
+  'mont-1': {ios: 'Montserrat', android: 'Montserrat-Thin', weight: 100},
+  'mont-2': {ios: 'Montserrat', android: 'Montserrat-ExtraLight', weight: 200},
+  'mont-3': {ios: 'Montserrat', android: 'Montserrat-Light', weight: 300},
+  'mont-4': {ios: 'Montserrat', android: 'Montserrat-Regular', weight: 400},
+  'mont-5': {ios: 'Montserrat', android: 'Montserrat-Medium', weight: 500}, // Default
+  'mont-6': {ios: 'Montserrat', android: 'Montserrat-SemiBold', weight: 600},
+  'mont-7': {ios: 'Montserrat', android: 'Montserrat-Bold', weight: 700},
+  'mont-8': {ios: 'Montserrat', android: 'Montserrat-ExtraBold', weight: 800},
+  'mont-9': {ios: 'Montserrat', android: 'Montserrat-Black', weight: 900},
+
+  // Special cases (no weight variations)
+  cherry: {
+    ios: 'CherryBlossom',
+    android: 'Cherry-Blossom',
+    weight: 500,
+  },
+  banana: {
+    ios: 'BananaChips-Regular',
+    android: 'BananaChips-Regular',
+    weight: 500,
+    lineHeightFactor: 0.8, // Adjusts large vertical space
+  },
+};
+
+// Default settings
+const DEFAULT_FONT = 'noto-5';
+
+export const useFonts = (font = DEFAULT_FONT) => {
+  const normalizedFont = font.trim().toLowerCase();
+  const fontData = fontLookup[normalizedFont] || fontLookup[DEFAULT_FONT];
+
+  return Platform.OS === 'ios'
+    ? {fontFamily: fontData.ios, fontWeight: fontData.weight}
+    : {fontFamily: fontData.android};
+};
+
+export const useSizes = (size = 'medium', font = 'NotoSans') => {
+  const sizes = {
+    tiny: 12,
+    xSmall: 14,
+    small: 16,
+    medium: 18, // Default
+    large: 20,
+    xLarge: 24,
+    giant: 28,
+    massive: 36,
+    gargantuan: 48,
+  };
+
+  // Scaling factors based on font
+  const fontScale = {
+    cherry: 1.1, // Slightly larger
+    banana: 2, // Twice the size
+  };
+
+  const baseSize = sizes[size] || sizes.medium;
+  const scaleFactor = fontScale[font.toLowerCase()] || 1;
+  return {fontSize: baseSize * scaleFactor};
+};
+
+
+//* Account.jsx
+import React from 'react';
+import {useRoute} from '@react-navigation/native';
+import {Text, View} from 'react-native';
+
+const Account = () => {
+  const route = useRoute();
+  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: bgColor,
+      }}>
+      <Text>Account</Text>
+    </View>
+  );
+};
+
+export default Account;
+
+//* Cupboards.jsx
+import React from 'react';
+import {useRoute} from '@react-navigation/native';
+import {Text, View} from 'react-native';
+
+const Cupboards = () => {
+  const route = useRoute();
+  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: bgColor,
+      }}>
+      <Text>Cupboards</Text>
+    </View>
+  );
+};
+
+export default Cupboards;
+
+//* Account.jsx
+import React from 'react';
+import {useRoute} from '@react-navigation/native';
+import {Text, View} from 'react-native';
+
+const Account = () => {
+  const route = useRoute();
+  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: bgColor,
+      }}>
+      <Text>Account</Text>
+    </View>
+  );
+};
+
+export default Account;
+
+//* Home.jsx
+import React from 'react';
+import {useRoute} from '@react-navigation/native';
+import {Platform, View} from 'react-native';
+import {useDeviceInfo} from '../../hooks/useHooks';
+import {isHBDevice} from '../../utilities/deviceUtils';
+import {Text} from '../../KQ-UI/KQText';
+
+const Home = () => {
+  const route = useRoute();
+  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+  const device = useDeviceInfo();
+
+  const Row = ({children}) => (
+    <View style={{flexDirection: 'row', width: '90%'}}>{children}</View>
+  );
+
+  const Cell = ({children}) => (
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+      }}>
+      {children}
+    </View>
+  );
+
+  const TextBefore = ({font, text, weight, size}) => (
+    <Text
+      kqColor="black"
+      style={{fontFamily: font, fontWeight: weight, fontSize: size || 20}}>
+      {text}
+    </Text>
+  );
+
+  const TextAfter = ({font, text, size}) => (
+    <Text kqColor="black" font={font} style={{fontSize: size || 20}}>
+      {text}
+    </Text>
+  );
+
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Row>
+        <Cell>
+          <TextBefore font="NotoSans-Light" weight={300} text="Noto 300" />
+        </Cell>
+        <Cell>
+          <TextAfter font="Noto-3" text="Noto 300" />
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>
+          <TextBefore font="NotoSans-Medium" weight={500} text="Noto 500" />
+        </Cell>
+        <Cell>
+          <TextAfter font="Noto-5" text="Noto 500" />
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>
+          <TextBefore font="NotoSans-Bold" weight={700} text="Noto 700" />
+        </Cell>
+        <Cell>
+          <TextAfter font="Noto-7" text="Noto 700" />
+        </Cell>
+      </Row>
+
+      <Row>
+        <Cell>
+          <TextBefore font="Montserrat-Light" weight={300} text="Mont 300" />
+        </Cell>
+        <Cell>
+          <TextAfter font="Mont-3" text="Mont 300" />
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>
+          <TextBefore font="Montserrat-Medium" weight={500} text="Mont 500" />
+        </Cell>
+        <Cell>
+          <TextAfter font="Mont-5" text="Mont 500" />
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>
+          <TextBefore font="Montserrat-Bold" weight={700} text="Mont 700" />
+        </Cell>
+        <Cell>
+          <TextAfter font="Mont-7" text="Mont 700" />
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>
+          <TextBefore
+            font={Platform.OS === 'ios' ? 'CherryBlossom' : 'Cherry-Blossom'}
+            weight={500}
+            size={22}
+            text="Cherry Blossom"
+          />
+        </Cell>
+        <Cell>
+          <TextAfter font="cherry" text="Cherry Blossom" size={22} />
+        </Cell>
+      </Row>
+      <Row>
+        <Cell>
+          <TextBefore
+            font="BananaChips-Regular"
+            text="Banana Chips"
+            size={40}
+            weight={500}
+          />
+        </Cell>
+        <Cell>
+          <TextAfter font="banana" text="Banana Chips" size={40} />
+        </Cell>
+      </Row>
+      <Text font="Mont-8" size="giant">
+        Some Stupid Text
+      </Text>
+      <Text font="Mont-7">Some Stupid Text</Text>
+    </View>
+  );
+};
+
+export default Home;
+
+
+//* Shopping.jsx
+import React from 'react';
+import {useRoute} from '@react-navigation/native';
+import {Text, View} from 'react-native';
+
+const Shopping = () => {
+  const route = useRoute();
+  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: bgColor,
+      }}>
+      <Text>Shopping</Text>
+    </View>
+  );
+};
+
+export default Shopping;
+
+//* Styles.jsx
+import {StyleSheet} from 'react-native';
+
+export const AppStyles = StyleSheet.create({
+  navMenu: {
+    height: 90,
+  },
+  safeArea: {
+    flex: 1,
+    margin: 5,
+  },
+  globalContainer: {
+    flex: 1,
+  },
+});
+
+export const CurvedBarStyles = StyleSheet.create({
+  container: {
+    height: '100%',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 2000,
+  },
+  fillColor: '#f7f7f7',
+  strokeColor: '#373d4340',
+  strokeWidth: 1.5,
+  shadowStroke: '#373d4320',
+  shadowStrokeWidth: 4,
+});
+
+export const NavMenuStyles = StyleSheet.create({
+  wrapper: {
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 2001,
+  },
+  container: {height: '100%', width: '100%', flexDirection: 'row', padding: 5},
+  cellWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+  },
+  cellContainer: {flexDirection: 'column', padding: 5},
+  cellTop: {justifyContent: 'flex-end', alignItems: 'center'},
+  cellBottom: {flex: 1},
+  cellText: {color: '#000'},
+});
+
+export const MenuButtonStyles = StyleSheet.create({
+  container: {
+    width: 65,
+    height: 65,
+    zIndex: 2002,
+    position: 'relative',
+    top: -21,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+    borderWidth: 1,
+    borderRadius: 30,
+    height: 55,
+    width: 55,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    borderColor: '#c4c4c480',
+    backgroundColor: '#319177',
+  },
+});
+
+export const ListStyles = StyleSheet.create({
+  actionButton: {
+    alignItems: 'center',
+    borderRadius: 5,
+    justifyContent: 'center',
+    marginHorizontal: 2,
+    width: 90,
+    height: 60,
+  },
+  actionsContainer: {
+    alignItems: 'top',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 2,
+    paddingVertical: 5,
+    borderBottomWidth: 1,
+    borderColor: '#c4c4c4',
+  },
+  addButton: {
+    backgroundColor: '#44B3B3',
+  },
+  bottomInnerContainer: {
+    borderColor: '#c4c4c4',
+    borderTopWidth: 1,
+    height: 58,
+    justifyContent: 'center',
+    marginHorizontal: -5,
+  },
+  bottomLeft: {
+    flex: 1,
+    paddingLeft: 10,
+    paddingRight: 5,
+  },
+  bottomRight: {
+    flex: 1,
+    paddingLeft: 5,
+    paddingRight: 10,
+  },
+  bottomCenter: {width: '50%', paddingLeft: 5, paddingRight: 5},
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 2,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'transparent',
+  },
+  buttonText: {
+    color: '#fff',
+    textAlign: 'center',
+  },
+  container: {
+    backgroundColor: '#ffffff',
+    flex: 1,
+  },
+  deleteButton: {
+    backgroundColor: '#fE4949',
+  },
+  viewContainer: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    padding: 5,
+    marginBottom: 18,
+  },
+  updateButton: {
+    backgroundColor: '#0077A2',
+  },
+  bottomSheet: {
+    zIndex: 9000,
+    borderColor: 'transparent',
+    borderRadius: 18,
+  },
+
+  rmcContainer: {flex: 1},
+  rmcImage: {alignItems: 'center', justifyContent: 'center'},
+  rmcTitle: {
+    marginHorizontal: 5,
+    marginVertical: 2,
+    alignItems: 'center',
+    paddingVertical: 2,
+  },
+  rmcBrand: {
+    marginHorizontal: 5,
+    marginTop: 2,
+    marginBottom: 5,
+    alignItems: 'center',
+    paddingVertical: 2,
+  },
+  rmcScroll: {
+    flex: 1,
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+  },
+  rmcScrollShellTop: {height: 5},
+  rmcScrollShellBottom: {height: 15},
+  rmcScrollWrapper: {
+    paddingVertical: 2,
+    paddingHorizontal: 5,
+  },
+  rmcNutrientLabel: {
+    flex: 1,
+    borderBottomWidth: 1,
+    padding: 2,
+    paddingBottom: 1,
+    justifyContent: 'center',
+  },
+  rmcNutrientValue: {
+    borderBottomWidth: 1,
+    alignItems: 'flex-end',
+    padding: 2,
+    paddingBottom: 1,
+    justifyContent: 'center',
+  },
+  rmcContents: {borderWidth: 0, marginTop: 10, paddingHorizontal: 5},
+  rmcButtonWrapper: {flexDirection: 'row', paddingHorizontal: 5},
+  rmcButtonContainer: {flex: 1, marginHorizontal: 5},
+  rmcDisclaimer: {marginTop: 3, marginHorizontal: 5, paddingHorizontal: 2},
+});
+
+export const NavHeaderStyles = StyleSheet.create({
+  header: {
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderColor: '#c4c4c490',
+    borderBottomWidth: 1,
+    elevation: 5,
+    shadowColor: '#c4c4c490',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.8,
+  },
+  title: {
+    fontSize: 18,
+  },
+  titleContainer: {
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2000,
+  },
+  buttonContainer: {
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: 2001,
+  },
+  buttonRows: {flexDirection: 'row', height: '100%'},
+  sideContainers: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 15,
+  },
+  leftWrapper: {flexDirection: 'row', marginLeft: 0},
+  leftContainer: {flex: 1, justifyContent: 'center'},
+  rightWrapper: {flexDirection: 'row', marginRight: 10},
+  rightContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  rightContainerAlt: {
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'flex-end',
+    alignItems: 'flex-end',
+    marginRight: 5,
+  },
+  textStyles: {
+    fontSize: 16,
+  },
+});
+
+export const ScreenStyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#ffffff',
+    flex: 1,
+  },
+  error: {
+    color: 'red',
+    flex: 1,
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  success: {
+    color: 'green',
+    flex: 1,
+    fontSize: 22,
+    marginBottom: 20,
+    marginTop: 20,
+    textAlign: 'center',
+  },
+  successContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  viewContainer: {
+    flex: 1,
+    paddingBottom: 2,
+    padding: 5,
+  },
+  viewInnerTopContainer: {
+    alignItems: 'center',
+    paddingTop: 20,
+    paddingBottom: 5,
+    paddingHorizontal: 15,
+  },
+  scrollContainer: {
+    flex: 1,
+    paddingVertical: 10,
+  },
+});
+
+export const SelectItemStyles = StyleSheet.create({
+  container: {
+    marginHorizontal: 2.5,
+    flex: 1,
+  },
+  imageContainer: {
+    flex: 0.3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  updateContainer: {
+    padding: 0,
+    marginVertical: -5,
+  },
+  infoContainer: {
+    flex: 0.7,
+    paddingHorizontal: 5,
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    borderBottomWidth: 1.5,
+    borderRadius: 8,
+    borderBottomColor: '#c4c4c490',
+    paddingBottom: 6,
+    paddingTop: 3,
+  },
+  itemNoteContainer: {
+    borderRadius: 8,
+    borderBottomColor: '#c4c4c4',
+    paddingBottom: 3,
+    paddingTop: 7,
+  },
+  titleWrap: {paddingTop: 3, paddingHorizontal: 3},
+  infoWrap: {
+    flex: 1,
+    paddingTop: 3,
+    paddingHorizontal: 4,
+  },
+  infoNoteWrap: {
+    paddingTop: 3,
+    paddingHorizontal: 4,
+  },
+  textStyles: {textAlign: 'right'},
+  textNoteStyles: {letterSpacing: 0.2, textAlign: 'justify'},
+});
+
+export const LegalStyles = StyleSheet.create({
+  container: {
+    height: '100%',
+    flexDirection: 'column',
+  },
+  body: {
+    flex: 1,
+  },
+  buttonWrapper: {
+    flexDirection: 'row',
+  },
+  buttonCells: {
+    flex: 1,
+    paddingHorizontal: 5,
+  },
+  sectionWrapper: {
+    marginVertical: 5,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+  },
+  sectionIndex: {
+    width: 40,
+    alignItems: 'flex-end',
+    paddingRight: 3,
+    paddingVertical: 3,
+  },
+  sectionTitle: {
+    flex: 1,
+    alignItems: 'flex-start',
+    paddingLeft: 3,
+    paddingVertical: 3,
+  },
+  clauseWrapper: {},
+  clauseHeader: {
+    flexDirection: 'row',
+  },
+  clauseIndexSpacing: {width: 39},
+  clauseTextWrapper: {
+    flex: 1,
+    paddingVertical: 3,
+    paddingLeft: 3,
+    paddingRight: 20,
+    paddingBottom: 5,
+  },
+  subClauseWrapper: {},
+  subClauseHeader: {flexDirection: 'row'},
+  bulletWrapper: {
+    width: 55,
+    alignItems: 'flex-end',
+    paddingRight: 3,
+  },
+  subClauseTextWrapper: {
+    flex: 1,
+    paddingVertical: 2,
+    paddingLeft: 3,
+    paddingRight: 25,
+    paddingBottom: 10,
+  },
+  clauseInfo: {},
+});
+
+export const SettingsStyles = StyleSheet.create({
+  card: {
+    marginTop: 15,
+    marginHorizontal: 15,
+    backgroundColor: '#319177',
+    borderTopRightRadius: 8,
+    borderTopLeftRadius: 8,
+    borderWidth: 1,
+    borderBottomWidth: 0.5,
+    borderColor: '#c4c4c4',
+  },
+  cardTitle: {marginVertical: 10, color: '#fff'},
+  topContainer: {
+    borderTopWidth: 1,
+    borderColor: '#c4c4c4',
+    height: 70,
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    height: 70,
+  },
+  innerTopContainer: {
+    width: 70,
+    padding: 8,
+  },
+  quantityCell: {
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#c4c4c4',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoCell: {
+    flex: 1,
+    marginVertical: 5,
+    marginRight: 5,
+    justifyContent: 'center',
+    padding: 0,
+  },
+  bottomContainer: {
+    marginHorizontal: 15,
+    borderWidth: 1,
+    borderTopWidth: 0.5,
+    borderBottomRightRadius: 8,
+    borderBottomLeftRadius: 8,
+    paddingVertical: 7,
+    borderColor: '#c4c4c4',
+  },
+  buttonContainer: {alignContent: 'center', alignItems: 'center'},
+
+  listContainer: {
+    paddingHorizontal: 10,
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 15,
+    marginVertical: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#dcdcdc',
+  },
+  description: {
+    marginVertical: 10,
+  },
+  segmentedButtonContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    gap: 10,
+  },
+  hapticButton: {
+    elevation: 3,
+    shadowColor: '#373d43',
+    shadowOffset: {width: 1, height: 2},
+    shadowOpacity: 0.3,
+    borderRadius: 5,
+    marginVertical: 10,
+    marginHorizontal: 5,
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: '#319177',
+    height: 45,
+  },
+  hbInner: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    width: '100%',
+    flexDirection: 'row',
+  },
+});
+
+export const KQDropStyles = StyleSheet.create({
+  dropdownContainer: {
+    marginVertical: 5,
+    marginHorizontal: 7,
+  },
+  labelContainer: {
+    marginBottom: 4,
+    marginLeft: 5,
+  },
+  dropdown: {
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#c4c4c4',
+    minHeight: 40,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+  },
+  iconContainer: {
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sheetContentContainer: {
+    paddingVertical: 16,
+  },
+  sheetItem: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  sheetItemText: {
+    fontSize: 18,
+  },
+  bottomSheet: {
+    zIndex: 9000,
+    borderColor: 'transparent',
+    borderWidth: 4,
+    borderRadius: 18,
+  },
+  captionWrap: {marginHorizontal: 10, marginBottom: 5},
+  captionText: {
+    color: '#373d4390',
+  },
+});
+
+export const AvatarStyles = StyleSheet.create({
+  avatarCard: {
+    // width: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  avatarView: {
+    width: 100,
+    height: 100,
+    borderWidth: 1,
+    borderRadius: 50,
+    overflow: 'hidden',
+  },
+});
+
+export const ProfileStyles = StyleSheet.create({
+  FTCenter: {textAlign: 'center'},
+  FTLeft: {
+    // fontWeight: 700,
+    textAlign: 'right',
+    marginRight: 5,
+  },
+  FTRight: {marginLeft: 5},
+  optionContainer: {height: 35, flexDirection: 'row', marginVertical: 4},
+  optionLeft: {
+    borderWidth: 1,
+    borderColor: '#373d43',
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+    width: 40,
+    backgroundColor: '#fff',
+    shadowColor: 'black',
+    shadowOffset: {width: 1, height: 2},
+    shadowOpacity: 0.3,
+    elevation: 5,
+  },
+  olInner: {
+    position: 'relative',
+    left: 5,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+  },
+  optionRight: {
+    borderWidth: 1,
+    borderColor: '#373d43',
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+    width: 40,
+    backgroundColor: '#fff',
+    shadowColor: 'black',
+    shadowOffset: {width: 2, height: 3},
+    shadowOpacity: 0.3,
+    elevation: 5,
+  },
+  orInner: {
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+  },
+  optionView: {
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#373d43',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 150,
+    backgroundColor: '#fff',
+    shadowColor: 'black',
+    shadowOffset: {width: 2, height: 3},
+    shadowOpacity: 0.3,
+    elevation: 5,
+  },
+});
+
+export const AccountStyles = StyleSheet.create({
+  section: {flex: 1, backgroundColor: '#fff', padding: 5, marginBottom: 10},
+  sectionNav: {flexDirection: 'row'},
+  sectionUsers: {
+    borderWidth: 1,
+    borderColor: '#c4c4c4',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    shadowColor: '#373d4380',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    elevation: 5,
+    paddingBottom: 15,
+  },
+  usersHeader: {
+    borderBottomWidth: 1,
+    borderColor: '#c4c4c4',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  avatarWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginHorizontal: 10,
+    marginTop: 5,
+  },
+  subWrapper: {
+    height: 65,
+    borderWidth: 1,
+    borderColor: '#c4c4c4',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    shadowColor: '#373d4380',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  subIcon: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    alignContent: 'center',
+  },
+  subTextWrap: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+  },
+});
+
+export const CMStyles = StyleSheet.create({
+  shContainer: {height: 35, borderWidth: 0},
+  shLine: {
+    borderBottomWidth: 1,
+    position: 'relative',
+    top: 16,
+    marginLeft: 15,
+    marginRight: 50,
+    zIndex: 1,
+  },
+  shTWrap: {alignItems: 'flex-end', marginRight: 1},
+  shTO: {
+    height: 30,
+    width: 50,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  shTitleWrap: {
+    zIndex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    top: -7,
+  },
+  shTitle: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 15,
+    paddingVertical: 2,
+  },
+  sectionExpanded: {paddingHorizontal: 25, paddingVertical: 5, marginTop: -10},
+  sectionCollapsed: {
+    paddingHorizontal: 25,
+    paddingTop: 3,
+    paddingBottom: 10,
+    alignItems: 'center',
+    marginTop: -10,
+  },
+  sectionTO: {
+    flexDirection: 'row',
+    marginVertical: 6,
+  },
+  sectionIcon: {marginRight: 20},
+});
+
+// deviceUtils.js
+export const hbDevices = [
+  'iPhone SE',
+  'iPad Air 3rd Gen (WiFi)',
+  'iPad Air 3rd Gen (Cellular)',
+  // Add other home-button models here as needed
+];
+
+export const isHBDevice = model => hbDevices.includes(model);
+
+export const isAndroidPhone = device =>
+  device?.system?.os === 'Android' && device?.system?.device === 'Handset';
+
+export const isAndroidTablet = device =>
+  device?.system?.os === 'Android' && device?.system?.device === 'Tablet';
+
+export const isiOSPhone = device =>
+  device?.system?.os === 'iOS' && device?.system?.device === 'Handset';
+
+export const isiOSTablet = device =>
+  device?.system?.os === 'iOS' && device?.system?.device === 'Tablet';
+
+export const getNavMenuHeight = device => {
+  const {deviceSize, model, os} = device?.system || {};
+  const isHomeButton = isHBDevice(model);
+
+  let baseHeight = 90; // Fallback for unknown devices (just to be safe)
+
+  switch (deviceSize) {
+    case 'xLarge':
+      baseHeight = 100;
+      break;
+    case 'large':
+      baseHeight = 100;
+      break;
+    case 'medium':
+      baseHeight = 100;
+      break;
+    case 'small':
+      baseHeight = 100;
+      break;
+    case 'xSmall':
+      baseHeight = 100;
+      break;
+    default:
+      baseHeight = 90; // Unknown devices default to xSmall
+      break;
+  }
+
+  // Special adjustment for iOS devices
+  if (os === 'iOS') {
+    baseHeight -= 5;
+  }
+
+  // Special adjustment for home button devices
+  if (isHomeButton) {
+    baseHeight -= 30;
+  }
+
+  return baseHeight;
+};
+
+export const getNavBarHeight = (device, baseHeight) => {
+  if (isHBDevice(device?.system?.model)) {
+    return baseHeight;
+  } else {
+    return baseHeight - 20;
+  }
+};
+
+//* Main.jsx
+
+import {NavigationContainer} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Dimensions, Text, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import NavMenu from './src/components/NavMenu';
+import {useDispatch} from 'react-redux';
+import {getNavMenuHeight} from './src/utilities/deviceUtils';
+import Home from './src/screens/Home/Home';
+import {useDeviceInfo, useProfile} from './src/hooks/useHooks';
+import {setHapticFeedback} from './src/hooks/setHapticFeedback';
+import Account from './src/screens/Account/Account';
+import Cupboards from './src/screens/Cupboard/Cupboard';
+import Shopping from './src/screens/Shopping/Shopping';
+import KQBottomSheet from './src/KQ-UI/KQBottomSheet';
+
+const Main = () => {
+  const dispatch = useDispatch();
+  const device = useDeviceInfo();
+  const profile = useProfile();
+  const useHaptics = setHapticFeedback();
+  const Stack = createNativeStackNavigator();
+  const [headerColor, setHeaderColor] = useState('#319177');
+  const [screenLocation, setScreenLocation] = useState('');
+  const [bgColor, setBgColor] = useState('#ffffff');
+  const [textColor, setTextColor] = useState('#373d43');
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const bottomHeight = getNavMenuHeight(device);
+
+  useEffect(() => {
+    dispatch({type: 'FETCH_DEVICE_INFO'});
+
+    const subscription = Dimensions.addEventListener('change', () => {
+      dispatch({type: 'FETCH_DEVICE_INFO'});
+    });
+
+    return () => subscription?.remove();
+  }, [dispatch]);
+
+  const toggleMenu = useCallback(() => {
+    setIsSheetOpen(prev => !prev);
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
+  }, [useHaptics]);
+
+  const BottomMenu = () => (
+    <KQBottomSheet
+      visible={isSheetOpen}
+      onClose={() => setIsSheetOpen(false)}
+      snapPoints={[0.01, 0.95]}>
+      <View>
+        <Text>Test</Text>
+      </View>
+      {/* <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} /> */}
+    </KQBottomSheet>
+  );
+
+  const Navigation = () => {
+    return (
+      <>
+        <Stack.Navigator
+          screenOptions={{
+            animation: 'none',
+            gestureEnabled: false,
+            headerBackVisible: false,
+            headerShown: false,
+            navigationBarColor: '#f7f7f7',
+          }}>
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            initialParams={{
+              title: 'Home',
+              bgColor: bgColor,
+              headerColor: headerColor,
+              textColor: textColor,
+              screenLocation: screenLocation,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('Home');
+              },
+            }}
+          />
+          <Stack.Screen
+            name="ShoppingList"
+            component={Shopping}
+            initialParams={{
+              title: 'Shopping List',
+              bgColor: bgColor,
+              headerColor: headerColor,
+              textColor: textColor,
+              screenLocation: screenLocation,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('ShoppingList');
+              },
+            }}
+          />
+          <Stack.Screen
+            name="CupboardList"
+            component={Cupboards}
+            initialParams={{
+              title: 'Cupboards',
+              bgColor: bgColor,
+              headerColor: headerColor,
+              textColor: textColor,
+              screenLocation: screenLocation,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('CupboardList');
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Account"
+            component={Account}
+            initialParams={{
+              title: 'Account',
+              bgColor: bgColor,
+              headerColor: headerColor,
+              textColor: textColor,
+              screenLocation: screenLocation,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('Account');
+              },
+            }}
+          />
+        </Stack.Navigator>
+      </>
+    );
+  };
+
+  return (
+    <NavigationContainer>
+      <SafeAreaView
+        style={{flex: 1, backgroundColor: headerColor}}
+        edges={['top']}>
+        <View style={{flex: 1}}>
+          <Navigation />
+          <BottomMenu />
+        </View>
+      </SafeAreaView>
+      <SafeAreaView style={{height: bottomHeight}} edges={['bottom']}>
+        <NavMenu
+          bottomHeight={bottomHeight}
+          bottomWidth={device?.dimensions?.width}
+          toggleMenu={toggleMenu}
+          device={device}
+        />
+      </SafeAreaView>
+    </NavigationContainer>
+  );
+};
+
+export default Main;
+
+//*App.jsx
+
+import React, {useEffect, useState} from 'react';
+import {Provider} from 'react-redux';
+import {store, persistor} from './store';
+import {PersistGate} from 'redux-persist/integration/react';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {StatusBar, View} from 'react-native';
+import SplashScreen from './src/components/SplashScreen';
+import Toast from 'react-native-toast-message';
+import {toastConfig} from './src/KQ-UI/KQToast';
+import Main from './Main';
+import {initializeApp, getApps} from '@react-native-firebase/app';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+
+const App = () => {
+  if (!getApps().length) {
+    initializeApp();
+  }
+
+  const [isSplashVisible, setSplashVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSplashVisible(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isSplashVisible) {
+    return (
+      <>
+        <SplashScreen />
+        <StatusBar barStyle="light-content" />
+      </>
+    );
+  }
+  return (
+    <Provider store={store}>
+      <PersistGate loading={<SplashScreen />} persistor={persistor}>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <SafeAreaProvider>
+            <View style={{flex: 1}}>
+              <StatusBar barStyle="light-content" />
+              <Main />
+              <Toast config={toastConfig} />
+            </View>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </PersistGate>
+    </Provider>
+  );
+};
+
+export default App;
