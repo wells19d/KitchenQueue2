@@ -47,6 +47,9 @@
 |-| screens
 |-|-| Account
 |-|-|-| Account.jsx
+|-|-| CenterMenu
+|-|-|-| CenterMenu.jsx
+|-|-|-| CenterMenuArray.jsx
 |-|-| Cupboard
 |-|-|-| Cupboard.jsx
 |-|-| Home

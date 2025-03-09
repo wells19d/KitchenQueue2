@@ -1,7 +1,8 @@
 //* Cupboards.jsx
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
+import {Text} from '../../KQ-UI/KQText';
 
 const Cupboards = () => {
   const route = useRoute();

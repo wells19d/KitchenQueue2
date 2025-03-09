@@ -8,7 +8,7 @@ export const Text = ({
   style,
   size = 'medium',
   kqColor = 'black',
-  font = 'Noto-5',
+  font = 'open-5',
   ...props
 }) => {
   const setColor = useColors(kqColor);

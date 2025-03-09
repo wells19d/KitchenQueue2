@@ -1,7 +1,7 @@
 //* Main.jsx
 
 import {NavigationContainer} from '@react-navigation/native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Dimensions, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -15,6 +15,7 @@ import Account from './src/screens/Account/Account';
 import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
 import KQBottomSheet from './src/KQ-UI/KQBottomSheet';
+import CenterMenu from './src/screens/CenterMenu/CenterMenu';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,11 @@ const Main = () => {
   const [textColor, setTextColor] = useState('#373d43');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const bottomHeight = getNavMenuHeight(device);
+
+  const borrowedParams = useMemo(
+    () => ({bgColor, textColor, screenLocation}),
+    [bgColor, textColor, screenLocation],
+  );
 
   useEffect(() => {
     dispatch({type: 'FETCH_DEVICE_INFO'});
@@ -49,10 +55,7 @@ const Main = () => {
       visible={isSheetOpen}
       onClose={() => setIsSheetOpen(false)}
       snapPoints={[0.01, 0.95]}>
-      <View>
-        <Text>Test</Text>
-      </View>
-      {/* <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} /> */}
+      <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} />
     </KQBottomSheet>
   );
 

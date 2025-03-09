@@ -18,15 +18,23 @@ module.exports = {
 //* metro.config.js
 const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 
-/**
- * Metro configuration
- * https://reactnative.dev/docs/metro
- *
- * @type {import('@react-native/metro-config').MetroConfig}
- */
-const config = {};
+const config = {
+  server: {
+    enhanceMiddleware: middleware => {
+      return (req, res, next) => {
+        if (req.url.startsWith('/debugger-ui')) {
+          res.writeHead(404);
+          res.end();
+          return;
+        }
+        return middleware(req, res, next);
+      };
+    },
+  },
+};
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+
 
 //* package.json
 {
@@ -302,11 +310,12 @@ export const Icons = {
 
 //*NavMenu.jsx
 import React, {useMemo} from 'react';
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import CurvedBottomBar from './CurvedBottomBar';
 import {Icons} from '../components/IconListRouter';
 import {useNavigation} from '@react-navigation/native';
 import {getNavBarHeight} from '../utilities/deviceUtils';
+import {Text} from '../KQ-UI/KQText';
 
 const NavMenu = props => {
   const {bottomHeight, bottomWidth, toggleMenu, device} = props;
@@ -402,7 +411,7 @@ const NavMenu = props => {
                 onPress={() => handleNavPress(item)}
                 style={MenuButtonStyles.menuButton}>
                 {item.icon}
-                <Text style={{fontSize: 10}}>{item.title}</Text>
+                <Text size="xSmall">{item.title}</Text>
               </TouchableOpacity>
             );
           })}
@@ -413,6 +422,65 @@ const NavMenu = props => {
 };
 
 export default NavMenu;
+
+const NavMenuStyles = StyleSheet.create({
+  container: {flex: 1},
+  wrapper: {
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    padding: 5,
+  },
+});
+
+const CurvedBarStyles = StyleSheet.create({
+  fillColor: '#f7f7f7',
+  strokeColor: '#373d4340',
+  strokeWidth: 1.5,
+  shadowStroke: '#373d4320',
+  shadowStrokeWidth: 4,
+});
+
+const MenuButtonStyles = StyleSheet.create({
+  wrapper: {
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    flexDirection: 'row',
+    zIndex: 2000, // Bottom Layer
+  },
+  container: {
+    flex: 1,
+    height: 65,
+    position: 'relative',
+    top: -21,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    zIndex: 2100, // Middle Layer
+  },
+  button: {
+    borderWidth: 1,
+    height: 55,
+    width: 55,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    borderColor: '#c4c4c480',
+    backgroundColor: '#319177',
+    zIndex: 2200, // Top Layer
+  },
+  menuButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2200, // Top Layer
+  },
+});
+
 
 const NavMenuStyles = StyleSheet.create({
   container: {flex: 1},
@@ -788,6 +856,7 @@ const styles = StyleSheet.create({
 
 export default KQBottomSheet;
 
+
 //* KQText.jsx
 import React from 'react';
 import {Text as KQText, View} from 'react-native';
@@ -798,7 +867,7 @@ export const Text = ({
   style,
   size = 'medium',
   kqColor = 'black',
-  font = 'Noto-5',
+  font = 'open-5',
   ...props
 }) => {
   const setColor = useColors(kqColor);
@@ -806,11 +875,12 @@ export const Text = ({
   const setSize = useSizes(size, font);
 
   return (
-      <KQText style={[setColor, setFont, setSize, style]} {...props}>
-        {children}
-    </View>
+    <KQText style={[setColor, setFont, setSize, style]} {...props}>
+      {children}
+    </KQText>
   );
 };
+
 
 
 //*KQToast.jsx
@@ -921,7 +991,7 @@ export const toastConfig = {
   ),
 };
 
-//* KQUtilities.js
+//* KQUtilities.jsx
 import {Platform} from 'react-native';
 
 export const useColors = color => {
@@ -956,7 +1026,7 @@ const fontLookup = {
   'noto-2': {ios: 'NotoSans', android: 'NotoSans-ExtraLight', weight: 200},
   'noto-3': {ios: 'NotoSans', android: 'NotoSans-Light', weight: 300},
   'noto-4': {ios: 'NotoSans', android: 'NotoSans-Regular', weight: 400},
-  'noto-5': {ios: 'NotoSans', android: 'NotoSans-Medium', weight: 500}, // Default
+  'noto-5': {ios: 'NotoSans', android: 'NotoSans-Medium', weight: 500},
   'noto-6': {ios: 'NotoSans', android: 'NotoSans-SemiBold', weight: 600},
   'noto-7': {ios: 'NotoSans', android: 'NotoSans-Bold', weight: 700},
   'noto-8': {ios: 'NotoSans', android: 'NotoSans-ExtraBold', weight: 800},
@@ -967,11 +1037,27 @@ const fontLookup = {
   'mont-2': {ios: 'Montserrat', android: 'Montserrat-ExtraLight', weight: 200},
   'mont-3': {ios: 'Montserrat', android: 'Montserrat-Light', weight: 300},
   'mont-4': {ios: 'Montserrat', android: 'Montserrat-Regular', weight: 400},
-  'mont-5': {ios: 'Montserrat', android: 'Montserrat-Medium', weight: 500}, // Default
+  'mont-5': {ios: 'Montserrat', android: 'Montserrat-Medium', weight: 500},
   'mont-6': {ios: 'Montserrat', android: 'Montserrat-SemiBold', weight: 600},
   'mont-7': {ios: 'Montserrat', android: 'Montserrat-Bold', weight: 700},
   'mont-8': {ios: 'Montserrat', android: 'Montserrat-ExtraBold', weight: 800},
   'mont-9': {ios: 'Montserrat', android: 'Montserrat-Black', weight: 900},
+
+  // OpenSans mappings
+  'open-3': {ios: 'OpenSans-Light', android: 'OpenSans-Light', weight: 300},
+  'open-4': {ios: 'OpenSans-Regular', android: 'OpenSans-Regular', weight: 400},
+  'open-5': {ios: 'OpenSans-Medium', android: 'OpenSans-Medium', weight: 500}, // Default
+  'open-6': {
+    ios: 'OpenSans-SemiBold',
+    android: 'OpenSans-SemiBold',
+    weight: 600,
+  },
+  'open-7': {ios: 'OpenSans-Bold', android: 'OpenSans-Bold', weight: 700},
+  'open-8': {
+    ios: 'OpenSans-ExtraBold',
+    android: 'OpenSans-ExtraBold',
+    weight: 800,
+  },
 
   // Special cases (no weight variations)
   cherry: {
@@ -988,7 +1074,7 @@ const fontLookup = {
 };
 
 // Default settings
-const DEFAULT_FONT = 'noto-5';
+const DEFAULT_FONT = 'open-5';
 
 export const useFonts = (font = DEFAULT_FONT) => {
   const normalizedFont = font.trim().toLowerCase();
@@ -999,7 +1085,7 @@ export const useFonts = (font = DEFAULT_FONT) => {
     : {fontFamily: fontData.android};
 };
 
-export const useSizes = (size = 'medium', font = 'NotoSans') => {
+export const useSizes = (size = 'medium', font = 'OpenSans') => {
   const sizes = {
     tiny: 12,
     xSmall: 14,
@@ -1022,6 +1108,7 @@ export const useSizes = (size = 'medium', font = 'NotoSans') => {
   const scaleFactor = fontScale[font.toLowerCase()] || 1;
   return {fontSize: baseSize * scaleFactor};
 };
+
 
 
 //* Account.jsx
@@ -1977,9 +2064,11 @@ export const CMStyles = StyleSheet.create({
   sectionTO: {
     flexDirection: 'row',
     marginVertical: 6,
+    alignItems: 'center',
   },
   sectionIcon: {marginRight: 20},
 });
+
 
 // deviceUtils.js
 export const hbDevices = [
@@ -2223,7 +2312,183 @@ const Main = () => {
   );
 };
 
+export default Main;//* Main.jsx
+
+import {NavigationContainer} from '@react-navigation/native';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {Dimensions, Text, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import NavMenu from './src/components/NavMenu';
+import {useDispatch} from 'react-redux';
+import {getNavMenuHeight} from './src/utilities/deviceUtils';
+import Home from './src/screens/Home/Home';
+import {useDeviceInfo, useProfile} from './src/hooks/useHooks';
+import {setHapticFeedback} from './src/hooks/setHapticFeedback';
+import Account from './src/screens/Account/Account';
+import Cupboards from './src/screens/Cupboard/Cupboard';
+import Shopping from './src/screens/Shopping/Shopping';
+import KQBottomSheet from './src/KQ-UI/KQBottomSheet';
+import CenterMenu from './src/screens/CenterMenu/CenterMenu';
+
+const Main = () => {
+  const dispatch = useDispatch();
+  const device = useDeviceInfo();
+  const profile = useProfile();
+  const useHaptics = setHapticFeedback();
+  const Stack = createNativeStackNavigator();
+  const [headerColor, setHeaderColor] = useState('#319177');
+  const [screenLocation, setScreenLocation] = useState('');
+  const [bgColor, setBgColor] = useState('#ffffff');
+  const [textColor, setTextColor] = useState('#373d43');
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const bottomHeight = getNavMenuHeight(device);
+
+  const borrowedParams = useMemo(
+    () => ({bgColor, textColor, screenLocation}),
+    [bgColor, textColor, screenLocation],
+  );
+
+  useEffect(() => {
+    dispatch({type: 'FETCH_DEVICE_INFO'});
+
+    const subscription = Dimensions.addEventListener('change', () => {
+      dispatch({type: 'FETCH_DEVICE_INFO'});
+    });
+
+    return () => subscription?.remove();
+  }, [dispatch]);
+
+  const toggleMenu = useCallback(() => {
+    setIsSheetOpen(prev => !prev);
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
+  }, [useHaptics]);
+
+  const BottomMenu = () => (
+    <KQBottomSheet
+      visible={isSheetOpen}
+      onClose={() => setIsSheetOpen(false)}
+      snapPoints={[0.01, 0.95]}>
+      <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} />
+    </KQBottomSheet>
+  );
+
+  const Navigation = () => {
+    return (
+      <>
+        <Stack.Navigator
+          screenOptions={{
+            animation: 'none',
+            gestureEnabled: false,
+            headerBackVisible: false,
+            headerShown: false,
+            navigationBarColor: '#f7f7f7',
+          }}>
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            initialParams={{
+              title: 'Home',
+              bgColor: bgColor,
+              headerColor: headerColor,
+              textColor: textColor,
+              screenLocation: screenLocation,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('Home');
+              },
+            }}
+          />
+          <Stack.Screen
+            name="ShoppingList"
+            component={Shopping}
+            initialParams={{
+              title: 'Shopping List',
+              bgColor: bgColor,
+              headerColor: headerColor,
+              textColor: textColor,
+              screenLocation: screenLocation,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('ShoppingList');
+              },
+            }}
+          />
+          <Stack.Screen
+            name="CupboardList"
+            component={Cupboards}
+            initialParams={{
+              title: 'Cupboards',
+              bgColor: bgColor,
+              headerColor: headerColor,
+              textColor: textColor,
+              screenLocation: screenLocation,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('CupboardList');
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Account"
+            component={Account}
+            initialParams={{
+              title: 'Account',
+              bgColor: bgColor,
+              headerColor: headerColor,
+              textColor: textColor,
+              screenLocation: screenLocation,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('Account');
+              },
+            }}
+          />
+        </Stack.Navigator>
+      </>
+    );
+  };
+
+  return (
+    <NavigationContainer>
+      <SafeAreaView
+        style={{flex: 1, backgroundColor: headerColor}}
+        edges={['top']}>
+        <View style={{flex: 1}}>
+          <Navigation />
+          <BottomMenu />
+        </View>
+      </SafeAreaView>
+      <SafeAreaView style={{height: bottomHeight}} edges={['bottom']}>
+        <NavMenu
+          bottomHeight={bottomHeight}
+          bottomWidth={device?.dimensions?.width}
+          toggleMenu={toggleMenu}
+          device={device}
+        />
+      </SafeAreaView>
+    </NavigationContainer>
+  );
+};
+
 export default Main;
+
 
 //*App.jsx
 
@@ -2278,3 +2543,264 @@ const App = () => {
 };
 
 export default App;
+
+
+//*CenterMenu.jsx
+import React, {useCallback, useReducer} from 'react';
+import {Alert, ScrollView, TouchableOpacity, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {useProfile, useShoppingCart} from '../../hooks/useHooks';
+import {setHapticFeedback} from '../../hooks/setHapticFeedback';
+import {menuArray} from './CenterMenuArray';
+import {Icons} from '../../components/IconListRouter';
+import {Text} from '../../KQ-UI/KQText';
+import {CMStyles} from '../../styles/Styles';
+
+function CenterMenu(props) {
+  const {toggleMenu} = props;
+  const navigation = useNavigation();
+  const useHaptics = setHapticFeedback();
+  const dispatch = useDispatch();
+  const profile = useProfile();
+  const shopping = useShoppingCart();
+  const cartList =
+    shopping?.items?.filter(item => item.status === 'shopping-cart') ?? [];
+
+  const handleOnPress = useCallback(
+    navigate => {
+      if (navigate === 'console') return;
+      if (navigate === 'Logout') {
+        handleSignOut();
+        return;
+      }
+      useHaptics(profile?.userSettings?.hapticStrength || 'light');
+      toggleMenu();
+      navigation.navigate(navigate);
+    },
+    [profile?.userSettings?.hapticStrength, toggleMenu, navigation],
+  );
+
+  const handleSignOut = useCallback(() => {
+    Alert.alert('Logging Out', 'Are you sure you want to logout?', [
+      {text: 'Cancel', style: 'destructive'},
+      {
+        text: 'Confirm',
+        onPress: () => {
+          useHaptics(profile?.userSettings?.hapticStrength || 'light');
+          dispatch({type: 'LOGOUT'});
+        },
+      },
+    ]);
+  }, [profile?.userSettings?.hapticStrength, dispatch]);
+
+  const sectionReducer = (state, action) => {
+    return {...state, [action]: !state[action]};
+  };
+
+  const initialState = menuArray.reduce((acc, section) => {
+    acc[section.section] = section.defaultOpen;
+    return acc;
+  }, {});
+
+  const [sectionStates, dispatchSection] = useReducer(
+    sectionReducer,
+    initialState,
+  );
+
+  const toggleSection = useCallback(
+    sectionName => dispatchSection(sectionName),
+    [dispatchSection],
+  );
+
+  const SectionHeader = React.memo(({title, state, onPress}) => {
+    return (
+      <View style={CMStyles.shContainer}>
+        <View style={CMStyles.shLine}></View>
+        <View style={{flex: 1, zIndex: 2}}>
+          <View style={[CMStyles.shTWrap, {flex: 1}]}>
+            <TouchableOpacity style={CMStyles.shTO} onPress={onPress}>
+              {state ? <Icons.ChevronUp /> : <Icons.ChevronDown />}
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={CMStyles.shTitleWrap}>
+          <View style={CMStyles.shTitle}>
+            <Text>{title}</Text>
+          </View>
+        </View>
+      </View>
+    );
+  });
+
+  const Section = React.memo(({title, state, onPress, data}) => {
+    return (
+      <>
+        <SectionHeader title={title} state={state} onPress={onPress} />
+        {state ? (
+          <View style={CMStyles.sectionExpanded}>
+            {data.map((item, index) =>
+              item.action === 'InCart' && cartList.length === 0 ? null : (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleOnPress(item.action)}
+                  style={CMStyles.sectionTO}>
+                  <View style={CMStyles.sectionIcon}>{item.icon}</View>
+                  <Text size="small">{item.title}</Text>
+                </TouchableOpacity>
+              ),
+            )}
+          </View>
+        ) : (
+          <View style={CMStyles.sectionCollapsed}>
+            <Text size="xSmall">(Hidden: Expand to View)</Text>
+          </View>
+        )}
+      </>
+    );
+  });
+
+  return (
+    <ScrollView style={{backgroundColor: '#fff'}}>
+      {menuArray.map((section, index) => (
+        <Section
+          key={index}
+          title={section.section}
+          state={sectionStates[section.section]}
+          onPress={() => toggleSection(section.section)}
+          data={section.items}
+        />
+      ))}
+    </ScrollView>
+  );
+}
+
+export default CenterMenu;
+
+
+//* CenterMenuArray.js
+import {Icons} from '../../components/IconListRouter';
+
+export const menuArray = [
+  {
+    section: 'Shopping',
+    defaultOpen: true,
+    items: [
+      // future feature
+      // {
+      //   title: 'Scan to',
+      //   icon: <Icons.Barcode />,
+      //   action: 'console',
+      // },
+      {
+        title: 'Add to',
+        icon: <Icons.AddList />,
+        action: 'AddShopItems',
+      },
+      {
+        title: 'View List',
+        icon: <Icons.MenuList />,
+        action: 'ShoppingList',
+      },
+      {
+        title: 'View Cart',
+        icon: <Icons.Shopping />,
+        action: 'InCart',
+      },
+    ],
+  },
+  {
+    section: 'Cupboard',
+    defaultOpen: true,
+    items: [
+      // future feature
+      // {
+      //   title: 'Scan to',
+      //   icon: <Icons.Barcode />,
+      //   action: 'console',
+      // },
+      {
+        title: 'Add to',
+        icon: <Icons.AddList />,
+        action: 'AddCupboardItems',
+      },
+      {
+        title: 'View List',
+        icon: <Icons.Cupboards />,
+        action: 'CupboardList',
+      },
+    ],
+  },
+  // future feature
+  // {
+  //   section: 'Recipe',
+  //   defaultOpen: false,
+  //   items: [
+  //     {
+  //       title: 'Search',
+  //       icon: <Icons.Search />,
+  //       action: 'console',
+  //     },
+  //     {
+  //       title: 'Add to',
+  //       icon: <Icons.AddList />,
+  //       action: 'console',
+  //     },
+  //     {
+  //       title: 'View List',
+  //       icon: <Icons.Recipe />,
+  //       action: 'console',
+  //     },
+  //   ],
+  // },
+
+  // future feature
+  // {
+  //   section: 'Favorites',
+  //   defaultOpen: false,
+  //   items: [
+  //     {
+  //       title: 'Add to',
+  //       icon: <Icons.AddList />,
+  //       action: 'console',
+  //     },
+  //     {
+  //       title: 'View List',
+  //       icon: <Icons.Favorite />,
+  //       action: 'console',
+  //     },
+  //   ],
+  // },
+  {
+    section: 'Misc',
+    defaultOpen: true,
+    items: [
+      {
+        title: 'View Account',
+        icon: <Icons.Account />,
+        action: 'Account',
+      },
+      {
+        title: 'View Profile',
+        icon: <Icons.Profile />,
+        action: 'AccountProfile',
+      },
+      {
+        title: 'View Settings',
+        icon: <Icons.Settings />,
+        action: 'AccountSettings',
+      },
+      {
+        title: 'Get Help',
+        icon: <Icons.Help />,
+        action: 'AccountHelp',
+      },
+      {
+        title: 'LogOut',
+        icon: <Icons.Logout />,
+        action: 'Logout',
+      },
+    ],
+  },
+];
