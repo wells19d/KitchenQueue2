@@ -315,12 +315,12 @@ import CurvedBottomBar from './CurvedBottomBar';
 import {Icons} from '../components/IconListRouter';
 import {useNavigation} from '@react-navigation/native';
 import {getNavBarHeight} from '../utilities/deviceUtils';
-import {Text} from '../KQ-UI/KQText';
 import {
   CurvedBarStyles,
   MenuButtonStyles,
   NavMenuStyles,
 } from '../styles/Styles';
+import {Text} from '../KQ-UI';
 
 const NavMenu = props => {
   const {bottomHeight, bottomWidth, toggleMenu, device} = props;
@@ -427,6 +427,7 @@ const NavMenu = props => {
 };
 
 export default NavMenu;
+
 
 
 //*SplashScreen.jsx
@@ -581,6 +582,29 @@ export const useFoodDataError = () => {
 export const useFoodDataLoading = () => {
   return useSelector(state => state.edamam?.loading);
 };
+
+//* index.js (KQ-UI)
+export {default as Text} from './KQText';
+export {default as BottomSheet} from './KQBottomSheet';
+export {default as Toast} from './KQToast';
+export {default as Layout} from './KQLayout';
+
+//* KQLayout
+
+import React from 'react';
+import {View} from 'react-native';
+
+const KQLayout = ({children, bgColor = '#ffffff', styles}) => {
+  return (
+    <View style={[{flex: 1, backgroundColor: bgColor}, styles]}>
+      {children}
+    </View>
+  );
+};
+
+export default KQLayout;
+
+
 
 //* KQBottomSheet.jsx
 import React, {useEffect, useRef, useState} from 'react';
@@ -748,10 +772,10 @@ export default KQBottomSheet;
 
 //* KQText.jsx
 import React from 'react';
-import {Text as KQText, View} from 'react-native';
+import {Text} from 'react-native';
 import {useColors, useFonts, useSizes} from './KQUtilities';
 
-export const Text = ({
+const KQText = ({
   children,
   style,
   size = 'medium',
@@ -764,12 +788,13 @@ export const Text = ({
   const setSize = useSizes(size, font);
 
   return (
-    <KQText style={[setColor, setFont, setSize, style]} {...props}>
+    <Text style={[setColor, setFont, setSize, style]} {...props}>
       {children}
-    </KQText>
+    </Text>
   );
 };
 
+export default KQText;
 
 
 //*KQToast.jsx
@@ -800,7 +825,7 @@ const toastStyles = {
   },
 };
 
-export const toastConfig = {
+const toastConfig = {
   primary: props => (
     <BaseToast
       {...props}
@@ -879,6 +904,9 @@ export const toastConfig = {
     />
   ),
 };
+
+export default toastConfig;
+
 
 //* KQUtilities.jsx
 import {Platform} from 'react-native';
@@ -1026,48 +1054,42 @@ export default Account;
 //* Cupboards.jsx
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Text, View} from 'react-native';
+import {Layout, Text} from '../../KQ-UI';
 
 const Cupboards = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: bgColor,
-      }}>
+    <Layout
+      bgColor={bgColor}
+      styles={{justifyContent: 'center', alignItems: 'center'}}>
       <Text>Cupboards</Text>
-    </View>
+    </Layout>
   );
 };
 
 export default Cupboards;
 
+
 //* Account.jsx
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Text, View} from 'react-native';
+import {Layout, Text} from '../../KQ-UI';
 
 const Account = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: bgColor,
-      }}>
+    <Layout
+      bgColor={bgColor}
+      styles={{justifyContent: 'center', alignItems: 'center'}}>
       <Text>Account</Text>
-    </View>
+    </Layout>
   );
 };
 
 export default Account;
+
 
 //* Home.jsx
 import React from 'react';
@@ -1203,25 +1225,22 @@ export default Home;
 //* Shopping.jsx
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Text, View} from 'react-native';
+import {Layout, Text} from '../../KQ-UI';
 
 const Shopping = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: bgColor,
-      }}>
+    <Layout
+      bgColor={bgColor}
+      styles={{justifyContent: 'center', alignItems: 'center'}}>
       <Text>Shopping</Text>
-    </View>
+    </Layout>
   );
 };
 
 export default Shopping;
+
 
 //* Styles.jsx
 import {StyleSheet} from 'react-native';
@@ -2027,7 +2046,7 @@ export const getNavBarHeight = (device, baseHeight) => {
 //* Main.jsx
 
 import {NavigationContainer} from '@react-navigation/native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Dimensions, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -2040,7 +2059,8 @@ import {setHapticFeedback} from './src/hooks/setHapticFeedback';
 import Account from './src/screens/Account/Account';
 import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
-import KQBottomSheet from './src/KQ-UI/KQBottomSheet';
+import CenterMenu from './src/screens/CenterMenu/CenterMenu';
+import {BottomSheet} from './src/KQ-UI';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -2054,6 +2074,11 @@ const Main = () => {
   const [textColor, setTextColor] = useState('#373d43');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const bottomHeight = getNavMenuHeight(device);
+
+  const borrowedParams = useMemo(
+    () => ({bgColor, textColor, screenLocation}),
+    [bgColor, textColor, screenLocation],
+  );
 
   useEffect(() => {
     dispatch({type: 'FETCH_DEVICE_INFO'});
@@ -2071,15 +2096,12 @@ const Main = () => {
   }, [useHaptics]);
 
   const BottomMenu = () => (
-    <KQBottomSheet
+    <BottomSheet
       visible={isSheetOpen}
       onClose={() => setIsSheetOpen(false)}
       snapPoints={[0.01, 0.95]}>
-      <View>
-        <Text>Test</Text>
-      </View>
-      {/* <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} /> */}
-    </KQBottomSheet>
+      <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} />
+    </BottomSheet>
   );
 
   const Navigation = () => {
@@ -2196,7 +2218,8 @@ const Main = () => {
   );
 };
 
-export default Main;//* Main.jsx
+export default Main;
+
 
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
@@ -2438,8 +2461,8 @@ import {useProfile, useShoppingCart} from '../../hooks/useHooks';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 import {menuArray} from './CenterMenuArray';
 import {Icons} from '../../components/IconListRouter';
-import {Text} from '../../KQ-UI/KQText';
 import {CMStyles} from '../../styles/Styles';
+import {Text} from '../../KQ-UI';
 
 function CenterMenu(props) {
   const {toggleMenu} = props;
@@ -2561,6 +2584,7 @@ function CenterMenu(props) {
 }
 
 export default CenterMenu;
+
 
 
 //* CenterMenuArray.js

@@ -7,8 +7,8 @@ import {useProfile, useShoppingCart} from '../../hooks/useHooks';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 import {menuArray} from './CenterMenuArray';
 import {Icons} from '../../components/IconListRouter';
-import {Text} from '../../KQ-UI/KQText';
 import {CMStyles} from '../../styles/Styles';
+import {Text} from '../../KQ-UI';
 
 function CenterMenu(props) {
   const {toggleMenu} = props;
