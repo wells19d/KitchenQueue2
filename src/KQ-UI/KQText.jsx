@@ -1,9 +1,9 @@
 //* KQText.jsx
 import React from 'react';
-import {Text as KQText, View} from 'react-native';
+import {Text} from 'react-native';
 import {useColors, useFonts, useSizes} from './KQUtilities';
 
-export const Text = ({
+const KQText = ({
   children,
   style,
   size = 'medium',
@@ -16,8 +16,10 @@ export const Text = ({
   const setSize = useSizes(size, font);
 
   return (
-    <KQText style={[setColor, setFont, setSize, style]} {...props}>
+    <Text style={[setColor, setFont, setSize, style]} {...props}>
       {children}
-    </KQText>
+    </Text>
   );
 };
+
+export default KQText;

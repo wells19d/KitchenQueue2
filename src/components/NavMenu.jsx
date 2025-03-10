@@ -5,12 +5,12 @@ import CurvedBottomBar from './CurvedBottomBar';
 import {Icons} from '../components/IconListRouter';
 import {useNavigation} from '@react-navigation/native';
 import {getNavBarHeight} from '../utilities/deviceUtils';
-import {Text} from '../KQ-UI/KQText';
 import {
   CurvedBarStyles,
   MenuButtonStyles,
   NavMenuStyles,
 } from '../styles/Styles';
+import {Text} from '../KQ-UI';
 
 const NavMenu = props => {
   const {bottomHeight, bottomWidth, toggleMenu, device} = props;

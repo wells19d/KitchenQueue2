@@ -26,7 +26,7 @@ const toastStyles = {
   },
 };
 
-export const toastConfig = {
+const toastConfig = {
   primary: props => (
     <BaseToast
       {...props}
@@ -105,3 +105,5 @@ export const toastConfig = {
     />
   ),
 };
+
+export default toastConfig;

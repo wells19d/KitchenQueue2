@@ -4,7 +4,7 @@ import {useRoute} from '@react-navigation/native';
 import {Platform, View} from 'react-native';
 import {useDeviceInfo} from '../../hooks/useHooks';
 import {isHBDevice} from '../../utilities/deviceUtils';
-import {Text} from '../../KQ-UI/KQText';
+import {Layout, Text} from '../../KQ-UI';
 
 const Home = () => {
   const route = useRoute();
@@ -42,13 +42,9 @@ const Home = () => {
   );
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: bgColor,
-      }}>
+    <Layout
+      bgColor={bgColor}
+      styles={{justifyContent: 'center', alignItems: 'center'}}>
       <Row>
         <Cell>
           <TextBefore font="NotoSans-Light" weight={300} text="Noto 300" />
@@ -151,7 +147,7 @@ const Home = () => {
       <Text font="open-6" size="large">
         The quick brown lazy dog.
       </Text>
-    </View>
+    </Layout>
   );
 };
 
