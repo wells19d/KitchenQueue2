@@ -1,11 +1,16 @@
 //*NavMenu.jsx
 import React, {useMemo} from 'react';
-import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Alert, TouchableOpacity, View} from 'react-native';
 import CurvedBottomBar from './CurvedBottomBar';
 import {Icons} from '../components/IconListRouter';
 import {useNavigation} from '@react-navigation/native';
 import {getNavBarHeight} from '../utilities/deviceUtils';
 import {Text} from '../KQ-UI/KQText';
+import {
+  CurvedBarStyles,
+  MenuButtonStyles,
+  NavMenuStyles,
+} from '../styles/Styles';
 
 const NavMenu = props => {
   const {bottomHeight, bottomWidth, toggleMenu, device} = props;
@@ -112,61 +117,3 @@ const NavMenu = props => {
 };
 
 export default NavMenu;
-
-const NavMenuStyles = StyleSheet.create({
-  container: {flex: 1},
-  wrapper: {
-    height: '100%',
-    width: '100%',
-    position: 'absolute',
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    padding: 5,
-  },
-});
-
-const CurvedBarStyles = StyleSheet.create({
-  fillColor: '#f7f7f7',
-  strokeColor: '#373d4340',
-  strokeWidth: 1.5,
-  shadowStroke: '#373d4320',
-  shadowStrokeWidth: 4,
-});
-
-const MenuButtonStyles = StyleSheet.create({
-  wrapper: {
-    height: '100%',
-    width: '100%',
-    position: 'absolute',
-    flexDirection: 'row',
-    zIndex: 2000, // Bottom Layer
-  },
-  container: {
-    flex: 1,
-    height: 65,
-    position: 'relative',
-    top: -21,
-    justifyContent: 'center',
-    alignContent: 'center',
-    alignItems: 'center',
-    zIndex: 2100, // Middle Layer
-  },
-  button: {
-    borderWidth: 1,
-    height: 55,
-    width: 55,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignContent: 'center',
-    alignItems: 'center',
-    borderColor: '#c4c4c480',
-    backgroundColor: '#319177',
-    zIndex: 2200, // Top Layer
-  },
-  menuButton: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 2200, // Top Layer
-  },
-});

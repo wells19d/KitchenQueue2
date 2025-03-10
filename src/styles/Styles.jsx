@@ -14,17 +14,19 @@ export const AppStyles = StyleSheet.create({
   },
 });
 
-export const CurvedBarStyles = StyleSheet.create({
-  container: {
+export const NavMenuStyles = StyleSheet.create({
+  container: {flex: 1},
+  wrapper: {
     height: '100%',
     width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
     position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: 2000,
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    padding: 5,
   },
+});
+
+export const CurvedBarStyles = StyleSheet.create({
   fillColor: '#f7f7f7',
   strokeColor: '#373d4340',
   strokeWidth: 1.5,
@@ -32,49 +34,42 @@ export const CurvedBarStyles = StyleSheet.create({
   shadowStrokeWidth: 4,
 });
 
-export const NavMenuStyles = StyleSheet.create({
+export const MenuButtonStyles = StyleSheet.create({
   wrapper: {
     height: '100%',
     width: '100%',
-    backgroundColor: 'transparent',
     position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: 2001,
+    flexDirection: 'row',
+    zIndex: 2000, // Bottom Layer
+    paddingHorizontal: 5,
   },
-  container: {height: '100%', width: '100%', flexDirection: 'row', padding: 5},
-  cellWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent: 'center',
-  },
-  cellContainer: {flexDirection: 'column', padding: 5},
-  cellTop: {justifyContent: 'flex-end', alignItems: 'center'},
-  cellBottom: {flex: 1},
-  cellText: {color: '#000'},
-});
-
-export const MenuButtonStyles = StyleSheet.create({
   container: {
-    width: 65,
+    flex: 1,
     height: 65,
-    zIndex: 2002,
     position: 'relative',
     top: -21,
     justifyContent: 'center',
     alignContent: 'center',
     alignItems: 'center',
+    zIndex: 2100, // Middle Layer
   },
   button: {
     borderWidth: 1,
-    borderRadius: 30,
     height: 55,
     width: 55,
+    borderRadius: 30,
     justifyContent: 'center',
     alignContent: 'center',
     alignItems: 'center',
     borderColor: '#c4c4c480',
     backgroundColor: '#319177',
+    zIndex: 2300, // Over Layer
+  },
+  menuButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2200, // Top Layer
   },
 });
 
