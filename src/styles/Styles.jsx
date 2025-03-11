@@ -203,9 +203,6 @@ export const NavHeaderStyles = StyleSheet.create({
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.8,
   },
-  title: {
-    fontSize: 18,
-  },
   titleContainer: {
     position: 'absolute',
     top: 0,

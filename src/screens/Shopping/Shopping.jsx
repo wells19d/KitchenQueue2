@@ -9,7 +9,15 @@ const Shopping = () => {
   return (
     <Layout
       bgColor={bgColor}
-      styles={{justifyContent: 'center', alignItems: 'center'}}>
+      headerTitle={title}
+      headerColor={headerColor}
+      textColor={textColor}
+      LeftButton=""
+      RightButton=""
+      LeftAction={null}
+      RightAction={null}
+      sheetOpen={false}
+      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
       <Text>Shopping</Text>
     </Layout>
   );
