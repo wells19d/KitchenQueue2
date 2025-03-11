@@ -1,0 +1,311 @@
+//*NavHeader.jsx
+import React, {useCallback} from 'react';
+import {Alert, TouchableOpacity, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {Text} from '../KQ-UI';
+import {Icons} from './IconListRouter';
+import {setHapticFeedback} from '../hooks/setHapticFeedback';
+import {useDispatch} from 'react-redux';
+import {useProfile, useShoppingCart} from '../hooks/useHooks';
+import {NavHeaderStyles} from '../styles/Styles';
+
+const NavHeader = ({
+  title = '',
+  headerColor = '#319177',
+  textColor = '#000',
+  LeftButton = 'None',
+  RightButton = 'None',
+  LeftAction,
+  RightAction,
+  sheetOpen,
+}) => {
+  const navigation = useNavigation();
+  const useHaptics = setHapticFeedback();
+  const dispatch = useDispatch();
+  const shopping = useShoppingCart();
+  const profile = useProfile();
+  let fadeText = '#ffffff60';
+
+  const cartList =
+    shopping?.items?.filter(item => item.status === 'shopping-cart') ?? [];
+
+  const handleSignOut = useCallback(() => {
+    Alert.alert('Logging Out', 'Are you sure you want to logout?', [
+      {text: 'Cancel', style: 'destructive'},
+      {
+        text: 'Confirm',
+        onPress: () => {
+          useHaptics(profile?.userSettings?.hapticStrength || 'light');
+          dispatch({type: 'LOGOUT'});
+        },
+      },
+    ]);
+  }, [profile?.userSettings?.hapticStrength, dispatch]);
+
+  const NavButton = React.memo(
+    ({position, action, navigate, goBack, title, icon}) => {
+      const handlePress = useCallback(() => {
+        if (navigate) navigation.navigate(navigate);
+        if (goBack) navigation.goBack();
+        if (action) action();
+        useHaptics(profile?.userSettings?.hapticStrength || 'light');
+      }, [navigate, goBack, action, profile?.userSettings?.hapticStrength]);
+
+      const isLeft = position === 'Left';
+
+      if (sheetOpen) {
+        return (
+          <View
+            style={[
+              isLeft
+                ? NavHeaderStyles.leftWrapper
+                : NavHeaderStyles.rightWrapper,
+              {flex: 1},
+            ]}>
+            {isLeft && icon && <View>{icon}</View>}
+            <View
+              style={
+                isLeft
+                  ? NavHeaderStyles.leftContainer
+                  : NavHeaderStyles.rightContainerAlt
+              }>
+              {title && (
+                <Text
+                  size="small"
+                  style={{color: sheetOpen ? fadeText : textColor}}>
+                  {title}
+                </Text>
+              )}
+            </View>
+            {!isLeft && icon && <View>{icon}</View>}
+          </View>
+        );
+      } else {
+        return (
+          <TouchableOpacity onPress={handlePress}>
+            <View
+              style={
+                isLeft
+                  ? NavHeaderStyles.leftWrapper
+                  : NavHeaderStyles.rightWrapper
+              }>
+              {isLeft && icon && <View>{icon}</View>}
+              <View
+                style={
+                  isLeft
+                    ? NavHeaderStyles.leftContainer
+                    : NavHeaderStyles.rightContainerAlt
+                }>
+                {title && (
+                  <Text size="small" style={{color: textColor}}>
+                    {title}
+                  </Text>
+                )}
+              </View>
+              {!isLeft && icon && <View>{icon}</View>}
+            </View>
+          </TouchableOpacity>
+        );
+      }
+    },
+  );
+
+  const renderButton = (buttonType, position) => {
+    if (!buttonType || buttonType === 'None') return null;
+
+    const allowedLeftButtons = [
+      'Back',
+      'Cancel',
+      'Cancel-WA',
+      'Cancel-Scan',
+      'Close',
+      'Merge',
+      'Split',
+      'To-List',
+    ];
+    const allowedRightButtons = [
+      'Scan',
+      'Checkout',
+      'Edit',
+      'Logout',
+      'Save',
+      'Submit',
+      'To-Cart',
+      'Torch-On',
+      'Torch-Off',
+      'Update',
+    ];
+
+    if (
+      (position === 'Left' && !allowedLeftButtons.includes(buttonType)) ||
+      (position === 'Right' && !allowedRightButtons.includes(buttonType))
+    ) {
+      console.warn(
+        `Invalid placement: Button "${buttonType}" is not allowed on the ${position} side.`,
+      );
+      return null;
+    }
+
+    const buttonProps = {
+      position,
+      title: '',
+      icon: null,
+      action: null,
+      navigate: null,
+      goBack: false,
+      showCondition: true,
+    };
+
+    switch (buttonType) {
+      case 'Back':
+        buttonProps.title = 'Back';
+        buttonProps.icon = (
+          <Icons.Back size={20} color={sheetOpen ? fadeText : textColor} />
+        );
+        buttonProps.goBack = true;
+        break;
+
+      case 'Cancel':
+        buttonProps.title = 'Cancel';
+        buttonProps.goBack = true;
+        break;
+
+      case 'Cancel-WA':
+        buttonProps.title = 'Cancel';
+        buttonProps.action = () => LeftAction();
+        break;
+
+      case 'Cancel-Scan':
+        buttonProps.title = 'Cancel';
+        buttonProps.action = () => LeftAction();
+        break;
+
+      case 'Checkout':
+        buttonProps.title = 'Checkout';
+        buttonProps.showCondition = cartList?.length > 0;
+        buttonProps.icon = (
+          <Icons.Forward size={20} color={sheetOpen ? fadeText : textColor} />
+        );
+        buttonProps.action = () => RightAction();
+        break;
+
+      case 'Close':
+        buttonProps.title = 'Close';
+        buttonProps.action = () => LeftAction();
+        break;
+
+      case 'Edit':
+        buttonProps.title = 'Edit';
+        buttonProps.icon = (
+          <Icons.Edit size={20} color={sheetOpen ? fadeText : textColor} />
+        );
+        buttonProps.action = () => RightAction();
+        break;
+
+      case 'Logout':
+        buttonProps.title = 'Logout';
+        buttonProps.icon = (
+          <Icons.Logout size={20} color={sheetOpen ? fadeText : textColor} />
+        );
+        buttonProps.action = handleSignOut;
+        break;
+
+      case 'Merge':
+        buttonProps.title = 'Grouped';
+        buttonProps.icon = (
+          <View style={{marginRight: 5}}>
+            <Icons.Merge size={25} color={sheetOpen ? fadeText : textColor} />
+          </View>
+        );
+        buttonProps.action = () => LeftAction();
+        break;
+
+      case 'Save':
+        buttonProps.title = 'Save';
+        buttonProps.icon = (
+          <Icons.Save size={20} color={sheetOpen ? fadeText : textColor} />
+        );
+        buttonProps.action = () => RightAction();
+        break;
+
+      case 'Scan':
+        buttonProps.title = 'Scan';
+        buttonProps.icon = (
+          <Icons.Barcode size={20} color={sheetOpen ? fadeText : textColor} />
+        );
+        buttonProps.action = () => RightAction();
+        break;
+
+      case 'Split':
+        buttonProps.title = 'Single';
+        buttonProps.icon = (
+          <View style={{marginRight: 5}}>
+            <Icons.Split size={25} color={sheetOpen ? fadeText : textColor} />
+          </View>
+        );
+        buttonProps.action = () => LeftAction();
+        break;
+
+      case 'To-Cart':
+        buttonProps.title = 'Cart';
+        buttonProps.navigate = 'InCart';
+        buttonProps.icon = <Icons.Forward size={20} color={textColor} />;
+        buttonProps.showCondition = cartList?.length > 0;
+        break;
+
+      case 'To-List':
+        buttonProps.title = 'List';
+        buttonProps.navigate = 'ShoppingList';
+        buttonProps.icon = (
+          <Icons.Back size={20} color={sheetOpen ? fadeText : textColor} />
+        );
+        break;
+      case 'Torch-On':
+        buttonProps.title = 'Light On';
+        buttonProps.icon = (
+          <Icons.LightOn size={20} color={sheetOpen ? fadeText : textColor} />
+        );
+        buttonProps.action = () => RightAction();
+        break;
+      case 'Torch-Off':
+        buttonProps.title = 'Light Off';
+        buttonProps.icon = (
+          <Icons.LightOff size={20} color={sheetOpen ? fadeText : textColor} />
+        );
+        buttonProps.action = () => RightAction();
+        break;
+
+      default:
+        console.warn(`Unknown buttonType: "${buttonType}"`);
+        return null;
+    }
+
+    if (!buttonProps.showCondition) return null;
+
+    return <NavButton {...buttonProps} />;
+  };
+
+  return (
+    <View
+      style={[
+        NavHeaderStyles.header,
+        {backgroundColor: headerColor ?? '#fff', height: 50},
+      ]}>
+      <View style={NavHeaderStyles.titleContainer}>
+        <Text style={{color: textColor}}>{title}</Text>
+      </View>
+      <View style={NavHeaderStyles.buttonContainer}>
+        <View style={NavHeaderStyles.buttonRows}>
+          <View style={NavHeaderStyles.sideContainers}>
+            {renderButton(LeftButton, 'Left')}
+          </View>
+          <View style={NavHeaderStyles.sideContainers}>
+            {renderButton(RightButton, 'Right')}
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export default React.memo(NavHeader);

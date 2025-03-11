@@ -8,6 +8,7 @@
 |-| components
 |-|-| CurvedBottomBar.jsx
 |-|-| IconListRouter.jsx
+|-|-| NavHeader.jsx
 |-|-| NavMenu.jsx
 |-|-| SplashScreen.jsx
 |-| fonts (already setup)

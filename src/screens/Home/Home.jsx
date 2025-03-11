@@ -5,6 +5,7 @@ import {Platform, View} from 'react-native';
 import {useDeviceInfo} from '../../hooks/useHooks';
 import {isHBDevice} from '../../utilities/deviceUtils';
 import {Layout, Text} from '../../KQ-UI';
+import NavHeader from '../../components/NavHeader';
 
 const Home = () => {
   const route = useRoute();
@@ -44,7 +45,23 @@ const Home = () => {
   return (
     <Layout
       bgColor={bgColor}
-      styles={{justifyContent: 'center', alignItems: 'center'}}>
+      headerTitle={title}
+      headerColor={headerColor}
+      textColor={textColor}
+      LeftButton=""
+      RightButton=""
+      LeftAction={null}
+      RightAction={null}
+      sheetOpen={false}
+      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
+      <Row>
+        <Cell>
+          <TextBefore font="NotoSans-Light" weight={300} text="Noto 300" />
+        </Cell>
+        <Cell>
+          <TextAfter font="Noto-3" text="Noto 300" />
+        </Cell>
+      </Row>
       <Row>
         <Cell>
           <TextBefore font="NotoSans-Light" weight={300} text="Noto 300" />
