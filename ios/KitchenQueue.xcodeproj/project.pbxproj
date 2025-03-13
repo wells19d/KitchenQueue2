@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -61,6 +61,7 @@
 		7D66ED712D7E1C1700AF173B /* OpenSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7D66ED382D7E1C1700AF173B /* OpenSans-ExtraBold.ttf */; };
 		7D66ED722D7E1C1700AF173B /* OpenSans-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7D66ED392D7E1C1700AF173B /* OpenSans-ExtraBoldItalic.ttf */; };
 		7D66ED732D7E1C1700AF173B /* NotoSans-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7D66ED292D7E1C1700AF173B /* NotoSans-ExtraBoldItalic.ttf */; };
+		7D8B0ED32D81D49E0079A0BA /* AppLogo_350.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D8B0ED22D81D49E0079A0BA /* AppLogo_350.png */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		D0001761A9F87942D7960433 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
@@ -125,6 +126,7 @@
 		7D66ED3F2D7E1C1700AF173B /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "OpenSans-Regular.ttf"; path = "../src/fonts/OpenSans-Regular.ttf"; sourceTree = SOURCE_ROOT; };
 		7D66ED402D7E1C1700AF173B /* OpenSans-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "OpenSans-SemiBold.ttf"; path = "../src/fonts/OpenSans-SemiBold.ttf"; sourceTree = SOURCE_ROOT; };
 		7D66ED412D7E1C1700AF173B /* OpenSans-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "OpenSans-SemiBoldItalic.ttf"; path = "../src/fonts/OpenSans-SemiBoldItalic.ttf"; sourceTree = SOURCE_ROOT; };
+		7D8B0ED22D81D49E0079A0BA /* AppLogo_350.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppLogo_350.png; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = KitchenQueue/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -144,6 +146,7 @@
 		13B07FAE1A68108700A75B9A /* KitchenQueue */ = {
 			isa = PBXGroup;
 			children = (
+				7D8B0ED22D81D49E0079A0BA /* AppLogo_350.png */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -290,7 +293,7 @@
 				};
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "KitchenQueue" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -356,6 +359,7 @@
 				7D66ED682D7E1C1700AF173B /* NotoSans-Medium.ttf in Resources */,
 				7D66ED692D7E1C1700AF173B /* OpenSans-Regular.ttf in Resources */,
 				7D66ED6A2D7E1C1700AF173B /* Montserrat-Light.ttf in Resources */,
+				7D8B0ED32D81D49E0079A0BA /* AppLogo_350.png in Resources */,
 				7D66ED6B2D7E1C1700AF173B /* NotoSans-Bold.ttf in Resources */,
 				7D66ED6C2D7E1C1700AF173B /* Montserrat-Italic.ttf in Resources */,
 				7D66ED6D2D7E1C1700AF173B /* NotoSans-Regular.ttf in Resources */,

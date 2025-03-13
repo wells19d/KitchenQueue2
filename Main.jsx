@@ -15,7 +15,7 @@ import Account from './src/screens/Account/Account';
 import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
-import {BottomSheet} from './src/KQ-UI';
+import {BottomSheet, Modal} from './src/KQ-UI';
 
 const Main = () => {
   const dispatch = useDispatch();
