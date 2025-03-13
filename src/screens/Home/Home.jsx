@@ -1,16 +1,17 @@
 //* Home.jsx
-import React from 'react';
+import React, {useState} from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Platform, View} from 'react-native';
+import {Button, Platform, View} from 'react-native';
 import {useDeviceInfo} from '../../hooks/useHooks';
 import {isHBDevice} from '../../utilities/deviceUtils';
-import {Layout, Text} from '../../KQ-UI';
-import NavHeader from '../../components/NavHeader';
+import {Layout, Modal, Text, useModal} from '../../KQ-UI';
+// import NavHeader from '../../components/NavHeader';
 
 const Home = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const device = useDeviceInfo();
+  // const {showModal, updateModal} = useModal();
 
   const Row = ({children}) => (
     <View style={{flexDirection: 'row', width: '90%'}}>{children}</View>
@@ -41,6 +42,8 @@ const Home = () => {
       {text}
     </Text>
   );
+
+  // const [showModal2, setShowModal2] = useState(true);
 
   return (
     <Layout
@@ -164,6 +167,41 @@ const Home = () => {
       <Text font="open-6" size="large">
         The quick brown lazy dog.
       </Text>
+      {/* <>
+        <Button
+          title="Open Modal"
+          onPress={() =>
+            showModal({
+              size: 'full',
+              title: 'This is a Test, again, and again',
+              font: 'noto-9',
+              fontSize: 'large',
+              centered: false,
+              globalView: true,
+              children: <Text>Initial Content</Text>,
+            })
+          }
+        />
+        <Button title="Open Modal" onPress={() => setShowModal2(true)} />
+      </>
+      <Modal
+        size="small"
+        title="Welcome to the App, it's got the looks that kill!"
+        font="Noto-9"
+        fontSize="xLarge"
+        visible={showModal2}
+        height="90%"
+        width="90%"
+        centered
+        onClose={() => setShowModal2(false)}
+        // noTitle
+        // noHeader
+        // noCloseButton
+      >
+        <View style={{flex: 1, borderWidth: 1}}>
+          <Text>Test Test Test</Text>
+        </View>
+      </Modal> */}
     </Layout>
   );
 };

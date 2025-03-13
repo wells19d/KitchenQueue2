@@ -169,6 +169,7 @@ const Main = () => {
           device={device}
         />
       </SafeAreaView>
+      <Modal />
     </NavigationContainer>
   );
 };

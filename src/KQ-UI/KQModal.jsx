@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {
+  Animated,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -25,9 +26,11 @@ const KQModal = ({
   noTitle = false,
   noHeader = false,
   noCloseButton = false,
+  globalView = false,
   children,
   onClose = () => {},
 }) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
   const useHaptics = setHapticFeedback();
   const profile = useProfile();
   const insets = useSafeAreaInsets();
@@ -44,48 +47,112 @@ const KQModal = ({
     onClose();
   };
 
-  const modalSizes = {
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: visible ? 1 : 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [visible]);
+
+  const standardSizes = {
     small: {
-      top: centered
-        ? deviceHeight / 2 - (deviceHeight * 0.3) / 2
-        : insets.top + 10,
-      bottom: centered
-        ? deviceHeight / 2 - (deviceHeight * 0.3) / 2
-        : deviceHeight * 0.75 - insets.top,
-      left: centered
-        ? deviceWidth / 2 - (deviceWidth * 0.825) / 2
-        : insets.left + 35,
-      right: centered
-        ? deviceWidth / 2 - (deviceWidth * 0.825) / 2
-        : insets.right + 35,
+      top: 10,
+      bottom: deviceHeight * 0.65 - insets.top,
+      left: 35,
+      right: 35,
     },
     medium: {
-      top: centered
-        ? deviceHeight / 2 - (deviceHeight * 0.6) / 2
-        : insets.top + 10,
-      bottom: centered
-        ? deviceHeight / 2 - (deviceHeight * 0.6) / 2
-        : deviceHeight * 0.5 - insets.top,
-      left: centered
-        ? deviceWidth / 2 - (deviceWidth * 0.85) / 2
-        : insets.left + 30,
-      right: centered
-        ? deviceWidth / 2 - (deviceWidth * 0.85) / 2
-        : insets.right + 30,
+      top: 10,
+      bottom: deviceHeight * 0.4 - insets.top,
+      left: 30,
+      right: 30,
     },
     large: {
-      top: centered
-        ? deviceHeight / 2 - (deviceHeight * 0.75) / 2
-        : insets.top + 10,
+      top: 10,
+      bottom: deviceHeight * 0.25 - insets.top,
+      left: insets.left + 25,
+      right: insets.right + 25,
+    },
+    full: {
+      top: 10,
+      bottom: 10,
+      left: 10,
+      right: 10,
+    },
+    covered: {
+      top: 2,
+      bottom: 2,
+      left: 2,
+      right: 2,
+    },
+    custom: {
+      top: 10,
+      bottom: Math.max(5, deviceHeight * (1 - convertedHeight) + 10),
+      left: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + 10),
+      right: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + 10),
+    },
+  };
+
+  const centeredSizes = {
+    small: {
+      top: deviceHeight * 0.3,
+      bottom: deviceHeight * 0.3,
+      left: centered ? deviceWidth * 0.0875 : insets.left + 35,
+      right: centered ? deviceWidth * 0.0875 : insets.right + 35,
+    },
+    medium: {
+      top: centered ? deviceHeight * 0.2 : insets.top + 10,
+      bottom: centered ? deviceHeight * 0.2 : deviceHeight * 0.5 - insets.top,
+      left: centered ? deviceWidth * 0.075 : insets.left + 30,
+      right: centered ? deviceWidth * 0.075 : insets.right + 30,
+    },
+    large: {
+      top: centered ? deviceHeight * 0.125 : insets.top + 10,
       bottom: centered
-        ? deviceHeight / 2 - (deviceHeight * 0.75) / 2
+        ? deviceHeight * 0.125
         : deviceHeight * 0.25 - insets.top,
-      left: centered
-        ? deviceWidth / 2 - (deviceWidth * 0.875) / 2
-        : insets.left + 25,
-      right: centered
-        ? deviceWidth / 2 - (deviceWidth * 0.875) / 2
-        : insets.right + 25,
+      left: centered ? deviceWidth * 0.0625 : insets.left + 25,
+      right: centered ? deviceWidth * 0.0625 : insets.right + 25,
+    },
+    full: {
+      top: 10,
+      bottom: 10,
+      left: 10,
+      right: 10,
+    },
+    covered: {
+      top: 2,
+      bottom: 2,
+      left: 2,
+      right: 2,
+    },
+    custom: {
+      top: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
+      bottom: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
+      left: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
+      right: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
+    },
+  };
+
+  const globalSizes = {
+    small: {
+      top: insets.top + 10,
+      bottom: deviceHeight * 0.75 - insets.top,
+      left: insets.left + 35,
+      right: insets.right + 35,
+    },
+    medium: {
+      top: insets.top + 10,
+      bottom: deviceHeight * 0.5 - insets.top,
+      left: insets.left + 30,
+      right: insets.right + 30,
+    },
+    large: {
+      top: insets.top + 10,
+      bottom: deviceHeight * 0.25 - insets.top,
+      left: insets.left + 25,
+      right: insets.right + 25,
     },
     full: {
       top: insets.top + 10,
@@ -100,29 +167,84 @@ const KQModal = ({
       right: 0,
     },
     custom: {
-      top: centered
-        ? deviceHeight / 2 - (deviceHeight * convertedHeight * 0.85) / 2
-        : insets.top + 10,
-      bottom: centered
-        ? deviceHeight / 2 - (deviceHeight * convertedHeight * 0.925) / 2
-        : deviceHeight * (1 - convertedHeight) + insets.bottom,
-      left: centered
-        ? Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2)
-        : Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + insets.left),
-      right: centered
-        ? Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2)
-        : Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + insets.right),
+      top: insets.top + 10,
+      bottom: deviceHeight * (1 - convertedHeight) + insets.bottom,
+      left: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + insets.left),
+      right: Math.max(
+        5,
+        (deviceWidth * (1 - convertedWidth)) / 2 + insets.right,
+      ),
     },
   };
+
+  const globalCenteredSizes = {
+    small: {
+      top: deviceHeight * 0.35,
+      bottom: deviceHeight * 0.35,
+      left: deviceWidth * 0.0875,
+      right: deviceWidth * 0.0875,
+    },
+    medium: {
+      top: deviceHeight * 0.2,
+      bottom: deviceHeight * 0.2,
+      left: deviceWidth * 0.075,
+      right: deviceWidth * 0.075,
+    },
+    large: {
+      top: deviceHeight * 0.125,
+      bottom: deviceHeight * 0.125,
+      left: deviceWidth * 0.0625,
+      right: deviceWidth * 0.0625,
+    },
+    full: {
+      top: insets.top + 10,
+      bottom: deviceHeight * 0.1 - insets.top,
+      left: insets.left + 20,
+      right: insets.right + 20,
+    },
+    covered: {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+    },
+    custom: {
+      top: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
+      bottom: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
+      left: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
+      right: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
+    },
+  };
+
+  const useSize = useMemo(() => {
+    console.log(size, centered, globalView);
+    if (!globalView && !centered) {
+      return standardSizes[size];
+    }
+    if (!globalView && centered) {
+      return centeredSizes[size];
+    }
+    if (globalView && !centered) {
+      return globalSizes[size];
+    }
+    if (globalView && centered) {
+      return globalCenteredSizes[size];
+    }
+  }, [centered, size, globalView, convertedHeight, convertedWidth]);
 
   if (!visible) return null;
 
   return (
     <TouchableWithoutFeedback
       onPress={size !== 'covered' ? handleCloseButton : undefined}>
-      <View style={styles.backdrop}>
+      <Animated.View
+        style={[
+          styles.backdrop,
+          {bottom: globalView ? 0 : 25, opacity: fadeAnim},
+        ]}>
         <TouchableWithoutFeedback onPress={() => {}} accessible={false}>
-          <View style={[styles.modalContainer, modalSizes[size]]}>
+          <Animated.View
+            style={[styles.modalContainer, useSize, {opacity: fadeAnim}]}>
             {size !== 'covered' && !noHeader && (
               <View style={styles.header}>
                 <View
@@ -157,9 +279,9 @@ const KQModal = ({
               ]}>
               {children}
             </View>
-          </View>
+          </Animated.View>
         </TouchableWithoutFeedback>
-      </View>
+      </Animated.View>
     </TouchableWithoutFeedback>
   );
 };
