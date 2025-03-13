@@ -122,4 +122,37 @@ export const menuArray = [
       },
     ],
   },
-];
+  __DEV__
+    ? {
+        section: '(Development)',
+        defaultOpen: true,
+        items: [
+          {
+            title: 'Dev Playground',
+            icon: <Icons.Dev />,
+            action: 'DevPlayground',
+          },
+          {
+            title: 'Text Fields',
+            icon: <Icons.Dev />,
+            action: 'DevTextFields',
+          },
+          {
+            title: 'Buttons',
+            icon: <Icons.Dev />,
+            action: 'DevButtons',
+          },
+          {
+            title: 'Modals',
+            icon: <Icons.Dev />,
+            action: 'DevModals',
+          },
+          {
+            title: 'Dropdowns',
+            icon: <Icons.Dev />,
+            action: 'DevDropdowns',
+          },
+        ],
+      }
+    : null,
+].filter(Boolean);

@@ -21,8 +21,10 @@
 |-|-| AppLogo.png
 |-| KQ-UI
 |-|-| index.js
-|-|-| KQLayout.jsx
 |-|-| KQBottomSheet.jsx
+|-|-| KQLayout.jsx
+|-|-| KQModal.jsx
+|-|-| KQModalProvider.jsx
 |-|-| KQText.jsx
 |-|-| KQToast.jsx
 |-|-| KQUtilities.jsx
@@ -55,6 +57,12 @@
 |-|-|-| CenterMenuArray.jsx
 |-|-| Cupboard
 |-|-|-| Cupboard.jsx
+|-|-| Dev
+|-|-|-| DevButtons.jsx
+|-|-|-| DevDropdowns.jsx
+|-|-|-| DevModals.jsx
+|-|-|-| DevPlayground.jsx
+|-|-|-| DevTextFields.jsx
 |-|-| Home
 |-|-|-| Home.jsx
 |-|-| Shopping

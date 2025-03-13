@@ -1,12 +1,12 @@
-//* Home.jsx
+//* DevPlayground.jsx
 import React from 'react';
-import {useRoute} from '@react-navigation/native';
+import {View} from 'react-native';
 import {Layout, Text} from '../../KQ-UI';
+import {useRoute} from '@react-navigation/native';
 
-const Home = () => {
+const DevPlayground = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-
   return (
     <Layout
       bgColor={bgColor}
@@ -19,9 +19,9 @@ const Home = () => {
       RightAction={null}
       sheetOpen={false}
       innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Home</Text>
+      <Text>DevPlayground</Text>
     </Layout>
   );
 };
 
-export default Home;
+export default DevPlayground;
