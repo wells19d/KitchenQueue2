@@ -16,6 +16,11 @@ import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
 import {BottomSheet, Modal} from './src/KQ-UI';
+import DevTextFields from './src/screens/Dev/DevTextFields';
+import DevButtons from './src/screens/Dev/DevButtons';
+import DevModals from './src/screens/Dev/DevModals';
+import DevDropdowns from './src/screens/Dev/DevDropdowns';
+import DevPlayground from './src/screens/Dev/DevPlayground';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -146,6 +151,105 @@ const Main = () => {
               },
             }}
           />
+          {__DEV__ && (
+            <>
+              <Stack.Screen
+                name="DevPlayground"
+                component={DevPlayground}
+                initialParams={{
+                  title: 'Dev Playground',
+                  bgColor: bgColor,
+                  headerColor: headerColor,
+                  textColor: textColor,
+                  screenLocation: screenLocation,
+                }}
+                listeners={{
+                  focus: () => {
+                    setBgColor('#ffffff');
+                    setHeaderColor('#319177');
+                    setTextColor('#ffffff');
+                    setScreenLocation('DevPlayground');
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="DevTextFields"
+                component={DevTextFields}
+                initialParams={{
+                  title: 'Dev Text Fields',
+                  bgColor: bgColor,
+                  headerColor: headerColor,
+                  textColor: textColor,
+                  screenLocation: screenLocation,
+                }}
+                listeners={{
+                  focus: () => {
+                    setBgColor('#ffffff');
+                    setHeaderColor('#319177');
+                    setTextColor('#ffffff');
+                    setScreenLocation('DevTextFields');
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="DevButtons"
+                component={DevButtons}
+                initialParams={{
+                  title: 'Dev Buttons',
+                  bgColor: bgColor,
+                  headerColor: headerColor,
+                  textColor: textColor,
+                  screenLocation: screenLocation,
+                }}
+                listeners={{
+                  focus: () => {
+                    setBgColor('#ffffff');
+                    setHeaderColor('#319177');
+                    setTextColor('#ffffff');
+                    setScreenLocation('DevButtons');
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="DevModals"
+                component={DevModals}
+                initialParams={{
+                  title: 'Dev Modals',
+                  bgColor: bgColor,
+                  headerColor: headerColor,
+                  textColor: textColor,
+                  screenLocation: screenLocation,
+                }}
+                listeners={{
+                  focus: () => {
+                    setBgColor('#ffffff');
+                    setHeaderColor('#319177');
+                    setTextColor('#ffffff');
+                    setScreenLocation('DevModals');
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="DevDropdowns"
+                component={DevDropdowns}
+                initialParams={{
+                  title: 'Dev Dropdowns',
+                  bgColor: bgColor,
+                  headerColor: headerColor,
+                  textColor: textColor,
+                  screenLocation: screenLocation,
+                }}
+                listeners={{
+                  focus: () => {
+                    setBgColor('#ffffff');
+                    setHeaderColor('#319177');
+                    setTextColor('#ffffff');
+                    setScreenLocation('DevDropdowns');
+                  },
+                }}
+              />
+            </>
+          )}
         </Stack.Navigator>
       </>
     );

@@ -39,6 +39,7 @@ export const Icons = {
   Cupboards: props => (
     <MCIcons name="wardrobe" size={20} color="#000" {...props} />
   ),
+  Dev: props => <MCIcons name="dev-to" size={20} color="#000" {...props} />,
   Edit: props => <MIIcons name="edit-note" size={20} color="#000" {...props} />,
   Favorite: props => <MCIcons name="star" size={20} color="#000" {...props} />,
   Filter: props => (

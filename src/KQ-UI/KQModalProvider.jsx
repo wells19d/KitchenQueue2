@@ -19,20 +19,33 @@ export const KQModalProvider = ({children}) => {
     noTitle: false,
     noHeader: false,
     noCloseButton: false,
-    onClose: () => setModalProps(prev => ({...prev, visible: false})),
+    globalView: false,
+    onClose: () => hideModal(),
   };
 
   const [modalProps, setModalProps] = useState(defaultModalProps);
 
-  const showModal = props =>
+  const showModal = props => {
     setModalProps(prev => ({
-      ...defaultModalProps, // Reset to default values first
-      ...prev, // Keep any existing values
-      ...props, // Apply new props from function call
-      visible: true,
+      ...defaultModalProps, // Reset modal to default values
+      ...props, // Apply new props
+      visible: false, // Ensure state resets before showing
     }));
 
-  const hideModal = () => setModalProps(prev => ({...prev, visible: false}));
+    setTimeout(() => {
+      setModalProps(prev => ({
+        ...prev,
+        visible: true, // Reopen after state resets
+      }));
+    }, 10);
+  };
+
+  const hideModal = () => {
+    setModalProps(prev => ({
+      ...prev,
+      visible: false,
+    }));
+  };
 
   return (
     <ModalContext.Provider value={{showModal, hideModal}}>
