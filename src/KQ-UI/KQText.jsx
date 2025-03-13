@@ -11,12 +11,16 @@ const KQText = ({
   font = 'open-5',
   ...props
 }) => {
+  const {} = props;
   const setColor = useColors(kqColor);
   const setFont = useFonts(font);
   const setSize = useSizes(size, font);
 
   return (
-    <Text style={[setColor, setFont, setSize, style]} {...props}>
+    <Text
+      allowFontScaling={false}
+      style={[setColor, setFont, setSize, style]}
+      {...props}>
       {children}
     </Text>
   );
