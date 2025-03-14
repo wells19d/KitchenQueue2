@@ -57,16 +57,16 @@ const DevModals = () => {
         fontSize="medium"
         visible={showModal2}
         height="95%"
-        width="95%"
+        width="92%"
         centered
         onClose={() => setShowModal2(false)}
         // noTitle
         // noHeader
         // noCloseButton
       >
-        {/* <View style={{flex: 1, borderWidth: 0.2}}>
+        <View style={{flex: 1, borderWidth: 0.2}}>
           <Text>Test Test Test</Text>
-        </View> */}
+        </View>
       </Modal>
     </Layout>
   );
