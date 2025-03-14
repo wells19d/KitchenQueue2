@@ -18,7 +18,12 @@ const DevButtons = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
+      innerViewStyles={{
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'red',
+      }}>
       <Text>DevButtons</Text>
     </Layout>
   );

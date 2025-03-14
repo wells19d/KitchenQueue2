@@ -237,11 +237,7 @@ const KQModal = ({
   return (
     <TouchableWithoutFeedback
       onPress={size !== 'covered' ? handleCloseButton : undefined}>
-      <Animated.View
-        style={[
-          styles.backdrop,
-          {bottom: globalView ? 0 : 25, opacity: fadeAnim},
-        ]}>
+      <Animated.View style={[styles.backdrop, {opacity: fadeAnim}]}>
         <TouchableWithoutFeedback onPress={() => {}} accessible={false}>
           <Animated.View
             style={[styles.modalContainer, useSize, {opacity: fadeAnim}]}>
@@ -293,7 +289,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(55, 61, 67, 0.6)',
+    backgroundColor: 'white',
     zIndex: 9000,
     justifyContent: 'center',
     alignItems: 'center',
@@ -303,8 +299,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 5,
-    borderWidth: 0,
-    borderColor: '#373d43',
+    borderWidth: 1.5,
+    borderColor: '#319177',
     shadowColor: 'black',
     shadowOffset: {width: 2, height: 3},
     shadowOpacity: 0.3,
