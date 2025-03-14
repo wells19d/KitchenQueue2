@@ -51,22 +51,22 @@ const DevModals = () => {
         />
       </>
       <Modal
-        size="full"
+        size="custom"
         title="Welcome to the App, it's got the looks that kill!"
         // font="Noto-9"
         fontSize="medium"
         visible={showModal2}
-        height="90%"
-        width="90%"
+        height="95%"
+        width="95%"
         centered
         onClose={() => setShowModal2(false)}
         // noTitle
         // noHeader
         // noCloseButton
       >
-        <View style={{flex: 1, borderWidth: 0.2}}>
+        {/* <View style={{flex: 1, borderWidth: 0.2}}>
           <Text>Test Test Test</Text>
-        </View>
+        </View> */}
       </Modal>
     </Layout>
   );

@@ -20,7 +20,11 @@ const KQLayout = ({
   outerViewStyles = {},
 }) => {
   return (
-    <View style={[{flex: 1, backgroundColor: bgColor}, outerViewStyles]}>
+    <View
+      style={[
+        {flex: 1, backgroundColor: bgColor, paddingBottom: 25},
+        outerViewStyles,
+      ]}>
       {useHeader && (
         <NavHeader
           title={headerTitle}
