@@ -904,8 +904,8 @@ export {default as BottomSheet} from './KQBottomSheet';
 export {default as Toast} from './KQToast';
 export {default as Layout} from './KQLayout';
 export {default as Modal} from './KQModal';
-export {KQModalProvider as ModalProvider, useModal} from './KQModalProvider'; // ✅ Alias the export
-
+export {KQModalProvider as ModalProvider, useModal} from './KQModalProvider';
+export {default as Button} from './KQButton';
 
 //* KQBottomSheet.jsx
 import React, {useEffect, useRef, useState} from 'react';
@@ -1070,6 +1070,85 @@ const styles = StyleSheet.create({
 
 export default KQBottomSheet;
 
+//* KQButton.jsx
+import React, {useCallback} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Text} from '../KQ-UI/';
+import {setHapticFeedback} from '../hooks/setHapticFeedback';
+import {useProfile} from '../hooks/useHooks';
+import {
+  useColors,
+  useFontStyles,
+  useButtonStyles,
+  useButtonSizes,
+} from './KQUtilities';
+
+const KQButton = ({
+  children,
+  onPress,
+  style = {},
+  textStyle = {},
+  outerTextStyle = {},
+  type = 'filled',
+  size = 'small',
+  color = 'primary',
+  textSize = 'small',
+  textColor = 'white',
+  fontType = 'open-6',
+  hapticFeedback = 'light',
+  disabled = false,
+  ...props
+}) => {
+  const useHaptics = setHapticFeedback();
+  const profile = useProfile();
+  const buttonColor = useColors(disabled ? 'basic' : color);
+  const buttonStyle = useButtonStyles(type, buttonColor);
+  const buttonSize = useButtonSizes(size);
+
+  const fontStyles = useFontStyles(
+    fontType,
+    textSize,
+    type === 'filled' ? textColor : buttonColor,
+  );
+
+  const handlePress = useCallback(() => {
+    useHaptics(profile?.userSettings?.hapticStrength || hapticFeedback);
+    if (onPress) onPress();
+  }, [profile?.userSettings?.hapticStrength, hapticFeedback, onPress]);
+
+  return (
+    <TouchableOpacity
+      style={[ButtonStyles.buttonOC, buttonStyle, buttonSize, style]}
+      onPress={!disabled ? handlePress : null}
+      disabled={disabled}
+      {...props}>
+      <View style={outerTextStyle}>
+        <Text
+          numberOfLines={1}
+          style={[ButtonStyles.buttonText, fontStyles, textStyle]}>
+          {children}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+const ButtonStyles = StyleSheet.create({
+  buttonOC: {
+    borderRadius: 5,
+    margin: 5,
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 16,
+    textAlign: 'center',
+  },
+});
+
+export default React.memo(KQButton);
+
 
 //* KQLayout.jsx
 
@@ -1117,6 +1196,7 @@ const KQLayout = ({
 
 export default KQLayout;
 
+//* KQModal.jsx
 import React, {useEffect, useMemo, useRef} from 'react';
 import {
   Animated,
@@ -1336,7 +1416,6 @@ const KQModal = ({
   };
 
   const useSize = useMemo(() => {
-    console.log(size, centered, globalView);
     if (!globalView && !centered) {
       return standardSizes[size];
     }
@@ -1455,346 +1534,7 @@ const styles = StyleSheet.create({
 export default KQModal;
 
 
-import React, {useEffect, useMemo, useRef} from 'react';
-import {
-  Animated,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-  StyleSheet,
-} from 'react-native';
-import {Text} from '../KQ-UI';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useDeviceInfo, useProfile} from '../hooks/useHooks';
-import {Icons} from '../components/IconListRouter';
-import {setHapticFeedback} from '../hooks/setHapticFeedback';
-import {isHBDevice} from '../utilities/deviceUtils';
 
-const KQModal = ({
-  size = 'full',
-  title = '',
-  font = 'open-6',
-  fontSize = 'medium',
-  hapticFeedback = 'light',
-  height = '90%',
-  width = '90%',
-  centered = false,
-  visible = false,
-  noTitle = false,
-  noHeader = false,
-  noCloseButton = false,
-  globalView = false,
-  children,
-  onClose = () => {},
-}) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const useHaptics = setHapticFeedback();
-  const profile = useProfile();
-  const insets = useSafeAreaInsets();
-  const device = useDeviceInfo();
-  const isHB = isHBDevice(device?.system?.model);
-  const deviceWidth = device?.dimensions?.width || 300;
-  const deviceHeight = device?.dimensions.height || 400;
-
-  let convertedHeight = parseInt(height) / 100;
-  let convertedWidth = parseInt(width) / 100;
-
-  const handleCloseButton = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || hapticFeedback);
-    onClose();
-  };
-
-  useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: visible ? 1 : 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  }, [visible]);
-
-  const standardSizes = {
-    small: {
-      top: 10,
-      bottom: deviceHeight * 0.65 - insets.top,
-      left: 35,
-      right: 35,
-    },
-    medium: {
-      top: 10,
-      bottom: deviceHeight * 0.4 - insets.top,
-      left: 30,
-      right: 30,
-    },
-    large: {
-      top: 10,
-      bottom: deviceHeight * 0.25 - insets.top,
-      left: insets.left + 25,
-      right: insets.right + 25,
-    },
-    full: {
-      top: 10,
-      bottom: 10,
-      left: 10,
-      right: 10,
-    },
-    covered: {
-      top: 2,
-      bottom: 2,
-      left: 2,
-      right: 2,
-    },
-    custom: {
-      top: 10,
-      bottom: Math.max(5, deviceHeight * (1 - convertedHeight) + 10),
-      left: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + 10),
-      right: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + 10),
-    },
-  };
-
-  const centeredSizes = {
-    small: {
-      top: deviceHeight * 0.3,
-      bottom: deviceHeight * 0.3,
-      left: centered ? deviceWidth * 0.0875 : insets.left + 35,
-      right: centered ? deviceWidth * 0.0875 : insets.right + 35,
-    },
-    medium: {
-      top: centered ? deviceHeight * 0.2 : insets.top + 10,
-      bottom: centered ? deviceHeight * 0.2 : deviceHeight * 0.5 - insets.top,
-      left: centered ? deviceWidth * 0.075 : insets.left + 30,
-      right: centered ? deviceWidth * 0.075 : insets.right + 30,
-    },
-    large: {
-      top: centered ? deviceHeight * 0.125 : insets.top + 10,
-      bottom: centered
-        ? deviceHeight * 0.125
-        : deviceHeight * 0.25 - insets.top,
-      left: centered ? deviceWidth * 0.0625 : insets.left + 25,
-      right: centered ? deviceWidth * 0.0625 : insets.right + 25,
-    },
-    full: {
-      top: 10,
-      bottom: 10,
-      left: 10,
-      right: 10,
-    },
-    covered: {
-      top: 2,
-      bottom: 2,
-      left: 2,
-      right: 2,
-    },
-    custom: {
-      top: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      bottom: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      left: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-      right: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-    },
-  };
-
-  const globalSizes = {
-    small: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.75 - insets.top,
-      left: insets.left + 35,
-      right: insets.right + 35,
-    },
-    medium: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.5 - insets.top,
-      left: insets.left + 30,
-      right: insets.right + 30,
-    },
-    large: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.25 - insets.top,
-      left: insets.left + 25,
-      right: insets.right + 25,
-    },
-    full: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.1 - insets.top,
-      left: insets.left + 20,
-      right: insets.right + 20,
-    },
-    covered: {
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-    },
-    custom: {
-      top: insets.top + 10,
-      bottom: deviceHeight * (1 - convertedHeight) + insets.bottom,
-      left: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + insets.left),
-      right: Math.max(
-        5,
-        (deviceWidth * (1 - convertedWidth)) / 2 + insets.right,
-      ),
-    },
-  };
-
-  const globalCenteredSizes = {
-    small: {
-      top: deviceHeight * 0.35,
-      bottom: deviceHeight * 0.35,
-      left: deviceWidth * 0.0875,
-      right: deviceWidth * 0.0875,
-    },
-    medium: {
-      top: deviceHeight * 0.2,
-      bottom: deviceHeight * 0.2,
-      left: deviceWidth * 0.075,
-      right: deviceWidth * 0.075,
-    },
-    large: {
-      top: deviceHeight * 0.125,
-      bottom: deviceHeight * 0.125,
-      left: deviceWidth * 0.0625,
-      right: deviceWidth * 0.0625,
-    },
-    full: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.1 - insets.top,
-      left: insets.left + 20,
-      right: insets.right + 20,
-    },
-    covered: {
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-    },
-    custom: {
-      top: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      bottom: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      left: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-      right: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-    },
-  };
-
-  const useSize = useMemo(() => {
-    console.log(size, centered, globalView);
-    if (!globalView && !centered) {
-      return standardSizes[size];
-    }
-    if (!globalView && centered) {
-      return centeredSizes[size];
-    }
-    if (globalView && !centered) {
-      return globalSizes[size];
-    }
-    if (globalView && centered) {
-      return globalCenteredSizes[size];
-    }
-  }, [centered, size, globalView, convertedHeight, convertedWidth]);
-
-  if (!visible) return null;
-
-  return (
-    <TouchableWithoutFeedback
-      onPress={size !== 'covered' ? handleCloseButton : undefined}>
-      <Animated.View
-        style={[
-          styles.backdrop,
-          {bottom: globalView ? 0 : 25, opacity: fadeAnim},
-        ]}>
-        <TouchableWithoutFeedback onPress={() => {}} accessible={false}>
-          <Animated.View
-            style={[styles.modalContainer, useSize, {opacity: fadeAnim}]}>
-            {size !== 'covered' && !noHeader && (
-              <View style={styles.header}>
-                <View
-                  style={[
-                    styles.titleContainer,
-                    noCloseButton && {marginRight: 0},
-                  ]}>
-                  {!noTitle && (
-                    <Text size={fontSize} font={font} numberOfLines={1}>
-                      {title}
-                    </Text>
-                  )}
-                </View>
-                {!noCloseButton && (
-                  <TouchableOpacity
-                    onPress={handleCloseButton}
-                    style={styles.closeButton}>
-                    <Icons.Close />
-                  </TouchableOpacity>
-                )}
-              </View>
-            )}
-            <View
-              style={[
-                styles.childrenContainer,
-                {
-                  marginTop:
-                    size === 'covered' ? insets.top : noHeader ? 0 : 10,
-                  marginBottom:
-                    size === 'covered' ? (isHB ? 0 : insets.bottom + 40) : 0,
-                },
-              ]}>
-              {children}
-            </View>
-          </Animated.View>
-        </TouchableWithoutFeedback>
-      </Animated.View>
-    </TouchableWithoutFeedback>
-  );
-};
-
-const styles = StyleSheet.create({
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(55, 61, 67, 0.6)',
-    zIndex: 9000,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    position: 'absolute',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 5,
-    borderWidth: 0,
-    borderColor: '#373d43',
-    shadowColor: 'black',
-    shadowOffset: {width: 2, height: 3},
-    shadowOpacity: 0.3,
-    elevation: 5,
-  },
-  header: {
-    flexDirection: 'row',
-  },
-  titleContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 37,
-    marginRight: -37,
-    paddingRight: 42,
-    paddingLeft: 5,
-  },
-  closeButton: {
-    borderWidth: 2,
-    borderColor: '#C4C4C4',
-    borderRadius: 5,
-    margin: 1,
-    width: 35,
-    height: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  childrenContainer: {
-    flex: 1,
-  },
-});
-
-export default KQModal;
 
 //* KQModalProvider.jsx
 import React, {createContext, useContext, useState} from 'react';
@@ -1859,7 +1599,7 @@ export const useModal = () => useContext(ModalContext);
 //* KQText.jsx
 import React from 'react';
 import {Text} from 'react-native';
-import {useColors, useFonts, useSizes} from './KQUtilities';
+import {useFontStyles} from './KQUtilities';
 
 const KQText = ({
   children,
@@ -1869,18 +1609,17 @@ const KQText = ({
   font = 'open-5',
   ...props
 }) => {
-  const setColor = useColors(kqColor);
-  const setFont = useFonts(font);
-  const setSize = useSizes(size, font);
+  const fontStyles = useFontStyles(font, size, kqColor);
 
   return (
-    <Text style={[setColor, setFont, setSize, style]} {...props}>
+    <Text allowFontScaling={false} style={[fontStyles, style]} {...props}>
       {children}
     </Text>
   );
 };
 
-export default KQText;
+export default React.memo(KQText);
+
 
 
 //*KQToast.jsx
@@ -1998,7 +1737,7 @@ export default toastConfig;
 import {Platform} from 'react-native';
 
 export const useColors = color => {
-  if (!color || typeof color !== 'string') return {color: '#000000'};
+  if (!color || typeof color !== 'string') return '#000000'; // Default to black
 
   const colors = {
     black: '#000000',
@@ -2014,13 +1753,17 @@ export const useColors = color => {
 
   const normalizedColor = color.trim().toLowerCase();
 
-  return {
-    color:
-      colors[normalizedColor] ||
-      (/^#([0-9A-F]{3}){1,2}$/i.test(color) || color.includes('rgb')
-        ? color
-        : colors.black),
-  };
+  // If it's a predefined color, return it
+  if (colors[normalizedColor]) {
+    return colors[normalizedColor];
+  }
+
+  // If it's a valid hex or RGB(A) color, return it as is
+  if (/^#([0-9A-F]{3}){1,2}$/i.test(color) || color.startsWith('rgb')) {
+    return color;
+  }
+
+  return '#000000'; // Default fallback
 };
 
 const fontLookup = {
@@ -2088,7 +1831,7 @@ export const useFonts = (font = DEFAULT_FONT) => {
     : {fontFamily: fontData.android};
 };
 
-export const useSizes = (size = 'medium', font = 'OpenSans') => {
+export const useFontSizes = (size = 'medium', font = 'OpenSans') => {
   const sizes = {
     tiny: 12,
     xSmall: 14,
@@ -2111,6 +1854,58 @@ export const useSizes = (size = 'medium', font = 'OpenSans') => {
   const scaleFactor = fontScale[font.toLowerCase()] || 1;
   return {fontSize: baseSize * scaleFactor};
 };
+
+export const useFontStyles = (
+  font = 'open-5',
+  size = 'medium',
+  color = 'black',
+) => {
+  return {
+    ...useFonts(font), // ✅ Returns { fontFamily, fontWeight }
+    ...useFontSizes(size, font), // ✅ Returns { fontSize }
+    color: useColors(color), // ✅ Assign color as a string
+  };
+};
+
+export const useButtonStyles = (type = 'filled', color = 'primary') => {
+  const statusColor = useColors(color);
+
+  const styles = {
+    filled: {
+      backgroundColor: statusColor,
+      elevation: 3,
+      shadowColor: '#373d43',
+      shadowOffset: {width: 2, height: 3},
+      shadowOpacity: 0.3,
+    },
+    outline: {
+      backgroundColor: 'transparent',
+      borderColor: statusColor,
+      borderWidth: 2,
+    },
+    ghost: {
+      backgroundColor: 'transparent',
+    },
+  };
+
+  return styles[type] || styles.filled;
+};
+
+export const useButtonSizes = (size = 'medium') => {
+  const sizes = {
+    tiny: 30,
+    small: 35,
+    medium: 40,
+    large: 50,
+    giant: 60,
+  };
+
+  return {
+    height: sizes[size] ?? sizes.medium,
+    paddingHorizontal: 12,
+  };
+};
+
 
 
 
@@ -4045,13 +3840,14 @@ export const menuArray = [
 
 //* DevButtons.jsx
 import React from 'react';
-import {View} from 'react-native';
-import {Layout, Text} from '../../KQ-UI';
+import {Button, Layout} from '../../KQ-UI';
 import {useRoute} from '@react-navigation/native';
+import {View} from 'react-native';
 
 const DevButtons = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+
   return (
     <Layout
       bgColor={bgColor}
@@ -4063,13 +3859,274 @@ const DevButtons = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
-      <Text>DevButtons</Text>
+      innerViewStyles={{
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <Button
+        type="filled" //useButtonType
+        size="small" //useButtonSizes
+        color="primary" //useColors or allow custom like "white" or "#fff"
+        textSize="medium" //useFonts
+        fontType="open-6" //useFonts
+        textColor="white" //or useColors or allow custom like "white" or "#fff"
+        disabled={false} //true or false, default is false and the prop is optional
+        onPress={() => {
+          console.log('button pressed');
+        }}>
+        Press Me
+      </Button>
+      <View style={{flexDirection: 'row'}}>
+        <View style={{flex: 1}}>
+          <Button
+            type="filled" //useButtonType
+            color="Primary"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Primary
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="outline" //useButtonType
+            color="Primary"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Primary
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="ghost" //useButtonType
+            color="Primary"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Primary
+          </Button>
+        </View>
+      </View>
+      <View style={{flexDirection: 'row'}}>
+        <View style={{flex: 1}}>
+          <Button
+            type="filled" //useButtonType
+            color="Success"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Success
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="outline" //useButtonType
+            color="Success"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Success
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="ghost" //useButtonType
+            color="Success"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Success
+          </Button>
+        </View>
+      </View>
+      <View style={{flexDirection: 'row'}}>
+        <View style={{flex: 1}}>
+          <Button
+            type="filled" //useButtonType
+            color="Info"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Info
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="outline" //useButtonType
+            color="Info"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Info
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="ghost" //useButtonType
+            color="Info"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Info
+          </Button>
+        </View>
+      </View>
+      <View style={{flexDirection: 'row'}}>
+        <View style={{flex: 1}}>
+          <Button
+            type="filled" //useButtonType
+            color="Warning"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Warning
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="outline" //useButtonType
+            color="Warning"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Warning
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="ghost" //useButtonType
+            color="Warning"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Warning
+          </Button>
+        </View>
+      </View>
+      <View style={{flexDirection: 'row'}}>
+        <View style={{flex: 1}}>
+          <Button
+            type="filled" //useButtonType
+            color="Danger"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Danger
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="outline" //useButtonType
+            color="Danger"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Danger
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="ghost" //useButtonType
+            color="Danger"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Danger
+          </Button>
+        </View>
+      </View>
+      <View style={{flexDirection: 'row'}}>
+        <View style={{flex: 1}}>
+          <Button
+            type="filled" //useButtonType
+            color="Dark"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Dark
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="outline" //useButtonType
+            color="Dark"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Dark
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="ghost" //useButtonType
+            color="Dark"
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Dark
+          </Button>
+        </View>
+      </View>
+      <View style={{flexDirection: 'row'}}>
+        <View style={{flex: 1}}>
+          <Button
+            type="filled" //useButtonType
+            disabled
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Disabled
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="outline" //useButtonType
+            disabled
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Disabled
+          </Button>
+        </View>
+        <View style={{flex: 1}}>
+          <Button
+            type="ghost" //useButtonType
+            disabled
+            onPress={() => {
+              console.log('button pressed');
+            }} //function to run on button press
+          >
+            Disabled
+          </Button>
+        </View>
+      </View>
     </Layout>
   );
 };
 
 export default DevButtons;
+
 
 //* DevDropdowns.jsx
 import React from 'react';
@@ -4109,7 +4166,6 @@ const DevModals = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const {showModal} = useModal();
-
   const [showModal2, setShowModal2] = useState(false);
 
   return (
@@ -4174,6 +4230,7 @@ const DevModals = () => {
 };
 
 export default DevModals;
+
 
 
 //* DevPlayground.jsx

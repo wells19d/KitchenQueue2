@@ -2,7 +2,7 @@
 import {Platform} from 'react-native';
 
 export const useColors = color => {
-  if (!color || typeof color !== 'string') return {color: '#000000'};
+  if (!color || typeof color !== 'string') return '#000000'; // Default to black
 
   const colors = {
     black: '#000000',
@@ -18,13 +18,17 @@ export const useColors = color => {
 
   const normalizedColor = color.trim().toLowerCase();
 
-  return {
-    color:
-      colors[normalizedColor] ||
-      (/^#([0-9A-F]{3}){1,2}$/i.test(color) || color.includes('rgb')
-        ? color
-        : colors.black),
-  };
+  // If it's a predefined color, return it
+  if (colors[normalizedColor]) {
+    return colors[normalizedColor];
+  }
+
+  // If it's a valid hex or RGB(A) color, return it as is
+  if (/^#([0-9A-F]{3}){1,2}$/i.test(color) || color.startsWith('rgb')) {
+    return color;
+  }
+
+  return '#000000'; // Default fallback
 };
 
 const fontLookup = {
@@ -92,7 +96,7 @@ export const useFonts = (font = DEFAULT_FONT) => {
     : {fontFamily: fontData.android};
 };
 
-export const useSizes = (size = 'medium', font = 'OpenSans') => {
+export const useFontSizes = (size = 'medium', font = 'OpenSans') => {
   const sizes = {
     tiny: 12,
     xSmall: 14,
@@ -114,4 +118,55 @@ export const useSizes = (size = 'medium', font = 'OpenSans') => {
   const baseSize = sizes[size] || sizes.medium;
   const scaleFactor = fontScale[font.toLowerCase()] || 1;
   return {fontSize: baseSize * scaleFactor};
+};
+
+export const useFontStyles = (
+  font = 'open-5',
+  size = 'medium',
+  color = 'black',
+) => {
+  return {
+    ...useFonts(font), // ✅ Returns { fontFamily, fontWeight }
+    ...useFontSizes(size, font), // ✅ Returns { fontSize }
+    color: useColors(color), // ✅ Assign color as a string
+  };
+};
+
+export const useButtonStyles = (type = 'filled', color = 'primary') => {
+  const statusColor = useColors(color);
+
+  const styles = {
+    filled: {
+      backgroundColor: statusColor,
+      elevation: 3,
+      shadowColor: '#373d43',
+      shadowOffset: {width: 2, height: 3},
+      shadowOpacity: 0.3,
+    },
+    outline: {
+      backgroundColor: 'transparent',
+      borderColor: statusColor,
+      borderWidth: 2,
+    },
+    ghost: {
+      backgroundColor: 'transparent',
+    },
+  };
+
+  return styles[type] || styles.filled;
+};
+
+export const useButtonSizes = (size = 'medium') => {
+  const sizes = {
+    tiny: 30,
+    small: 35,
+    medium: 40,
+    large: 50,
+    giant: 60,
+  };
+
+  return {
+    height: sizes[size] ?? sizes.medium,
+    paddingHorizontal: 12,
+  };
 };

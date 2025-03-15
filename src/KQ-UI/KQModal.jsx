@@ -1,3 +1,4 @@
+//* KQModal.jsx
 import React, {useEffect, useMemo, useRef} from 'react';
 import {
   Animated,
@@ -217,7 +218,6 @@ const KQModal = ({
   };
 
   const useSize = useMemo(() => {
-    console.log(size, centered, globalView);
     if (!globalView && !centered) {
       return standardSizes[size];
     }

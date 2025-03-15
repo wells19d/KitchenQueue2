@@ -1,7 +1,7 @@
 //* KQText.jsx
 import React from 'react';
 import {Text} from 'react-native';
-import {useColors, useFonts, useSizes} from './KQUtilities';
+import {useFontStyles} from './KQUtilities';
 
 const KQText = ({
   children,
@@ -11,19 +11,13 @@ const KQText = ({
   font = 'open-5',
   ...props
 }) => {
-  const {} = props;
-  const setColor = useColors(kqColor);
-  const setFont = useFonts(font);
-  const setSize = useSizes(size, font);
+  const fontStyles = useFontStyles(font, size, kqColor);
 
   return (
-    <Text
-      allowFontScaling={false}
-      style={[setColor, setFont, setSize, style]}
-      {...props}>
+    <Text allowFontScaling={false} style={[fontStyles, style]} {...props}>
       {children}
     </Text>
   );
 };
 
-export default KQText;
+export default React.memo(KQText);
