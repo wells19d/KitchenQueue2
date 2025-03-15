@@ -8,7 +8,6 @@ const DevModals = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const {showModal} = useModal();
-
   const [showModal2, setShowModal2] = useState(false);
 
   return (
