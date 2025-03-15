@@ -63,6 +63,7 @@
 |-|-|-| DevDropdowns.jsx
 |-|-|-| DevModals.jsx
 |-|-|-| DevPlayground.jsx
+|-|-|-| DevText.jsx
 |-|-|-| DevTextFields.jsx
 |-|-| Home
 |-|-|-| Home.jsx

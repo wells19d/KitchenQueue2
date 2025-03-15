@@ -3020,6 +3020,7 @@ import DevButtons from './src/screens/Dev/DevButtons';
 import DevModals from './src/screens/Dev/DevModals';
 import DevDropdowns from './src/screens/Dev/DevDropdowns';
 import DevPlayground from './src/screens/Dev/DevPlayground';
+import DevText from './src/screens/Dev/DevText';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -3172,6 +3173,25 @@ const Main = () => {
                 }}
               />
               <Stack.Screen
+                name="DevText"
+                component={DevText}
+                initialParams={{
+                  title: 'Dev Text',
+                  bgColor: bgColor,
+                  headerColor: headerColor,
+                  textColor: textColor,
+                  screenLocation: screenLocation,
+                }}
+                listeners={{
+                  focus: () => {
+                    setBgColor('#ffffff');
+                    setHeaderColor('#319177');
+                    setTextColor('#ffffff');
+                    setScreenLocation('DevText');
+                  },
+                }}
+              />
+              <Stack.Screen
                 name="DevTextFields"
                 component={DevTextFields}
                 initialParams={{
@@ -3278,6 +3298,7 @@ const Main = () => {
 };
 
 export default Main;
+
 
 
 
@@ -3814,6 +3835,11 @@ export const menuArray = [
             action: 'DevPlayground',
           },
           {
+            title: 'Text',
+            icon: <Icons.Dev />,
+            action: 'DevText',
+          },
+          {
             title: 'Text Fields',
             icon: <Icons.Dev />,
             action: 'DevTextFields',
@@ -3837,6 +3863,7 @@ export const menuArray = [
       }
     : null,
 ].filter(Boolean);
+
 
 //* DevButtons.jsx
 import React from 'react';
@@ -4261,13 +4288,13 @@ const DevPlayground = () => {
 
 export default DevPlayground;
 
-//* DevTextFields.jsx
+//* DevText.jsx
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
 import {Platform, View} from 'react-native';
 import {Layout, Text} from '../../KQ-UI';
 
-const DevTextFields = () => {
+const DevText = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
 
@@ -4433,5 +4460,35 @@ const DevTextFields = () => {
   );
 };
 
+export default DevText;
+
+
+//* DevTextFields.jsx
+import React from 'react';
+import {useRoute} from '@react-navigation/native';
+import {Layout, Text} from '../../KQ-UI';
+
+const DevTextFields = () => {
+  const route = useRoute();
+  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+
+  return (
+    <Layout
+      bgColor={bgColor}
+      headerTitle={title}
+      headerColor={headerColor}
+      textColor={textColor}
+      LeftButton=""
+      RightButton=""
+      LeftAction={null}
+      RightAction={null}
+      sheetOpen={false}
+      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
+      <Text>DevTextFields</Text>
+    </Layout>
+  );
+};
+
 export default DevTextFields;
+
 

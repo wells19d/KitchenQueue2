@@ -133,6 +133,11 @@ export const menuArray = [
             action: 'DevPlayground',
           },
           {
+            title: 'Text',
+            icon: <Icons.Dev />,
+            action: 'DevText',
+          },
+          {
             title: 'Text Fields',
             icon: <Icons.Dev />,
             action: 'DevTextFields',
