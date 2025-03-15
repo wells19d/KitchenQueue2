@@ -21,6 +21,7 @@ import DevButtons from './src/screens/Dev/DevButtons';
 import DevModals from './src/screens/Dev/DevModals';
 import DevDropdowns from './src/screens/Dev/DevDropdowns';
 import DevPlayground from './src/screens/Dev/DevPlayground';
+import DevText from './src/screens/Dev/DevText';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -169,6 +170,25 @@ const Main = () => {
                     setHeaderColor('#319177');
                     setTextColor('#ffffff');
                     setScreenLocation('DevPlayground');
+                  },
+                }}
+              />
+              <Stack.Screen
+                name="DevText"
+                component={DevText}
+                initialParams={{
+                  title: 'Dev Text',
+                  bgColor: bgColor,
+                  headerColor: headerColor,
+                  textColor: textColor,
+                  screenLocation: screenLocation,
+                }}
+                listeners={{
+                  focus: () => {
+                    setBgColor('#ffffff');
+                    setHeaderColor('#319177');
+                    setTextColor('#ffffff');
+                    setScreenLocation('DevText');
                   },
                 }}
               />
