@@ -1,6 +1,12 @@
 //* KQInput.jsx
 import React, {useMemo} from 'react';
-import {View, TextInput, StyleSheet} from 'react-native';
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {Text} from '../KQ-UI/';
 import {useColors, useFontStyles} from './KQUtilities';
 
@@ -24,7 +30,7 @@ const Input = ({
   maxCount = 250,
   ...props
 }) => {
-  const fontStyles = useFontStyles('open-4', 'small', 'black');
+  const fontStyles = useFontStyles('open-5', 'medium', 'black');
   const showCount = value?.length || 0;
   const maxCountColor = useColors(showCount > maxCount ? 'danger' : 'dark90');
 
@@ -32,11 +38,11 @@ const Input = ({
     if (!multiline) return {};
 
     const heightMap = {
-      small: {minHeight: 25, maxHeight: 40},
-      medium: {minHeight: 25, maxHeight: 75},
-      large: {minHeight: 25, maxHeight: 150},
-      xLarge: {minHeight: 25, maxHeight: 250},
-      full: {minHeight: 25},
+      small: {minHeight: 20, maxHeight: 40},
+      medium: {minHeight: 20, maxHeight: 75},
+      large: {minHeight: 20, maxHeight: 150},
+      xLarge: {minHeight: 20, maxHeight: 250},
+      full: {minHeight: 20},
     };
 
     return {...(heightMap[multiHeight] || heightMap.medium)};
@@ -73,7 +79,7 @@ const Input = ({
       {label && (
         <View style={styles.labelContainer}>
           <Text
-            size="medium"
+            size="small"
             font="open-6"
             style={[
               styles.label(validation, props.disabled, fullBorder),

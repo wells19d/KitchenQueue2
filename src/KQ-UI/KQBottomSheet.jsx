@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import {PanGestureHandler, State} from 'react-native-gesture-handler';
-import {useDeviceInfo} from '../hooks/useHooks';
 
 const {height} = Dimensions.get('window');
 
@@ -21,14 +20,7 @@ const KQBottomSheet = ({
   const translateY = useRef(new Animated.Value(height)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const [isFullyVisible, setIsFullyVisible] = useState(visible);
-  const deviceInfo = useDeviceInfo();
-  const [heightMulti, setHeightMulti] = useState(0.78);
-
-  useEffect(() => {
-    if (deviceInfo?.system?.os === 'Android') {
-      setHeightMulti(0.805);
-    }
-  }, [deviceInfo]);
+  const [heightMulti, setHeightMulti] = useState(0.8);
 
   useEffect(() => {
     if (visible) {
@@ -156,6 +148,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 5,
     // borderWidth: 1,
+    marginBottom: 55,
   },
 });
 

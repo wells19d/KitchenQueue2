@@ -35,14 +35,16 @@ const DevInputs = ({}) => {
       RightButton=""
       LeftAction={null}
       RightAction={null}
-      sheetOpen={false}>
+      sheetOpen={false}
+      useKeyboardHandling={true}>
       <Input
         label="Email"
         placeholder="Email"
         value={value}
         onChangeText={setValue}
-        capitalize={true}
+        capitalize={false}
         capitalMode="words"
+        caption="Enter your email address"
       />
       <Input
         label="Password"
@@ -63,11 +65,11 @@ const DevInputs = ({}) => {
         value={value2}
         onChangeText={setValue2}
         multiline
-        multiHeight="medium"
+        // multiHeight="medium"
         required
         caption="Enter a message"
         counter
-        maxCount={50}
+        maxCount={150}
       />
       <Input
         label="Notes"
@@ -78,7 +80,7 @@ const DevInputs = ({}) => {
         multiHeight="large"
         caption="Enter notes"
         counter
-        maxCount={150}
+        maxCount={250}
       />
     </Layout>
   );
