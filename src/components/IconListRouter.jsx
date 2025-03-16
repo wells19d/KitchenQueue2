@@ -41,6 +41,8 @@ export const Icons = {
   ),
   Dev: props => <MCIcons name="dev-to" size={20} color="#000" {...props} />,
   Edit: props => <MIIcons name="edit-note" size={20} color="#000" {...props} />,
+  EyeOn: props => <MCIcons name="eye" size={20} color="#000" {...props} />,
+  EyeOff: props => <MCIcons name="eye-off" size={20} color="#000" {...props} />,
   Favorite: props => <MCIcons name="star" size={20} color="#000" {...props} />,
   Filter: props => (
     <IIcons name="filter-outline" size={20} color="#000" {...props} />

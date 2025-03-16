@@ -1,4 +1,4 @@
-//* CenterMenuArray.js
+//* CenterMenuArray.jsx
 import {Icons} from '../../components/IconListRouter';
 
 export const menuArray = [
@@ -138,9 +138,9 @@ export const menuArray = [
             action: 'DevText',
           },
           {
-            title: 'Text Fields',
+            title: 'Inputs',
             icon: <Icons.Dev />,
-            action: 'DevTextFields',
+            action: 'DevInputs',
           },
           {
             title: 'Buttons',
