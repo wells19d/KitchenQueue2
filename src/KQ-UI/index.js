@@ -6,3 +6,4 @@ export {default as Layout} from './KQLayout';
 export {default as Modal} from './KQModal';
 export {KQModalProvider as ModalProvider, useModal} from './KQModalProvider';
 export {default as Button} from './KQButton';
+export {default as Input} from './KQInput';

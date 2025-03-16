@@ -23,6 +23,7 @@
 |-|-| index.js
 |-|-| KQBottomSheet.jsx
 |-|-| KQButton.jsx
+|-|-| KQInput.jsx
 |-|-| KQLayout.jsx
 |-|-| KQModal.jsx
 |-|-| KQModalProvider.jsx
@@ -61,10 +62,10 @@
 |-|-| Dev
 |-|-|-| DevButtons.jsx
 |-|-|-| DevDropdowns.jsx
+|-|-|-| DevInputs.jsx
 |-|-|-| DevModals.jsx
 |-|-|-| DevPlayground.jsx
 |-|-|-| DevText.jsx
-|-|-|-| DevTextFields.jsx
 |-|-| Home
 |-|-|-| Home.jsx
 |-|-| Shopping

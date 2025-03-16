@@ -16,7 +16,7 @@ import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
 import {BottomSheet, Modal} from './src/KQ-UI';
-import DevTextFields from './src/screens/Dev/DevTextFields';
+import DevInputs from './src/screens/Dev/DevInputs';
 import DevButtons from './src/screens/Dev/DevButtons';
 import DevModals from './src/screens/Dev/DevModals';
 import DevDropdowns from './src/screens/Dev/DevDropdowns';
@@ -193,10 +193,10 @@ const Main = () => {
                 }}
               />
               <Stack.Screen
-                name="DevTextFields"
-                component={DevTextFields}
+                name="DevInputs"
+                component={DevInputs}
                 initialParams={{
-                  title: 'Dev Text Fields',
+                  title: 'Dev Inputs',
                   bgColor: bgColor,
                   headerColor: headerColor,
                   textColor: textColor,
@@ -207,7 +207,7 @@ const Main = () => {
                     setBgColor('#ffffff');
                     setHeaderColor('#319177');
                     setTextColor('#ffffff');
-                    setScreenLocation('DevTextFields');
+                    setScreenLocation('DevInputs');
                   },
                 }}
               />

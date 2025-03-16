@@ -259,6 +259,8 @@ export const Icons = {
   ),
   Dev: props => <MCIcons name="dev-to" size={20} color="#000" {...props} />,
   Edit: props => <MIIcons name="edit-note" size={20} color="#000" {...props} />,
+  EyeOn: props => <MCIcons name="eye" size={20} color="#000" {...props} />,
+  EyeOff: props => <MCIcons name="eye-off" size={20} color="#000" {...props} />,
   Favorite: props => <MCIcons name="star" size={20} color="#000" {...props} />,
   Filter: props => (
     <IIcons name="filter-outline" size={20} color="#000" {...props} />
@@ -906,6 +908,8 @@ export {default as Layout} from './KQLayout';
 export {default as Modal} from './KQModal';
 export {KQModalProvider as ModalProvider, useModal} from './KQModalProvider';
 export {default as Button} from './KQButton';
+export {default as Input} from './KQInput';
+
 
 //* KQBottomSheet.jsx
 import React, {useEffect, useRef, useState} from 'react';
@@ -1148,6 +1152,166 @@ const ButtonStyles = StyleSheet.create({
 });
 
 export default React.memo(KQButton);
+
+
+//* KQInput.jsx
+import React, {useMemo} from 'react';
+import {View, TextInput, StyleSheet} from 'react-native';
+import {Text} from '../KQ-UI/';
+import {useColors, useFontStyles} from './KQUtilities';
+
+const Input = ({
+  label = '',
+  labelStyles = {},
+  required = false,
+  validation = false,
+  validationMessage = '',
+  value = '',
+  onChangeText = () => {},
+  capitalize = false,
+  capitalMode = 'none',
+  multiline = false,
+  multiHeight = 'medium',
+  scrollEnabled = true,
+  fullBorder = false,
+  caption = '',
+  accessoryRight = null,
+  counter = false,
+  maxCount = 250,
+  ...props
+}) => {
+  const fontStyles = useFontStyles('open-4', 'small', 'black');
+  const showCount = value?.length || 0;
+  const maxCountColor = useColors(showCount > maxCount ? 'danger' : 'dark90');
+
+  const multiMode = useMemo(() => {
+    if (!multiline) return {};
+
+    const heightMap = {
+      small: {minHeight: 25, maxHeight: 40},
+      medium: {minHeight: 25, maxHeight: 75},
+      large: {minHeight: 25, maxHeight: 150},
+      xLarge: {minHeight: 25, maxHeight: 250},
+      full: {minHeight: 25},
+    };
+
+    return {...(heightMap[multiHeight] || heightMap.medium)};
+  }, [multiline, multiHeight]);
+
+  const capMode = useMemo(
+    () => (multiline ? 'sentences' : capitalize ? capitalMode : 'none'),
+    [capitalize, capitalMode, multiline],
+  );
+
+  const InputInfoContainer = ({children}) => {
+    if (caption || counter) {
+      return (
+        <View
+          style={{
+            flexDirection: 'row',
+          }}>
+          {children}
+        </View>
+      );
+    }
+    return null;
+  };
+
+  const handleTextChange = text => {
+    if (text.length > maxCount) {
+      text = text.substring(0, maxCount); // Trim excess characters
+    }
+    onChangeText(text); // Update state
+  };
+
+  return (
+    <View style={styles.inputContainer}>
+      {label && (
+        <View style={styles.labelContainer}>
+          <Text
+            size="medium"
+            font="open-6"
+            style={[
+              styles.label(validation, props.disabled, fullBorder),
+              labelStyles,
+            ]}>
+            {label} {required && '*'}
+          </Text>
+        </View>
+      )}
+      <View style={styles.inputWrapper}>
+        <View style={styles.textInputContainer}>
+          <TextInput
+            value={value}
+            onChangeText={handleTextChange}
+            autoCapitalize={capMode}
+            multiline={multiline}
+            style={[fontStyles, multiMode, {padding: 0}]}
+            {...props}
+          />
+        </View>
+        {accessoryRight && (
+          <View style={styles.accessoriesContainer}>{accessoryRight()}</View>
+        )}
+      </View>
+      <InputInfoContainer>
+        {caption && (
+          <View style={{flex: 1}}>
+            <Text
+              size="xSmall"
+              kqColor="dark90"
+              font="open-5"
+              numberOfLines={1}>
+              ({caption})
+            </Text>
+          </View>
+        )}
+        {counter && (
+          <View style={{flex: caption ? 0 : 1, alignItems: 'flex-end'}}>
+            <Text
+              size="xSmall"
+              font="open-6"
+              kqColor={maxCountColor}
+              numberOfLines={1}>
+              ({showCount} / {maxCount})
+            </Text>
+          </View>
+        )}
+      </InputInfoContainer>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    marginHorizontal: 5,
+    marginVertical: 10,
+    paddingHorizontal: 2,
+  },
+  labelContainer: {position: 'relative', left: 2, marginBottom: 2},
+  label: (validation, disabled) => ({
+    color: validation ? '#fE4949' : disabled ? '#373d4390' : '#373d43',
+  }),
+  inputWrapper: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: '#c4c4c4',
+  },
+  textInputContainer: {
+    flex: 1,
+    paddingHorizontal: 2,
+    paddingTop: 2,
+    paddingBottom: 5,
+  },
+  accessoriesContainer: {
+    width: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+export default React.memo(Input);
+
 
 
 //* KQLayout.jsx
@@ -1435,7 +1599,11 @@ const KQModal = ({
   return (
     <TouchableWithoutFeedback
       onPress={size !== 'covered' ? handleCloseButton : undefined}>
-      <Animated.View style={[styles.backdrop, {opacity: fadeAnim}]}>
+      <Animated.View
+        style={[
+          globalView ? styles.backdropGlobal : styles.backdrop,
+          {opacity: fadeAnim},
+        ]}>
         <TouchableWithoutFeedback onPress={() => {}} accessible={false}>
           <Animated.View
             style={[styles.modalContainer, useSize, {opacity: fadeAnim}]}>
@@ -1487,7 +1655,18 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
+    zIndex: 9000,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backdropGlobal: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     zIndex: 9000,
     justifyContent: 'center',
     alignItems: 'center',
@@ -1748,6 +1927,7 @@ export const useColors = color => {
     warning: '#FCC945',
     danger: '#DA2C43',
     dark: '#373d43',
+    dark90: '#373d4390',
     basic: '#C4C4C4',
   };
 
@@ -3015,7 +3195,7 @@ import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
 import {BottomSheet, Modal} from './src/KQ-UI';
-import DevTextFields from './src/screens/Dev/DevTextFields';
+import DevInputs from './src/screens/Dev/DevInputs';
 import DevButtons from './src/screens/Dev/DevButtons';
 import DevModals from './src/screens/Dev/DevModals';
 import DevDropdowns from './src/screens/Dev/DevDropdowns';
@@ -3192,10 +3372,10 @@ const Main = () => {
                 }}
               />
               <Stack.Screen
-                name="DevTextFields"
-                component={DevTextFields}
+                name="DevInputs"
+                component={DevInputs}
                 initialParams={{
-                  title: 'Dev Text Fields',
+                  title: 'Dev Inputs',
                   bgColor: bgColor,
                   headerColor: headerColor,
                   textColor: textColor,
@@ -3206,7 +3386,7 @@ const Main = () => {
                     setBgColor('#ffffff');
                     setHeaderColor('#319177');
                     setTextColor('#ffffff');
-                    setScreenLocation('DevTextFields');
+                    setScreenLocation('DevInputs');
                   },
                 }}
               />
@@ -3298,6 +3478,7 @@ const Main = () => {
 };
 
 export default Main;
+
 
 
 
@@ -3700,7 +3881,7 @@ export default CenterMenu;
 
 
 
-//* CenterMenuArray.js
+//* CenterMenuArray.jsx
 import {Icons} from '../../components/IconListRouter';
 
 export const menuArray = [
@@ -3840,9 +4021,9 @@ export const menuArray = [
             action: 'DevText',
           },
           {
-            title: 'Text Fields',
+            title: 'Inputs',
             icon: <Icons.Dev />,
-            action: 'DevTextFields',
+            action: 'DevInputs',
           },
           {
             title: 'Buttons',
@@ -4463,14 +4644,32 @@ const DevText = () => {
 export default DevText;
 
 
-//* DevTextFields.jsx
-import React from 'react';
+//* DevInputs.jsx
+import React, {useState} from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Layout, Text} from '../../KQ-UI';
+import {Layout, Input} from '../../KQ-UI';
+import {TouchableWithoutFeedback} from 'react-native';
+import {Icons} from '../../components/IconListRouter';
 
-const DevTextFields = () => {
+const DevInputs = ({}) => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+
+  const [value, setValue] = useState('');
+  const [value1, setValue1] = useState('');
+  const [value2, setValue2] = useState('');
+  const [value3, setValue3] = useState('');
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+
+  const toggleSecureEntry = () => {
+    setSecureTextEntry(!secureTextEntry);
+  };
+
+  const renderIcon = () => (
+    <TouchableWithoutFeedback onPress={toggleSecureEntry}>
+      {secureTextEntry ? <Icons.EyeOff /> : <Icons.EyeOn />}
+    </TouchableWithoutFeedback>
+  );
 
   return (
     <Layout
@@ -4482,13 +4681,56 @@ const DevTextFields = () => {
       RightButton=""
       LeftAction={null}
       RightAction={null}
-      sheetOpen={false}
-      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
-      <Text>DevTextFields</Text>
+      sheetOpen={false}>
+      <Input
+        label="Email"
+        placeholder="Email"
+        value={value}
+        onChangeText={setValue}
+        capitalize={true}
+        capitalMode="words"
+      />
+      <Input
+        label="Password"
+        placeholder="Password"
+        value={value1}
+        onChangeText={setValue1}
+        capitalize={false}
+        accessoryRight={renderIcon}
+        secureTextEntry={secureTextEntry}
+        required
+        caption="Password must be at least 8 characters long"
+        counter
+        maxCount={500}
+      />
+      <Input
+        label="Multiple Lines"
+        placeholder="Enter text here"
+        value={value2}
+        onChangeText={setValue2}
+        multiline
+        multiHeight="medium"
+        required
+        caption="Enter a message"
+        counter
+        maxCount={50}
+      />
+      <Input
+        label="Notes"
+        placeholder="Type multiple lines..."
+        value={value3}
+        onChangeText={setValue3}
+        multiline
+        multiHeight="large"
+        caption="Enter notes"
+        counter
+        maxCount={150}
+      />
     </Layout>
   );
 };
 
-export default DevTextFields;
+export default DevInputs;
+
 
 

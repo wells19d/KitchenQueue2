@@ -13,6 +13,7 @@ export const useColors = color => {
     warning: '#FCC945',
     danger: '#DA2C43',
     dark: '#373d43',
+    dark90: '#373d4390',
     basic: '#C4C4C4',
   };
 
