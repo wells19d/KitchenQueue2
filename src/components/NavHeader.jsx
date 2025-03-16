@@ -62,7 +62,9 @@ const NavHeader = ({
                 : NavHeaderStyles.rightWrapper,
               {flex: 1},
             ]}>
-            {isLeft && icon && <View>{icon}</View>}
+            {isLeft && icon && (
+              <View style={NavHeaderStyles.iconPosition}>{icon}</View>
+            )}
             <View
               style={
                 isLeft
@@ -70,14 +72,14 @@ const NavHeader = ({
                   : NavHeaderStyles.rightContainerAlt
               }>
               {title && (
-                <Text
-                  size="small"
-                  style={{color: sheetOpen ? fadeText : textColor}}>
+                <Text style={{color: sheetOpen ? fadeText : textColor}}>
                   {title}
                 </Text>
               )}
             </View>
-            {!isLeft && icon && <View>{icon}</View>}
+            {!isLeft && icon && (
+              <View style={NavHeaderStyles.iconPosition}>{icon}</View>
+            )}
           </View>
         );
       } else {
@@ -89,20 +91,20 @@ const NavHeader = ({
                   ? NavHeaderStyles.leftWrapper
                   : NavHeaderStyles.rightWrapper
               }>
-              {isLeft && icon && <View>{icon}</View>}
+              {isLeft && icon && (
+                <View style={NavHeaderStyles.iconPosition}>{icon}</View>
+              )}
               <View
                 style={
                   isLeft
                     ? NavHeaderStyles.leftContainer
                     : NavHeaderStyles.rightContainerAlt
                 }>
-                {title && (
-                  <Text size="small" style={{color: textColor}}>
-                    {title}
-                  </Text>
-                )}
+                {title && <Text style={{color: textColor}}>{title}</Text>}
               </View>
-              {!isLeft && icon && <View>{icon}</View>}
+              {!isLeft && icon && (
+                <View style={NavHeaderStyles.iconPosition}>{icon}</View>
+              )}
             </View>
           </TouchableOpacity>
         );

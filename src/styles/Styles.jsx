@@ -241,6 +241,7 @@ export const NavHeaderStyles = StyleSheet.create({
     alignItems: 'flex-end',
     marginRight: 5,
   },
+  iconPosition: {position: 'relative', top: 1},
   textStyles: {
     fontSize: 16,
   },
@@ -719,7 +720,7 @@ export const CMStyles = StyleSheet.create({
   },
   sectionTO: {
     flexDirection: 'row',
-    marginVertical: 6,
+    paddingVertical: 5,
     alignItems: 'center',
   },
   sectionIcon: {marginRight: 20},

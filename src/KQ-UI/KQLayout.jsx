@@ -1,7 +1,13 @@
 //* KQLayout.jsx
-
 import React from 'react';
-import {View} from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  View,
+} from 'react-native';
 import NavHeader from '../components/NavHeader';
 
 const KQLayout = ({
@@ -16,30 +22,68 @@ const KQLayout = ({
   RightAction = null,
   sheetOpen = false,
   useHeader = true,
+  useKeyboardHandling = false,
   innerViewStyles = {},
   outerViewStyles = {},
 }) => {
-  return (
-    <View
-      style={[
-        {flex: 1, backgroundColor: bgColor, paddingBottom: 25},
-        outerViewStyles,
-      ]}>
-      {useHeader && (
-        <NavHeader
-          title={headerTitle}
-          headerColor={headerColor}
-          textColor={textColor}
-          LeftButton={LeftButton}
-          RightButton={RightButton}
-          LeftAction={LeftAction}
-          RightAction={RightAction}
-          sheetOpen={sheetOpen}
-        />
-      )}
-      <View style={[{flex: 1}, innerViewStyles]}>{children}</View>
-    </View>
-  );
+  if (useKeyboardHandling) {
+    return (
+      <View
+        style={[
+          {flex: 1, backgroundColor: bgColor, paddingBottom: 25},
+          outerViewStyles,
+        ]}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <View style={{flex: 1}}>
+            {useHeader && (
+              <NavHeader
+                title={headerTitle}
+                headerColor={headerColor}
+                textColor={textColor}
+                LeftButton={LeftButton}
+                RightButton={RightButton}
+                LeftAction={LeftAction}
+                RightAction={RightAction}
+                sheetOpen={sheetOpen}
+              />
+            )}
+            <KeyboardAvoidingView
+              style={{flex: 1}}
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
+              <ScrollView
+                onScrollBeginDrag={Keyboard.dismiss}
+                contentContainerStyle={{flexGrow: 1}}>
+                <View style={[{flex: 1}, innerViewStyles]}>{children}</View>
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    );
+  } else {
+    return (
+      <View
+        style={[
+          {flex: 1, backgroundColor: bgColor, paddingBottom: 25},
+          outerViewStyles,
+        ]}>
+        {useHeader && (
+          <NavHeader
+            title={headerTitle}
+            headerColor={headerColor}
+            textColor={textColor}
+            LeftButton={LeftButton}
+            RightButton={RightButton}
+            LeftAction={LeftAction}
+            RightAction={RightAction}
+            sheetOpen={sheetOpen}
+          />
+        )}
+        <View style={[{flex: 1}, innerViewStyles]}>{children}</View>
+      </View>
+    );
+  }
 };
 
 export default KQLayout;

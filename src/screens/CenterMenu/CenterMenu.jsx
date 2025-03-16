@@ -100,7 +100,7 @@ function CenterMenu(props) {
                   onPress={() => handleOnPress(item.action)}
                   style={CMStyles.sectionTO}>
                   <View style={CMStyles.sectionIcon}>{item.icon}</View>
-                  <Text size="small">{item.title}</Text>
+                  <Text>{item.title}</Text>
                 </TouchableOpacity>
               ),
             )}

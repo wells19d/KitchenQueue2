@@ -68,7 +68,7 @@ const App = () => {
         <GestureHandlerRootView style={{flex: 1}}>
           <SafeAreaProvider>
             <ModalProvider>
-              <View style={{flex: 1}}>
+              <View style={{flex: 1, backgroundColor: '#fff'}}>
                 <StatusBar barStyle="light-content" />
                 <Main />
                 <Toast config={toastConfig} />

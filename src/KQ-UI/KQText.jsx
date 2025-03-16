@@ -6,9 +6,9 @@ import {useFontStyles} from './KQUtilities';
 const KQText = ({
   children,
   style,
-  size = 'medium',
+  size = 'small',
   kqColor = 'black',
-  font = 'open-5',
+  font = 'open-6',
   ...props
 }) => {
   const fontStyles = useFontStyles(font, size, kqColor);
