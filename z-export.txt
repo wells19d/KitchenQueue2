@@ -643,7 +643,7 @@ import {
 import {Text} from '../KQ-UI';
 
 const NavMenu = props => {
-  const {bottomHeight, bottomWidth, toggleMenu, device} = props;
+  const {bottomHeight, bottomWidth, toggleMenu, device, setIsSheetOpen} = props;
   const navigation = useNavigation();
 
   const navHeight = useMemo(
@@ -696,6 +696,7 @@ const NavMenu = props => {
   const navItems = getNavBarLayout(userItems);
 
   const handleNavPress = item => {
+    setIsSheetOpen(false);
     const allowedScreens = ['Home', 'ShoppingList', 'CupboardList', 'Account'];
 
     if (allowedScreens.includes(item.screen)) {
@@ -736,7 +737,9 @@ const NavMenu = props => {
                 onPress={() => handleNavPress(item)}
                 style={MenuButtonStyles.menuButton}>
                 {item.icon}
-                <Text size="xSmall">{item.title}</Text>
+                <Text size="tiny" font="open-6">
+                  {item.title}
+                </Text>
               </TouchableOpacity>
             );
           })}
@@ -747,6 +750,7 @@ const NavMenu = props => {
 };
 
 export default NavMenu;
+
 
 
 
@@ -2940,7 +2944,7 @@ const Main = () => {
       visible={isSheetOpen}
       onClose={() => setIsSheetOpen(false)}
       snapPoints={[0.01, 0.95]}>
-      <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} />
+      <CenterMenu borrowedParams={borrowedParams} />
     </BottomSheet>
   );
 
@@ -3161,7 +3165,7 @@ const Main = () => {
         edges={['top']}>
         <View style={{flex: 1}}>
           <Navigation />
-          <BottomMenu />
+          <BottomMenu toggleMenu={toggleMenu} />
         </View>
       </SafeAreaView>
       <SafeAreaView style={{height: bottomHeight}} edges={['bottom']}>
@@ -3169,6 +3173,7 @@ const Main = () => {
           bottomHeight={bottomHeight}
           bottomWidth={device?.dimensions?.width}
           toggleMenu={toggleMenu}
+          setIsSheetOpen={setIsSheetOpen}
           device={device}
         />
       </SafeAreaView>
@@ -3178,6 +3183,7 @@ const Main = () => {
 };
 
 export default Main;
+
 
 
 

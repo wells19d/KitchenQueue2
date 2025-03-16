@@ -61,7 +61,7 @@ const Main = () => {
       visible={isSheetOpen}
       onClose={() => setIsSheetOpen(false)}
       snapPoints={[0.01, 0.95]}>
-      <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} />
+      <CenterMenu borrowedParams={borrowedParams} />
     </BottomSheet>
   );
 
@@ -282,7 +282,7 @@ const Main = () => {
         edges={['top']}>
         <View style={{flex: 1}}>
           <Navigation />
-          <BottomMenu />
+          <BottomMenu toggleMenu={toggleMenu} />
         </View>
       </SafeAreaView>
       <SafeAreaView style={{height: bottomHeight}} edges={['bottom']}>
@@ -290,6 +290,7 @@ const Main = () => {
           bottomHeight={bottomHeight}
           bottomWidth={device?.dimensions?.width}
           toggleMenu={toggleMenu}
+          setIsSheetOpen={setIsSheetOpen}
           device={device}
         />
       </SafeAreaView>

@@ -13,7 +13,7 @@ import {
 import {Text} from '../KQ-UI';
 
 const NavMenu = props => {
-  const {bottomHeight, bottomWidth, toggleMenu, device} = props;
+  const {bottomHeight, bottomWidth, toggleMenu, device, setIsSheetOpen} = props;
   const navigation = useNavigation();
 
   const navHeight = useMemo(
@@ -66,6 +66,7 @@ const NavMenu = props => {
   const navItems = getNavBarLayout(userItems);
 
   const handleNavPress = item => {
+    setIsSheetOpen(false);
     const allowedScreens = ['Home', 'ShoppingList', 'CupboardList', 'Account'];
 
     if (allowedScreens.includes(item.screen)) {
@@ -106,7 +107,9 @@ const NavMenu = props => {
                 onPress={() => handleNavPress(item)}
                 style={MenuButtonStyles.menuButton}>
                 {item.icon}
-                <Text size="xSmall">{item.title}</Text>
+                <Text size="tiny" font="open-6">
+                  {item.title}
+                </Text>
               </TouchableOpacity>
             );
           })}
