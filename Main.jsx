@@ -61,7 +61,7 @@ const Main = () => {
       visible={isSheetOpen}
       onClose={() => setIsSheetOpen(false)}
       snapPoints={[0.01, 0.95]}>
-      <CenterMenu borrowedParams={borrowedParams} />
+      <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} />
     </BottomSheet>
   );
 
