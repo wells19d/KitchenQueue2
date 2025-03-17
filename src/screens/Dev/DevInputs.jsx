@@ -45,6 +45,13 @@ const DevInputs = ({}) => {
         capitalize={false}
         capitalMode="words"
         caption="Enter your email address"
+        // keyboardType="default"
+        // keyboardType="number-pad" // ios, has no decimal point
+        // keyboardType="decimal-pad"
+        // keyboardType="numeric" // ios, shows letters on number pad
+        // keyboardType="email-address"
+        // keyboardType="phone-pad" // same as numeric
+        // keyboardType="url"
       />
       <Input
         label="Password"

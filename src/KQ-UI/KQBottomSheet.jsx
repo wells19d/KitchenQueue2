@@ -152,4 +152,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default KQBottomSheet;
+export default React.memo(KQBottomSheet);

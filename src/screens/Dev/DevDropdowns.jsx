@@ -18,9 +18,10 @@ const DevDropdowns = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
-      <Text>DevDropdowns</Text>
-    </Layout>
+      innerViewStyles={{
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}></Layout>
   );
 };
 

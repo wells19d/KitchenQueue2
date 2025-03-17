@@ -1,16 +1,10 @@
 //* KQInput.jsx
 import React, {useMemo} from 'react';
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import {View, TextInput, StyleSheet} from 'react-native';
 import {Text} from '../KQ-UI/';
 import {useColors, useFontStyles} from './KQUtilities';
 
-const Input = ({
+const KQInput = ({
   label = '',
   labelStyles = {},
   required = false,
@@ -160,4 +154,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(Input);
+export default React.memo(KQInput);
