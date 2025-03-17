@@ -348,4 +348,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default KQModal;
+export default React.memo(KQModal);
