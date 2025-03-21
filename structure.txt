@@ -23,10 +23,10 @@
 |-|-| index.js
 |-|-| KQBottomSheet.jsx
 |-|-| KQButton.jsx
+|-|-| KQDropdown.jsx // not developed
 |-|-| KQInput.jsx
 |-|-| KQLayout.jsx
 |-|-| KQModal.jsx
-|-|-| KQModalProvider.jsx
 |-|-| KQText.jsx
 |-|-| KQToast.jsx
 |-|-| KQUtilities.jsx
@@ -73,7 +73,10 @@
 |-| styles
 |-|-| Styles.jsx
 |-| utilities
+|-|-| categories.js
 |-|-| deviceUtils.js
+|-|-| measurements.js
+|-|-| nutrients.js
 .eslintrc.js
 .gitignore
 .prettierrc.js

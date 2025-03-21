@@ -17,7 +17,6 @@ const KQInput = ({
   multiline = false,
   multiHeight = 'medium',
   scrollEnabled = true,
-  fullBorder = false,
   caption = '',
   accessoryRight = null,
   counter = false,
@@ -53,6 +52,8 @@ const KQInput = ({
         <View
           style={{
             flexDirection: 'row',
+            paddingHorizontal: 2,
+            marginTop: 2,
           }}>
           {children}
         </View>
@@ -75,10 +76,7 @@ const KQInput = ({
           <Text
             size="small"
             font="open-6"
-            style={[
-              styles.label(validation, props.disabled, fullBorder),
-              labelStyles,
-            ]}>
+            style={[styles.label(validation, props.disabled), labelStyles]}>
             {label} {required && '*'}
           </Text>
         </View>
@@ -126,7 +124,7 @@ const KQInput = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styles = {
   inputContainer: {
     marginHorizontal: 5,
     marginVertical: 10,
@@ -152,6 +150,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+};
 
 export default React.memo(KQInput);

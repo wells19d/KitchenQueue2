@@ -1,14 +1,14 @@
 //* DevModals.jsx
 import React, {useState} from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Button, View} from 'react-native';
-import {Layout, Modal, Text, useModal} from '../../KQ-UI';
+import {View} from 'react-native';
+import {Button, Layout, Modal, Text} from '../../KQ-UI';
 
 const DevModals = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-  const {showModal} = useModal();
-  const [showModal2, setShowModal2] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <Layout
@@ -22,53 +22,32 @@ const DevModals = () => {
       RightAction={null}
       sheetOpen={false}
       innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
-      <>
-        <Button
-          title="Open Global Modal"
-          onPress={() =>
-            showModal({
-              size: 'full',
-              title: 'Welcome to the App!',
-              // font: 'noto-9',
-              fontSize: 'large',
-              centered: false,
-              globalView: true,
-              // noTitle: true,
-              // noCloseButton: true,
-              // noHeader: true,
-              children: (
-                <View style={{flex: 1, borderWidth: 0.2}}>
-                  <Text>Test Test Test</Text>
-                </View>
-              ),
-            })
-          }
-        />
-        <Button
-          title="Open Component Modal"
-          onPress={() => setShowModal2(true)}
-        />
-      </>
       <Modal
-        size="custom"
-        title="Welcome to the App, it's got the looks that kill!"
-        // font="Noto-9"
-        fontSize="medium"
-        visible={showModal2}
+        visible={showModal}
+        header="Modal Title"
+        headerFont="open-6"
+        headerSize="small"
+        headerColor="white"
         height="95%"
-        width="92%"
-        centered
-        onClose={() => setShowModal2(false)}
-        // noTitle
-        // noHeader
-        // noCloseButton
-      >
-        <View style={{flex: 1, borderWidth: 0.2}}>
-          <Text>Test Test Test</Text>
+        width="95%"
+        // fullScreen
+        hideHeader
+        // hideTitle
+        // hideClose
+        onClose={() => setShowModal(false)}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text>Show me the money!</Text>
+          <Button onPress={() => setShowModal(false)}>Close Modal</Button>
         </View>
       </Modal>
+      <Button onPress={() => setShowModal(true)}>Show Modal</Button>
     </Layout>
   );
 };
 
-export default DevModals;
+export default React.memo(DevModals);

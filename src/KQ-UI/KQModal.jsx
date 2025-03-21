@@ -1,351 +1,240 @@
 //* KQModal.jsx
-import React, {useEffect, useMemo, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  Animated,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
-  StyleSheet,
+  Keyboard,
+  TouchableOpacity,
+  Modal,
+  StatusBar,
+  Pressable,
+  Dimensions,
 } from 'react-native';
-import {Text} from '../KQ-UI';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useDeviceInfo, useProfile} from '../hooks/useHooks';
 import {Icons} from '../components/IconListRouter';
+import {Text} from '../KQ-UI';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
-import {isHBDevice} from '../utilities/deviceUtils';
+import {useProfile} from '../hooks/useHooks';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useColors} from './KQUtilities';
 
 const KQModal = ({
-  size = 'full',
-  title = '',
-  font = 'open-6',
-  fontSize = 'medium',
-  hapticFeedback = 'light',
+  visible,
+  header = '',
+  children,
   height = '90%',
   width = '90%',
-  centered = false,
-  visible = false,
-  noTitle = false,
-  noHeader = false,
-  noCloseButton = false,
-  globalView = false,
-  children,
-  onClose = () => {},
+  headerFont = 'open-6',
+  headerSize = 'small',
+  headerColor = 'white',
+  hideHeader = false,
+  hideTitle = false,
+  hideClose = false,
+  fullScreen = false,
+  hapticFeedback = 'light',
+  onClose,
 }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
   const useHaptics = setHapticFeedback();
   const profile = useProfile();
   const insets = useSafeAreaInsets();
-  const device = useDeviceInfo();
-  const isHB = isHBDevice(device?.system?.model);
-  const deviceWidth = device?.dimensions?.width || 300;
-  const deviceHeight = device?.dimensions.height || 400;
+  const isClosingRef = useRef(false);
 
-  let convertedHeight = parseInt(height) / 100;
-  let convertedWidth = parseInt(width) / 100;
+  const handleClose = (event = null) => {
+    const isBackdropTap = event?.target === event?.currentTarget;
+    const isManualCall = !event;
 
-  const handleCloseButton = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || hapticFeedback);
-    onClose();
+    if ((isBackdropTap || isManualCall) && !isClosingRef.current) {
+      isClosingRef.current = true;
+
+      useHaptics(profile?.userSettings?.hapticStrength || hapticFeedback);
+      Keyboard.dismiss();
+
+      setTimeout(() => {
+        onClose?.();
+        isClosingRef.current = false;
+      }, 100);
+    }
   };
+
+  const Header = () => {
+    if (hideHeader) {
+      return null;
+    }
+    return (
+      <View style={styles.headerWrapper(fullScreen)}>
+        <View style={styles.headerContainer}>
+          {!hideTitle && (
+            <Text
+              kqColor={useColors(headerColor)}
+              font={headerFont}
+              size={headerSize}>
+              {header}
+            </Text>
+          )}
+        </View>
+        {!hideClose && (
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => handleClose()}>
+            <Icons.Close size={25} color={'white'} />
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
+
+  const [screenSize, setScreenSize] = useState({
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
+  });
 
   useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: visible ? 1 : 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  }, [visible]);
+    const updateScreenSize = () => {
+      setScreenSize({
+        height: Dimensions.get('window').height,
+        width: Dimensions.get('window').width,
+      });
+    };
 
-  const standardSizes = {
-    small: {
-      top: 10,
-      bottom: deviceHeight * 0.65 - insets.top,
-      left: 35,
-      right: 35,
-    },
-    medium: {
-      top: 10,
-      bottom: deviceHeight * 0.4 - insets.top,
-      left: 30,
-      right: 30,
-    },
-    large: {
-      top: 10,
-      bottom: deviceHeight * 0.25 - insets.top,
-      left: insets.left + 25,
-      right: insets.right + 25,
-    },
-    full: {
-      top: 10,
-      bottom: 10,
-      left: 10,
-      right: 10,
-    },
-    covered: {
-      top: 2,
-      bottom: 2,
-      left: 2,
-      right: 2,
-    },
-    custom: {
-      top: 10,
-      bottom: Math.max(5, deviceHeight * (1 - convertedHeight) + 10),
-      left: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + 10),
-      right: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + 10),
-    },
-  };
+    const subscription = Dimensions.addEventListener(
+      'change',
+      updateScreenSize,
+    );
 
-  const centeredSizes = {
-    small: {
-      top: deviceHeight * 0.3,
-      bottom: deviceHeight * 0.3,
-      left: centered ? deviceWidth * 0.0875 : insets.left + 35,
-      right: centered ? deviceWidth * 0.0875 : insets.right + 35,
-    },
-    medium: {
-      top: centered ? deviceHeight * 0.2 : insets.top + 10,
-      bottom: centered ? deviceHeight * 0.2 : deviceHeight * 0.5 - insets.top,
-      left: centered ? deviceWidth * 0.075 : insets.left + 30,
-      right: centered ? deviceWidth * 0.075 : insets.right + 30,
-    },
-    large: {
-      top: centered ? deviceHeight * 0.125 : insets.top + 10,
-      bottom: centered
-        ? deviceHeight * 0.125
-        : deviceHeight * 0.25 - insets.top,
-      left: centered ? deviceWidth * 0.0625 : insets.left + 25,
-      right: centered ? deviceWidth * 0.0625 : insets.right + 25,
-    },
-    full: {
-      top: 10,
-      bottom: 10,
-      left: 10,
-      right: 10,
-    },
-    covered: {
-      top: 2,
-      bottom: 2,
-      left: 2,
-      right: 2,
-    },
-    custom: {
-      top: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      bottom: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      left: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-      right: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-    },
-  };
+    return () => subscription?.remove();
+  }, []);
 
-  const globalSizes = {
-    small: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.75 - insets.top,
-      left: insets.left + 35,
-      right: insets.right + 35,
-    },
-    medium: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.5 - insets.top,
-      left: insets.left + 30,
-      right: insets.right + 30,
-    },
-    large: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.25 - insets.top,
-      left: insets.left + 25,
-      right: insets.right + 25,
-    },
-    full: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.1 - insets.top,
-      left: insets.left + 20,
-      right: insets.right + 20,
-    },
-    covered: {
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-    },
-    custom: {
-      top: insets.top + 10,
-      bottom: deviceHeight * (1 - convertedHeight) + insets.bottom,
-      left: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + insets.left),
-      right: Math.max(
-        5,
-        (deviceWidth * (1 - convertedWidth)) / 2 + insets.right,
-      ),
-    },
-  };
+  const prsHeight = Math.min(Math.max(parseFloat(height), 75), 100);
+  const prsWidth = Math.min(Math.max(parseFloat(width), 75), 100);
 
-  const globalCenteredSizes = {
-    small: {
-      top: deviceHeight * 0.35,
-      bottom: deviceHeight * 0.35,
-      left: deviceWidth * 0.0875,
-      right: deviceWidth * 0.0875,
-    },
-    medium: {
-      top: deviceHeight * 0.2,
-      bottom: deviceHeight * 0.2,
-      left: deviceWidth * 0.075,
-      right: deviceWidth * 0.075,
-    },
-    large: {
-      top: deviceHeight * 0.125,
-      bottom: deviceHeight * 0.125,
-      left: deviceWidth * 0.0625,
-      right: deviceWidth * 0.0625,
-    },
-    full: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.1 - insets.top,
-      left: insets.left + 20,
-      right: insets.right + 20,
-    },
-    covered: {
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-    },
-    custom: {
-      top: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      bottom: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      left: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-      right: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-    },
-  };
+  const topHeight = fullScreen
+    ? 0
+    : insets.top + (screenSize.height - (screenSize.height * prsHeight) / 100);
+  const btmHeight = fullScreen
+    ? 0
+    : insets.bottom +
+      (screenSize.height - (screenSize.height * prsHeight) / 100);
+  const midHeight = screenSize.height - topHeight - btmHeight;
 
-  const useSize = useMemo(() => {
-    if (!globalView && !centered) {
-      return standardSizes[size];
-    }
-    if (!globalView && centered) {
-      return centeredSizes[size];
-    }
-    if (globalView && !centered) {
-      return globalSizes[size];
-    }
-    if (globalView && centered) {
-      return globalCenteredSizes[size];
-    }
-  }, [centered, size, globalView, convertedHeight, convertedWidth]);
+  const midLeftWidth = fullScreen
+    ? 0
+    : insets.left + (screenSize.width - (screenSize.width * prsWidth) / 100);
+  const midRightWidth = fullScreen
+    ? 0
+    : insets.right + (screenSize.width - (screenSize.width * prsWidth) / 100);
 
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   return (
-    <TouchableWithoutFeedback
-      onPress={size !== 'covered' ? handleCloseButton : undefined}>
-      <Animated.View
-        style={[
-          globalView ? styles.backdropGlobal : styles.backdrop,
-          {opacity: fadeAnim},
-        ]}>
-        <TouchableWithoutFeedback onPress={() => {}} accessible={false}>
-          <Animated.View
-            style={[styles.modalContainer, useSize, {opacity: fadeAnim}]}>
-            {size !== 'covered' && !noHeader && (
-              <View style={styles.header}>
-                <View
-                  style={[
-                    styles.titleContainer,
-                    noCloseButton && {marginRight: 0},
-                  ]}>
-                  {!noTitle && (
-                    <Text size={fontSize} font={font} numberOfLines={1}>
-                      {title}
-                    </Text>
-                  )}
-                </View>
-                {!noCloseButton && (
-                  <TouchableOpacity
-                    onPress={handleCloseButton}
-                    style={styles.closeButton}>
-                    <Icons.Close />
-                  </TouchableOpacity>
-                )}
-              </View>
-            )}
-            <View
-              style={[
-                styles.childrenContainer,
-                {
-                  marginTop:
-                    size === 'covered' ? insets.top : noHeader ? 0 : 10,
-                  marginBottom:
-                    size === 'covered' ? (isHB ? 0 : insets.bottom + 40) : 0,
-                },
-              ]}>
-              {children}
-            </View>
-          </Animated.View>
-        </TouchableWithoutFeedback>
-      </Animated.View>
-    </TouchableWithoutFeedback>
+    <Modal
+      visible={visible}
+      animationType="fade"
+      transparent={true}
+      statusBarTranslucent
+      onRequestClose={handleClose}>
+      <StatusBar
+        barStyle={fullScreen ? 'dark-content' : 'light-content'}
+        backgroundColor={'rgba(0,0,0,0.5)'}
+        translucent
+      />
+      <View style={styles.wrapper}>
+        <Pressable
+          style={styles.pressTop(topHeight, screenSize)}
+          onPress={handleClose}
+        />
+        <View style={styles.container}>
+          <Pressable
+            style={styles.pressLeft(midLeftWidth, midHeight)}
+            onPress={handleClose}
+          />
+          <View style={styles.subContainer(fullScreen, midHeight, insets)}>
+            <Header />
+            <View style={{flex: 1}}>{children}</View>
+          </View>
+          <Pressable
+            style={styles.pressRight(midRightWidth, midHeight)}
+            onPress={handleClose}
+          />
+        </View>
+        <Pressable
+          style={styles.pressBtm(btmHeight, screenSize)}
+          onPress={handleClose}
+        />
+      </View>
+    </Modal>
   );
 };
 
-const styles = StyleSheet.create({
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#fff',
-    zIndex: 9000,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backdropGlobal: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    zIndex: 9000,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    position: 'absolute',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 5,
-    borderWidth: 1.5,
-    borderColor: '#319177',
-    shadowColor: 'black',
-    shadowOffset: {width: 2, height: 3},
-    shadowOpacity: 0.3,
-    elevation: 5,
-  },
-  header: {
-    flexDirection: 'row',
-  },
-  titleContainer: {
+export default React.memo(KQModal);
+
+const styles = {
+  wrapper: {
     flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  pressTop: (topHeight, screenSize) => ({
+    height: topHeight,
+    width: screenSize.width,
+    backgroundColor: 'transparent',
+  }),
+  pressBtm: (btmHeight, screenSize) => ({
+    height: btmHeight,
+    width: screenSize.width,
+    backgroundColor: 'transparent',
+  }),
+  pressLeft: (midLeftWidth, midHeight) => ({
+    width: midLeftWidth,
+    height: midHeight,
+    backgroundColor: 'transparent',
+  }),
+  pressRight: (midRightWidth, midHeight) => ({
+    width: midRightWidth,
+    height: midHeight,
+    backgroundColor: 'transparent',
+  }),
+  container: {flex: 1, flexDirection: 'row'},
+  subContainer: (fullScreen, midHeight, insets) => ({
+    flex: 1,
+    height: midHeight,
+    borderWidth: 1,
+    borderColor: '#319177',
+    backgroundColor: '#fff',
+    paddingTop: fullScreen ? insets.top : 0,
+    paddingBottom: fullScreen ? insets.bottom : 0,
+    borderRadius: fullScreen ? 0 : 10,
+    shadowColor: fullScreen ? '' : 'black',
+    shadowOffset: fullScreen ? {} : {width: 3, height: 4},
+    shadowOpacity: fullScreen ? 0 : 0.5,
+    elevation: fullScreen ? 0 : 7,
+  }),
+
+  headerWrapper: fullScreen => ({
+    flexDirection: 'row',
+    borderWidth: fullScreen ? 0 : 1,
+    borderTopRightRadius: fullScreen ? 0 : 8,
+    borderTopLeftRadius: fullScreen ? 0 : 8,
+    borderColor: '#319177',
+    backgroundColor: '#319177',
+  }),
+  headerContainer: {
+    flex: 1,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 37,
-    marginRight: -37,
-    paddingRight: 42,
-    paddingLeft: 5,
   },
   closeButton: {
-    borderWidth: 2,
-    borderColor: '#C4C4C4',
-    borderRadius: 5,
-    margin: 1,
-    width: 35,
-    height: 35,
+    position: 'absolute',
+    zIndex: 999,
+    right: 0,
+    borderWidth: 1.5,
+    backgroundColor: '#319177',
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 5,
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    borderColor: 'white',
   },
-  childrenContainer: {
-    flex: 1,
-  },
-});
-
-export default React.memo(KQModal);
+};
