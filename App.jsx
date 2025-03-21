@@ -19,7 +19,6 @@ import {toastConfig} from './src/KQ-UI/KQToast';
 import Main from './Main';
 import {initializeApp, getApps} from '@react-native-firebase/app';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {ModalProvider} from './src/KQ-UI';
 
 const App = () => {
   if (!getApps().length) {
@@ -67,13 +66,11 @@ const App = () => {
       <PersistGate loading={<SplashScreen />} persistor={persistor}>
         <GestureHandlerRootView style={{flex: 1}}>
           <SafeAreaProvider>
-            <ModalProvider>
-              <View style={{flex: 1, backgroundColor: '#fff'}}>
-                <StatusBar barStyle="light-content" />
-                <Main />
-                <Toast config={toastConfig} />
-              </View>
-            </ModalProvider>
+            <View style={{flex: 1, backgroundColor: '#fff'}}>
+              <StatusBar barStyle="light-content" />
+              <Main />
+              <Toast config={toastConfig} />
+            </View>
           </SafeAreaProvider>
         </GestureHandlerRootView>
       </PersistGate>

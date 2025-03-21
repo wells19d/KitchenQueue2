@@ -62,12 +62,12 @@ module.exports = mergeConfig(getDefaultConfig(__dirname), config);
     "@react-native-firebase/app": "^21.12.0",
     "@react-native-firebase/auth": "^21.12.0",
     "@react-native-firebase/firestore": "^21.12.0",
-    "@react-navigation/native": "7.0.15",
-    "@react-navigation/native-stack": "7.2.1",
-    "@shopify/flash-list": "1.7.3",
+    "@react-navigation/native": "7.0.17",
+    "@react-navigation/native-stack": "7.3.1",
+    "@shopify/flash-list": "1.7.6",
     "pluralize": "8.0.0",
     "react": "19.0.0",
-    "react-native": "0.78.0",
+    "react-native": "0.78.1",
     "react-native-config": "1.5.5",
     "react-native-device-info": "14.0.4",
     "react-native-gesture-handler": "2.24.0",
@@ -75,7 +75,7 @@ module.exports = mergeConfig(getDefaultConfig(__dirname), config);
     "react-native-permissions": "5.2.6",
     "react-native-reanimated": "3.17.1",
     "react-native-safe-area-context": "^5.3.0",
-    "react-native-screens": "4.9.1",
+    "react-native-screens": "4.9.2",
     "react-native-svg": "15.11.2",
     "react-native-toast-message": "2.2.1",
     "react-native-uuid": "2.0.3",
@@ -86,21 +86,27 @@ module.exports = mergeConfig(getDefaultConfig(__dirname), config);
     "redux-saga": "1.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.9",
-    "@babel/runtime": "^7.26.9",
+    "@babel/core": "^7.26.10",
+    "@babel/helpers": "^7.26.10",
+    "@babel/runtime": "^7.26.10",
     "@react-native-community/cli": "15.1.3",
     "@react-native-community/cli-platform-android": "15.1.3",
     "@react-native-community/cli-platform-ios": "15.1.3",
-    "@react-native/babel-preset": "0.78.0",
-    "@react-native/eslint-config": "0.78.0",
-    "@react-native/metro-config": "0.78.0",
-    "@react-native/typescript-config": "0.78.0",
+    "@react-native/babel-preset": "0.78.1",
+    "@react-native/eslint-config": "0.78.1",
+    "@react-native/metro-config": "0.78.1",
+    "@react-native/typescript-config": "0.78.1",
     "react-test-renderer": "19.0.0"
+  },
+  "resolutions": {
+    "@babel/runtime": "^7.26.10",
+    "@babel/helpers": "^7.26.10"
   },
   "engines": {
     "node": ">=18"
   }
 }
+
 
 
 //* react-native.config.js
@@ -310,6 +316,7 @@ export const Icons = {
   Wave: props => <MCIcons name="wave" size={20} color="#000" {...props} />,
   Waves: props => <MCIcons name="waves" size={20} color="#000" {...props} />,
 };
+
 
 
 //*NavHeader.jsx
@@ -626,8 +633,6 @@ const NavHeader = ({
 
 export default React.memo(NavHeader);
 
-
-
 //*NavMenu.jsx
 import React, {useMemo} from 'react';
 import {Alert, TouchableOpacity, View} from 'react-native';
@@ -752,8 +757,6 @@ const NavMenu = props => {
 export default NavMenu;
 
 
-
-
 //*SplashScreen.jsx
 import React from 'react';
 import {View, Text, StyleSheet, ActivityIndicator, Image} from 'react-native';
@@ -795,6 +798,7 @@ const styles = StyleSheet.create({
 });
 
 export default SplashScreen;
+
 
 //*setHapticFeedback.jsx
 import HapticFeedback from 'react-native-haptic-feedback';
@@ -913,9 +917,10 @@ export {default as BottomSheet} from './KQBottomSheet';
 export {default as Toast} from './KQToast';
 export {default as Layout} from './KQLayout';
 export {default as Modal} from './KQModal';
-export {KQModalProvider as ModalProvider, useModal} from './KQModalProvider';
 export {default as Button} from './KQButton';
 export {default as Input} from './KQInput';
+export {default as Dropdown} from './KQDropdown';
+
 
 
 //* KQBottomSheet.jsx
@@ -1075,7 +1080,6 @@ const styles = StyleSheet.create({
 export default React.memo(KQBottomSheet);
 
 
-
 //* KQButton.jsx
 import React, {useCallback} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
@@ -1155,20 +1159,21 @@ const ButtonStyles = StyleSheet.create({
 
 export default React.memo(KQButton);
 
+//* KQDropdown.jsx
+import React from 'react';
+
+const KQDropdown = ({}) => {};
+
+export default React.memo(KQDropdown);
+
 
 //* KQInput.jsx
 import React, {useMemo} from 'react';
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import {View, TextInput, StyleSheet} from 'react-native';
 import {Text} from '../KQ-UI/';
 import {useColors, useFontStyles} from './KQUtilities';
 
-const Input = ({
+const KQInput = ({
   label = '',
   labelStyles = {},
   required = false,
@@ -1181,7 +1186,6 @@ const Input = ({
   multiline = false,
   multiHeight = 'medium',
   scrollEnabled = true,
-  fullBorder = false,
   caption = '',
   accessoryRight = null,
   counter = false,
@@ -1217,6 +1221,8 @@ const Input = ({
         <View
           style={{
             flexDirection: 'row',
+            paddingHorizontal: 2,
+            marginTop: 2,
           }}>
           {children}
         </View>
@@ -1239,10 +1245,7 @@ const Input = ({
           <Text
             size="small"
             font="open-6"
-            style={[
-              styles.label(validation, props.disabled, fullBorder),
-              labelStyles,
-            ]}>
+            style={[styles.label(validation, props.disabled), labelStyles]}>
             {label} {required && '*'}
           </Text>
         </View>
@@ -1290,7 +1293,7 @@ const Input = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styles = {
   inputContainer: {
     marginHorizontal: 5,
     marginVertical: 10,
@@ -1316,11 +1319,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+};
 
-export default React.memo(Input);
-
-
+export default React.memo(KQInput);
 
 
 //* KQLayout.jsx
@@ -1415,356 +1416,245 @@ export default KQLayout;
 
 
 //* KQModal.jsx
-import React, {useEffect, useMemo, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  Animated,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
-  StyleSheet,
+  Keyboard,
+  TouchableOpacity,
+  Modal,
+  StatusBar,
+  Pressable,
+  Dimensions,
 } from 'react-native';
-import {Text} from '../KQ-UI';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useDeviceInfo, useProfile} from '../hooks/useHooks';
 import {Icons} from '../components/IconListRouter';
+import {Text} from '../KQ-UI';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
-import {isHBDevice} from '../utilities/deviceUtils';
+import {useProfile} from '../hooks/useHooks';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useColors} from './KQUtilities';
 
 const KQModal = ({
-  size = 'full',
-  title = '',
-  font = 'open-6',
-  fontSize = 'medium',
-  hapticFeedback = 'light',
+  visible,
+  header = '',
+  children,
   height = '90%',
   width = '90%',
-  centered = false,
-  visible = false,
-  noTitle = false,
-  noHeader = false,
-  noCloseButton = false,
-  globalView = false,
-  children,
-  onClose = () => {},
+  headerFont = 'open-6',
+  headerSize = 'small',
+  headerColor = 'white',
+  hideHeader = false,
+  hideTitle = false,
+  hideClose = false,
+  fullScreen = false,
+  hapticFeedback = 'light',
+  onClose,
 }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
   const useHaptics = setHapticFeedback();
   const profile = useProfile();
   const insets = useSafeAreaInsets();
-  const device = useDeviceInfo();
-  const isHB = isHBDevice(device?.system?.model);
-  const deviceWidth = device?.dimensions?.width || 300;
-  const deviceHeight = device?.dimensions.height || 400;
+  const isClosingRef = useRef(false);
 
-  let convertedHeight = parseInt(height) / 100;
-  let convertedWidth = parseInt(width) / 100;
+  const handleClose = (event = null) => {
+    const isBackdropTap = event?.target === event?.currentTarget;
+    const isManualCall = !event;
 
-  const handleCloseButton = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || hapticFeedback);
-    onClose();
+    if ((isBackdropTap || isManualCall) && !isClosingRef.current) {
+      isClosingRef.current = true;
+
+      useHaptics(profile?.userSettings?.hapticStrength || hapticFeedback);
+      Keyboard.dismiss();
+
+      setTimeout(() => {
+        onClose?.();
+        isClosingRef.current = false;
+      }, 100);
+    }
   };
+
+  const Header = () => {
+    if (hideHeader) {
+      return null;
+    }
+    return (
+      <View style={styles.headerWrapper(fullScreen)}>
+        <View style={styles.headerContainer}>
+          {!hideTitle && (
+            <Text
+              kqColor={useColors(headerColor)}
+              font={headerFont}
+              size={headerSize}>
+              {header}
+            </Text>
+          )}
+        </View>
+        {!hideClose && (
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => handleClose()}>
+            <Icons.Close size={25} color={'white'} />
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
+
+  const [screenSize, setScreenSize] = useState({
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
+  });
 
   useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: visible ? 1 : 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  }, [visible]);
+    const updateScreenSize = () => {
+      setScreenSize({
+        height: Dimensions.get('window').height,
+        width: Dimensions.get('window').width,
+      });
+    };
 
-  const standardSizes = {
-    small: {
-      top: 10,
-      bottom: deviceHeight * 0.65 - insets.top,
-      left: 35,
-      right: 35,
-    },
-    medium: {
-      top: 10,
-      bottom: deviceHeight * 0.4 - insets.top,
-      left: 30,
-      right: 30,
-    },
-    large: {
-      top: 10,
-      bottom: deviceHeight * 0.25 - insets.top,
-      left: insets.left + 25,
-      right: insets.right + 25,
-    },
-    full: {
-      top: 10,
-      bottom: 10,
-      left: 10,
-      right: 10,
-    },
-    covered: {
-      top: 2,
-      bottom: 2,
-      left: 2,
-      right: 2,
-    },
-    custom: {
-      top: 10,
-      bottom: Math.max(5, deviceHeight * (1 - convertedHeight) + 10),
-      left: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + 10),
-      right: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + 10),
-    },
-  };
+    const subscription = Dimensions.addEventListener(
+      'change',
+      updateScreenSize,
+    );
 
-  const centeredSizes = {
-    small: {
-      top: deviceHeight * 0.3,
-      bottom: deviceHeight * 0.3,
-      left: centered ? deviceWidth * 0.0875 : insets.left + 35,
-      right: centered ? deviceWidth * 0.0875 : insets.right + 35,
-    },
-    medium: {
-      top: centered ? deviceHeight * 0.2 : insets.top + 10,
-      bottom: centered ? deviceHeight * 0.2 : deviceHeight * 0.5 - insets.top,
-      left: centered ? deviceWidth * 0.075 : insets.left + 30,
-      right: centered ? deviceWidth * 0.075 : insets.right + 30,
-    },
-    large: {
-      top: centered ? deviceHeight * 0.125 : insets.top + 10,
-      bottom: centered
-        ? deviceHeight * 0.125
-        : deviceHeight * 0.25 - insets.top,
-      left: centered ? deviceWidth * 0.0625 : insets.left + 25,
-      right: centered ? deviceWidth * 0.0625 : insets.right + 25,
-    },
-    full: {
-      top: 10,
-      bottom: 10,
-      left: 10,
-      right: 10,
-    },
-    covered: {
-      top: 2,
-      bottom: 2,
-      left: 2,
-      right: 2,
-    },
-    custom: {
-      top: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      bottom: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      left: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-      right: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-    },
-  };
+    return () => subscription?.remove();
+  }, []);
 
-  const globalSizes = {
-    small: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.75 - insets.top,
-      left: insets.left + 35,
-      right: insets.right + 35,
-    },
-    medium: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.5 - insets.top,
-      left: insets.left + 30,
-      right: insets.right + 30,
-    },
-    large: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.25 - insets.top,
-      left: insets.left + 25,
-      right: insets.right + 25,
-    },
-    full: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.1 - insets.top,
-      left: insets.left + 20,
-      right: insets.right + 20,
-    },
-    covered: {
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-    },
-    custom: {
-      top: insets.top + 10,
-      bottom: deviceHeight * (1 - convertedHeight) + insets.bottom,
-      left: Math.max(5, (deviceWidth * (1 - convertedWidth)) / 2 + insets.left),
-      right: Math.max(
-        5,
-        (deviceWidth * (1 - convertedWidth)) / 2 + insets.right,
-      ),
-    },
-  };
+  const prsHeight = Math.min(Math.max(parseFloat(height), 75), 100);
+  const prsWidth = Math.min(Math.max(parseFloat(width), 75), 100);
 
-  const globalCenteredSizes = {
-    small: {
-      top: deviceHeight * 0.35,
-      bottom: deviceHeight * 0.35,
-      left: deviceWidth * 0.0875,
-      right: deviceWidth * 0.0875,
-    },
-    medium: {
-      top: deviceHeight * 0.2,
-      bottom: deviceHeight * 0.2,
-      left: deviceWidth * 0.075,
-      right: deviceWidth * 0.075,
-    },
-    large: {
-      top: deviceHeight * 0.125,
-      bottom: deviceHeight * 0.125,
-      left: deviceWidth * 0.0625,
-      right: deviceWidth * 0.0625,
-    },
-    full: {
-      top: insets.top + 10,
-      bottom: deviceHeight * 0.1 - insets.top,
-      left: insets.left + 20,
-      right: insets.right + 20,
-    },
-    covered: {
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-    },
-    custom: {
-      top: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      bottom: deviceHeight / 2 - (deviceHeight * convertedHeight) / 2,
-      left: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-      right: Math.max(5, deviceWidth / 2 - (deviceWidth * convertedWidth) / 2),
-    },
-  };
+  const topHeight = fullScreen
+    ? 0
+    : insets.top + (screenSize.height - (screenSize.height * prsHeight) / 100);
+  const btmHeight = fullScreen
+    ? 0
+    : insets.bottom +
+      (screenSize.height - (screenSize.height * prsHeight) / 100);
+  const midHeight = screenSize.height - topHeight - btmHeight;
 
-  const useSize = useMemo(() => {
-    if (!globalView && !centered) {
-      return standardSizes[size];
-    }
-    if (!globalView && centered) {
-      return centeredSizes[size];
-    }
-    if (globalView && !centered) {
-      return globalSizes[size];
-    }
-    if (globalView && centered) {
-      return globalCenteredSizes[size];
-    }
-  }, [centered, size, globalView, convertedHeight, convertedWidth]);
+  const midLeftWidth = fullScreen
+    ? 0
+    : insets.left + (screenSize.width - (screenSize.width * prsWidth) / 100);
+  const midRightWidth = fullScreen
+    ? 0
+    : insets.right + (screenSize.width - (screenSize.width * prsWidth) / 100);
 
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   return (
-    <TouchableWithoutFeedback
-      onPress={size !== 'covered' ? handleCloseButton : undefined}>
-      <Animated.View
-        style={[
-          globalView ? styles.backdropGlobal : styles.backdrop,
-          {opacity: fadeAnim},
-        ]}>
-        <TouchableWithoutFeedback onPress={() => {}} accessible={false}>
-          <Animated.View
-            style={[styles.modalContainer, useSize, {opacity: fadeAnim}]}>
-            {size !== 'covered' && !noHeader && (
-              <View style={styles.header}>
-                <View
-                  style={[
-                    styles.titleContainer,
-                    noCloseButton && {marginRight: 0},
-                  ]}>
-                  {!noTitle && (
-                    <Text size={fontSize} font={font} numberOfLines={1}>
-                      {title}
-                    </Text>
-                  )}
-                </View>
-                {!noCloseButton && (
-                  <TouchableOpacity
-                    onPress={handleCloseButton}
-                    style={styles.closeButton}>
-                    <Icons.Close />
-                  </TouchableOpacity>
-                )}
-              </View>
-            )}
-            <View
-              style={[
-                styles.childrenContainer,
-                {
-                  marginTop:
-                    size === 'covered' ? insets.top : noHeader ? 0 : 10,
-                  marginBottom:
-                    size === 'covered' ? (isHB ? 0 : insets.bottom + 40) : 0,
-                },
-              ]}>
-              {children}
-            </View>
-          </Animated.View>
-        </TouchableWithoutFeedback>
-      </Animated.View>
-    </TouchableWithoutFeedback>
+    <Modal
+      visible={visible}
+      animationType="fade"
+      transparent={true}
+      statusBarTranslucent
+      onRequestClose={handleClose}>
+      <StatusBar
+        barStyle={fullScreen ? 'dark-content' : 'light-content'}
+        backgroundColor={'rgba(0,0,0,0.5)'}
+        translucent
+      />
+      <View style={styles.wrapper}>
+        <Pressable
+          style={styles.pressTop(topHeight, screenSize)}
+          onPress={handleClose}
+        />
+        <View style={styles.container}>
+          <Pressable
+            style={styles.pressLeft(midLeftWidth, midHeight)}
+            onPress={handleClose}
+          />
+          <View style={styles.subContainer(fullScreen, midHeight, insets)}>
+            <Header />
+            <View style={{flex: 1}}>{children}</View>
+          </View>
+          <Pressable
+            style={styles.pressRight(midRightWidth, midHeight)}
+            onPress={handleClose}
+          />
+        </View>
+        <Pressable
+          style={styles.pressBtm(btmHeight, screenSize)}
+          onPress={handleClose}
+        />
+      </View>
+    </Modal>
   );
 };
 
-const styles = StyleSheet.create({
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#fff',
-    zIndex: 9000,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backdropGlobal: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    zIndex: 9000,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    position: 'absolute',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 5,
-    borderWidth: 1.5,
-    borderColor: '#319177',
-    shadowColor: 'black',
-    shadowOffset: {width: 2, height: 3},
-    shadowOpacity: 0.3,
-    elevation: 5,
-  },
-  header: {
-    flexDirection: 'row',
-  },
-  titleContainer: {
+export default React.memo(KQModal);
+
+const styles = {
+  wrapper: {
     flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  pressTop: (topHeight, screenSize) => ({
+    height: topHeight,
+    width: screenSize.width,
+    backgroundColor: 'transparent',
+  }),
+  pressBtm: (btmHeight, screenSize) => ({
+    height: btmHeight,
+    width: screenSize.width,
+    backgroundColor: 'transparent',
+  }),
+  pressLeft: (midLeftWidth, midHeight) => ({
+    width: midLeftWidth,
+    height: midHeight,
+    backgroundColor: 'transparent',
+  }),
+  pressRight: (midRightWidth, midHeight) => ({
+    width: midRightWidth,
+    height: midHeight,
+    backgroundColor: 'transparent',
+  }),
+  container: {flex: 1, flexDirection: 'row'},
+  subContainer: (fullScreen, midHeight, insets) => ({
+    flex: 1,
+    height: midHeight,
+    borderWidth: 1,
+    borderColor: '#319177',
+    backgroundColor: '#fff',
+    paddingTop: fullScreen ? insets.top : 0,
+    paddingBottom: fullScreen ? insets.bottom : 0,
+    borderRadius: fullScreen ? 0 : 10,
+    shadowColor: fullScreen ? '' : 'black',
+    shadowOffset: fullScreen ? {} : {width: 3, height: 4},
+    shadowOpacity: fullScreen ? 0 : 0.5,
+    elevation: fullScreen ? 0 : 7,
+  }),
+
+  headerWrapper: fullScreen => ({
+    flexDirection: 'row',
+    borderWidth: fullScreen ? 0 : 1,
+    borderTopRightRadius: fullScreen ? 0 : 8,
+    borderTopLeftRadius: fullScreen ? 0 : 8,
+    borderColor: '#319177',
+    backgroundColor: '#319177',
+  }),
+  headerContainer: {
+    flex: 1,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 37,
-    marginRight: -37,
-    paddingRight: 42,
-    paddingLeft: 5,
   },
   closeButton: {
-    borderWidth: 2,
-    borderColor: '#C4C4C4',
-    borderRadius: 5,
-    margin: 1,
-    width: 35,
-    height: 35,
+    position: 'absolute',
+    zIndex: 999,
+    right: 0,
+    borderWidth: 1.5,
+    backgroundColor: '#319177',
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 5,
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    borderColor: 'white',
   },
-  childrenContainer: {
-    flex: 1,
-  },
-});
-
-export default React.memo(KQModal);
+};
 
 
 
@@ -3161,6 +3051,53 @@ export const CMStyles = StyleSheet.create({
 });
 
 
+//* categories.js
+
+export const displayCategories = [
+  {index: 0, key: 'na', label: 'No Category', bg: '#319177'},
+  {index: 1, key: 'meats-seafood', label: 'Meat & Seafood', bg: '#8B0000'},
+  {index: 2, key: 'dairy', label: 'Dairy & Eggs', bg: '#FFB300'},
+  {index: 3, key: 'produce', label: 'Produce', bg: '#2E8B57'},
+  {index: 4, key: 'frozen', label: 'Frozen Goods', bg: '#4682B4'},
+  {index: 5, key: 'baked', label: 'Baked Goods', bg: '#C5A27D'},
+  {index: 6, key: 'dry-pasta', label: 'Dry Goods & Pasta', bg: '#C5A27D'},
+  {index: 7, key: 'condiments', label: 'Condiments & Sauces', bg: '#A0522D'},
+  {index: 8, key: 'canned', label: 'Canned Goods', bg: '#708090'},
+  {index: 9, key: 'spices', label: 'Oils, Vinegars & Spices', bg: '#DAA520'},
+  {index: 10, key: 'baking', label: 'Baking Ingredients', bg: '#C5A27D'},
+  {index: 11, key: 'cereals', label: 'Breakfast & Cereal', bg: '#CD853F'},
+  {index: 12, key: 'snacks', label: 'Snacks & Candy', bg: '#FF6347'},
+  {index: 13, key: 'beverages', label: 'Beverages', bg: '#4682B4'},
+  {index: 14, key: 'other', label: 'Other', bg: '#319177'},
+  {index: 99, key: 'custom', label: 'Custom', bg: '#319177'},
+];
+
+export const formatCategories = category => {
+  const found = displayCategories.find(cat => cat.key === category);
+
+  if (category === undefined || category === null) {
+  } else if (found) {
+    return found.label;
+  } else {
+    return category
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+};
+
+export const categoryColors = category => {
+  const found = displayCategories.find(cat => cat.key === category);
+
+  if (category === undefined || category === null) {
+    return '#319177';
+  } else if (found) {
+    return found.bg;
+  } else {
+    return '#319177';
+  }
+};
+
 
 
 // deviceUtils.js
@@ -3233,6 +3170,96 @@ export const getNavBarHeight = (device, baseHeight) => {
   }
 };
 
+//* measurements.js
+
+export const displayMeasurements = [
+  {index: 0, key: 'each', label: 'Single'},
+  {index: 1, key: 'slice', label: 'Slice'},
+  {index: 2, key: 'bag', label: 'Bag'},
+  {index: 3, key: 'roll', label: 'Roll'},
+  {index: 4, key: 'tube', label: 'Tube'},
+  {index: 5, key: 'package', label: 'Package'},
+  {index: 6, key: 'box', label: 'Box'},
+  {index: 7, key: 'fluidounce', label: 'Fluid Ounce'},
+  {index: 8, key: 'milliliter', label: 'Milliliter'},
+  {index: 9, key: 'liter', label: 'Liter'},
+  {index: 10, key: 'pint', label: 'Pint'},
+  {index: 11, key: 'quart', label: 'Quart'},
+  {index: 12, key: 'gallon', label: 'Gallon'},
+  {index: 13, key: 'ounce', label: 'Ounce'},
+  {index: 14, key: 'pound', label: 'Pound'},
+  {index: 15, key: 'gram', label: 'Gram'},
+  {index: 16, key: 'kilogram', label: 'Kilogram'},
+  {index: 17, key: 'can', label: 'Can'},
+  {index: 18, key: 'cup', label: 'Cup'},
+  {index: 19, key: 'tablespoon', label: 'Tablespoon'},
+  {index: 20, key: 'teaspoon', label: 'Teaspoon'},
+  {index: 21, key: 'custom', label: 'Custom (Enter Your Own)'},
+];
+
+export const formatMeasurement = measurement => {
+  const found = displayMeasurements.find(meas => meas.key === measurement);
+  if (measurement === undefined || measurement === null) {
+    // do nothing
+  } else if (found) {
+    return found.label;
+  } else {
+    return measurement
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+};
+
+//* nutrients.js
+
+export const displayNutrients = [
+  {index: 0, key: 'CA', label: 'Calcium', unit: 'mg'},
+  {index: 1, key: 'CHOCDF', label: 'Total Carbohydrates', unit: 'g'},
+  {index: 2, key: 'CHOCDF.net', label: 'Net Carbohydrates', unit: 'g'},
+  {index: 3, key: 'CHOLE', label: 'Cholesterol', unit: 'mg'},
+  {index: 4, key: 'ENERC_KCAL', label: 'Calories', unit: 'kcal'},
+  {index: 5, key: 'FAMS', label: 'Monounsaturated Fat', unit: 'g'},
+  {index: 6, key: 'FAPU', label: 'Polyunsaturated Fat', unit: 'g'},
+  {index: 7, key: 'FASAT', label: 'Saturated Fat', unit: 'g'},
+  {index: 8, key: 'FATRN', label: 'Trans Fat', unit: 'g'},
+  {index: 9, key: 'FAT', label: 'Total Fat', unit: 'g'},
+  {index: 10, key: 'FE', label: 'Iron', unit: 'mg'},
+  {index: 11, key: 'FIBTG', label: 'Dietary Fiber', unit: 'g'},
+  {index: 12, key: 'FOLAC', label: 'Folic Acid', unit: 'µg'},
+  {index: 13, key: 'FOLDFE', label: 'Folate (DFE)', unit: 'µg'},
+  {index: 14, key: 'FOLFD', label: 'Folate (Food)', unit: 'µg'},
+  {index: 15, key: 'K', label: 'Potassium', unit: 'mg'},
+  {index: 16, key: 'MG', label: 'Magnesium', unit: 'mg'},
+  {index: 17, key: 'NA', label: 'Sodium', unit: 'mg'},
+  {index: 18, key: 'NIA', label: 'Niacin', unit: 'mg'},
+  {index: 19, key: 'P', label: 'Phosphorus', unit: 'mg'},
+  {index: 20, key: 'PROCNT', label: 'Protein', unit: 'g'},
+  {index: 21, key: 'RIBF', label: 'Riboflavin', unit: 'mg'},
+  {index: 22, key: 'SUGAR', label: 'Total Sugars', unit: 'g'},
+  {index: 23, key: 'SUGAR.added', label: 'Added Sugars', unit: 'g'},
+  {index: 24, key: 'Sugar.alcohol', label: 'Sugar Alcohols', unit: 'g'},
+  {index: 25, key: 'THIA', label: 'Thiamin', unit: 'mg'},
+  {index: 26, key: 'TOCPHA', label: 'Vitamin E', unit: 'mg'},
+  {index: 27, key: 'VITA_RAE', label: 'Vitamin A', unit: 'µg'},
+  {index: 28, key: 'VITB12', label: 'Vitamin B12', unit: 'µg'},
+  {index: 29, key: 'VITB6A', label: 'Vitamin B6', unit: 'mg'},
+  {index: 30, key: 'VITC', label: 'Vitamin C', unit: 'mg'},
+  {index: 31, key: 'VITD', label: 'Vitamin D', unit: 'µg'},
+  {index: 32, key: 'VITK1', label: 'Vitamin K', unit: 'µg'},
+  {index: 33, key: 'WATER', label: 'Water', unit: 'g'},
+  {index: 34, key: 'ZN', label: 'Zinc', unit: 'mg'},
+];
+
+export const formatNutrient = nutrient => {
+  const found = displayNutrients.find(n => n.key === nutrient);
+  if (found) {
+    return {label: found.label, unit: found.unit};
+  }
+  return {label: nutrient, unit: ''}; // Default if not found
+};
+
+
 //* Main.jsx
 
 import {NavigationContainer} from '@react-navigation/native';
@@ -3250,7 +3277,7 @@ import Account from './src/screens/Account/Account';
 import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
-import {BottomSheet, Modal} from './src/KQ-UI';
+import {BottomSheet} from './src/KQ-UI';
 import DevInputs from './src/screens/Dev/DevInputs';
 import DevButtons from './src/screens/Dev/DevButtons';
 import DevModals from './src/screens/Dev/DevModals';
@@ -3264,7 +3291,7 @@ const Main = () => {
   const profile = useProfile();
   const useHaptics = setHapticFeedback();
   const Stack = createNativeStackNavigator();
-  const [headerColor, setHeaderColor] = useState('#319177');
+  const [headerColor, setHeaderColor] = useState('black');
   const [screenLocation, setScreenLocation] = useState('');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [textColor, setTextColor] = useState('#373d43');
@@ -3296,7 +3323,7 @@ const Main = () => {
       visible={isSheetOpen}
       onClose={() => setIsSheetOpen(false)}
       snapPoints={[0.01, 0.95]}>
-      <CenterMenu borrowedParams={borrowedParams} />
+      <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} />
     </BottomSheet>
   );
 
@@ -3529,193 +3556,11 @@ const Main = () => {
           device={device}
         />
       </SafeAreaView>
-      <Modal />
     </NavigationContainer>
   );
 };
 
 export default Main;
-
-
-
-
-
-
-import {NavigationContainer} from '@react-navigation/native';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Dimensions, Text, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import NavMenu from './src/components/NavMenu';
-import {useDispatch} from 'react-redux';
-import {getNavMenuHeight} from './src/utilities/deviceUtils';
-import Home from './src/screens/Home/Home';
-import {useDeviceInfo, useProfile} from './src/hooks/useHooks';
-import {setHapticFeedback} from './src/hooks/setHapticFeedback';
-import Account from './src/screens/Account/Account';
-import Cupboards from './src/screens/Cupboard/Cupboard';
-import Shopping from './src/screens/Shopping/Shopping';
-import KQBottomSheet from './src/KQ-UI/KQBottomSheet';
-import CenterMenu from './src/screens/CenterMenu/CenterMenu';
-
-const Main = () => {
-  const dispatch = useDispatch();
-  const device = useDeviceInfo();
-  const profile = useProfile();
-  const useHaptics = setHapticFeedback();
-  const Stack = createNativeStackNavigator();
-  const [headerColor, setHeaderColor] = useState('#319177');
-  const [screenLocation, setScreenLocation] = useState('');
-  const [bgColor, setBgColor] = useState('#ffffff');
-  const [textColor, setTextColor] = useState('#373d43');
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const bottomHeight = getNavMenuHeight(device);
-
-  const borrowedParams = useMemo(
-    () => ({bgColor, textColor, screenLocation}),
-    [bgColor, textColor, screenLocation],
-  );
-
-  useEffect(() => {
-    dispatch({type: 'FETCH_DEVICE_INFO'});
-
-    const subscription = Dimensions.addEventListener('change', () => {
-      dispatch({type: 'FETCH_DEVICE_INFO'});
-    });
-
-    return () => subscription?.remove();
-  }, [dispatch]);
-
-  const toggleMenu = useCallback(() => {
-    setIsSheetOpen(prev => !prev);
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-  }, [useHaptics]);
-
-  const BottomMenu = () => (
-    <KQBottomSheet
-      visible={isSheetOpen}
-      onClose={() => setIsSheetOpen(false)}
-      snapPoints={[0.01, 0.95]}>
-      <CenterMenu borrowedParams={borrowedParams} toggleMenu={toggleMenu} />
-    </KQBottomSheet>
-  );
-
-  const Navigation = () => {
-    return (
-      <>
-        <Stack.Navigator
-          screenOptions={{
-            animation: 'none',
-            gestureEnabled: false,
-            headerBackVisible: false,
-            headerShown: false,
-            navigationBarColor: '#f7f7f7',
-          }}>
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            initialParams={{
-              title: 'Home',
-              bgColor: bgColor,
-              headerColor: headerColor,
-              textColor: textColor,
-              screenLocation: screenLocation,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('Home');
-              },
-            }}
-          />
-          <Stack.Screen
-            name="ShoppingList"
-            component={Shopping}
-            initialParams={{
-              title: 'Shopping List',
-              bgColor: bgColor,
-              headerColor: headerColor,
-              textColor: textColor,
-              screenLocation: screenLocation,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('ShoppingList');
-              },
-            }}
-          />
-          <Stack.Screen
-            name="CupboardList"
-            component={Cupboards}
-            initialParams={{
-              title: 'Cupboards',
-              bgColor: bgColor,
-              headerColor: headerColor,
-              textColor: textColor,
-              screenLocation: screenLocation,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('CupboardList');
-              },
-            }}
-          />
-          <Stack.Screen
-            name="Account"
-            component={Account}
-            initialParams={{
-              title: 'Account',
-              bgColor: bgColor,
-              headerColor: headerColor,
-              textColor: textColor,
-              screenLocation: screenLocation,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('Account');
-              },
-            }}
-          />
-        </Stack.Navigator>
-      </>
-    );
-  };
-
-  return (
-    <NavigationContainer>
-      <SafeAreaView
-        style={{flex: 1, backgroundColor: headerColor}}
-        edges={['top']}>
-        <View style={{flex: 1}}>
-          <Navigation />
-          <BottomMenu />
-        </View>
-      </SafeAreaView>
-      <SafeAreaView style={{height: bottomHeight}} edges={['bottom']}>
-        <NavMenu
-          bottomHeight={bottomHeight}
-          bottomWidth={device?.dimensions?.width}
-          toggleMenu={toggleMenu}
-          device={device}
-        />
-      </SafeAreaView>
-    </NavigationContainer>
-  );
-};
-
-export default Main;
-
 
 //*App.jsx
 import React, {useEffect, useState} from 'react';
@@ -3738,7 +3583,6 @@ import {toastConfig} from './src/KQ-UI/KQToast';
 import Main from './Main';
 import {initializeApp, getApps} from '@react-native-firebase/app';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {ModalProvider} from './src/KQ-UI';
 
 const App = () => {
   if (!getApps().length) {
@@ -3786,13 +3630,11 @@ const App = () => {
       <PersistGate loading={<SplashScreen />} persistor={persistor}>
         <GestureHandlerRootView style={{flex: 1}}>
           <SafeAreaProvider>
-            <ModalProvider>
-              <View style={{flex: 1, backgroundColor: '#fff'}}>
-                <StatusBar barStyle="light-content" />
-                <Main />
-                <Toast config={toastConfig} />
-              </View>
-            </ModalProvider>
+            <View style={{flex: 1, backgroundColor: '#fff'}}>
+              <StatusBar barStyle="light-content" />
+              <Main />
+              <Toast config={toastConfig} />
+            </View>
           </SafeAreaProvider>
         </GestureHandlerRootView>
       </PersistGate>
@@ -3801,6 +3643,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 
@@ -4397,14 +4240,17 @@ export default DevButtons;
 
 
 //* DevDropdowns.jsx
-import React from 'react';
+import React, {useState} from 'react';
 import {View} from 'react-native';
 import {Layout, Text} from '../../KQ-UI';
 import {useRoute} from '@react-navigation/native';
+import {displayCategories} from '../../utilities/categories';
+import {displayMeasurements} from '../../utilities/measurements';
 
 const DevDropdowns = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+  const [value, setValue] = useState('');
   return (
     <Layout
       bgColor={bgColor}
@@ -4415,26 +4261,32 @@ const DevDropdowns = () => {
       RightButton=""
       LeftAction={null}
       RightAction={null}
-      sheetOpen={false}
-      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
-      <Text>DevDropdowns</Text>
+      sheetOpen={false}>
+      {/* <Dropdown
+        label="Category"
+        placeholder="Press to Select"
+        value={value}
+        caption="Select a Category"
+        mapData={displayMeasurements}
+      /> */}
     </Layout>
   );
 };
 
 export default DevDropdowns;
 
+
 //* DevModals.jsx
 import React, {useState} from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Button, View} from 'react-native';
-import {Layout, Modal, Text, useModal} from '../../KQ-UI';
+import {View} from 'react-native';
+import {Button, Layout, Modal, Text} from '../../KQ-UI';
 
 const DevModals = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-  const {showModal} = useModal();
-  const [showModal2, setShowModal2] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <Layout
@@ -4448,56 +4300,37 @@ const DevModals = () => {
       RightAction={null}
       sheetOpen={false}
       innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
-      <>
-        <Button
-          title="Open Global Modal"
-          onPress={() =>
-            showModal({
-              size: 'full',
-              title: 'Welcome to the App!',
-              // font: 'noto-9',
-              fontSize: 'large',
-              centered: false,
-              globalView: true,
-              // noTitle: true,
-              // noCloseButton: true,
-              // noHeader: true,
-              children: (
-                <View style={{flex: 1, borderWidth: 0.2}}>
-                  <Text>Test Test Test</Text>
-                </View>
-              ),
-            })
-          }
-        />
-        <Button
-          title="Open Component Modal"
-          onPress={() => setShowModal2(true)}
-        />
-      </>
       <Modal
-        size="custom"
-        title="Welcome to the App, it's got the looks that kill!"
-        // font="Noto-9"
-        fontSize="medium"
-        visible={showModal2}
+        visible={showModal}
+        header="Modal Title"
+        headerFont="open-6"
+        headerSize="small"
+        headerColor="white"
         height="95%"
-        width="92%"
-        centered
-        onClose={() => setShowModal2(false)}
-        // noTitle
-        // noHeader
-        // noCloseButton
-      >
-        <View style={{flex: 1, borderWidth: 0.2}}>
-          <Text>Test Test Test</Text>
+        width="95%"
+        fullScreen
+        // hideHeader
+        // hideTitle
+        // hideClose
+        onClose={() => setShowModal(false)}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text>Show me the money!</Text>
+          <Button onPress={() => setShowModal(false)}>Close Modal</Button>
         </View>
       </Modal>
+      <Button onPress={() => setShowModal(true)}>Show Modal</Button>
     </Layout>
   );
 };
 
-export default DevModals;
+export default React.memo(DevModals);
+
+
 
 
 

@@ -15,7 +15,7 @@ import Account from './src/screens/Account/Account';
 import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
-import {BottomSheet, Modal} from './src/KQ-UI';
+import {BottomSheet} from './src/KQ-UI';
 import DevInputs from './src/screens/Dev/DevInputs';
 import DevButtons from './src/screens/Dev/DevButtons';
 import DevModals from './src/screens/Dev/DevModals';
@@ -29,7 +29,7 @@ const Main = () => {
   const profile = useProfile();
   const useHaptics = setHapticFeedback();
   const Stack = createNativeStackNavigator();
-  const [headerColor, setHeaderColor] = useState('#319177');
+  const [headerColor, setHeaderColor] = useState('black');
   const [screenLocation, setScreenLocation] = useState('');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [textColor, setTextColor] = useState('#373d43');
@@ -294,7 +294,6 @@ const Main = () => {
           device={device}
         />
       </SafeAreaView>
-      <Modal />
     </NavigationContainer>
   );
 };
