@@ -23,7 +23,7 @@ const KQInput = ({
   maxCount = 250,
   ...props
 }) => {
-  const fontStyles = useFontStyles('open-6', 'medium', 'black');
+  const fontStyles = useFontStyles('open-6', 'small', 'black');
   const showCount = value?.length || 0;
 
   const multiMode = useMemo(() => {
@@ -87,6 +87,7 @@ const KQInput = ({
             onChangeText={handleTextChange}
             autoCapitalize={capMode}
             multiline={multiline}
+            allowFontScaling={false}
             style={[fontStyles, multiMode, {padding: 0}]}
             {...props}
           />
@@ -129,7 +130,7 @@ const styles = {
     marginVertical: 10,
     paddingHorizontal: 2,
   },
-  labelContainer: {position: 'relative', left: 1},
+  labelContainer: {position: 'relative', left: 0},
   label: (validation, disabled) => ({
     color: validation ? '#fE4949' : disabled ? '#373d4390' : '#373d43',
   }),
@@ -141,7 +142,7 @@ const styles = {
   textInputContainer: {
     flex: 1,
     paddingHorizontal: 1,
-    paddingBottom: 3,
+    paddingVertical: 3,
   },
   accessoriesContainer: {
     width: 40,

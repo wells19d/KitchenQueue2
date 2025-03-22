@@ -1,7 +1,7 @@
 //* DevDropdowns.jsx
 import React, {useState} from 'react';
 import {View} from 'react-native';
-import {Layout, Text} from '../../KQ-UI';
+import {Dropdown, Input, Layout, Text} from '../../KQ-UI';
 import {useRoute} from '@react-navigation/native';
 import {displayCategories} from '../../utilities/categories';
 import {displayMeasurements} from '../../utilities/measurements';
@@ -10,6 +10,8 @@ const DevDropdowns = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const [value, setValue] = useState('');
+  const [value2, setValue2] = useState('');
+
   return (
     <Layout
       bgColor={bgColor}
@@ -21,13 +23,29 @@ const DevDropdowns = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}>
-      {/* <Dropdown
+      <Input
+        label="Category"
+        placeholder="Press to Select"
+        value={value2}
+        onChangeText={setValue2}
+        capitalize={false}
+        capitalMode="words"
+        caption="Select a Category"
+        // keyboardType="default"
+        // keyboardType="number-pad" // ios, has no decimal point
+        // keyboardType="decimal-pad"
+        // keyboardType="numeric" // ios, shows letters on number pad
+        // keyboardType="email-address"
+        // keyboardType="phone-pad" // same as numeric
+        // keyboardType="url"
+      />
+      <Dropdown
         label="Category"
         placeholder="Press to Select"
         value={value}
         caption="Select a Category"
         mapData={displayMeasurements}
-      /> */}
+      />
     </Layout>
   );
 };
