@@ -26,6 +26,7 @@ export const Icons = {
   Barcode: props => (
     <FAIcons name="barcode" size={20} color="#000" {...props} />
   ),
+  Check: props => <FA5Icons name="check" size={20} color="#000" {...props} />,
   ChevronDown: props => (
     <FEIcons name="chevron-down" size={20} color="#000" {...props} />
   ),

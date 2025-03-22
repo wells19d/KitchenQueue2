@@ -149,7 +149,7 @@ const KQModal = ({
           />
           <View style={styles.subContainer(fullScreen, midHeight, insets)}>
             <Header />
-            <View style={{flex: 1}}>{children}</View>
+            {children}
           </View>
           <Pressable
             style={styles.pressRight(midRightWidth, midHeight)}

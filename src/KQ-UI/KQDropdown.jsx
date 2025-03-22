@@ -2,7 +2,7 @@
 
 import React, {useMemo, useState} from 'react';
 import {View, TouchableOpacity, Platform} from 'react-native';
-import {Modal, Text, Button} from '../KQ-UI/';
+import {Modal, Text, Button, ScrollView} from '../KQ-UI/';
 import {useFontStyles} from './KQUtilities';
 import {Icons} from '../components/IconListRouter';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
@@ -14,7 +14,8 @@ const KQDropdown = ({
   required = false,
   validation = false,
   validationMessage = '',
-  value = '',
+  value = null,
+  setValue = () => {},
   placeholder = '',
   onPress = () => {},
   caption,
@@ -22,26 +23,28 @@ const KQDropdown = ({
   mapData,
   ...props
 }) => {
+  const isIOS = Platform.OS === 'ios';
   const useHaptics = setHapticFeedback();
   const profile = useProfile();
   const [showDropModal, setShowDropModal] = useState(false);
-  const isIOS = Platform.OS === 'ios';
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const handleOnPress = () => {
     useHaptics(profile?.userSettings?.hapticStrength || hapticFeedback);
-    setShowDropModal(prev => !prev);
+    setSelectedItem(value); // set to current value on open
+    setShowDropModal(true);
     onPress();
   };
 
   const renderStyles = useMemo(() => {
-    if (isIOS && value === '') {
+    if (isIOS && value === null) {
       return {
         color: '#373d4350',
         padding: 0,
       };
     }
 
-    if (!isIOS && value === '') {
+    if (!isIOS && value === null) {
       return {
         color: '#373d43',
         padding: 0,
@@ -49,6 +52,21 @@ const KQDropdown = ({
       };
     }
   }, [value, placeholder]);
+
+  const handleCancel = () => {
+    setShowDropModal(false);
+    setSelectedItem(null);
+  };
+
+  const handleSave = item => {
+    setShowDropModal(false);
+    setValue(item);
+  };
+
+  const handleClear = () => {
+    setSelectedItem(null);
+    setValue(null);
+  };
 
   return (
     <View style={styles.dropContainer}>
@@ -64,16 +82,25 @@ const KQDropdown = ({
           </View>
         </View>
       )}
-      <TouchableOpacity onPress={handleOnPress} style={styles.dropWrapper}>
-        <View style={styles.textInputContainer}>
-          <Text size="small" font="open-6" style={renderStyles}>
-            {value ? value : placeholder}
-          </Text>
-        </View>
-        <View style={styles.accessoriesContainer}>
+      <View style={styles.dropWrapper}>
+        <TouchableOpacity onPress={() => handleOnPress()} style={{flex: 1}}>
+          <Text style={renderStyles}>{value?.label || placeholder}</Text>
+        </TouchableOpacity>
+
+        {value && (
+          <TouchableOpacity
+            onPress={() => handleClear()}
+            style={{paddingHorizontal: 5}}>
+            <Icons.Close />
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity
+          onPress={() => handleOnPress()}
+          style={{paddingHorizontal: 5}}>
           <Icons.ChevronDown />
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
       {caption && (
         <View style={styles.captionContainer}>
           <View style={{flex: 1}}>
@@ -89,25 +116,82 @@ const KQDropdown = ({
       )}
       <Modal
         visible={showDropModal}
-        header="Full Screen"
-        headerFont="open-6"
-        headerSize="small"
-        headerColor="white"
-        height="95%"
-        width="95%"
         fullScreen
         hideHeader
-        // hideTitle
-        // hideClose
         onClose={() => setShowDropModal(false)}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text>Drop Down Modal</Text>
-          <Button onPress={() => setShowDropModal(false)}>Close Modal</Button>
+        <View style={styles.modalContainer}>
+          <View style={styles.headerContainer}>
+            <TouchableOpacity
+              style={styles.headerButtonContainer}
+              onPress={handleCancel}>
+              <View style={styles.headerButtonIcon}>
+                <View style={{position: 'relative', left: 4}}>
+                  <Icons.Back />
+                </View>
+              </View>
+              <View style={styles.headerButtonTextLeft}>
+                <Text>Cancel</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.headerButtonContainer}
+              onPress={() => handleSave(selectedItem)}>
+              <View style={styles.headerButtonTextRight}>
+                <Text>Save</Text>
+              </View>
+              <View style={styles.headerButtonIcon}>
+                <Icons.Save />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={{flex: 1}}>
+            <ScrollView>
+              <View style={{flex: 1}}>
+                {mapData?.map((item, index) => {
+                  return (
+                    <View
+                      key={index}
+                      style={{borderBottomWidth: 1, borderColor: '#373d4380'}}>
+                      <TouchableOpacity
+                        style={{
+                          height: 48,
+                          alignItems: 'flex-start',
+                          justifyContent: 'center',
+                          paddingHorizontal: 5,
+                        }}
+                        onPress={() => setSelectedItem(item)}>
+                        <View style={{flexDirection: 'row'}}>
+                          <View style={{flex: 1}}>
+                            <Text
+                              style={
+                                selectedItem?.index === item.index
+                                  ? {
+                                      fontFamily: 'OpenSans-Bold',
+                                      fontWeight: 700,
+                                      fontSize: 18,
+                                    }
+                                  : {
+                                      fontFamily: 'OpenSans-Medium',
+                                      fontWeight: 500,
+                                      fontSize: 16,
+                                    }
+                              }>
+                              {item.label}
+                            </Text>
+                          </View>
+                          {selectedItem?.index === item.index && (
+                            <View>
+                              <Icons.Check color={'#63B76C'} size={20} />
+                            </View>
+                          )}
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          </View>
         </View>
       </Modal>
     </View>
@@ -128,6 +212,8 @@ const styles = {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderColor: '#c4c4c4',
+    paddingTop: 2,
+    paddingBottom: 4,
   },
   captionContainer: {
     flexDirection: 'row',
@@ -139,10 +225,35 @@ const styles = {
     paddingHorizontal: 1,
     paddingVertical: 3,
   },
-  accessoriesContainer: {
-    paddingHorizontal: 5,
-    alignItems: 'center',
+  modalContainer: {flex: 1, flexDirection: 'column'},
+  headerContainer: {
+    height: 50,
+    marginHorizontal: 5,
+    marginBottom: 5,
+    flexDirection: 'row',
+  },
+  headerButtonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  headerButtonIcon: {
+    flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerButtonTextLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+  },
+  headerButtonTextRight: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingHorizontal: 5,
   },
 };
 
