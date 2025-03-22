@@ -9,7 +9,8 @@ import {displayMeasurements} from '../../utilities/measurements';
 const DevDropdowns = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(null);
+  console.log('value:', value);
   const [value2, setValue2] = useState('');
 
   return (
@@ -31,18 +32,12 @@ const DevDropdowns = () => {
         capitalize={false}
         capitalMode="words"
         caption="Select a Category"
-        // keyboardType="default"
-        // keyboardType="number-pad" // ios, has no decimal point
-        // keyboardType="decimal-pad"
-        // keyboardType="numeric" // ios, shows letters on number pad
-        // keyboardType="email-address"
-        // keyboardType="phone-pad" // same as numeric
-        // keyboardType="url"
       />
       <Dropdown
         label="Category"
         placeholder="Press to Select"
         value={value}
+        setValue={setValue}
         caption="Select a Category"
         mapData={displayMeasurements}
       />
