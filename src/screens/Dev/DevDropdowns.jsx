@@ -25,13 +25,13 @@ const DevDropdowns = () => {
       RightAction={null}
       sheetOpen={false}>
       <Input
-        label="Category"
-        placeholder="Press to Select"
+        label="Item Name"
+        placeholder="Enter Item Name"
         value={value2}
         onChangeText={setValue2}
         capitalize={false}
         capitalMode="words"
-        caption="Select a Category"
+        caption="Enter Item"
       />
       <Dropdown
         label="Category"

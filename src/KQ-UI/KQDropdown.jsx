@@ -2,8 +2,7 @@
 
 import React, {useMemo, useState} from 'react';
 import {View, TouchableOpacity, Platform} from 'react-native';
-import {Modal, Text, Button, ScrollView} from '../KQ-UI/';
-import {useFontStyles} from './KQUtilities';
+import {Modal, Text, ScrollView} from '../KQ-UI/';
 import {Icons} from '../components/IconListRouter';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
 import {useProfile} from '../hooks/useHooks';
@@ -163,18 +162,15 @@ const KQDropdown = ({
                         <View style={{flexDirection: 'row'}}>
                           <View style={{flex: 1}}>
                             <Text
-                              style={
+                              size={
                                 selectedItem?.index === item.index
-                                  ? {
-                                      fontFamily: 'OpenSans-Bold',
-                                      fontWeight: 700,
-                                      fontSize: 18,
-                                    }
-                                  : {
-                                      fontFamily: 'OpenSans-Medium',
-                                      fontWeight: 500,
-                                      fontSize: 16,
-                                    }
+                                  ? 'small'
+                                  : 'xSmall'
+                              }
+                              font={
+                                selectedItem?.index === item.index
+                                  ? 'open-7'
+                                  : 'open-5'
                               }>
                               {item.label}
                             </Text>
