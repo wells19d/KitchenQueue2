@@ -23,9 +23,8 @@ const KQInput = ({
   maxCount = 250,
   ...props
 }) => {
-  const fontStyles = useFontStyles('open-5', 'medium', 'black');
+  const fontStyles = useFontStyles('open-6', 'medium', 'black');
   const showCount = value?.length || 0;
-  const maxCountColor = useColors(showCount > maxCount ? 'danger' : 'dark90');
 
   const multiMode = useMemo(() => {
     if (!multiline) return {};
@@ -112,8 +111,8 @@ const KQInput = ({
           <View style={{flex: caption ? 0 : 1, alignItems: 'flex-end'}}>
             <Text
               size="xSmall"
-              font="open-6"
-              kqColor={maxCountColor}
+              kqColor={showCount >= maxCount ? 'danger' : 'dark90'}
+              font="open-5"
               numberOfLines={1}>
               ({showCount} / {maxCount})
             </Text>
@@ -130,7 +129,7 @@ const styles = {
     marginVertical: 10,
     paddingHorizontal: 2,
   },
-  labelContainer: {position: 'relative', left: 2, marginBottom: 2},
+  labelContainer: {position: 'relative', left: 1},
   label: (validation, disabled) => ({
     color: validation ? '#fE4949' : disabled ? '#373d4390' : '#373d43',
   }),
@@ -141,9 +140,8 @@ const styles = {
   },
   textInputContainer: {
     flex: 1,
-    paddingHorizontal: 2,
-    paddingTop: 2,
-    paddingBottom: 5,
+    paddingHorizontal: 1,
+    paddingBottom: 3,
   },
   accessoriesContainer: {
     width: 40,
