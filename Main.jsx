@@ -2,41 +2,59 @@
 
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Dimensions, Text, View} from 'react-native';
+import {Dimensions, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import NavMenu from './src/components/NavMenu';
 import {useDispatch} from 'react-redux';
 import {getNavMenuHeight} from './src/utilities/deviceUtils';
 import Home from './src/screens/Home/Home';
-import {useDeviceInfo, useProfile} from './src/hooks/useHooks';
+import {useAuth, useDeviceInfo, useProfile} from './src/hooks/useHooks';
 import {setHapticFeedback} from './src/hooks/setHapticFeedback';
 import Account from './src/screens/Account/Account';
 import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
-import {BottomSheet} from './src/KQ-UI';
+import {BottomSheet, Text} from './src/KQ-UI';
 import DevInputs from './src/screens/Dev/DevInputs';
 import DevButtons from './src/screens/Dev/DevButtons';
 import DevModals from './src/screens/Dev/DevModals';
 import DevDropdowns from './src/screens/Dev/DevDropdowns';
 import DevPlayground from './src/screens/Dev/DevPlayground';
 import DevText from './src/screens/Dev/DevText';
-import useAuthSync from './src/hooks/useAuthSync';
+import {getAuth} from '@react-native-firebase/auth';
+import {getApp} from '@react-native-firebase/app';
+import Auth from './src/screens/Auth/Auth';
 
 const Main = () => {
-  useAuthSync(); // this will fire off a console.log to check user auth status
   const dispatch = useDispatch();
   const device = useDeviceInfo();
   const profile = useProfile();
   const useHaptics = setHapticFeedback();
   const Stack = createNativeStackNavigator();
+  const isAuthenticated = useAuth();
   const [headerColor, setHeaderColor] = useState('black');
   const [screenLocation, setScreenLocation] = useState('');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [textColor, setTextColor] = useState('#373d43');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const bottomHeight = getNavMenuHeight(device);
+
+  useEffect(() => {
+    try {
+      const auth = getAuth(getApp());
+      const user = auth.currentUser;
+
+      if (user) {
+        dispatch({type: 'SET_USER', payload: user});
+      } else {
+        dispatch({type: 'LOGOUT'});
+      }
+    } catch (e) {
+      console.log('[Main] Firebase not ready yet:', e.message);
+      dispatch({type: 'LOGOUT'});
+    }
+  }, []);
 
   const borrowedParams = useMemo(
     () => ({bgColor, textColor, screenLocation}),
@@ -154,6 +172,7 @@ const Main = () => {
               },
             }}
           />
+
           {__DEV__ && (
             <>
               <Stack.Screen
@@ -272,32 +291,41 @@ const Main = () => {
               />
             </>
           )}
+          <Stack.Screen name="Login" component={Auth} />
         </Stack.Navigator>
       </>
     );
   };
 
-  return (
-    <NavigationContainer>
-      <SafeAreaView
-        style={{flex: 1, backgroundColor: headerColor}}
-        edges={['top']}>
-        <View style={{flex: 1}}>
-          <Navigation />
-          <BottomMenu toggleMenu={toggleMenu} />
-        </View>
+  if (!isAuthenticated) {
+    return (
+      <SafeAreaView style={{flex: 1, margin: 5}}>
+        <Auth bgColor={bgColor} />
       </SafeAreaView>
-      <SafeAreaView style={{height: bottomHeight}} edges={['bottom']}>
-        <NavMenu
-          bottomHeight={bottomHeight}
-          bottomWidth={device?.dimensions?.width}
-          toggleMenu={toggleMenu}
-          setIsSheetOpen={setIsSheetOpen}
-          device={device}
-        />
-      </SafeAreaView>
-    </NavigationContainer>
-  );
+    );
+  } else {
+    return (
+      <NavigationContainer>
+        <SafeAreaView
+          style={{flex: 1, backgroundColor: headerColor}}
+          edges={['top']}>
+          <View style={{flex: 1}}>
+            <Navigation />
+            <BottomMenu toggleMenu={toggleMenu} />
+          </View>
+        </SafeAreaView>
+        <SafeAreaView style={{height: bottomHeight}} edges={['bottom']}>
+          <NavMenu
+            bottomHeight={bottomHeight}
+            bottomWidth={device?.dimensions?.width}
+            toggleMenu={toggleMenu}
+            setIsSheetOpen={setIsSheetOpen}
+            device={device}
+          />
+        </SafeAreaView>
+      </NavigationContainer>
+    );
+  }
 };
 
 export default Main;

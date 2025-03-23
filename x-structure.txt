@@ -55,6 +55,8 @@
 |-| screens
 |-|-| Account
 |-|-|-| Account.jsx
+|-|-| Auth
+|-|-|-| Auth.jsx
 |-|-| CenterMenu
 |-|-|-| CenterMenu.jsx
 |-|-|-| CenterMenuArray.jsx

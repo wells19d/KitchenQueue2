@@ -2459,11 +2459,37 @@ export const useButtonSizes = (size = 'medium') => {
 //* Account.jsx
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Layout, Text} from '../../KQ-UI';
+import {Layout, ScrollView, Text} from '../../KQ-UI';
+import {useAccount, useProfile} from '../../hooks/useHooks';
+import {View} from 'react-native';
 
 const Account = () => {
   const route = useRoute();
+  const profile = useProfile();
+  const account = useAccount();
+
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+
+  const renderValue = value => {
+    if (Array.isArray(value)) {
+      return value.map((item, idx) => (
+        <Text key={idx} font="open-5" style={{marginLeft: 16}}>
+          • {typeof item === 'object' ? JSON.stringify(item) : String(item)}
+        </Text>
+      ));
+    }
+
+    if (typeof value === 'object' && value !== null) {
+      return Object.entries(value).map(([k, v], idx) => (
+        <Text key={idx} font="open-5" style={{marginLeft: 16}}>
+          • {k}: {typeof v === 'object' ? JSON.stringify(v) : String(v)}
+        </Text>
+      ));
+    }
+
+    return <Text font="open-5">{String(value)}</Text>;
+  };
+
   return (
     <Layout
       bgColor={bgColor}
@@ -2475,13 +2501,27 @@ const Account = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Account</Text>
+      innerViewStyles={{}}>
+      <ScrollView>
+        {Object.entries(profile).map(([key, value]) => (
+          <View key={key} style={{marginBottom: 8}}>
+            <Text font="open-7">{key}:</Text>
+            {renderValue(value)}
+          </View>
+        ))}
+        {Object.entries(account).map(([key, value]) => (
+          <View key={key} style={{marginBottom: 8}}>
+            <Text font="open-7">{key}:</Text>
+            {renderValue(value)}
+          </View>
+        ))}
+      </ScrollView>
     </Layout>
   );
 };
 
 export default Account;
+
 
 -----
 
@@ -2511,6 +2551,170 @@ const Cupboards = () => {
 };
 
 export default Cupboards;
+
+-----
+
+//* Auth.jsx
+import React, {useEffect, useRef} from 'react';
+import {
+  Animated,
+  Image,
+  Platform,
+  StatusBar,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import MCIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch} from 'react-redux';
+import {Button, Input, Layout} from '../../KQ-UI';
+import {useDeviceInfo} from '../../hooks/useHooks';
+
+function Auth(props) {
+  const {bgColor} = props;
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [secureTextEntry, setSecureTextEntry] = React.useState(true);
+  const dispatch = useDispatch();
+  const device = useDeviceInfo();
+
+  const logoPosition = useRef(
+    new Animated.Value(Platform.OS === 'ios' ? 330 : 370),
+  ).current;
+  const formOpacity = useRef(new Animated.Value(0)).current;
+  const formTranslateY = useRef(new Animated.Value(50)).current;
+
+  useEffect(() => {
+    const screenHeight = device?.dimensions?.height || 800; // Default fallback
+    const deviceSize = device?.system?.deviceSize || 'unknown';
+    const os = device?.system?.os || 'unknown';
+
+    const getLogoFinalPosition = (screenHeight, deviceSize, os) => {
+      switch (`${deviceSize}-${os}`) {
+        case 'xSmall-iOS':
+          return screenHeight * 0.1;
+        case 'xSmall-Android':
+          return screenHeight * 0.12;
+
+        case 'small-iOS':
+          return screenHeight * 0.12;
+        case 'small-Android':
+          return screenHeight * 0.14;
+
+        case 'medium-iOS':
+          return screenHeight * 0.14;
+        case 'medium-Android':
+          return screenHeight * 0.16;
+
+        case 'large-iOS':
+          return screenHeight * 0.16;
+        case 'large-Android':
+          return screenHeight * 0.18;
+
+        case 'xLarge-iOS': // iPhone Pro Max / Large Tablets
+          return screenHeight * 0.18;
+        case 'xLarge-Android': // Android XL devices
+          return screenHeight * 0.2;
+
+        default:
+          return screenHeight * 0.18; // Fallback for unknown sizes
+      }
+    };
+
+    const finalPosition = getLogoFinalPosition(screenHeight, deviceSize, os);
+
+    Animated.timing(logoPosition, {
+      toValue: finalPosition,
+      duration: 1000,
+      useNativeDriver: false,
+    }).start();
+
+    setTimeout(() => {
+      Animated.parallel([
+        Animated.timing(formOpacity, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(formTranslateY, {
+          toValue: 0,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }, 800);
+  }, [device]); // Recalculate when `device` changes
+
+  const toggleSecureEntry = () => {
+    setSecureTextEntry(!secureTextEntry);
+  };
+
+  const renderIcon = () => (
+    <TouchableWithoutFeedback onPress={toggleSecureEntry}>
+      <MCIcons
+        name={secureTextEntry ? 'eye-off' : 'eye'}
+        size={20}
+        color={'#000'}
+      />
+    </TouchableWithoutFeedback>
+  );
+
+  const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidPassword = password => password.length >= 8;
+  const canSignIn = isValidEmail(email) && isValidPassword(password);
+
+  const handleSignIn = () => {
+    if (canSignIn) {
+      dispatch({
+        type: 'LOGIN_REQUEST',
+        payload: {email, password},
+      });
+    }
+  };
+
+  const logo = require('../../images/AppLogo_350.png');
+
+  return (
+    <Layout useHeader={false} innerViewStyles={{justifyContent: 'center'}}>
+      <StatusBar backgroundColor={bgColor} barStyle="light-content" />
+      <Animated.View
+        style={{
+          position: 'absolute',
+          top: logoPosition,
+          width: '100%',
+          alignItems: 'center',
+        }}>
+        <Image source={logo} />
+      </Animated.View>
+      <Animated.View
+        style={{
+          opacity: formOpacity,
+          transform: [{translateY: formTranslateY}],
+        }}>
+        <Input
+          placeholder="Email"
+          capitalize={false}
+          value={email}
+          onChangeText={setEmail}
+        />
+        <Input
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          accessoryRight={renderIcon}
+          secureTextEntry={secureTextEntry}
+          capitalize={false}
+        />
+        <Button
+          status={canSignIn ? 'primary' : 'basic'}
+          onPress={handleSignIn}
+          disabled={!canSignIn}>
+          Sign In
+        </Button>
+      </Animated.View>
+    </Layout>
+  );
+}
+
+export default Auth;
 
 -----
 
@@ -3521,41 +3725,59 @@ export const formatNutrient = nutrient => {
 
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Dimensions, Text, View} from 'react-native';
+import {Dimensions, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import NavMenu from './src/components/NavMenu';
 import {useDispatch} from 'react-redux';
 import {getNavMenuHeight} from './src/utilities/deviceUtils';
 import Home from './src/screens/Home/Home';
-import {useDeviceInfo, useProfile} from './src/hooks/useHooks';
+import {useAuth, useDeviceInfo, useProfile} from './src/hooks/useHooks';
 import {setHapticFeedback} from './src/hooks/setHapticFeedback';
 import Account from './src/screens/Account/Account';
 import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
-import {BottomSheet} from './src/KQ-UI';
+import {BottomSheet, Text} from './src/KQ-UI';
 import DevInputs from './src/screens/Dev/DevInputs';
 import DevButtons from './src/screens/Dev/DevButtons';
 import DevModals from './src/screens/Dev/DevModals';
 import DevDropdowns from './src/screens/Dev/DevDropdowns';
 import DevPlayground from './src/screens/Dev/DevPlayground';
 import DevText from './src/screens/Dev/DevText';
-import useAuthSync from './src/hooks/useAuthSync';
+import {getAuth} from '@react-native-firebase/auth';
+import {getApp} from '@react-native-firebase/app';
+import Auth from './src/screens/Auth/Auth';
 
 const Main = () => {
-  useAuthSync(); // this will fire off a console.log to check user auth status
   const dispatch = useDispatch();
   const device = useDeviceInfo();
   const profile = useProfile();
   const useHaptics = setHapticFeedback();
   const Stack = createNativeStackNavigator();
+  const isAuthenticated = useAuth();
   const [headerColor, setHeaderColor] = useState('black');
   const [screenLocation, setScreenLocation] = useState('');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [textColor, setTextColor] = useState('#373d43');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const bottomHeight = getNavMenuHeight(device);
+
+  useEffect(() => {
+    try {
+      const auth = getAuth(getApp());
+      const user = auth.currentUser;
+
+      if (user) {
+        dispatch({type: 'SET_USER', payload: user});
+      } else {
+        dispatch({type: 'LOGOUT'});
+      }
+    } catch (e) {
+      console.log('[Main] Firebase not ready yet:', e.message);
+      dispatch({type: 'LOGOUT'});
+    }
+  }, []);
 
   const borrowedParams = useMemo(
     () => ({bgColor, textColor, screenLocation}),
@@ -3673,6 +3895,7 @@ const Main = () => {
               },
             }}
           />
+
           {__DEV__ && (
             <>
               <Stack.Screen
@@ -3791,32 +4014,41 @@ const Main = () => {
               />
             </>
           )}
+          <Stack.Screen name="Login" component={Auth} />
         </Stack.Navigator>
       </>
     );
   };
 
-  return (
-    <NavigationContainer>
-      <SafeAreaView
-        style={{flex: 1, backgroundColor: headerColor}}
-        edges={['top']}>
-        <View style={{flex: 1}}>
-          <Navigation />
-          <BottomMenu toggleMenu={toggleMenu} />
-        </View>
+  if (!isAuthenticated) {
+    return (
+      <SafeAreaView style={{flex: 1, margin: 5}}>
+        <Auth bgColor={bgColor} />
       </SafeAreaView>
-      <SafeAreaView style={{height: bottomHeight}} edges={['bottom']}>
-        <NavMenu
-          bottomHeight={bottomHeight}
-          bottomWidth={device?.dimensions?.width}
-          toggleMenu={toggleMenu}
-          setIsSheetOpen={setIsSheetOpen}
-          device={device}
-        />
-      </SafeAreaView>
-    </NavigationContainer>
-  );
+    );
+  } else {
+    return (
+      <NavigationContainer>
+        <SafeAreaView
+          style={{flex: 1, backgroundColor: headerColor}}
+          edges={['top']}>
+          <View style={{flex: 1}}>
+            <Navigation />
+            <BottomMenu toggleMenu={toggleMenu} />
+          </View>
+        </SafeAreaView>
+        <SafeAreaView style={{height: bottomHeight}} edges={['bottom']}>
+          <NavMenu
+            bottomHeight={bottomHeight}
+            bottomWidth={device?.dimensions?.width}
+            toggleMenu={toggleMenu}
+            setIsSheetOpen={setIsSheetOpen}
+            device={device}
+          />
+        </SafeAreaView>
+      </NavigationContainer>
+    );
+  }
 };
 
 export default Main;
@@ -3846,9 +4078,18 @@ import {initializeApp, getApps} from '@react-native-firebase/app';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 const App = () => {
-  if (!getApps().length) {
-    initializeApp();
-  }
+  const [appReady, setAppReady] = useState(false);
+
+  useEffect(() => {
+    if (!getApps().length) {
+      initializeApp();
+    }
+
+    // Wait until app is ready
+    if (getApps().length) {
+      setAppReady(true);
+    }
+  }, []);
 
   const [isSplashVisible, setSplashVisible] = useState(true);
 
@@ -3877,7 +4118,7 @@ const App = () => {
     });
   }, []);
 
-  if (isSplashVisible) {
+  if (!appReady || isSplashVisible) {
     return (
       <>
         <SplashScreen />
