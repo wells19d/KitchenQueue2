@@ -25,6 +25,14 @@ import DevText from './src/screens/Dev/DevText';
 import {getAuth} from '@react-native-firebase/auth';
 import {getApp} from '@react-native-firebase/app';
 import Auth from './src/screens/Auth/Auth';
+import {
+  RTAccounts,
+  RTProfiles,
+  RTShopping,
+  RTCupboards,
+  RTUsers,
+  RTAllowedProfiles,
+} from './src/utilities/realtime';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -39,6 +47,13 @@ const Main = () => {
   const [textColor, setTextColor] = useState('#373d43');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const bottomHeight = getNavMenuHeight(device);
+
+  RTUsers();
+  RTAccounts();
+  RTProfiles();
+  RTShopping();
+  RTCupboards();
+  RTAllowedProfiles();
 
   useEffect(() => {
     try {

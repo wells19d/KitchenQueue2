@@ -2459,37 +2459,11 @@ export const useButtonSizes = (size = 'medium') => {
 //* Account.jsx
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Layout, ScrollView, Text} from '../../KQ-UI';
-import {useAccount, useProfile} from '../../hooks/useHooks';
-import {View} from 'react-native';
+import {Layout, Text} from '../../KQ-UI';
 
 const Account = () => {
   const route = useRoute();
-  const profile = useProfile();
-  const account = useAccount();
-
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-
-  const renderValue = value => {
-    if (Array.isArray(value)) {
-      return value.map((item, idx) => (
-        <Text key={idx} font="open-5" style={{marginLeft: 16}}>
-          • {typeof item === 'object' ? JSON.stringify(item) : String(item)}
-        </Text>
-      ));
-    }
-
-    if (typeof value === 'object' && value !== null) {
-      return Object.entries(value).map(([k, v], idx) => (
-        <Text key={idx} font="open-5" style={{marginLeft: 16}}>
-          • {k}: {typeof v === 'object' ? JSON.stringify(v) : String(v)}
-        </Text>
-      ));
-    }
-
-    return <Text font="open-5">{String(value)}</Text>;
-  };
-
   return (
     <Layout
       bgColor={bgColor}
@@ -2501,27 +2475,13 @@ const Account = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      innerViewStyles={{}}>
-      <ScrollView>
-        {Object.entries(profile).map(([key, value]) => (
-          <View key={key} style={{marginBottom: 8}}>
-            <Text font="open-7">{key}:</Text>
-            {renderValue(value)}
-          </View>
-        ))}
-        {Object.entries(account).map(([key, value]) => (
-          <View key={key} style={{marginBottom: 8}}>
-            <Text font="open-7">{key}:</Text>
-            {renderValue(value)}
-          </View>
-        ))}
-      </ScrollView>
+      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
+      <Text>Account</Text>
     </Layout>
   );
 };
 
 export default Account;
-
 
 -----
 
@@ -3507,6 +3467,295 @@ export const CMStyles = StyleSheet.create({
 
 -----
 
+//* RealTimeAccounts.jsx
+import {useEffect} from 'react';
+import {useDispatch} from 'react-redux';
+import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
+import {useAccount, useProfile} from '../../hooks/useHooks';
+
+const useRealTimeAccounts = () => {
+  const dispatch = useDispatch();
+  const profile = useProfile();
+  const db = getFirestore();
+
+  useEffect(() => {
+    if (!profile?.account) {
+      return;
+    }
+
+    console.log(`🔄 Fetching Account data from Firestore`);
+    const accountRef = doc(db, 'accounts', profile.account);
+
+    const unsubscribe = onSnapshot(
+      accountRef,
+      snapshot => {
+        if (snapshot.exists) {
+          const accountData = snapshot.data();
+          const account = {
+            ...accountData,
+            lastUpdated: accountData?.lastUpdated || null, // ✅ No more toDate()
+            createdOn: accountData?.createdOn || null, // ✅ No more toDate()
+          };
+          dispatch({type: 'SET_ACCOUNT', payload: account});
+        } else {
+          dispatch({type: 'SET_ACCOUNT', payload: null});
+        }
+      },
+      error => {
+        dispatch({type: 'ACCOUNT_FETCH_FAILED', payload: error.message});
+      },
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [dispatch, profile?.account, db]); // ✅ Removed `storedAccount`
+};
+
+export default useRealTimeAccounts;
+
+-----
+
+//* RealTimeAllowedProfiles.jsx
+import {useEffect} from 'react';
+import {useDispatch} from 'react-redux';
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  onSnapshot,
+} from '@react-native-firebase/firestore';
+import {useAccount} from '../../hooks/useHooks';
+
+const useRealTimeAllowedProfiles = () => {
+  const dispatch = useDispatch();
+  const account = useAccount();
+  const db = getFirestore();
+
+  useEffect(() => {
+    if (!account?.allowedUsers?.length) {
+      return;
+    }
+
+    console.log(`🔄 Fetching Allowed Profiles data from Firestore`);
+
+    const profilesQuery = query(
+      collection(db, 'profiles'),
+      where('id', 'in', account.allowedUsers),
+    );
+
+    const unsubscribe = onSnapshot(
+      profilesQuery,
+      querySnapshot => {
+        if (!querySnapshot.empty) {
+          const profiles = querySnapshot.docs
+            .map(doc => doc.data())
+            .filter(profile => profile?.isActive)
+            .sort((a, b) => (a.role === 'owner' ? -1 : 1));
+
+          dispatch({type: 'SET_ALLOWED_PROFILES', payload: profiles});
+        } else {
+          dispatch({type: 'SET_ALLOWED_PROFILES', payload: []});
+        }
+      },
+      error => {
+        dispatch({
+          type: 'ALLOWED_PROFILES_FETCH_FAILED',
+          payload: error.message,
+        });
+      },
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [dispatch, account?.allowedUsers, db]); // ✅ Removed `persistedProfiles`
+};
+
+export default useRealTimeAllowedProfiles;
+
+-----
+
+//* RealTimeCupboard.jsx
+import {useEffect} from 'react';
+import {useDispatch} from 'react-redux';
+import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
+import {useAccount} from '../../hooks/useHooks';
+
+const useRealTimeCupboard = () => {
+  const dispatch = useDispatch();
+  const account = useAccount();
+  const db = getFirestore();
+
+  useEffect(() => {
+    if (!account?.cupboardID) {
+      return;
+    }
+
+    console.log(`🔄 Fetching Cupboard data from Firestore`);
+    const cupboardRef = doc(db, 'cupboards', account.cupboardID);
+
+    const unsubscribe = onSnapshot(
+      cupboardRef,
+      snapshot => {
+        if (snapshot.exists) {
+          const cupboardData = snapshot.data();
+          const cupboard = {
+            ...cupboardData,
+            items: cupboardData.items || [],
+            lastUpdated: cupboardData?.lastUpdated || null, // ✅ No more toDate()
+          };
+
+          dispatch({type: 'SET_CUPBOARD', payload: cupboard});
+        } else {
+          dispatch({type: 'SET_CUPBOARD', payload: null});
+        }
+      },
+      error => {
+        dispatch({type: 'CUPBOARD_FETCH_FAILED', payload: error.message});
+      },
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [dispatch, account?.cupboardID, db]); // ✅ Removed `persistedCupboard`
+};
+
+export default useRealTimeCupboard;
+
+-----
+
+import {useEffect} from 'react';
+import {useDispatch} from 'react-redux';
+import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
+import {useProfile, useUser} from '../../hooks/useHooks';
+
+const useRealTimeProfiles = () => {
+  const dispatch = useDispatch();
+  const user = useUser();
+  const db = getFirestore();
+
+  useEffect(() => {
+    if (!user?.uid) {
+      return;
+    }
+
+    console.log(`🔄 Fetching Profile data from Firestore`);
+    const profileRef = doc(db, 'profiles', user.uid);
+
+    const unsubscribe = onSnapshot(
+      profileRef,
+      snapshot => {
+        if (snapshot.exists) {
+          const profileData = snapshot.data();
+          const profilePayload = {
+            ...profileData,
+            lastUpdated: profileData?.lastUpdated || null, // ✅ No more toDate()
+          };
+          dispatch({type: 'SET_PROFILE', payload: profilePayload});
+        } else {
+          dispatch({type: 'SET_PROFILE', payload: null});
+        }
+      },
+      error => {
+        dispatch({type: 'PROFILE_FETCH_FAILED', payload: error.message});
+      },
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [dispatch, user?.uid, db]); // ✅ Removed `storedProfile`
+};
+
+export default useRealTimeProfiles;
+
+-----
+
+//* RealTimeShoppingCart.jsx
+import {useEffect} from 'react';
+import {useDispatch} from 'react-redux';
+import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
+import {useAccount, useShoppingCart} from '../../hooks/useHooks';
+
+const useRealTimeShoppingCart = () => {
+  const dispatch = useDispatch();
+  const account = useAccount();
+  const persistedCart = useShoppingCart();
+  const db = getFirestore();
+
+  useEffect(() => {
+    if (!account?.shoppingCartID) {
+      return;
+    }
+
+    const cartRef = doc(db, 'shoppingCarts', account.shoppingCartID);
+    console.log('RealTimeShoppingCart fired');
+
+    const unsubscribe = onSnapshot(
+      cartRef,
+      snapshot => {
+        if (snapshot.exists) {
+          const shopCartData = snapshot.data();
+          const shopCart = {
+            ...shopCartData,
+            items: shopCartData.items || [],
+            lastUpdated: shopCartData?.lastUpdated || null, // ✅ No need for toDate()
+          };
+
+          // ✅ Prevent unnecessary updates by checking if data changed
+          if (JSON.stringify(persistedCart) !== JSON.stringify(shopCart)) {
+            dispatch({type: 'SET_SHOP_CART', payload: shopCart});
+          }
+        }
+      },
+      error => {
+        dispatch({type: 'SHOP_CART_FETCH_FAILED', payload: error.message});
+      },
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [dispatch, account?.shoppingCartID, persistedCart, db]);
+};
+
+export default useRealTimeShoppingCart;
+
+-----
+
+//* RealTimeUsers.jsx
+import {useEffect} from 'react';
+import {useDispatch} from 'react-redux';
+import {getAuth, onAuthStateChanged} from '@react-native-firebase/auth';
+
+const auth = getAuth();
+
+const useRealTimeUsers = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log(`🔄 Fetching User data from Firebase Auth`);
+
+    const unsubscribe = onAuthStateChanged(auth, currentUser => {
+      if (currentUser) {
+        dispatch({type: 'SET_USER', payload: currentUser});
+      } else {
+        dispatch({type: 'UNSET_USER'});
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [dispatch]);
+};
+
+export default useRealTimeUsers;
+
+-----
 //* categories.js
 
 export const displayCategories = [
@@ -3748,6 +3997,14 @@ import DevText from './src/screens/Dev/DevText';
 import {getAuth} from '@react-native-firebase/auth';
 import {getApp} from '@react-native-firebase/app';
 import Auth from './src/screens/Auth/Auth';
+import {
+  RTAccounts,
+  RTProfiles,
+  RTShopping,
+  RTCupboards,
+  RTUsers,
+  RTAllowedProfiles,
+} from './src/utilities/realtime';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -3762,6 +4019,13 @@ const Main = () => {
   const [textColor, setTextColor] = useState('#373d43');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const bottomHeight = getNavMenuHeight(device);
+
+  RTUsers();
+  RTAccounts();
+  RTProfiles();
+  RTShopping();
+  RTCupboards();
+  RTAllowedProfiles();
 
   useEffect(() => {
     try {
@@ -5025,15 +5289,88 @@ export default React.memo(DevModals);
 
 -----
 
-//* DevPlayground.jsx
-import React from 'react';
+//* Account.jsx
+import React, {use, useEffect} from 'react';
+import {useIsFocused, useRoute} from '@react-navigation/native';
+import {Layout, ScrollView, Text} from '../../KQ-UI';
+import {
+  useAccount,
+  useCupboard,
+  useProfile,
+  useShoppingCart,
+} from '../../hooks/useHooks';
 import {View} from 'react-native';
-import {Layout, Text} from '../../KQ-UI';
-import {useRoute} from '@react-navigation/native';
 
 const DevPlayground = () => {
+  const isFocused = useIsFocused();
   const route = useRoute();
+  const profile = useProfile();
+  const account = useAccount();
+  const shopping = useShoppingCart();
+  const cupboard = useCupboard();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+
+  useEffect(() => {
+    if (isFocused) {
+      console.log('profile', profile);
+      console.log('account', account);
+      console.log('shopping', shopping);
+      console.log('cupboard', cupboard);
+    }
+  }, [isFocused, profile, account, shopping, cupboard]);
+
+  const renderValue = value => {
+    if (Array.isArray(value)) {
+      return value.map((item, idx) => {
+        if (typeof item === 'object' && item !== null) {
+          return (
+            <View key={idx} style={{marginLeft: 8, marginBottom: 12}}>
+              <Text font="open-6" style={{marginBottom: 4}}>
+                {idx}:
+              </Text>
+              {Object.entries(item)
+                .sort(([a, b]) => a.localeCompare(b))
+                .map(([k, v], subIdx) => (
+                  <Text key={subIdx} font="open-5" style={{marginLeft: 16}}>
+                    • {k}:{' '}
+                    {typeof v === 'object' ? JSON.stringify(v) : String(v)}
+                  </Text>
+                ))}
+            </View>
+          );
+        }
+
+        return (
+          <Text
+            key={idx}
+            font="open-5"
+            style={{marginLeft: 16, marginBottom: 8}}>
+            {idx}: {String(item)}
+          </Text>
+        );
+      });
+    }
+
+    if (typeof value === 'object' && value !== null) {
+      return Object.entries(value)
+        .sort(([a, b]) => a.localeCompare(b))
+        .map(([k, v], idx) => (
+          <Text
+            key={idx}
+            font="open-5"
+            style={{marginLeft: 16, marginBottom: 4}}>
+            • {k}: {typeof v === 'object' ? JSON.stringify(v) : String(v)}
+          </Text>
+        ));
+    }
+
+    return (
+      <Text font="open-5" style={{marginLeft: 16}}>
+        {String(value)}
+      </Text>
+    );
+  };
+
   return (
     <Layout
       bgColor={bgColor}
@@ -5045,8 +5382,53 @@ const DevPlayground = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
-      <Text>DevPlayground</Text>
+      innerViewStyles={{}}>
+      <ScrollView>
+        <View style={{borderWidth: 1, padding: 5}}>
+          <Text>Profile</Text>
+          {Object.entries(profile)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([key, value]) => (
+              <View key={key} style={{marginBottom: 8}}>
+                <Text font="open-7">{key}:</Text>
+                {renderValue(value)}
+              </View>
+            ))}
+        </View>
+        <View style={{borderWidth: 1, padding: 5}}>
+          <Text>Account</Text>
+          {Object.entries(account)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([key, value]) => (
+              <View key={key} style={{marginBottom: 8}}>
+                <Text font="open-7">{key}:</Text>
+                {renderValue(value)}
+              </View>
+            ))}
+        </View>
+        <View style={{borderWidth: 1, padding: 5}}>
+          <Text>Shopping</Text>
+          {Object.entries(shopping)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([key, value]) => (
+              <View key={key} style={{marginBottom: 8}}>
+                <Text font="open-7">{key}:</Text>
+                {renderValue(value)}
+              </View>
+            ))}
+        </View>
+        <View style={{borderWidth: 1, padding: 5}}>
+          <Text>Cupboard</Text>
+          {Object.entries(cupboard)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([key, value]) => (
+              <View key={key} style={{marginBottom: 8}}>
+                <Text font="open-7">{key}:</Text>
+                {renderValue(value)}
+              </View>
+            ))}
+        </View>
+      </ScrollView>
     </Layout>
   );
 };
