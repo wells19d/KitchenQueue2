@@ -3541,8 +3541,10 @@ import DevModals from './src/screens/Dev/DevModals';
 import DevDropdowns from './src/screens/Dev/DevDropdowns';
 import DevPlayground from './src/screens/Dev/DevPlayground';
 import DevText from './src/screens/Dev/DevText';
+import useAuthSync from './src/hooks/useAuthSync';
 
 const Main = () => {
+  useAuthSync(); // this will fire off a console.log to check user auth status
   const dispatch = useDispatch();
   const device = useDeviceInfo();
   const profile = useProfile();
