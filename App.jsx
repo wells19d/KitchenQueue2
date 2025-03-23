@@ -21,9 +21,18 @@ import {initializeApp, getApps} from '@react-native-firebase/app';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 const App = () => {
-  if (!getApps().length) {
-    initializeApp();
-  }
+  const [appReady, setAppReady] = useState(false);
+
+  useEffect(() => {
+    if (!getApps().length) {
+      initializeApp();
+    }
+
+    // Wait until app is ready
+    if (getApps().length) {
+      setAppReady(true);
+    }
+  }, []);
 
   const [isSplashVisible, setSplashVisible] = useState(true);
 
@@ -52,7 +61,7 @@ const App = () => {
     });
   }, []);
 
-  if (isSplashVisible) {
+  if (!appReady || isSplashVisible) {
     return (
       <>
         <SplashScreen />
