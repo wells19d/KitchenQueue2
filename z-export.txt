@@ -1739,13 +1739,15 @@ import {useColors} from './KQUtilities';
 
 const KQModal = ({
   visible,
-  header = '',
+  title = '',
   children,
   height = '90%',
   width = '90%',
   headerFont = 'open-6',
   headerSize = 'small',
-  headerColor = 'white',
+  headerTextColor = 'white',
+  headerColor = 'primary',
+  headerBorderColor = 'primary',
   hideHeader = false,
   hideTitle = false,
   hideClose = false,
@@ -1780,14 +1782,21 @@ const KQModal = ({
       return null;
     }
     return (
-      <View style={styles.headerWrapper(fullScreen)}>
+      <View
+        style={[
+          styles.headerWrapper(fullScreen),
+          {
+            borderColor: useColors(headerBorderColor),
+            backgroundColor: useColors(headerColor),
+          },
+        ]}>
         <View style={styles.headerContainer}>
           {!hideTitle && (
             <Text
-              kqColor={useColors(headerColor)}
+              kqColor={useColors(headerTextColor)}
               font={headerFont}
               size={headerSize}>
-              {header}
+              {title}
             </Text>
           )}
         </View>
@@ -1935,81 +1944,8 @@ const styles = {
     borderWidth: fullScreen ? 0 : 1,
     borderTopRightRadius: fullScreen ? 0 : 8,
     borderTopLeftRadius: fullScreen ? 0 : 8,
-    borderColor: '#319177',
-    backgroundColor: '#319177',
-  }),
-  headerContainer: {
-    flex: 1,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeButton: {
-    position: 'absolute',
-    zIndex: 999,
-    right: 0,
-    borderWidth: 1.5,
-    backgroundColor: '#319177',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 5,
-    width: 30,
-    height: 30,
-    borderRadius: 8,
-    borderColor: 'white',
-  },
-};
-
-
-const styles = {
-  wrapper: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  pressTop: (topHeight, screenSize) => ({
-    height: topHeight,
-    width: screenSize.width,
-    backgroundColor: 'transparent',
-  }),
-  pressBtm: (btmHeight, screenSize) => ({
-    height: btmHeight,
-    width: screenSize.width,
-    backgroundColor: 'transparent',
-  }),
-  pressLeft: (midLeftWidth, midHeight) => ({
-    width: midLeftWidth,
-    height: midHeight,
-    backgroundColor: 'transparent',
-  }),
-  pressRight: (midRightWidth, midHeight) => ({
-    width: midRightWidth,
-    height: midHeight,
-    backgroundColor: 'transparent',
-  }),
-  container: {flex: 1, flexDirection: 'row'},
-  subContainer: (fullScreen, midHeight, insets) => ({
-    flex: 1,
-    height: midHeight,
-    borderWidth: 1,
-    borderColor: '#319177',
-    backgroundColor: '#fff',
-    paddingTop: fullScreen ? insets.top : 0,
-    paddingBottom: fullScreen ? insets.bottom : 0,
-    borderRadius: fullScreen ? 0 : 10,
-    shadowColor: fullScreen ? '' : 'black',
-    shadowOffset: fullScreen ? {} : {width: 3, height: 4},
-    shadowOpacity: fullScreen ? 0 : 0.5,
-    elevation: fullScreen ? 0 : 7,
-  }),
-
-  headerWrapper: fullScreen => ({
-    flexDirection: 'row',
-    borderWidth: fullScreen ? 0 : 1,
-    borderTopRightRadius: fullScreen ? 0 : 8,
-    borderTopLeftRadius: fullScreen ? 0 : 8,
-    borderColor: '#319177',
-    backgroundColor: '#319177',
+    // borderColor: '#319177',
+    // backgroundColor: '#319177',
   }),
   headerContainer: {
     flex: 1,
@@ -2175,24 +2111,26 @@ const toastStyles = {
   baseStyle: {
     top: 60,
     minHeight: 75,
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
-  primary: {borderLeftColor: '#44B3B3'},
-  success: {borderLeftColor: '#228B22'},
-  info: {borderLeftColor: '#0077A2'},
+  primary: {borderLeftColor: '#319177'},
+  success: {borderLeftColor: '#63B76C'},
+  info: {borderLeftColor: '#009DC4'},
   warning: {borderLeftColor: '#FCC945'},
-  danger: {borderLeftColor: '#fE4949'},
+  danger: {borderLeftColor: '#DA2C43'},
   dark: {borderLeftColor: '#373d43'},
   basic: {borderLeftColor: '#C4C4C4'},
   textStyle1: {
     fontSize: 16,
     color: '#000',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'OpenSans-Bold',
+    fontWeight: 700,
   },
   textStyle2: {
     fontSize: 14,
     color: '#000',
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'OpenSans-SemiBold',
+    fontWeight: 600,
   },
 };
 
@@ -2471,7 +2409,7 @@ const Account = () => {
       headerColor={headerColor}
       textColor={textColor}
       LeftButton=""
-      RightButton=""
+      RightButton="Logout"
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
@@ -2708,6 +2646,526 @@ export default Home;
 
 -----
 
+//*LegalArray.js
+export const LegalArray = {
+  PP: [
+    {
+      dates: {effective: 'July 1, 2025', written: 'March 23, 2025'},
+      version: {previous: '1.0.1', current: '1.0.2'},
+      sections: [
+        {
+          index: 1,
+          title: 'Information We Collect',
+          clauses: [
+            {
+              index: 1,
+              info: 'We collect and process the following types of information:',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Personal Data: Includes names, email addresses, and profile information provided by users during account creation.',
+                },
+                {
+                  index: 2,
+                  info: 'Household Data: Information about items entered by users into the app, such as shopping lists, cupboard inventories, and categories.',
+                },
+                {
+                  index: 3,
+                  info: 'Device Information: Information about the device used to access the app, such as device type and operating system, used solely to improve app functionality.',
+                },
+                {
+                  index: 4,
+                  info: 'Usage Data: Activity logs related to shopping, cupboard, and event features to enhance user experience.',
+                },
+                {
+                  index: 5,
+                  info: 'Third-Party Data: Retrieved via trusted APIs (e.g., barcode lookups and recipe suggestions) and processed according to those services’ policies.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          index: 2,
+          title: 'How We Use Your Data',
+          clauses: [
+            {
+              index: 1,
+              info: 'Data is used to:',
+              subClause: [
+                {index: 1, info: 'Facilitate and improve core app features.'},
+                {
+                  index: 2,
+                  info: 'Ensure a seamless experience across devices.',
+                },
+                {index: 3, info: 'Analyze and improve app performance.'},
+                {
+                  index: 4,
+                  info: 'Support barcode lookup and recipe suggestions from third-party APIs.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          index: 3,
+          title: 'Data Sharing',
+          clauses: [
+            {
+              index: 1,
+              info: 'We do not sell or rent user data. Data is shared only with trusted third-party services strictly for feature functionality.',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Data may be passed to trusted APIs for features like UPC scanning or recipe search.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          index: 4,
+          title: 'Data Security',
+          clauses: [
+            {
+              index: 1,
+              info: 'We use secure, encrypted systems to store and manage user data. While best efforts are made, no system is entirely immune to risks.',
+            },
+          ],
+        },
+        {
+          index: 5,
+          title: 'User Rights',
+          clauses: [
+            {
+              index: 1,
+              info: 'Users have the right to:',
+              subClause: [
+                {index: 1, info: 'Access their personal data.'},
+                {index: 2, info: 'Request corrections to their data.'},
+                {
+                  index: 3,
+                  info: 'Request deletion of their account and associated data.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          index: 6,
+          title: "Children's Privacy",
+          clauses: [
+            {
+              index: 1,
+              info: 'This app is not intended for children under 13. Use by minors is the responsibility of the account holder.',
+            },
+          ],
+        },
+        {
+          index: 7,
+          title: 'Third-Party Services',
+          clauses: [
+            {
+              index: 1,
+              info: 'The app integrates trusted third-party services such as Edamam for features like barcode lookups and recipe suggestions. These services may collect data in accordance with their own privacy policies.',
+            },
+          ],
+        },
+        {
+          index: 8,
+          title: 'Changes to the Privacy Policy',
+          clauses: [
+            {
+              index: 1,
+              info: 'This policy may be updated periodically to reflect feature changes or legal requirements. Continued use of the app implies acceptance.',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  TOS: [
+    {
+      dates: {effective: 'July 1, 2025', written: 'March 23, 2025'},
+      version: {previous: '1.0.1', current: '1.0.2'},
+      sections: [
+        {
+          index: 1,
+          title: 'Acceptance of Terms',
+          clauses: [
+            {
+              index: 1,
+              info: 'By using Kitchen Queue, you agree to these terms. If you do not agree, discontinue use of the app.',
+            },
+          ],
+        },
+        {
+          index: 2,
+          title: 'Purpose of Kitchen Queue',
+          clauses: [
+            {
+              index: 1,
+              info: 'Kitchen Queue is designed to help users manage kitchen inventory, shopping lists, and meal planning.',
+            },
+          ],
+        },
+        {
+          index: 3,
+          title: 'User Responsibilities',
+          clauses: [
+            {
+              index: 1,
+              info: 'Users must use the app for its intended household planning and food management purposes only.',
+            },
+            {
+              index: 2,
+              info: 'Prohibited use includes illegal content, including drug-related items or activity.',
+            },
+            {
+              index: 3,
+              info: 'Users are responsible for ensuring their data is accurate and purposeful.',
+            },
+            {
+              index: 4,
+              info: 'Kitchen Queue is not responsible for any inaccuracies or misuse of user-entered data.',
+            },
+          ],
+        },
+        {
+          index: 4,
+          title: 'Age Restrictions',
+          clauses: [
+            {
+              index: 1,
+              info: 'The app is not intended for users under 13 years old.',
+            },
+            {
+              index: 2,
+              info: 'Account holders are responsible for the data entered by any minor users they authorize.',
+            },
+            {
+              index: 3,
+              info: 'Unauthorized accounts for children under 13 will be deleted.',
+            },
+          ],
+        },
+        {
+          index: 5,
+          title: 'Data Usage and Limitations',
+          clauses: [
+            {
+              index: 1,
+              info: 'Users are fully responsible for managing and verifying their own data within the app.',
+            },
+          ],
+        },
+        {
+          index: 6,
+          title: 'Third-Party Services',
+          clauses: [
+            {
+              index: 1,
+              info: 'The app uses services such as Edamam for recipe suggestions and barcode lookups. Users must comply with the terms of these third-party providers.',
+            },
+          ],
+        },
+        {
+          index: 7,
+          title: 'Changes to Terms',
+          clauses: [
+            {
+              index: 1,
+              info: 'Terms may be updated from time to time. Continued use of the app confirms your acceptance of any updates.',
+            },
+          ],
+        },
+        {
+          index: 8,
+          title: 'Limitation of Liability',
+          clauses: [
+            {
+              index: 1,
+              info: 'Kitchen Queue is not liable for misuse, data errors, or third-party service issues. The app is provided as-is.',
+            },
+          ],
+        },
+        {
+          index: 9,
+          title: 'Governing Law',
+          clauses: [
+            {
+              index: 1,
+              info: 'These terms are governed by the laws of the State of North Dakota, USA.',
+            },
+          ],
+        },
+        {
+          index: 10,
+          title: 'Subscriptions and Payments',
+          clauses: [
+            {
+              index: 1,
+              info: 'All subscriptions and in-app purchases are handled exclusively through Apple and Google’s platforms. Kitchen Queue does not process or store any payment data.',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+
+  About: [
+    {
+      sections: [
+        {
+          index: 1,
+          title: 'Discover Kitchen Queue',
+          clauses: [
+            {
+              index: 1,
+              info: 'Kitchen Queue is your ultimate household companion for managing shopping, inventory, and meal planning.',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Create shopping lists and move items between list/cart/cupboard.',
+                },
+                {
+                  index: 2,
+                  info: 'Up to 4 users per household, collaborating in real-time.',
+                },
+                {
+                  index: 3,
+                  info: 'Barcode scanning and recipe searching powered by Edamam.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          index: 2,
+          title: 'What’s Coming Soon',
+          clauses: [
+            {
+              index: 1,
+              info: 'Recipe Box and Community Recipes',
+              subClause: [
+                {index: 1, info: 'Store and share your favorite meals.'},
+                {
+                  index: 2,
+                  info: 'Auto-check your cupboard for required ingredients.',
+                },
+              ],
+            },
+            {
+              index: 2,
+              info: 'Smart Meal Planning and UPC History',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'View past scanned items and plan meals accordingly.',
+                },
+              ],
+            },
+            {
+              index: 3,
+              info: 'Events and Guest Lists',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Organize shared meals and let guests claim food items.',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+-----
+
+//* PrivacyPolicy.jsx
+import React from 'react';
+import {View} from 'react-native';
+import {LegalStyles} from '../../styles/Styles';
+import {LegalArray} from './LegalArray';
+import {Text, Button, ScrollView} from '../../KQ-UI';
+
+export default function PrivacyPolicy({
+  handlePPConfirm,
+  handleCancel,
+  hideConfirm,
+}) {
+  let terms = LegalArray.PP[0];
+
+  const RenderTermData = ({terms}) => {
+    return terms.sections.map(section => (
+      <View key={section.index} style={LegalStyles.sectionWrapper}>
+        <View style={LegalStyles.sectionHeader}>
+          <View style={LegalStyles.sectionIndex}>
+            <Text size="small">{section.index}.</Text>
+          </View>
+          <View style={LegalStyles.sectionTitle}>
+            <Text size="small">{section.title}:</Text>
+          </View>
+        </View>
+        {section.clauses.map(clause => (
+          <View key={clause.index} style={LegalStyles.clauseWrapper}>
+            <View style={LegalStyles.clauseHeader}>
+              <View style={LegalStyles.clauseIndexSpacing}></View>
+              <View style={LegalStyles.clauseTextWrapper}>
+                <Text size="small" style={LegalStyles.clauseInfo}>
+                  {clause.info}
+                </Text>
+              </View>
+            </View>
+            {clause.subClause?.length > 0 && (
+              <View style={LegalStyles.subClauseWrapper}>
+                {clause.subClause.map(sub => (
+                  <View key={sub.index} style={LegalStyles.subClauseHeader}>
+                    <View style={LegalStyles.bulletWrapper}>
+                      <Text size="small">{'\u2022'}</Text>
+                    </View>
+                    <View style={LegalStyles.subClauseTextWrapper}>
+                      <Text size="small" style={LegalStyles.clauseInfo}>
+                        {sub.info}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        ))}
+      </View>
+    ));
+  };
+  return (
+    <View style={LegalStyles.container}>
+      <View
+        style={[
+          LegalStyles.body,
+          hideConfirm ? {paddingBottom: 20} : {paddingBottom: 10},
+        ]}>
+        <ScrollView>
+          <RenderTermData terms={terms} />
+        </ScrollView>
+      </View>
+      {!hideConfirm && (
+        <View style={LegalStyles.buttonWrapper}>
+          <View style={LegalStyles.buttonCells}>
+            <Button
+              color="danger"
+              size="small"
+              onPress={() => handleCancel('Privacy Policy')}>
+              Cancel
+            </Button>
+          </View>
+          <View style={LegalStyles.buttonCells}>
+            <Button
+              color="success"
+              size="small"
+              onPress={() => handlePPConfirm()}>
+              Confirm
+            </Button>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+}
+
+-----
+
+//* TermsService.jsx
+import React from 'react';
+import {View} from 'react-native';
+import {LegalStyles} from '../../styles/Styles';
+import {LegalArray} from './LegalArray';
+import {Text, Button, ScrollView} from '../../KQ-UI';
+
+export default function TermsService({
+  handleTOSConfirm,
+  handleCancel,
+  hideConfirm,
+}) {
+  let terms = LegalArray.TOS[0];
+
+  const RenderTermData = ({terms}) => {
+    return terms.sections.map(section => (
+      <View key={section.index} style={LegalStyles.sectionWrapper}>
+        <View style={LegalStyles.sectionHeader}>
+          <View style={LegalStyles.sectionIndex}>
+            <Text size="small">{section.index}.</Text>
+          </View>
+          <View style={LegalStyles.sectionTitle}>
+            <Text size="small">{section.title}:</Text>
+          </View>
+        </View>
+        {section.clauses.map(clause => (
+          <View key={clause.index} style={LegalStyles.clauseWrapper}>
+            <View style={LegalStyles.clauseHeader}>
+              <View style={LegalStyles.clauseIndexSpacing}></View>
+              <View style={LegalStyles.clauseTextWrapper}>
+                <Text size="small">{clause.info}</Text>
+              </View>
+            </View>
+            {clause.subClause?.length > 0 && (
+              <View style={LegalStyles.subClauseWrapper}>
+                {clause.subClause.map(sub => (
+                  <View key={sub.index} style={LegalStyles.subClauseHeader}>
+                    <View style={LegalStyles.bulletWrapper}>
+                      <Text size="small">{'\u2022'}</Text>
+                    </View>
+                    <View style={LegalStyles.subClauseTextWrapper}>
+                      <Text size="small">{sub.info}</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        ))}
+      </View>
+    ));
+  };
+
+  return (
+    <View style={LegalStyles.container}>
+      <View
+        style={[
+          LegalStyles.body,
+          hideConfirm ? {paddingBottom: 20} : {paddingBottom: 10},
+        ]}>
+        <ScrollView>
+          <RenderTermData terms={terms} />
+        </ScrollView>
+      </View>
+      {!hideConfirm && (
+        <View style={LegalStyles.buttonWrapper}>
+          <View style={LegalStyles.buttonCells}>
+            <Button
+              color="danger"
+              size="small"
+              onPress={() => handleCancel('Terms of Service')}>
+              Cancel
+            </Button>
+          </View>
+          <View style={LegalStyles.buttonCells}>
+            <Button
+              color="success"
+              size="small"
+              onPress={() => handleTOSConfirm()}>
+              Confirm
+            </Button>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+}
+
+-----
 //* Shopping.jsx
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
@@ -3078,8 +3536,9 @@ export const SelectItemStyles = StyleSheet.create({
 
 export const LegalStyles = StyleSheet.create({
   container: {
-    height: '100%',
+    flex: 1,
     flexDirection: 'column',
+    paddingVertical: 15,
   },
   body: {
     flex: 1,
@@ -3974,7 +4433,7 @@ export const formatNutrient = nutrient => {
 
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Dimensions, View} from 'react-native';
+import {Alert, Dimensions, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import NavMenu from './src/components/NavMenu';
@@ -3987,7 +4446,7 @@ import Account from './src/screens/Account/Account';
 import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
-import {BottomSheet, Text} from './src/KQ-UI';
+import {BottomSheet, Modal, Text} from './src/KQ-UI';
 import DevInputs from './src/screens/Dev/DevInputs';
 import DevButtons from './src/screens/Dev/DevButtons';
 import DevModals from './src/screens/Dev/DevModals';
@@ -4005,6 +4464,9 @@ import {
   RTUsers,
   RTAllowedProfiles,
 } from './src/utilities/realtime';
+import TermsService from './src/screens/Legal/TermsService';
+import PrivacyPolicy from './src/screens/Legal/PrivacyPolicy';
+import {AppInfo} from './AppInfo';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -4019,6 +4481,10 @@ const Main = () => {
   const [textColor, setTextColor] = useState('#373d43');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const bottomHeight = getNavMenuHeight(device);
+
+  const [showPPModal, setShowPPModal] = useState(false);
+  const [showTOSModal, setShowTOSModal] = useState(true);
+  const [currentModal, setCurrentModal] = useState('TOS');
 
   RTUsers();
   RTAccounts();
@@ -4049,6 +4515,21 @@ const Main = () => {
   );
 
   useEffect(() => {
+    if (isAuthenticated && profile) {
+      if (!profile?.tosVersion || profile?.tosVersion !== AppInfo.tosVersion) {
+        setCurrentModal('TOS');
+        setShowTOSModal(true);
+      } else if (
+        !profile?.ppVersion ||
+        profile?.ppVersion !== AppInfo.ppVersion
+      ) {
+        setCurrentModal('PP');
+        setShowPPModal(true);
+      }
+    }
+  }, [isAuthenticated, profile]);
+
+  useEffect(() => {
     dispatch({type: 'FETCH_DEVICE_INFO'});
 
     const subscription = Dimensions.addEventListener('change', () => {
@@ -4057,6 +4538,51 @@ const Main = () => {
 
     return () => subscription?.remove();
   }, [dispatch]);
+
+  const handlePPConfirm = () => {
+    let updatedData = {
+      ppVersion: AppInfo.ppVersion,
+    };
+    dispatch({
+      type: 'UPDATE_PROFILE_REQUEST',
+      payload: {userId: profile?.id, updatedData},
+    });
+    setShowPPModal(false);
+
+    if (profile?.tosVersion !== AppInfo.tosVersion) {
+      setCurrentModal('TOS');
+      setShowTOSModal(true);
+    }
+  };
+
+  const handleTOSConfirm = () => {
+    let updatedData = {
+      tosVersion: AppInfo.tosVersion,
+    };
+    dispatch({
+      type: 'UPDATE_PROFILE_REQUEST',
+      payload: {userId: profile?.id, updatedData},
+    });
+    setShowTOSModal(false);
+    setCurrentModal('');
+  };
+
+  const handleCancel = type => {
+    Alert.alert(
+      `${type} Declined`,
+      `Not accepting the ${type}, you will be logged out and prevented from using Kitchen Queue. Are you sure you want to decline?`,
+      [
+        {text: 'Back'},
+        {
+          text: 'Decline',
+          style: 'destructive',
+          onPress: () => {
+            dispatch({type: 'LOGOUT'});
+          },
+        },
+      ],
+    );
+  };
 
   const toggleMenu = useCallback(() => {
     setIsSheetOpen(prev => !prev);
@@ -4121,6 +4647,54 @@ const Main = () => {
               },
             }}
           />
+          {/* <Stack.Screen
+            name="InCart"
+            component={InCart}
+            initialParams={{
+              title: 'Shopping Cart',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('InCart');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="AddShopItems"
+            component={AddShopItems}
+            initialParams={{
+              title: 'Add Item(s)',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('AddShopItems');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="UpdateShopItems"
+            component={UpdateShopItems}
+            initialParams={{
+              title: 'Update Item',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('UpdateShopItems');
+              },
+            }}
+          /> */}
           <Stack.Screen
             name="CupboardList"
             component={Cupboards}
@@ -4140,6 +4714,54 @@ const Main = () => {
               },
             }}
           />
+          {/* <Stack.Screen
+            name="AddCupboardItems"
+            component={AddCupboardItems}
+            initialParams={{
+              title: 'Add Item(s)',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('AddCupboardItems');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="UpdateCupboardItems"
+            component={UpdateCupboardItems}
+            initialParams={{
+              title: 'Update Item',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('UpdateCupboardItems');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="RecipeList"
+            component={Recipes}
+            initialParams={{
+              title: 'Recipes',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('RecipeList');
+              },
+            }}
+          /> */}
           <Stack.Screen
             name="Account"
             component={Account}
@@ -4159,7 +4781,134 @@ const Main = () => {
               },
             }}
           />
-
+          {/* <Stack.Screen
+            name="AccountSettings"
+            component={Settings}
+            initialParams={{
+              title: 'Settings',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('AccountSettings');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="AccountHelp"
+            component={Help}
+            initialParams={{
+              title: 'Help',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('AccountHelp');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="Vibrations"
+            component={Vibrations}
+            initialParams={{
+              title: 'Vibration Settings',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('Vibrations');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="ItemDisplay"
+            component={ItemDisplay}
+            initialParams={{
+              title: 'Item Display',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('ItemDisplay');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="AdvancedFields"
+            component={AdvancedFields}
+            initialParams={{
+              title: 'Advanced Fields',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('AdvancedFields');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="DefaultView"
+            component={DefaultGroupView}
+            initialParams={{
+              title: 'Group View',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('DefaultView');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="Resets"
+            component={Resets}
+            initialParams={{
+              title: 'Resets',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('Resets');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="Passwords"
+            component={Passwords}
+            initialParams={{
+              title: 'Passwords',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('Passwords');
+              },
+            }}
+          /> */}
           {__DEV__ && (
             <>
               <Stack.Screen
@@ -4310,6 +5059,31 @@ const Main = () => {
             device={device}
           />
         </SafeAreaView>
+        {currentModal === 'TOS' && (
+          <Modal
+            visible={showTOSModal}
+            title="Terms of Service Update"
+            fullScreen
+            hideClose>
+            <TermsService
+              handleTOSConfirm={handleTOSConfirm}
+              handleCancel={handleCancel}
+            />
+          </Modal>
+        )}
+
+        {currentModal === 'PP' && (
+          <Modal
+            visible={showPPModal}
+            title="Privacy Policy Update"
+            fullScreen
+            hideClose>
+            <PrivacyPolicy
+              handlePPConfirm={handlePPConfirm}
+              handleCancel={handleCancel}
+            />
+          </Modal>
+        )}
       </NavigationContainer>
     );
   }
@@ -4336,7 +5110,7 @@ import {
 } from 'react-native';
 import SplashScreen from './src/components/SplashScreen';
 import Toast from 'react-native-toast-message';
-import {toastConfig} from './src/KQ-UI/KQToast';
+import toastConfig from './src/KQ-UI/KQToast';
 import Main from './Main';
 import {initializeApp, getApps} from '@react-native-firebase/app';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -4409,6 +5183,16 @@ const App = () => {
 };
 
 export default App;
+
+-----
+
+//* AppInfo.js
+export const AppInfo = {
+  appName: 'Kitchen Queue',
+  appVersion: '0.0.4',
+  tosVersion: '1.0.2',
+  ppVersion: '1.0.2',
+};
 
 -----
 
@@ -5183,10 +5967,9 @@ const DevModals = () => {
       innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
       <Modal
         visible={showModal}
-        header="Full Screen"
+        title="Full Screen"
         headerFont="open-6"
         headerSize="small"
-        headerColor="white"
         height="95%"
         width="95%"
         fullScreen
@@ -5206,10 +5989,9 @@ const DevModals = () => {
       </Modal>
       <Modal
         visible={showModal2}
-        header="Full Screen"
+        title="Full Screen"
         headerFont="open-6"
         headerSize="small"
-        headerColor="white"
         height="95%"
         width="95%"
         fullScreen
@@ -5229,10 +6011,9 @@ const DevModals = () => {
       </Modal>
       <Modal
         visible={showModal3}
-        header="Modal Title"
+        title="Modal Title"
         headerFont="open-6"
         headerSize="small"
-        headerColor="white"
         height="95%"
         width="95%"
         // fullScreen
@@ -5252,10 +6033,9 @@ const DevModals = () => {
       </Modal>
       <Modal
         visible={showModal4}
-        header="Modal Title"
+        title="Modal Title"
         headerFont="open-6"
         headerSize="small"
-        headerColor="white"
         height="85%"
         width="85%"
         // fullScreen

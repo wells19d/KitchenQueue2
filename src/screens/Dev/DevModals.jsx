@@ -27,10 +27,9 @@ const DevModals = () => {
       innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
       <Modal
         visible={showModal}
-        header="Full Screen"
+        title="Full Screen"
         headerFont="open-6"
         headerSize="small"
-        headerColor="white"
         height="95%"
         width="95%"
         fullScreen
@@ -50,10 +49,9 @@ const DevModals = () => {
       </Modal>
       <Modal
         visible={showModal2}
-        header="Full Screen"
+        title="Full Screen"
         headerFont="open-6"
         headerSize="small"
-        headerColor="white"
         height="95%"
         width="95%"
         fullScreen
@@ -73,10 +71,9 @@ const DevModals = () => {
       </Modal>
       <Modal
         visible={showModal3}
-        header="Modal Title"
+        title="Modal Title"
         headerFont="open-6"
         headerSize="small"
-        headerColor="white"
         height="95%"
         width="95%"
         // fullScreen
@@ -96,10 +93,9 @@ const DevModals = () => {
       </Modal>
       <Modal
         visible={showModal4}
-        header="Modal Title"
+        title="Modal Title"
         headerFont="open-6"
         headerSize="small"
-        headerColor="white"
         height="85%"
         width="85%"
         // fullScreen

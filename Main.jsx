@@ -2,7 +2,7 @@
 
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Dimensions, View} from 'react-native';
+import {Alert, Dimensions, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import NavMenu from './src/components/NavMenu';
@@ -15,7 +15,7 @@ import Account from './src/screens/Account/Account';
 import Cupboards from './src/screens/Cupboard/Cupboard';
 import Shopping from './src/screens/Shopping/Shopping';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
-import {BottomSheet, Text} from './src/KQ-UI';
+import {BottomSheet, Modal, Text} from './src/KQ-UI';
 import DevInputs from './src/screens/Dev/DevInputs';
 import DevButtons from './src/screens/Dev/DevButtons';
 import DevModals from './src/screens/Dev/DevModals';
@@ -33,6 +33,9 @@ import {
   RTUsers,
   RTAllowedProfiles,
 } from './src/utilities/realtime';
+import TermsService from './src/screens/Legal/TermsService';
+import PrivacyPolicy from './src/screens/Legal/PrivacyPolicy';
+import {AppInfo} from './AppInfo';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -47,6 +50,10 @@ const Main = () => {
   const [textColor, setTextColor] = useState('#373d43');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const bottomHeight = getNavMenuHeight(device);
+
+  const [showPPModal, setShowPPModal] = useState(false);
+  const [showTOSModal, setShowTOSModal] = useState(true);
+  const [currentModal, setCurrentModal] = useState('TOS');
 
   RTUsers();
   RTAccounts();
@@ -77,6 +84,21 @@ const Main = () => {
   );
 
   useEffect(() => {
+    if (isAuthenticated && profile) {
+      if (!profile?.tosVersion || profile?.tosVersion !== AppInfo.tosVersion) {
+        setCurrentModal('TOS');
+        setShowTOSModal(true);
+      } else if (
+        !profile?.ppVersion ||
+        profile?.ppVersion !== AppInfo.ppVersion
+      ) {
+        setCurrentModal('PP');
+        setShowPPModal(true);
+      }
+    }
+  }, [isAuthenticated, profile]);
+
+  useEffect(() => {
     dispatch({type: 'FETCH_DEVICE_INFO'});
 
     const subscription = Dimensions.addEventListener('change', () => {
@@ -85,6 +107,51 @@ const Main = () => {
 
     return () => subscription?.remove();
   }, [dispatch]);
+
+  const handlePPConfirm = () => {
+    let updatedData = {
+      ppVersion: AppInfo.ppVersion,
+    };
+    dispatch({
+      type: 'UPDATE_PROFILE_REQUEST',
+      payload: {userId: profile?.id, updatedData},
+    });
+    setShowPPModal(false);
+
+    if (profile?.tosVersion !== AppInfo.tosVersion) {
+      setCurrentModal('TOS');
+      setShowTOSModal(true);
+    }
+  };
+
+  const handleTOSConfirm = () => {
+    let updatedData = {
+      tosVersion: AppInfo.tosVersion,
+    };
+    dispatch({
+      type: 'UPDATE_PROFILE_REQUEST',
+      payload: {userId: profile?.id, updatedData},
+    });
+    setShowTOSModal(false);
+    setCurrentModal('');
+  };
+
+  const handleCancel = type => {
+    Alert.alert(
+      `${type} Declined`,
+      `Not accepting the ${type}, you will be logged out and prevented from using Kitchen Queue. Are you sure you want to decline?`,
+      [
+        {text: 'Back'},
+        {
+          text: 'Decline',
+          style: 'destructive',
+          onPress: () => {
+            dispatch({type: 'LOGOUT'});
+          },
+        },
+      ],
+    );
+  };
 
   const toggleMenu = useCallback(() => {
     setIsSheetOpen(prev => !prev);
@@ -149,6 +216,54 @@ const Main = () => {
               },
             }}
           />
+          {/* <Stack.Screen
+            name="InCart"
+            component={InCart}
+            initialParams={{
+              title: 'Shopping Cart',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('InCart');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="AddShopItems"
+            component={AddShopItems}
+            initialParams={{
+              title: 'Add Item(s)',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('AddShopItems');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="UpdateShopItems"
+            component={UpdateShopItems}
+            initialParams={{
+              title: 'Update Item',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('UpdateShopItems');
+              },
+            }}
+          /> */}
           <Stack.Screen
             name="CupboardList"
             component={Cupboards}
@@ -168,6 +283,54 @@ const Main = () => {
               },
             }}
           />
+          {/* <Stack.Screen
+            name="AddCupboardItems"
+            component={AddCupboardItems}
+            initialParams={{
+              title: 'Add Item(s)',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('AddCupboardItems');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="UpdateCupboardItems"
+            component={UpdateCupboardItems}
+            initialParams={{
+              title: 'Update Item',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('UpdateCupboardItems');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="RecipeList"
+            component={Recipes}
+            initialParams={{
+              title: 'Recipes',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('RecipeList');
+              },
+            }}
+          /> */}
           <Stack.Screen
             name="Account"
             component={Account}
@@ -187,7 +350,134 @@ const Main = () => {
               },
             }}
           />
-
+          {/* <Stack.Screen
+            name="AccountSettings"
+            component={Settings}
+            initialParams={{
+              title: 'Settings',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('AccountSettings');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="AccountHelp"
+            component={Help}
+            initialParams={{
+              title: 'Help',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('AccountHelp');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="Vibrations"
+            component={Vibrations}
+            initialParams={{
+              title: 'Vibration Settings',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('Vibrations');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="ItemDisplay"
+            component={ItemDisplay}
+            initialParams={{
+              title: 'Item Display',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('ItemDisplay');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="AdvancedFields"
+            component={AdvancedFields}
+            initialParams={{
+              title: 'Advanced Fields',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('AdvancedFields');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="DefaultView"
+            component={DefaultGroupView}
+            initialParams={{
+              title: 'Group View',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('DefaultView');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="Resets"
+            component={Resets}
+            initialParams={{
+              title: 'Resets',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('Resets');
+              },
+            }}
+          /> */}
+          {/* <Stack.Screen
+            name="Passwords"
+            component={Passwords}
+            initialParams={{
+              title: 'Passwords',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#319177');
+                setTextColor('#fff');
+                setScreenLocation('Passwords');
+              },
+            }}
+          /> */}
           {__DEV__ && (
             <>
               <Stack.Screen
@@ -338,6 +628,31 @@ const Main = () => {
             device={device}
           />
         </SafeAreaView>
+        {currentModal === 'TOS' && (
+          <Modal
+            visible={showTOSModal}
+            title="Terms of Service Update"
+            fullScreen
+            hideClose>
+            <TermsService
+              handleTOSConfirm={handleTOSConfirm}
+              handleCancel={handleCancel}
+            />
+          </Modal>
+        )}
+
+        {currentModal === 'PP' && (
+          <Modal
+            visible={showPPModal}
+            title="Privacy Policy Update"
+            fullScreen
+            hideClose>
+            <PrivacyPolicy
+              handlePPConfirm={handlePPConfirm}
+              handleCancel={handleCancel}
+            />
+          </Modal>
+        )}
       </NavigationContainer>
     );
   }

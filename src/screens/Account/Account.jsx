@@ -13,7 +13,7 @@ const Account = () => {
       headerColor={headerColor}
       textColor={textColor}
       LeftButton=""
-      RightButton=""
+      RightButton="Logout"
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
