@@ -5,24 +5,26 @@ const toastStyles = {
   baseStyle: {
     top: 60,
     minHeight: 75,
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
-  primary: {borderLeftColor: '#44B3B3'},
-  success: {borderLeftColor: '#228B22'},
-  info: {borderLeftColor: '#0077A2'},
+  primary: {borderLeftColor: '#319177'},
+  success: {borderLeftColor: '#63B76C'},
+  info: {borderLeftColor: '#009DC4'},
   warning: {borderLeftColor: '#FCC945'},
-  danger: {borderLeftColor: '#fE4949'},
+  danger: {borderLeftColor: '#DA2C43'},
   dark: {borderLeftColor: '#373d43'},
   basic: {borderLeftColor: '#C4C4C4'},
   textStyle1: {
     fontSize: 16,
     color: '#000',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'OpenSans-Bold',
+    fontWeight: 700,
   },
   textStyle2: {
     fontSize: 14,
     color: '#000',
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'OpenSans-SemiBold',
+    fontWeight: 600,
   },
 };
 

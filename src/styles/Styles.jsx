@@ -339,8 +339,9 @@ export const SelectItemStyles = StyleSheet.create({
 
 export const LegalStyles = StyleSheet.create({
   container: {
-    height: '100%',
+    flex: 1,
     flexDirection: 'column',
+    paddingVertical: 15,
   },
   body: {
     flex: 1,

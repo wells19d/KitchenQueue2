@@ -18,13 +18,15 @@ import {useColors} from './KQUtilities';
 
 const KQModal = ({
   visible,
-  header = '',
+  title = '',
   children,
   height = '90%',
   width = '90%',
   headerFont = 'open-6',
   headerSize = 'small',
-  headerColor = 'white',
+  headerTextColor = 'white',
+  headerColor = 'primary',
+  headerBorderColor = 'primary',
   hideHeader = false,
   hideTitle = false,
   hideClose = false,
@@ -59,14 +61,21 @@ const KQModal = ({
       return null;
     }
     return (
-      <View style={styles.headerWrapper(fullScreen)}>
+      <View
+        style={[
+          styles.headerWrapper(fullScreen),
+          {
+            borderColor: useColors(headerBorderColor),
+            backgroundColor: useColors(headerColor),
+          },
+        ]}>
         <View style={styles.headerContainer}>
           {!hideTitle && (
             <Text
-              kqColor={useColors(headerColor)}
+              kqColor={useColors(headerTextColor)}
               font={headerFont}
               size={headerSize}>
-              {header}
+              {title}
             </Text>
           )}
         </View>
@@ -214,8 +223,8 @@ const styles = {
     borderWidth: fullScreen ? 0 : 1,
     borderTopRightRadius: fullScreen ? 0 : 8,
     borderTopLeftRadius: fullScreen ? 0 : 8,
-    borderColor: '#319177',
-    backgroundColor: '#319177',
+    // borderColor: '#319177',
+    // backgroundColor: '#319177',
   }),
   headerContainer: {
     flex: 1,

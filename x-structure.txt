@@ -71,6 +71,10 @@
 |-|-|-| DevText.jsx
 |-|-| Home
 |-|-|-| Home.jsx
+|-|-| Legal
+|-|-|-| LegalArray.js
+|-|-|-| PrivacyPolicy.jsx
+|-|-|-| TermsService.jsx
 |-|-| Shopping
 |-|-|-| Shopping.jsx
 |-| styles
@@ -94,6 +98,7 @@
 .watchmanconfig
 app.json
 App.jsx
+AppInfo.js
 bable.config.js
 Export.txt - Custom file for me, used to give you info
 font-ref.txt - Custom file for me
