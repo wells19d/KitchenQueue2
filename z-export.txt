@@ -4,16 +4,22 @@
   "displayName": "KitchenQueue"
 }
 
+------
+
 //* bable.config.js
 module.exports = {
   presets: ['module:@react-native/babel-preset'],
   plugins: ['react-native-reanimated/plugin'],
 };
 
+-----
+
 //* jest.config.js
 module.exports = {
   preset: 'react-native',
 };
+
+-----
 
 //* metro.config.js
 const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
@@ -35,6 +41,7 @@ const config = {
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);
 
+-----
 
 //* package.json
 {
@@ -107,7 +114,7 @@ module.exports = mergeConfig(getDefaultConfig(__dirname), config);
   }
 }
 
-
+-----
 
 //* react-native.config.js
 module.exports = {
@@ -124,6 +131,8 @@ module.exports = {
     },
   },
 };
+
+-----
 
 //*store.js
 import {createStore, applyMiddleware} from 'redux';
@@ -147,6 +156,8 @@ const persistor = persistStore(store);
 sagaMiddleware.run(rootSaga);
 
 export {store, persistor};
+
+-----
 
 //*CurvedBottomBar.jsx
 import React from 'react';
@@ -222,6 +233,8 @@ const CurvedBottomBar = props => {
 
 export default CurvedBottomBar;
 
+-----
+
 //*IconListRouter.jsx
 import ADIcons from 'react-native-vector-icons/AntDesign';
 import FAIcons from 'react-native-vector-icons/FontAwesome';
@@ -250,6 +263,7 @@ export const Icons = {
   Barcode: props => (
     <FAIcons name="barcode" size={20} color="#000" {...props} />
   ),
+  Check: props => <FA5Icons name="check" size={20} color="#000" {...props} />,
   ChevronDown: props => (
     <FEIcons name="chevron-down" size={20} color="#000" {...props} />
   ),
@@ -317,7 +331,7 @@ export const Icons = {
   Waves: props => <MCIcons name="waves" size={20} color="#000" {...props} />,
 };
 
-
+-----
 
 //*NavHeader.jsx
 import React, {useCallback} from 'react';
@@ -633,6 +647,8 @@ const NavHeader = ({
 
 export default React.memo(NavHeader);
 
+-----
+
 //*NavMenu.jsx
 import React, {useMemo} from 'react';
 import {Alert, TouchableOpacity, View} from 'react-native';
@@ -756,6 +772,7 @@ const NavMenu = props => {
 
 export default NavMenu;
 
+-----
 
 //*SplashScreen.jsx
 import React from 'react';
@@ -799,6 +816,7 @@ const styles = StyleSheet.create({
 
 export default SplashScreen;
 
+-----
 
 //*setHapticFeedback.jsx
 import HapticFeedback from 'react-native-haptic-feedback';
@@ -839,6 +857,8 @@ export const setHapticFeedback = () => {
 
   return triggerHaptic;
 };
+
+-----
 
 //*useHooks.jsx
 import {useSelector} from 'react-redux';
@@ -911,6 +931,8 @@ export const useFoodDataLoading = () => {
   return useSelector(state => state.edamam?.loading);
 };
 
+-----
+
 //* index.js (KQ-UI)
 export {default as Text} from './KQText';
 export {default as BottomSheet} from './KQBottomSheet';
@@ -920,8 +942,9 @@ export {default as Modal} from './KQModal';
 export {default as Button} from './KQButton';
 export {default as Input} from './KQInput';
 export {default as Dropdown} from './KQDropdown';
+export {default as ScrollView} from './KQScrollView';
 
-
+-----
 
 //* KQBottomSheet.jsx
 import React, {useEffect, useRef, useState} from 'react';
@@ -1079,6 +1102,7 @@ const styles = StyleSheet.create({
 
 export default React.memo(KQBottomSheet);
 
+-----
 
 //* KQButton.jsx
 import React, {useCallback} from 'react';
@@ -1159,13 +1183,266 @@ const ButtonStyles = StyleSheet.create({
 
 export default React.memo(KQButton);
 
-//* KQDropdown.jsx
-import React from 'react';
+-----
 
-const KQDropdown = ({}) => {};
+//* KQDropdown.jsx
+
+import React, {useMemo, useState} from 'react';
+import {View, TouchableOpacity, Platform} from 'react-native';
+import {Modal, Text, ScrollView} from '../KQ-UI/';
+import {Icons} from '../components/IconListRouter';
+import {setHapticFeedback} from '../hooks/setHapticFeedback';
+import {useProfile} from '../hooks/useHooks';
+
+const KQDropdown = ({
+  label = '',
+  labelStyles = {},
+  required = false,
+  validation = false,
+  validationMessage = '',
+  value = null,
+  setValue = () => {},
+  placeholder = '',
+  onPress = () => {},
+  caption,
+  hapticFeedback = 'light',
+  mapData,
+  ...props
+}) => {
+  const isIOS = Platform.OS === 'ios';
+  const useHaptics = setHapticFeedback();
+  const profile = useProfile();
+  const [showDropModal, setShowDropModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleOnPress = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || hapticFeedback);
+    setSelectedItem(value); // set to current value on open
+    setShowDropModal(true);
+    onPress();
+  };
+
+  const renderStyles = useMemo(() => {
+    if (isIOS && value === null) {
+      return {
+        color: '#373d4350',
+        padding: 0,
+      };
+    }
+
+    if (!isIOS && value === null) {
+      return {
+        color: '#373d43',
+        padding: 0,
+        opacity: 0.8,
+      };
+    }
+  }, [value, placeholder]);
+
+  const handleCancel = () => {
+    setShowDropModal(false);
+    setSelectedItem(null);
+  };
+
+  const handleSave = item => {
+    setShowDropModal(false);
+    setValue(item);
+  };
+
+  const handleClear = () => {
+    setSelectedItem(null);
+    setValue(null);
+  };
+
+  return (
+    <View style={styles.dropContainer}>
+      {label && (
+        <View style={styles.labelContainer}>
+          <View style={styles.labelContainer}>
+            <Text
+              size="small"
+              font="open-6"
+              style={[styles.label(validation, props.disabled), labelStyles]}>
+              {label} {required && '*'}
+            </Text>
+          </View>
+        </View>
+      )}
+      <View style={styles.dropWrapper}>
+        <TouchableOpacity onPress={() => handleOnPress()} style={{flex: 1}}>
+          <Text style={renderStyles}>{value?.label || placeholder}</Text>
+        </TouchableOpacity>
+
+        {value && (
+          <TouchableOpacity
+            onPress={() => handleClear()}
+            style={{paddingHorizontal: 5}}>
+            <Icons.Close />
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity
+          onPress={() => handleOnPress()}
+          style={{paddingHorizontal: 5}}>
+          <Icons.ChevronDown />
+        </TouchableOpacity>
+      </View>
+      {caption && (
+        <View style={styles.captionContainer}>
+          <View style={{flex: 1}}>
+            <Text
+              size="xSmall"
+              kqColor="dark90"
+              font="open-5"
+              numberOfLines={1}>
+              ({caption})
+            </Text>
+          </View>
+        </View>
+      )}
+      <Modal
+        visible={showDropModal}
+        fullScreen
+        hideHeader
+        onClose={() => setShowDropModal(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.headerContainer}>
+            <TouchableOpacity
+              style={styles.headerButtonContainer}
+              onPress={handleCancel}>
+              <View style={styles.headerButtonIcon}>
+                <View style={{position: 'relative', left: 4}}>
+                  <Icons.Back />
+                </View>
+              </View>
+              <View style={styles.headerButtonTextLeft}>
+                <Text>Cancel</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.headerButtonContainer}
+              onPress={() => handleSave(selectedItem)}>
+              <View style={styles.headerButtonTextRight}>
+                <Text>Save</Text>
+              </View>
+              <View style={styles.headerButtonIcon}>
+                <Icons.Save />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={{flex: 1}}>
+            <ScrollView>
+              <View style={{flex: 1}}>
+                {mapData?.map((item, index) => {
+                  return (
+                    <View
+                      key={index}
+                      style={{borderBottomWidth: 1, borderColor: '#373d4380'}}>
+                      <TouchableOpacity
+                        style={{
+                          height: 48,
+                          alignItems: 'flex-start',
+                          justifyContent: 'center',
+                          paddingHorizontal: 5,
+                        }}
+                        onPress={() => setSelectedItem(item)}>
+                        <View style={{flexDirection: 'row'}}>
+                          <View style={{flex: 1}}>
+                            <Text
+                              size={
+                                selectedItem?.index === item.index
+                                  ? 'small'
+                                  : 'xSmall'
+                              }
+                              font={
+                                selectedItem?.index === item.index
+                                  ? 'open-7'
+                                  : 'open-5'
+                              }>
+                              {item.label}
+                            </Text>
+                          </View>
+                          {selectedItem?.index === item.index && (
+                            <View>
+                              <Icons.Check color={'#63B76C'} size={20} />
+                            </View>
+                          )}
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+const styles = {
+  dropContainer: {
+    marginHorizontal: 5,
+    marginVertical: 10,
+    paddingHorizontal: 2,
+  },
+  labelContainer: {position: 'relative', left: 0},
+  label: (validation, disabled) => ({
+    color: validation ? '#fE4949' : disabled ? '#373d4390' : '#373d43',
+  }),
+  dropWrapper: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: '#c4c4c4',
+    paddingTop: 2,
+    paddingBottom: 4,
+  },
+  captionContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 2,
+    marginTop: 2,
+  },
+  textInputContainer: {
+    flex: 1,
+    paddingHorizontal: 1,
+    paddingVertical: 3,
+  },
+  modalContainer: {flex: 1, flexDirection: 'column'},
+  headerContainer: {
+    height: 50,
+    marginHorizontal: 5,
+    marginBottom: 5,
+    flexDirection: 'row',
+  },
+  headerButtonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  headerButtonIcon: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerButtonTextLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+  },
+  headerButtonTextRight: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+  },
+};
 
 export default React.memo(KQDropdown);
 
+-----
 
 //* KQInput.jsx
 import React, {useMemo} from 'react';
@@ -1192,7 +1469,7 @@ const KQInput = ({
   maxCount = 250,
   ...props
 }) => {
-  const fontStyles = useFontStyles('open-6', 'medium', 'black');
+  const fontStyles = useFontStyles('open-6', 'small', 'black');
   const showCount = value?.length || 0;
 
   const multiMode = useMemo(() => {
@@ -1256,6 +1533,7 @@ const KQInput = ({
             onChangeText={handleTextChange}
             autoCapitalize={capMode}
             multiline={multiline}
+            allowFontScaling={false}
             style={[fontStyles, multiMode, {padding: 0}]}
             {...props}
           />
@@ -1298,7 +1576,7 @@ const styles = {
     marginVertical: 10,
     paddingHorizontal: 2,
   },
-  labelContainer: {position: 'relative', left: 1},
+  labelContainer: {position: 'relative', left: 0},
   label: (validation, disabled) => ({
     color: validation ? '#fE4949' : disabled ? '#373d4390' : '#373d43',
   }),
@@ -1310,7 +1588,7 @@ const styles = {
   textInputContainer: {
     flex: 1,
     paddingHorizontal: 1,
-    paddingBottom: 3,
+    paddingVertical: 3,
   },
   accessoriesContainer: {
     width: 40,
@@ -1321,7 +1599,7 @@ const styles = {
 
 export default React.memo(KQInput);
 
-
+-----
 
 //* KQLayout.jsx
 import React from 'react';
@@ -1413,6 +1691,7 @@ const KQLayout = ({
 
 export default KQLayout;
 
+-----
 
 //* KQModal.jsx
 import React, {useEffect, useRef, useState} from 'react';
@@ -1565,7 +1844,7 @@ const KQModal = ({
           />
           <View style={styles.subContainer(fullScreen, midHeight, insets)}>
             <Header />
-            <View style={{flex: 1}}>{children}</View>
+            {children}
           </View>
           <Pressable
             style={styles.pressRight(midRightWidth, midHeight)}
@@ -1656,66 +1935,186 @@ const styles = {
 };
 
 
+const styles = {
+  wrapper: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  pressTop: (topHeight, screenSize) => ({
+    height: topHeight,
+    width: screenSize.width,
+    backgroundColor: 'transparent',
+  }),
+  pressBtm: (btmHeight, screenSize) => ({
+    height: btmHeight,
+    width: screenSize.width,
+    backgroundColor: 'transparent',
+  }),
+  pressLeft: (midLeftWidth, midHeight) => ({
+    width: midLeftWidth,
+    height: midHeight,
+    backgroundColor: 'transparent',
+  }),
+  pressRight: (midRightWidth, midHeight) => ({
+    width: midRightWidth,
+    height: midHeight,
+    backgroundColor: 'transparent',
+  }),
+  container: {flex: 1, flexDirection: 'row'},
+  subContainer: (fullScreen, midHeight, insets) => ({
+    flex: 1,
+    height: midHeight,
+    borderWidth: 1,
+    borderColor: '#319177',
+    backgroundColor: '#fff',
+    paddingTop: fullScreen ? insets.top : 0,
+    paddingBottom: fullScreen ? insets.bottom : 0,
+    borderRadius: fullScreen ? 0 : 10,
+    shadowColor: fullScreen ? '' : 'black',
+    shadowOffset: fullScreen ? {} : {width: 3, height: 4},
+    shadowOpacity: fullScreen ? 0 : 0.5,
+    elevation: fullScreen ? 0 : 7,
+  }),
 
-//* KQModalProvider.jsx
-import React, {createContext, useContext, useState} from 'react';
-import KQModal from './KQModal';
+  headerWrapper: fullScreen => ({
+    flexDirection: 'row',
+    borderWidth: fullScreen ? 0 : 1,
+    borderTopRightRadius: fullScreen ? 0 : 8,
+    borderTopLeftRadius: fullScreen ? 0 : 8,
+    borderColor: '#319177',
+    backgroundColor: '#319177',
+  }),
+  headerContainer: {
+    flex: 1,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    zIndex: 999,
+    right: 0,
+    borderWidth: 1.5,
+    backgroundColor: '#319177',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 5,
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    borderColor: 'white',
+  },
+};
 
-const ModalContext = createContext();
+-----
 
-export const KQModalProvider = ({children}) => {
-  const defaultModalProps = {
-    visible: false,
-    size: 'full',
-    title: '',
-    children: null,
-    font: 'open-6',
-    fontSize: 'medium',
-    hapticFeedback: 'light',
-    height: '90%',
-    width: '90%',
-    centered: false,
-    noTitle: false,
-    noHeader: false,
-    noCloseButton: false,
-    globalView: false,
-    onClose: () => hideModal(),
+//* KQScrollView.jsx
+import React, {useState, useRef, useEffect} from 'react';
+import {ScrollView, View, StyleSheet} from 'react-native';
+
+const KQScrollView = ({children, style}) => {
+  const [scrollBarHeight, setScrollBarHeight] = useState(0);
+  const [scrollBarTop, setScrollBarTop] = useState(0);
+  const [layoutHeight, setLayoutHeight] = useState(0);
+  const [contentHeight, setContentHeight] = useState(0);
+
+  const scrollViewRef = useRef();
+
+  useEffect(() => {
+    if (layoutHeight > 0 && contentHeight > layoutHeight) {
+      const visibleRatio = layoutHeight / contentHeight;
+      const calculatedHeight = layoutHeight * visibleRatio;
+      const minHeight = 30;
+      setScrollBarHeight(Math.max(calculatedHeight, minHeight));
+      setScrollBarTop(0);
+    } else {
+      setScrollBarHeight(0);
+      setScrollBarTop(0);
+    }
+  }, [layoutHeight, contentHeight]);
+
+  const handleLayout = event => {
+    const {height} = event.nativeEvent.layout;
+    setLayoutHeight(height);
   };
 
-  const [modalProps, setModalProps] = useState(defaultModalProps);
-
-  const showModal = props => {
-    setModalProps(prev => ({
-      ...defaultModalProps, // Reset modal to default values
-      ...props, // Apply new props
-      visible: false, // Ensure state resets before showing
-    }));
-
-    setTimeout(() => {
-      setModalProps(prev => ({
-        ...prev,
-        visible: true, // Reopen after state resets
-      }));
-    }, 10);
+  const handleContentSizeChange = (width, height) => {
+    setContentHeight(height);
   };
 
-  const hideModal = () => {
-    setModalProps(prev => ({
-      ...prev,
-      visible: false,
-    }));
+  const handleScroll = event => {
+    const {layoutMeasurement, contentOffset, contentSize} = event.nativeEvent;
+    const scrollRatio =
+      contentOffset.y / (contentSize.height - layoutMeasurement.height);
+    const calculatedTop =
+      scrollRatio * (layoutMeasurement.height - scrollBarHeight);
+    setScrollBarTop(calculatedTop);
   };
 
   return (
-    <ModalContext.Provider value={{showModal, hideModal}}>
-      {children}
-      <KQModal {...modalProps} />
-    </ModalContext.Provider>
+    <View style={[styles.container, style]}>
+      <ScrollView
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        onLayout={handleLayout}
+        onContentSizeChange={handleContentSizeChange}
+        scrollEventThrottle={16}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
+        {children}
+      </ScrollView>
+      {scrollBarHeight > 0 && (
+        <View style={styles.scrollBar}>
+          <View
+            style={[
+              styles.scrollBarThumb,
+              {
+                height: scrollBarHeight,
+                top: scrollBarTop,
+              },
+            ]}
+          />
+        </View>
+      )}
+    </View>
   );
 };
 
-export const useModal = () => useContext(ModalContext);
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative',
+    marginHorizontal: 3,
+    paddingHorizontal: 5,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingRight: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+  },
+  scrollBar: {
+    position: 'absolute',
+    right: 2,
+    top: 2,
+    bottom: 2,
+    width: 4,
+    backgroundColor: 'transparent',
+    borderRadius: 2,
+  },
+  scrollBarThumb: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    backgroundColor: '#373d4380',
+    borderRadius: 3,
+  },
+});
 
+export default KQScrollView;
+
+-----
 
  //* KQText.jsx
 import React from 'react';
@@ -1741,8 +2140,7 @@ const KQText = ({
 
 export default React.memo(KQText);
 
-
-
+-----
 
 //*KQToast.jsx
 import {BaseToast} from 'react-native-toast-message';
@@ -1854,6 +2252,7 @@ const toastConfig = {
 
 export default toastConfig;
 
+-----
 
 //* KQUtilities.jsx
 import {Platform} from 'react-native';
@@ -2029,8 +2428,7 @@ export const useButtonSizes = (size = 'medium') => {
   };
 };
 
-
-
+-----
 
 //* Account.jsx
 import React from 'react';
@@ -2059,6 +2457,7 @@ const Account = () => {
 
 export default Account;
 
+-----
 
 //* Cupboards.jsx
 import React from 'react';
@@ -2087,80 +2486,16 @@ const Cupboards = () => {
 
 export default Cupboards;
 
-
-
-//* Account.jsx
-import React from 'react';
-import {useRoute} from '@react-navigation/native';
-import {Layout, Text} from '../../KQ-UI';
-
-const Account = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-  return (
-    <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
-      LeftButton=""
-      RightButton=""
-      LeftAction={null}
-      RightAction={null}
-      sheetOpen={false}
-      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Account</Text>
-    </Layout>
-  );
-};
-
-export default Account;
-
-
+-----
 
 //* Home.jsx
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
-import {Platform, View} from 'react-native';
-import {useDeviceInfo} from '../../hooks/useHooks';
-import {isHBDevice} from '../../utilities/deviceUtils';
 import {Layout, Text} from '../../KQ-UI';
-import NavHeader from '../../components/NavHeader';
 
 const Home = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-  const device = useDeviceInfo();
-
-  const Row = ({children}) => (
-    <View style={{flexDirection: 'row', width: '90%'}}>{children}</View>
-  );
-
-  const Cell = ({children}) => (
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
-      }}>
-      {children}
-    </View>
-  );
-
-  const TextBefore = ({font, text, weight, size}) => (
-    <Text
-      kqColor="black"
-      style={{fontFamily: font, fontWeight: weight, fontSize: size || 20}}>
-      {text}
-    </Text>
-  );
-
-  const TextAfter = ({font, text, size}) => (
-    <Text kqColor="black" font={font} style={{fontSize: size || 20}}>
-      {text}
-    </Text>
-  );
 
   return (
     <Layout
@@ -2174,123 +2509,14 @@ const Home = () => {
       RightAction={null}
       sheetOpen={false}
       innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
-      <Row>
-        <Cell>
-          <TextBefore font="NotoSans-Light" weight={300} text="Noto 300" />
-        </Cell>
-        <Cell>
-          <TextAfter font="Noto-3" text="Noto 300" />
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <TextBefore font="NotoSans-Light" weight={300} text="Noto 300" />
-        </Cell>
-        <Cell>
-          <TextAfter font="Noto-3" text="Noto 300" />
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <TextBefore font="NotoSans-Medium" weight={500} text="Noto 500" />
-        </Cell>
-        <Cell>
-          <TextAfter font="Noto-5" text="Noto 500" />
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <TextBefore font="NotoSans-Bold" weight={700} text="Noto 700" />
-        </Cell>
-        <Cell>
-          <TextAfter font="Noto-7" text="Noto 700" />
-        </Cell>
-      </Row>
-
-      <Row>
-        <Cell>
-          <TextBefore font="Montserrat-Light" weight={200} text="Mont 300" />
-        </Cell>
-        <Cell>
-          <TextAfter font="Mont-3" text="Mont 300" />
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <TextBefore font="Montserrat-Medium" weight={400} text="Mont 500" />
-        </Cell>
-        <Cell>
-          <TextAfter font="Mont-5" text="Mont 500" />
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <TextBefore font="Montserrat-Bold" weight={700} text="Mont 700" />
-        </Cell>
-        <Cell>
-          <TextAfter font="Mont-7" text="Mont 700" />
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <TextBefore font="OpenSans-Light" weight={300} text="Open 300" />
-        </Cell>
-        <Cell>
-          <TextAfter font="open-3" text="Open 300" />
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <TextBefore font="OpenSans-Medium" weight={500} text="Open 500" />
-        </Cell>
-        <Cell>
-          <TextAfter font="open-5" text="Open 500" />
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <TextBefore font="OpenSans-Bold" weight={700} text="Open 700" />
-        </Cell>
-        <Cell>
-          <TextAfter font="open-7" text="Open 700" />
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <TextBefore
-            font={Platform.OS === 'ios' ? 'CherryBlossom' : 'Cherry-Blossom'}
-            weight={500}
-            size={22}
-            text="Cherry Blossom"
-          />
-        </Cell>
-        <Cell>
-          <TextAfter font="cherry" text="Cherry Blossom" size={22} />
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <TextBefore
-            font="BananaChips-Regular"
-            text="Banana Chips"
-            size={40}
-            weight={500}
-          />
-        </Cell>
-        <Cell>
-          <TextAfter font="banana" text="Banana Chips" size={40} />
-        </Cell>
-      </Row>
-      <Text font="open-6" size="large">
-        The quick brown lazy dog.
-      </Text>
+      <Text>Home</Text>
     </Layout>
   );
 };
 
 export default Home;
 
-
+-----
 
 //* Shopping.jsx
 import React from 'react';
@@ -2319,7 +2545,7 @@ const Shopping = () => {
 
 export default Shopping;
 
-
+-----
 
 //* Styles.jsx
 import {StyleSheet} from 'react-native';
@@ -3049,6 +3275,7 @@ export const CMStyles = StyleSheet.create({
   sectionIcon: {marginRight: 20},
 });
 
+-----
 
 //* categories.js
 
@@ -3097,7 +3324,7 @@ export const categoryColors = category => {
   }
 };
 
-
+-----
 
 // deviceUtils.js
 export const hbDevices = [
@@ -3169,6 +3396,8 @@ export const getNavBarHeight = (device, baseHeight) => {
   }
 };
 
+-----
+
 //* measurements.js
 
 export const displayMeasurements = [
@@ -3209,6 +3438,8 @@ export const formatMeasurement = measurement => {
       .join(' ');
   }
 };
+
+-----
 
 //* nutrients.js
 
@@ -3258,6 +3489,7 @@ export const formatNutrient = nutrient => {
   return {label: nutrient, unit: ''}; // Default if not found
 };
 
+-----
 
 //* Main.jsx
 
@@ -3561,6 +3793,8 @@ const Main = () => {
 
 export default Main;
 
+-----
+
 //*App.jsx
 import React, {useEffect, useState} from 'react';
 import {Provider} from 'react-redux';
@@ -3643,9 +3877,7 @@ const App = () => {
 
 export default App;
 
-
-
-
+-----
 
 //*CenterMenu.jsx
 import React, {useCallback, useReducer} from 'react';
@@ -3780,8 +4012,7 @@ function CenterMenu(props) {
 
 export default CenterMenu;
 
-
-
+-----
 
 //* CenterMenuArray.jsx
 import {Icons} from '../../components/IconListRouter';
@@ -3947,6 +4178,7 @@ export const menuArray = [
     : null,
 ].filter(Boolean);
 
+-----
 
 //* DevButtons.jsx
 import React from 'react';
@@ -4237,11 +4469,12 @@ const DevButtons = () => {
 
 export default DevButtons;
 
+-----
 
 //* DevDropdowns.jsx
 import React, {useState} from 'react';
 import {View} from 'react-native';
-import {Layout, Text} from '../../KQ-UI';
+import {Dropdown, Input, Layout, Text} from '../../KQ-UI';
 import {useRoute} from '@react-navigation/native';
 import {displayCategories} from '../../utilities/categories';
 import {displayMeasurements} from '../../utilities/measurements';
@@ -4249,7 +4482,10 @@ import {displayMeasurements} from '../../utilities/measurements';
 const DevDropdowns = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(null);
+  console.log('value:', value);
+  const [value2, setValue2] = useState('');
+
   return (
     <Layout
       bgColor={bgColor}
@@ -4261,19 +4497,129 @@ const DevDropdowns = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}>
-      {/* <Dropdown
+      <Input
+        label="Item Name"
+        placeholder="Enter Item Name"
+        value={value2}
+        onChangeText={setValue2}
+        capitalize={false}
+        capitalMode="words"
+        caption="Enter Item"
+      />
+      <Dropdown
         label="Category"
         placeholder="Press to Select"
         value={value}
+        setValue={setValue}
         caption="Select a Category"
         mapData={displayMeasurements}
-      /> */}
+      />
     </Layout>
   );
 };
 
 export default DevDropdowns;
 
+-----
+
+//* DevInputs.jsx
+import React, {useState} from 'react';
+import {useRoute} from '@react-navigation/native';
+import {Layout, Input} from '../../KQ-UI';
+import {TouchableWithoutFeedback} from 'react-native';
+import {Icons} from '../../components/IconListRouter';
+
+const DevInputs = ({}) => {
+  const route = useRoute();
+  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+
+  const [value, setValue] = useState('');
+  const [value1, setValue1] = useState('');
+  const [value2, setValue2] = useState('');
+  const [value3, setValue3] = useState('');
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+
+  const toggleSecureEntry = () => {
+    setSecureTextEntry(!secureTextEntry);
+  };
+
+  const renderIcon = () => (
+    <TouchableWithoutFeedback onPress={toggleSecureEntry}>
+      {secureTextEntry ? <Icons.EyeOff /> : <Icons.EyeOn />}
+    </TouchableWithoutFeedback>
+  );
+
+  return (
+    <Layout
+      bgColor={bgColor}
+      headerTitle={title}
+      headerColor={headerColor}
+      textColor={textColor}
+      LeftButton=""
+      RightButton=""
+      LeftAction={null}
+      RightAction={null}
+      sheetOpen={false}
+      useKeyboardHandling={true}>
+      <Input
+        label="Email"
+        placeholder="Email"
+        value={value}
+        onChangeText={setValue}
+        capitalize={false}
+        capitalMode="words"
+        caption="Enter your email address"
+        // keyboardType="default"
+        // keyboardType="number-pad" // ios, has no decimal point
+        // keyboardType="decimal-pad"
+        // keyboardType="numeric" // ios, shows letters on number pad
+        // keyboardType="email-address"
+        // keyboardType="phone-pad" // same as numeric
+        // keyboardType="url"
+      />
+      <Input
+        label="Password"
+        placeholder="Password"
+        value={value1}
+        onChangeText={setValue1}
+        capitalize={false}
+        accessoryRight={renderIcon}
+        secureTextEntry={secureTextEntry}
+        required
+        caption="Password must be at least 8 characters long"
+        counter
+        maxCount={500}
+      />
+      <Input
+        label="Multiple Lines"
+        placeholder="Enter text here"
+        value={value2}
+        onChangeText={setValue2}
+        multiline
+        // multiHeight="medium"
+        required
+        caption="Enter a message"
+        counter
+        maxCount={150}
+      />
+      <Input
+        label="Notes"
+        placeholder="Type multiple lines..."
+        value={value3}
+        onChangeText={setValue3}
+        multiline
+        multiHeight="large"
+        caption="Enter notes"
+        counter
+        maxCount={250}
+      />
+    </Layout>
+  );
+};
+
+export default DevInputs;
+
+-----
 
 //* DevModals.jsx
 import React, {useState} from 'react';
@@ -4286,6 +4632,9 @@ const DevModals = () => {
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
 
   const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
+  const [showModal3, setShowModal3] = useState(false);
+  const [showModal4, setShowModal4] = useState(false);
 
   return (
     <Layout
@@ -4301,7 +4650,7 @@ const DevModals = () => {
       innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}>
       <Modal
         visible={showModal}
-        header="Modal Title"
+        header="Full Screen"
         headerFont="open-6"
         headerSize="small"
         headerColor="white"
@@ -4318,20 +4667,94 @@ const DevModals = () => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text>Show me the money!</Text>
+          <Text>Full Screen w/ Header</Text>
           <Button onPress={() => setShowModal(false)}>Close Modal</Button>
         </View>
       </Modal>
-      <Button onPress={() => setShowModal(true)}>Show Modal</Button>
+      <Modal
+        visible={showModal2}
+        header="Full Screen"
+        headerFont="open-6"
+        headerSize="small"
+        headerColor="white"
+        height="95%"
+        width="95%"
+        fullScreen
+        hideHeader
+        // hideTitle
+        // hideClose
+        onClose={() => setShowModal2(false)}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text>Full Screen w/o Header</Text>
+          <Button onPress={() => setShowModal2(false)}>Close Modal</Button>
+        </View>
+      </Modal>
+      <Modal
+        visible={showModal3}
+        header="Modal Title"
+        headerFont="open-6"
+        headerSize="small"
+        headerColor="white"
+        height="95%"
+        width="95%"
+        // fullScreen
+        // hideHeader
+        hideTitle
+        // hideClose
+        onClose={() => setShowModal3(false)}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text>95% Screen w/o Title</Text>
+          <Button onPress={() => setShowModal3(false)}>Close Modal</Button>
+        </View>
+      </Modal>
+      <Modal
+        visible={showModal4}
+        header="Modal Title"
+        headerFont="open-6"
+        headerSize="small"
+        headerColor="white"
+        height="85%"
+        width="85%"
+        // fullScreen
+        // hideHeader
+        // hideTitle
+        hideClose
+        onClose={() => setShowModal4(false)}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text>85% Screen w/o Close Button</Text>
+          <Button onPress={() => setShowModal4(false)}>Close Modal</Button>
+        </View>
+      </Modal>
+      <Button onPress={() => setShowModal(true)}>Show F/S w/ Header</Button>
+      <Button onPress={() => setShowModal2(true)}>Show F/S w/o Header</Button>
+      <Button onPress={() => setShowModal3(true)}>
+        Show 95% Modal w/o Title
+      </Button>
+      <Button onPress={() => setShowModal4(true)}>
+        Show 85% Modal w/o Close
+      </Button>
     </Layout>
   );
 };
 
 export default React.memo(DevModals);
 
-
-
-
+-----
 
 //* DevPlayground.jsx
 import React from 'react';
@@ -4360,6 +4783,8 @@ const DevPlayground = () => {
 };
 
 export default DevPlayground;
+
+-----
 
 //* DevText.jsx
 import React from 'react';
@@ -4535,97 +4960,5 @@ const DevText = () => {
 
 export default DevText;
 
-
-//* DevInputs.jsx
-import React, {useState} from 'react';
-import {useRoute} from '@react-navigation/native';
-import {Layout, Input} from '../../KQ-UI';
-import {TouchableWithoutFeedback} from 'react-native';
-import {Icons} from '../../components/IconListRouter';
-
-const DevInputs = ({}) => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-
-  const [value, setValue] = useState('');
-  const [value1, setValue1] = useState('');
-  const [value2, setValue2] = useState('');
-  const [value3, setValue3] = useState('');
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
-
-  const toggleSecureEntry = () => {
-    setSecureTextEntry(!secureTextEntry);
-  };
-
-  const renderIcon = () => (
-    <TouchableWithoutFeedback onPress={toggleSecureEntry}>
-      {secureTextEntry ? <Icons.EyeOff /> : <Icons.EyeOn />}
-    </TouchableWithoutFeedback>
-  );
-
-  return (
-    <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
-      LeftButton=""
-      RightButton=""
-      LeftAction={null}
-      RightAction={null}
-      sheetOpen={false}
-      useKeyboardHandling={true}>
-      <Input
-        label="Email"
-        placeholder="Email"
-        value={value}
-        onChangeText={setValue}
-        capitalize={false}
-        capitalMode="words"
-        caption="Enter your email address"
-      />
-      <Input
-        label="Password"
-        placeholder="Password"
-        value={value1}
-        onChangeText={setValue1}
-        capitalize={false}
-        accessoryRight={renderIcon}
-        secureTextEntry={secureTextEntry}
-        required
-        caption="Password must be at least 8 characters long"
-        counter
-        maxCount={500}
-      />
-      <Input
-        label="Multiple Lines"
-        placeholder="Enter text here"
-        value={value2}
-        onChangeText={setValue2}
-        multiline
-        // multiHeight="medium"
-        required
-        caption="Enter a message"
-        counter
-        maxCount={150}
-      />
-      <Input
-        label="Notes"
-        placeholder="Type multiple lines..."
-        value={value3}
-        onChangeText={setValue3}
-        multiline
-        multiHeight="large"
-        caption="Enter notes"
-        counter
-        maxCount={250}
-      />
-    </Layout>
-  );
-};
-
-export default DevInputs;
-
-
-
+-----
 
