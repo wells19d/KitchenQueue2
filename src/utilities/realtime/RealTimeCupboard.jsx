@@ -2,11 +2,12 @@
 import {useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
-import {useAccount} from '../../hooks/useHooks';
+import {useAccount, useCupboard} from '../../hooks/useHooks';
 
 const useRealTimeCupboard = () => {
   const dispatch = useDispatch();
   const account = useAccount();
+  const persistedCupboard = useCupboard();
   const db = getFirestore();
 
   useEffect(() => {
@@ -14,8 +15,8 @@ const useRealTimeCupboard = () => {
       return;
     }
 
-    console.log(`🔄 Fetching Cupboard data from Firestore`);
     const cupboardRef = doc(db, 'cupboards', account.cupboardID);
+    console.log('RealTimeCupboard fired');
 
     const unsubscribe = onSnapshot(
       cupboardRef,
@@ -25,12 +26,12 @@ const useRealTimeCupboard = () => {
           const cupboard = {
             ...cupboardData,
             items: cupboardData.items || [],
-            lastUpdated: cupboardData?.lastUpdated || null, // ✅ No more toDate()
+            lastUpdated: cupboardData?.lastUpdated || null,
           };
 
-          dispatch({type: 'SET_CUPBOARD', payload: cupboard});
-        } else {
-          dispatch({type: 'SET_CUPBOARD', payload: null});
+          if (JSON.stringify(persistedCupboard) !== JSON.stringify(cupboard)) {
+            dispatch({type: 'SET_CUPBOARD', payload: cupboard});
+          }
         }
       },
       error => {
@@ -41,7 +42,7 @@ const useRealTimeCupboard = () => {
     return () => {
       unsubscribe();
     };
-  }, [dispatch, account?.cupboardID, db]); // ✅ Removed `persistedCupboard`
+  }, [dispatch, account?.cupboardID, persistedCupboard, db]);
 };
 
 export default useRealTimeCupboard;

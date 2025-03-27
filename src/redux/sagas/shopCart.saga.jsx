@@ -51,20 +51,17 @@ function* fetchShopCart(action) {
 function* addItemToShopCart(action) {
   const {shoppingCartID, newItem, profileID} = action.payload;
   try {
-    // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
     const shopCartDoc = yield call(getDoc, shopCartRef);
 
     if (shopCartDoc.exists) {
       const shopCartData = shopCartDoc.data();
 
-      // Append new item with a generated UUID and timestamp
       const updatedItems = [
         ...(shopCartData.items || []),
         {...newItem, itemId: uuid.v4(), itemDate: new Date().toISOString()},
       ];
 
-      // Update Firestore shopCart document with new items array
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
@@ -73,10 +70,8 @@ function* addItemToShopCart(action) {
         }),
       );
 
-      // Reload shopCart data
       yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
-      // Show success toast message
       Toast.show({
         type: 'success',
         text1: 'Item Added',
@@ -108,19 +103,15 @@ function* addItemToShopCart(action) {
 function* updateItemInShopCart(action) {
   const {shoppingCartID, updatedItem, updateType, profileID} = action.payload;
   try {
-    // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
     const shopCartDoc = yield call(getDoc, shopCartRef);
 
     if (shopCartDoc.exists) {
       const shopCartData = shopCartDoc.data();
-
-      // Update the correct item in the items array
       const updatedItems = shopCartData?.items?.map(item =>
         item.itemId === updatedItem.itemId ? updatedItem : item,
       );
 
-      // Update Firestore shopCart document with new items array
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
@@ -129,10 +120,8 @@ function* updateItemInShopCart(action) {
         }),
       );
 
-      // Reload shopCart data
       yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
-      // Handle different update types for toast messages
       if (updateType === 'toCart') {
         Toast.show({
           type: 'success',
@@ -180,19 +169,16 @@ function* updateItemInShopCart(action) {
 function* deleteItemFromShopCart(action) {
   const {shoppingCartID, itemId, itemName, profileID} = action.payload;
   try {
-    // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
     const shopCartDoc = yield call(getDoc, shopCartRef);
 
     if (shopCartDoc.exists) {
       const shopCartData = shopCartDoc.data();
 
-      // Remove the specified item from the items array
       const updatedItems = shopCartData?.items?.filter(
         item => item.itemId !== itemId,
       );
 
-      // Update Firestore shopCart document with the new filtered items array
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
@@ -201,10 +187,8 @@ function* deleteItemFromShopCart(action) {
         }),
       );
 
-      // Reload shopCart data
       yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
-      // Show success toast message
       Toast.show({
         type: 'success',
         text1: 'Item Deleted',
@@ -237,19 +221,16 @@ function* deleteListFromShopCart(action) {
   const {shoppingCartID, items, profileID} = action.payload;
 
   try {
-    // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
     const shopCartDoc = yield call(getDoc, shopCartRef);
 
     if (shopCartDoc.exists) {
       const shopCartData = shopCartDoc.data();
 
-      // Remove all items that match those in the `items` list
       const updatedItems = shopCartData?.items?.filter(
         item => !items.some(cartItem => cartItem.itemId === item.itemId),
       );
 
-      // Update Firestore shopCart document with the new filtered items array
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
@@ -258,7 +239,6 @@ function* deleteListFromShopCart(action) {
         }),
       );
 
-      // Reload shopCart data
       yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
     }
   } catch (error) {
@@ -324,7 +304,7 @@ function* batchToShopping(action) {
       Toast.show({
         type: 'success',
         text1: 'Items Added',
-        text2: `Batch items were added to your ${
+        text2: `Items were added to your ${
           status === 'shopping-list' ? 'shopping list' : 'shopping cart'
         }.`,
       });
@@ -357,12 +337,10 @@ function* batchToShopping(action) {
 function* resetShopCart(action) {
   const {shoppingCartID, profileID} = action.payload;
   try {
-    // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
     const shopCartDoc = yield call(getDoc, shopCartRef);
 
     if (shopCartDoc.exists) {
-      // Update shopCart to reset items
       yield call(() =>
         updateDoc(shopCartRef, {
           items: [],
@@ -371,7 +349,6 @@ function* resetShopCart(action) {
         }),
       );
 
-      // Reload the updated shopCart
       yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       Toast.show({
@@ -403,6 +380,6 @@ export default function* shopCartSaga() {
   yield takeLatest('UPDATE_ITEM_IN_SHOP_CART', updateItemInShopCart);
   yield takeLatest('DELETE_ITEM_FROM_SHOP_CART', deleteItemFromShopCart);
   yield takeLatest('DELETE_LIST_FROM_SHOP_CART', deleteListFromShopCart);
-  yield takeLatest('BATCH_TO_SHOPPING', batchToShopping);
+  yield takeLatest('BATCH_TO_SHOP_CART', batchToShopping);
   yield takeLatest('RESET_SHOP_CART', resetShopCart);
 }
