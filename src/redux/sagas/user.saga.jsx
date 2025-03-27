@@ -38,7 +38,8 @@ function* loginUser(action) {
 
     if (user?.emailVerified) {
       yield put({type: 'SET_USER', payload: user});
-      yield put({type: 'START_LOGIN_SEQUENCE', payload: user.uid});
+      console.log('User Set');
+      yield put({type: 'START_LOGIN', payload: user.uid});
     } else {
       yield put({
         type: 'LOGIN_FAILED',
