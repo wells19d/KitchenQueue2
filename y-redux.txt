@@ -366,8 +366,7 @@ export default userReducer;
 
 sagas
 
-//*_root.saga.jsx
-import {all} from 'redux-saga/effects';
+import {all, fork} from 'redux-saga/effects';
 import userSaga from './user.saga';
 import profileSaga from './profile.saga';
 import accountSaga from './account.saga';
@@ -376,17 +375,19 @@ import cupboardSaga from './cupboard.saga';
 import deviceSaga from './device.saga';
 import {invitesSaga} from './invites.saga';
 import edamamSaga from './edamam.saga';
+import loginSaga from './login.saga';
 
 export default function* rootSaga() {
   yield all([
-    userSaga(),
-    profileSaga(),
-    accountSaga(),
-    shoppingSaga(),
-    cupboardSaga(),
-    deviceSaga(),
-    invitesSaga(),
-    edamamSaga(),
+    fork(userSaga),
+    fork(profileSaga),
+    fork(accountSaga),
+    fork(shoppingSaga),
+    fork(cupboardSaga),
+    fork(deviceSaga),
+    fork(invitesSaga),
+    fork(edamamSaga),
+    fork(loginSaga),
   ]);
 }
 
@@ -423,6 +424,7 @@ function* fetchAccount(action) {
             createdOn: accountData?.createdOn || null,
           },
         });
+        console.log('Account Set');
       } else {
         yield put({type: 'SET_ACCOUNT', payload: null});
       }
@@ -515,11 +517,12 @@ function* fetchCupboard(action) {
       };
 
       yield put({type: 'SET_CUPBOARD', payload: cupboard});
+      console.log('Cupboard Set');
     } else {
       yield put({type: 'SET_CUPBOARD', payload: null});
     }
   } catch (error) {
-    yield put({type: 'CUPBOARD_LOAD_FAILED', payload: error.message});
+    yield put({type: 'CUPBOARD_SET_FAILED', payload: error.message});
   }
 }
 
@@ -549,7 +552,7 @@ function* addItemToCupboard(action) {
       );
 
       // Reload cupboard data
-      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+      yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       // Show success toast message
       Toast.show({
@@ -605,7 +608,7 @@ function* updateItemInCupboard(action) {
       );
 
       // Reload cupboard data
-      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+      yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       // Show success toast message
       Toast.show({
@@ -661,7 +664,7 @@ function* deleteItemFromCupboard(action) {
       );
 
       // Reload cupboard data
-      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+      yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       // Show success toast message
       Toast.show({
@@ -752,7 +755,7 @@ function* batchToCupboard(action) {
       yield call(() => batch.commit());
 
       // Reload cupboard data
-      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+      yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       Toast.show({
         type: 'success',
@@ -803,7 +806,7 @@ function* resetCupboard(action) {
       );
 
       // Reload the updated cupboard
-      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+      yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       Toast.show({
         type: 'success',
@@ -829,7 +832,7 @@ function* resetCupboard(action) {
 }
 
 export default function* cupboardSaga() {
-  yield takeLatest('LOAD_CUPBOARD', fetchCupboard);
+  yield takeLatest('FETCH_CUPBOARD', fetchCupboard);
   yield takeLatest('ADD_ITEM_TO_CUPBOARD', addItemToCupboard);
   yield takeLatest('UPDATE_ITEM_IN_CUPBOARD', updateItemInCupboard);
   yield takeLatest('DELETE_ITEM_FROM_CUPBOARD', deleteItemFromCupboard);
@@ -1113,6 +1116,61 @@ export function* invitesSaga() {
 
 -----
 
+//* login.saga.jsx
+import {put, takeLatest, select, call} from 'redux-saga/effects';
+
+// Step 1: Fetch profile using user.uid
+function* handleLogin(action) {
+  try {
+    console.log('Starting login...');
+    const uid = action.payload;
+
+    // ✅ Step 1: Fetch Profile
+    yield put({type: 'FETCH_PROFILE', payload: {uid}});
+
+    // Wait until profile is set in Redux
+    const profile = yield call(waitForProfile);
+
+    // ✅ Step 2: Fetch Account using profile.account & profile.id
+    const {account, id} = profile;
+    yield put({type: 'FETCH_ACCOUNT', payload: {account, id}});
+
+    // Wait until account is set in Redux
+    const accountData = yield call(waitForAccount);
+
+    // ✅ Step 3: Fetch shoppingCart and cupboard
+    const {shoppingCartID, cupboardID} = accountData;
+    yield put({type: 'FETCH_SHOP_CART', payload: {shoppingCartID}});
+    yield put({type: 'FETCH_CUPBOARD', payload: {cupboardID}});
+    console.log('Login complete');
+  } catch (error) {
+    console.log('Login failed');
+    yield put({type: 'LOGIN_SEQUENCE_FAILED', payload: error.message});
+  }
+}
+
+function* waitForProfile() {
+  while (true) {
+    const profile = yield select(state => state.profile.profile);
+    if (profile) return profile;
+    yield new Promise(resolve => setTimeout(resolve, 50));
+  }
+}
+
+function* waitForAccount() {
+  while (true) {
+    const account = yield select(state => state.account.account);
+    if (account) return account;
+    yield new Promise(resolve => setTimeout(resolve, 50));
+  }
+}
+
+export default function* loginSaga() {
+  yield takeLatest('START_LOGIN', handleLogin);
+}
+
+-----
+
 //*profile.saga.jsx
 import {put, takeLatest, call} from 'redux-saga/effects';
 import Toast from 'react-native-toast-message';
@@ -1144,6 +1202,7 @@ function* fetchProfile(action) {
           createdOn: profileData?.createdOn || null,
         },
       });
+      console.log('Profile Set');
     } else {
       yield put({type: 'SET_PROFILE', payload: null});
     }
@@ -1230,11 +1289,12 @@ function* fetchShopCart(action) {
       };
 
       yield put({type: 'SET_SHOP_CART', payload: shopCart});
+      console.log('ShopCart Set');
     } else {
       yield put({type: 'SET_SHOP_CART', payload: null});
     }
   } catch (error) {
-    yield put({type: 'SHOP_CART_LOAD_FAILED', payload: error.message});
+    yield put({type: 'SHOP_CART_SET_FAILED', payload: error.message});
   }
 }
 
@@ -1264,7 +1324,7 @@ function* addItemToShopCart(action) {
       );
 
       // Reload shopCart data
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       // Show success toast message
       Toast.show({
@@ -1320,7 +1380,7 @@ function* updateItemInShopCart(action) {
       );
 
       // Reload shopCart data
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       // Handle different update types for toast messages
       if (updateType === 'toCart') {
@@ -1392,7 +1452,7 @@ function* deleteItemFromShopCart(action) {
       );
 
       // Reload shopCart data
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       // Show success toast message
       Toast.show({
@@ -1449,7 +1509,7 @@ function* deleteListFromShopCart(action) {
       );
 
       // Reload shopCart data
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
     }
   } catch (error) {
     yield put({type: 'SHOP_CART_DELETE_LIST_FAILED', payload: error.message});
@@ -1509,7 +1569,7 @@ function* batchToShopping(action) {
 
       yield call(() => batch.commit());
 
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       Toast.show({
         type: 'success',
@@ -1562,7 +1622,7 @@ function* resetShopCart(action) {
       );
 
       // Reload the updated shopCart
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       Toast.show({
         type: 'success',
@@ -1588,7 +1648,7 @@ function* resetShopCart(action) {
 }
 
 export default function* shopCartSaga() {
-  yield takeLatest('LOAD_SHOP_CART', fetchShopCart);
+  yield takeLatest('FETCH_SHOP_CART', fetchShopCart);
   yield takeLatest('ADD_ITEM_TO_SHOP_CART', addItemToShopCart);
   yield takeLatest('UPDATE_ITEM_IN_SHOP_CART', updateItemInShopCart);
   yield takeLatest('DELETE_ITEM_FROM_SHOP_CART', deleteItemFromShopCart);
@@ -1639,7 +1699,8 @@ function* loginUser(action) {
 
     if (user?.emailVerified) {
       yield put({type: 'SET_USER', payload: user});
-      yield put({type: 'START_LOGIN_SEQUENCE', payload: user.uid});
+      console.log('User Set');
+      yield put({type: 'START_LOGIN', payload: user.uid});
     } else {
       yield put({
         type: 'LOGIN_FAILED',

@@ -39,11 +39,12 @@ function* fetchShopCart(action) {
       };
 
       yield put({type: 'SET_SHOP_CART', payload: shopCart});
+      console.log('ShopCart Set');
     } else {
       yield put({type: 'SET_SHOP_CART', payload: null});
     }
   } catch (error) {
-    yield put({type: 'SHOP_CART_LOAD_FAILED', payload: error.message});
+    yield put({type: 'SHOP_CART_SET_FAILED', payload: error.message});
   }
 }
 
@@ -73,7 +74,7 @@ function* addItemToShopCart(action) {
       );
 
       // Reload shopCart data
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       // Show success toast message
       Toast.show({
@@ -129,7 +130,7 @@ function* updateItemInShopCart(action) {
       );
 
       // Reload shopCart data
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       // Handle different update types for toast messages
       if (updateType === 'toCart') {
@@ -201,7 +202,7 @@ function* deleteItemFromShopCart(action) {
       );
 
       // Reload shopCart data
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       // Show success toast message
       Toast.show({
@@ -258,7 +259,7 @@ function* deleteListFromShopCart(action) {
       );
 
       // Reload shopCart data
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
     }
   } catch (error) {
     yield put({type: 'SHOP_CART_DELETE_LIST_FAILED', payload: error.message});
@@ -318,7 +319,7 @@ function* batchToShopping(action) {
 
       yield call(() => batch.commit());
 
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       Toast.show({
         type: 'success',
@@ -371,7 +372,7 @@ function* resetShopCart(action) {
       );
 
       // Reload the updated shopCart
-      yield put({type: 'LOAD_SHOP_CART', payload: {shoppingCartID}});
+      yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       Toast.show({
         type: 'success',

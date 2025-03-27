@@ -39,11 +39,12 @@ function* fetchCupboard(action) {
       };
 
       yield put({type: 'SET_CUPBOARD', payload: cupboard});
+      console.log('Cupboard Set');
     } else {
       yield put({type: 'SET_CUPBOARD', payload: null});
     }
   } catch (error) {
-    yield put({type: 'CUPBOARD_LOAD_FAILED', payload: error.message});
+    yield put({type: 'CUPBOARD_SET_FAILED', payload: error.message});
   }
 }
 
@@ -73,7 +74,7 @@ function* addItemToCupboard(action) {
       );
 
       // Reload cupboard data
-      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+      yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       // Show success toast message
       Toast.show({
@@ -129,7 +130,7 @@ function* updateItemInCupboard(action) {
       );
 
       // Reload cupboard data
-      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+      yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       // Show success toast message
       Toast.show({
@@ -185,7 +186,7 @@ function* deleteItemFromCupboard(action) {
       );
 
       // Reload cupboard data
-      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+      yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       // Show success toast message
       Toast.show({
@@ -276,7 +277,7 @@ function* batchToCupboard(action) {
       yield call(() => batch.commit());
 
       // Reload cupboard data
-      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+      yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       Toast.show({
         type: 'success',
@@ -327,7 +328,7 @@ function* resetCupboard(action) {
       );
 
       // Reload the updated cupboard
-      yield put({type: 'LOAD_CUPBOARD', payload: {cupboardID}});
+      yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       Toast.show({
         type: 'success',

@@ -29,6 +29,7 @@ function* fetchAccount(action) {
             createdOn: accountData?.createdOn || null,
           },
         });
+        console.log('Account Set');
       } else {
         yield put({type: 'SET_ACCOUNT', payload: null});
       }
