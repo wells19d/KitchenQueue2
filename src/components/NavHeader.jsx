@@ -36,7 +36,7 @@ const NavHeader = ({
         text: 'Confirm',
         onPress: () => {
           useHaptics(profile?.userSettings?.hapticStrength || 'light');
-          dispatch({type: 'LOGOUT'});
+          dispatch({type: 'LOGOUT_AND_CLEAR'});
         },
       },
     ]);

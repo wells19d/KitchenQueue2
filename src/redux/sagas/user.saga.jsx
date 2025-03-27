@@ -3,7 +3,6 @@ import {put, takeLatest, call} from 'redux-saga/effects';
 import {getAuth} from '@react-native-firebase/auth';
 import {persistor} from '../../../store';
 
-// Initialize Firebase Auth
 const auth = getAuth();
 
 const getErrorMessage = error => {
@@ -24,11 +23,11 @@ const getErrorMessage = error => {
   }
 };
 
+// New Process
 function* loginUser(action) {
   try {
     const {email, password} = action.payload;
 
-    // Authenticate user
     const userCredential = yield call(
       [auth, auth.signInWithEmailAndPassword],
       email,
@@ -39,10 +38,7 @@ function* loginUser(action) {
 
     if (user?.emailVerified) {
       yield put({type: 'SET_USER', payload: user});
-      yield put({
-        type: 'FETCH_PROFILE',
-        payload: {uid: user?.uid, role: user?.role},
-      });
+      yield put({type: 'START_LOGIN_SEQUENCE', payload: user.uid});
     } else {
       yield put({
         type: 'LOGIN_FAILED',
@@ -55,6 +51,7 @@ function* loginUser(action) {
   }
 }
 
+// No changes needed
 function* logoutUser() {
   try {
     yield call([auth, auth.signOut]);
@@ -65,6 +62,7 @@ function* logoutUser() {
   }
 }
 
+// No changes needed
 function* logOutAndClear() {
   try {
     yield call([auth, auth.signOut]);

@@ -53,7 +53,7 @@ const Main = () => {
 
   const [showPPModal, setShowPPModal] = useState(false);
   const [showTOSModal, setShowTOSModal] = useState(true);
-  const [currentModal, setCurrentModal] = useState('TOS');
+  const [currentModal, setCurrentModal] = useState('');
 
   RTUsers();
   RTAccounts();

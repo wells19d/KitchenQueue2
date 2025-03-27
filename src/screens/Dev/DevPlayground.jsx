@@ -19,14 +19,14 @@ const DevPlayground = () => {
   const cupboard = useCupboard();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
 
-  useEffect(() => {
-    if (isFocused) {
-      console.log('profile', profile);
-      console.log('account', account);
-      console.log('shopping', shopping);
-      console.log('cupboard', cupboard);
-    }
-  }, [isFocused, profile, account, shopping, cupboard]);
+  // useEffect(() => {
+  //   if (isFocused) {
+  //     console.log('profile', profile);
+  //     console.log('account', account);
+  //     console.log('shopping', shopping);
+  //     console.log('cupboard', cupboard);
+  //   }
+  // }, [isFocused, profile, account, shopping, cupboard]);
 
   const renderValue = value => {
     if (Array.isArray(value)) {

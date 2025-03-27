@@ -1,39 +1,26 @@
 //*account.saga.jsx
-import {put, takeLatest, call, all, select} from 'redux-saga/effects';
+import {put, takeLatest, call, all} from 'redux-saga/effects';
 import {getFirestore, getDoc, doc} from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
 const db = getFirestore(getApp());
 
+// New Process
 function* fetchAccount(action) {
-  const accountId = action.payload;
+  const {account, id} = action.payload;
   // console.log('[Saga] Fetching account for ID:', accountId);
 
   try {
-    const accountRef = doc(db, 'accounts', accountId);
+    const accountRef = doc(db, 'accounts', account);
     const accountDoc = yield call(getDoc, accountRef);
 
     if (accountDoc.exists) {
       const accountData = accountDoc.data();
       // console.log('[Saga] ✅ Account Data:', accountData);
 
-      // 🚀 Get the current profile from Redux
-      const profile = yield select(state => state.profile.profile);
-
-      if (!profile) {
-        // console.log(
-        //   '[Saga] ❌ No profile found in Redux state, skipping account check',
-        // );
-        yield put({type: 'SET_ACCOUNT', payload: null});
-        return;
-      }
-
-      const isAllowed = accountData?.allowedUsers?.includes(profile.id);
+      const isAllowed = accountData?.allowedUsers?.includes(id);
 
       if (isAllowed) {
-        // console.log(
-        //   `[Saga] ✅ Profile ${profile.id} is allowed in account ${accountId}`,
-        // );
         yield put({
           type: 'SET_ACCOUNT',
           payload: {
@@ -43,21 +30,17 @@ function* fetchAccount(action) {
           },
         });
       } else {
-        // console.log(
-        //   `[Saga] ❌ Profile ${profile.id} is NOT allowed in account ${accountId}`,
-        // );
         yield put({type: 'SET_ACCOUNT', payload: null});
       }
     } else {
-      // console.log('[Saga] ❌ No account found');
       yield put({type: 'SET_ACCOUNT', payload: null});
     }
   } catch (error) {
-    // console.error('[Saga] ❌ Fetch Account Error:', error);
     yield put({type: 'ACCOUNT_FETCH_FAILED', payload: error.message});
   }
 }
 
+// Needs update
 function* fetchAllowedProfiles(action) {
   const {allowedUsers} = action.payload;
   try {

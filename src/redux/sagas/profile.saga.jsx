@@ -6,15 +6,14 @@ import {
   getDoc,
   updateDoc,
   doc,
-  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
 const db = getFirestore(getApp());
 
+// New Process
 function* fetchProfile(action) {
   const {uid} = action.payload;
-  // console.log('[Saga] Fetching profile for UID:', uid);
 
   try {
     const profileRef = doc(db, 'profiles', uid);
@@ -22,27 +21,23 @@ function* fetchProfile(action) {
 
     if (profileDoc.exists) {
       const profileData = profileDoc.data();
-      // console.log('[Saga] ✅ Profile Data:', profileData);
-
-      yield put({type: 'SET_PROFILE', payload: profileData});
-
-      // 🚀 Fetch account **after** profile is set
-      if (profileData?.account) {
-        // console.log(
-        //   `[Saga] 🚀 Dispatching FETCH_ACCOUNT for: ${profileData.account}`,
-        // );
-        yield put({type: 'FETCH_ACCOUNT', payload: profileData.account});
-      }
+      yield put({
+        type: 'SET_PROFILE',
+        payload: {
+          ...profileData,
+          lastUpdated: profileData?.lastUpdated || null,
+          createdOn: profileData?.createdOn || null,
+        },
+      });
     } else {
-      // console.log('[Saga] ❌ No profile found');
       yield put({type: 'SET_PROFILE', payload: null});
     }
   } catch (error) {
-    // console.error('[Saga] ❌ Fetch Profile Error:', error);
     yield put({type: 'PROFILE_FETCH_FAILED', payload: error.message});
   }
 }
 
+// Needs update
 function* updateProfile(action) {
   const {userId, updatedData} = action.payload;
   try {

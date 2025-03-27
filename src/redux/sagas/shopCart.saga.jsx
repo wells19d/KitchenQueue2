@@ -8,7 +8,6 @@ import {
   updateDoc,
   doc,
   writeBatch,
-  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
@@ -49,7 +48,7 @@ function* fetchShopCart(action) {
 }
 
 function* addItemToShopCart(action) {
-  const {shoppingCartID, newItem} = action.payload;
+  const {shoppingCartID, newItem, profileID} = action.payload;
   try {
     // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
@@ -69,6 +68,7 @@ function* addItemToShopCart(action) {
         updateDoc(shopCartRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -105,7 +105,7 @@ function* addItemToShopCart(action) {
 }
 
 function* updateItemInShopCart(action) {
-  const {shoppingCartID, updatedItem, updateType} = action.payload;
+  const {shoppingCartID, updatedItem, updateType, profileID} = action.payload;
   try {
     // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
@@ -124,6 +124,7 @@ function* updateItemInShopCart(action) {
         updateDoc(shopCartRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -176,7 +177,7 @@ function* updateItemInShopCart(action) {
 }
 
 function* deleteItemFromShopCart(action) {
-  const {shoppingCartID, itemId, itemName} = action.payload;
+  const {shoppingCartID, itemId, itemName, profileID} = action.payload;
   try {
     // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
@@ -195,6 +196,7 @@ function* deleteItemFromShopCart(action) {
         updateDoc(shopCartRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -231,7 +233,7 @@ function* deleteItemFromShopCart(action) {
 }
 
 function* deleteListFromShopCart(action) {
-  const {shoppingCartID, items} = action.payload;
+  const {shoppingCartID, items, profileID} = action.payload;
 
   try {
     // Reference the shopCart document using shoppingCartID as the document ID
@@ -251,6 +253,7 @@ function* deleteListFromShopCart(action) {
         updateDoc(shopCartRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -262,8 +265,8 @@ function* deleteListFromShopCart(action) {
   }
 }
 
-function* batchToShopCart(action) {
-  const {shoppingCartID, items} = action.payload;
+function* batchToShopping(action) {
+  const {shoppingCartID, items, status, profileID} = action.payload;
 
   try {
     yield put({type: 'SHOP_CART_BATCH_ADD_START'});
@@ -273,9 +276,7 @@ function* batchToShopCart(action) {
 
     if (shopCartDoc.exists) {
       const shopCartData = shopCartDoc.data();
-
       const batch = writeBatch(db);
-
       let updatedItems = [...(shopCartData.items || [])];
 
       items.forEach(item => {
@@ -299,9 +300,10 @@ function* batchToShopCart(action) {
             category: category || '',
             notes: notes || '',
             itemId: uuid.v4(),
-            itemDate: new Date().toISOString(), // ✅ Fix: Use Firestore new Date().toISOString()
+            itemDate: new Date().toISOString(),
             quantity: 1,
-            status: 'shopping-cart',
+            status:
+              status === 'shopping-list' ? 'shopping-list' : 'shopping-cart',
           };
 
           updatedItems.push(newItem);
@@ -311,6 +313,7 @@ function* batchToShopCart(action) {
       batch.update(shopCartRef, {
         items: updatedItems,
         lastUpdated: new Date().toISOString(),
+        lastUpdatedBy: profileID,
       });
 
       yield call(() => batch.commit());
@@ -320,7 +323,9 @@ function* batchToShopCart(action) {
       Toast.show({
         type: 'success',
         text1: 'Items Added',
-        text2: `Batch items were added to the shopping cart.`,
+        text2: `Batch items were added to your ${
+          status === 'shopping-list' ? 'shopping list' : 'shopping cart'
+        }.`,
       });
 
       yield put({type: 'SHOP_CART_BATCH_ADD_SUCCESS'});
@@ -349,7 +354,7 @@ function* batchToShopCart(action) {
 }
 
 function* resetShopCart(action) {
-  const {shoppingCartID} = action.payload;
+  const {shoppingCartID, profileID} = action.payload;
   try {
     // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
@@ -361,6 +366,7 @@ function* resetShopCart(action) {
         updateDoc(shopCartRef, {
           items: [],
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -391,11 +397,11 @@ function* resetShopCart(action) {
 }
 
 export default function* shopCartSaga() {
-  yield takeLatest('LOAD_SHOP_CART', fetchShopCart);
+  yield takeLatest('FETCH_SHOP_CART', fetchShopCart);
   yield takeLatest('ADD_ITEM_TO_SHOP_CART', addItemToShopCart);
   yield takeLatest('UPDATE_ITEM_IN_SHOP_CART', updateItemInShopCart);
   yield takeLatest('DELETE_ITEM_FROM_SHOP_CART', deleteItemFromShopCart);
   yield takeLatest('DELETE_LIST_FROM_SHOP_CART', deleteListFromShopCart);
-  yield takeLatest('BATCH_TO_SHOP_CART', batchToShopCart);
+  yield takeLatest('BATCH_TO_SHOPPING', batchToShopping);
   yield takeLatest('RESET_SHOP_CART', resetShopCart);
 }
