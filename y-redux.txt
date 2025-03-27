@@ -393,41 +393,28 @@ export default function* rootSaga() {
 -----
 
 //*account.saga.jsx
-import {put, takeLatest, call, all, select} from 'redux-saga/effects';
+import {put, takeLatest, call, all} from 'redux-saga/effects';
 import {getFirestore, getDoc, doc} from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
 const db = getFirestore(getApp());
 
+// New Process
 function* fetchAccount(action) {
-  const accountId = action.payload;
+  const {account, id} = action.payload;
   // console.log('[Saga] Fetching account for ID:', accountId);
 
   try {
-    const accountRef = doc(db, 'accounts', accountId);
+    const accountRef = doc(db, 'accounts', account);
     const accountDoc = yield call(getDoc, accountRef);
 
     if (accountDoc.exists) {
       const accountData = accountDoc.data();
       // console.log('[Saga] ✅ Account Data:', accountData);
 
-      // 🚀 Get the current profile from Redux
-      const profile = yield select(state => state.profile.profile);
-
-      if (!profile) {
-        // console.log(
-        //   '[Saga] ❌ No profile found in Redux state, skipping account check',
-        // );
-        yield put({type: 'SET_ACCOUNT', payload: null});
-        return;
-      }
-
-      const isAllowed = accountData?.allowedUsers?.includes(profile.id);
+      const isAllowed = accountData?.allowedUsers?.includes(id);
 
       if (isAllowed) {
-        // console.log(
-        //   `[Saga] ✅ Profile ${profile.id} is allowed in account ${accountId}`,
-        // );
         yield put({
           type: 'SET_ACCOUNT',
           payload: {
@@ -437,21 +424,17 @@ function* fetchAccount(action) {
           },
         });
       } else {
-        // console.log(
-        //   `[Saga] ❌ Profile ${profile.id} is NOT allowed in account ${accountId}`,
-        // );
         yield put({type: 'SET_ACCOUNT', payload: null});
       }
     } else {
-      // console.log('[Saga] ❌ No account found');
       yield put({type: 'SET_ACCOUNT', payload: null});
     }
   } catch (error) {
-    // console.error('[Saga] ❌ Fetch Account Error:', error);
     yield put({type: 'ACCOUNT_FETCH_FAILED', payload: error.message});
   }
 }
 
+// Needs update
 function* fetchAllowedProfiles(action) {
   const {allowedUsers} = action.payload;
   try {
@@ -501,7 +484,6 @@ import {
   updateDoc,
   doc,
   writeBatch,
-  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
@@ -510,7 +492,6 @@ const db = getFirestore(getApp());
 function* fetchCupboard(action) {
   const {cupboardID} = action.payload;
   try {
-    // Reference to the cupboard document using the cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
@@ -518,7 +499,6 @@ function* fetchCupboard(action) {
       let cupboardData = cupboardDoc.data();
 
       if (!cupboardData.items) {
-        // Ensure items array is initialized
         cupboardData = {...cupboardData, items: []};
 
         yield call(() =>
@@ -544,7 +524,7 @@ function* fetchCupboard(action) {
 }
 
 function* addItemToCupboard(action) {
-  const {cupboardID, newItem} = action.payload;
+  const {cupboardID, newItem, profileID} = action.payload;
   try {
     // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
@@ -564,6 +544,7 @@ function* addItemToCupboard(action) {
         updateDoc(cupboardRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -600,7 +581,7 @@ function* addItemToCupboard(action) {
 }
 
 function* updateItemInCupboard(action) {
-  const {cupboardID, updatedItem} = action.payload;
+  const {cupboardID, updatedItem, profileID} = action.payload;
   try {
     // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
@@ -619,6 +600,7 @@ function* updateItemInCupboard(action) {
         updateDoc(cupboardRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -655,7 +637,7 @@ function* updateItemInCupboard(action) {
 }
 
 function* deleteItemFromCupboard(action) {
-  const {cupboardID, itemId, itemName} = action.payload;
+  const {cupboardID, itemId, itemName, profileID} = action.payload;
   try {
     // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
@@ -674,6 +656,7 @@ function* deleteItemFromCupboard(action) {
         updateDoc(cupboardRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -710,7 +693,7 @@ function* deleteItemFromCupboard(action) {
 }
 
 function* batchToCupboard(action) {
-  const {cupboardID, items} = action.payload;
+  const {cupboardID, items, profileID} = action.payload;
 
   try {
     yield put({type: 'CUPBOARD_BATCH_ADD_START'});
@@ -762,6 +745,7 @@ function* batchToCupboard(action) {
       batch.update(cupboardRef, {
         items: updatedItems,
         lastUpdated: new Date().toISOString(),
+        lastUpdatedBy: profileID,
       });
 
       // Commit the batch
@@ -802,7 +786,7 @@ function* batchToCupboard(action) {
 }
 
 function* resetCupboard(action) {
-  const {cupboardID} = action.payload;
+  const {cupboardID, profileID} = action.payload;
   try {
     // Get cupboard document reference
     const cupboardRef = doc(db, 'cupboards', cupboardID);
@@ -814,6 +798,7 @@ function* resetCupboard(action) {
         updateDoc(cupboardRef, {
           items: [],
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -854,6 +839,7 @@ export default function* cupboardSaga() {
 
 -----
 
+//* device.saga.jsx
 import {put, takeLatest, call, takeEvery} from 'redux-saga/effects';
 import {
   getBrand,
@@ -1135,15 +1121,14 @@ import {
   getDoc,
   updateDoc,
   doc,
-  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
 const db = getFirestore(getApp());
 
+// New Process
 function* fetchProfile(action) {
   const {uid} = action.payload;
-  // console.log('[Saga] Fetching profile for UID:', uid);
 
   try {
     const profileRef = doc(db, 'profiles', uid);
@@ -1151,27 +1136,23 @@ function* fetchProfile(action) {
 
     if (profileDoc.exists) {
       const profileData = profileDoc.data();
-      // console.log('[Saga] ✅ Profile Data:', profileData);
-
-      yield put({type: 'SET_PROFILE', payload: profileData});
-
-      // 🚀 Fetch account **after** profile is set
-      if (profileData?.account) {
-        // console.log(
-        //   `[Saga] 🚀 Dispatching FETCH_ACCOUNT for: ${profileData.account}`,
-        // );
-        yield put({type: 'FETCH_ACCOUNT', payload: profileData.account});
-      }
+      yield put({
+        type: 'SET_PROFILE',
+        payload: {
+          ...profileData,
+          lastUpdated: profileData?.lastUpdated || null,
+          createdOn: profileData?.createdOn || null,
+        },
+      });
     } else {
-      // console.log('[Saga] ❌ No profile found');
       yield put({type: 'SET_PROFILE', payload: null});
     }
   } catch (error) {
-    // console.error('[Saga] ❌ Fetch Profile Error:', error);
     yield put({type: 'PROFILE_FETCH_FAILED', payload: error.message});
   }
 }
 
+// Needs update
 function* updateProfile(action) {
   const {userId, updatedData} = action.payload;
   try {
@@ -1218,7 +1199,6 @@ import {
   updateDoc,
   doc,
   writeBatch,
-  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
@@ -1259,7 +1239,7 @@ function* fetchShopCart(action) {
 }
 
 function* addItemToShopCart(action) {
-  const {shoppingCartID, newItem} = action.payload;
+  const {shoppingCartID, newItem, profileID} = action.payload;
   try {
     // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
@@ -1279,6 +1259,7 @@ function* addItemToShopCart(action) {
         updateDoc(shopCartRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -1315,7 +1296,7 @@ function* addItemToShopCart(action) {
 }
 
 function* updateItemInShopCart(action) {
-  const {shoppingCartID, updatedItem, updateType} = action.payload;
+  const {shoppingCartID, updatedItem, updateType, profileID} = action.payload;
   try {
     // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
@@ -1334,6 +1315,7 @@ function* updateItemInShopCart(action) {
         updateDoc(shopCartRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -1386,7 +1368,7 @@ function* updateItemInShopCart(action) {
 }
 
 function* deleteItemFromShopCart(action) {
-  const {shoppingCartID, itemId, itemName} = action.payload;
+  const {shoppingCartID, itemId, itemName, profileID} = action.payload;
   try {
     // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
@@ -1405,6 +1387,7 @@ function* deleteItemFromShopCart(action) {
         updateDoc(shopCartRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -1441,7 +1424,7 @@ function* deleteItemFromShopCart(action) {
 }
 
 function* deleteListFromShopCart(action) {
-  const {shoppingCartID, items} = action.payload;
+  const {shoppingCartID, items, profileID} = action.payload;
 
   try {
     // Reference the shopCart document using shoppingCartID as the document ID
@@ -1461,6 +1444,7 @@ function* deleteListFromShopCart(action) {
         updateDoc(shopCartRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -1472,8 +1456,8 @@ function* deleteListFromShopCart(action) {
   }
 }
 
-function* batchToShopCart(action) {
-  const {shoppingCartID, items} = action.payload;
+function* batchToShopping(action) {
+  const {shoppingCartID, items, status, profileID} = action.payload;
 
   try {
     yield put({type: 'SHOP_CART_BATCH_ADD_START'});
@@ -1483,9 +1467,7 @@ function* batchToShopCart(action) {
 
     if (shopCartDoc.exists) {
       const shopCartData = shopCartDoc.data();
-
       const batch = writeBatch(db);
-
       let updatedItems = [...(shopCartData.items || [])];
 
       items.forEach(item => {
@@ -1509,9 +1491,10 @@ function* batchToShopCart(action) {
             category: category || '',
             notes: notes || '',
             itemId: uuid.v4(),
-            itemDate: new Date().toISOString(), // ✅ Fix: Use Firestore new Date().toISOString()
+            itemDate: new Date().toISOString(),
             quantity: 1,
-            status: 'shopping-cart',
+            status:
+              status === 'shopping-list' ? 'shopping-list' : 'shopping-cart',
           };
 
           updatedItems.push(newItem);
@@ -1521,6 +1504,7 @@ function* batchToShopCart(action) {
       batch.update(shopCartRef, {
         items: updatedItems,
         lastUpdated: new Date().toISOString(),
+        lastUpdatedBy: profileID,
       });
 
       yield call(() => batch.commit());
@@ -1530,7 +1514,9 @@ function* batchToShopCart(action) {
       Toast.show({
         type: 'success',
         text1: 'Items Added',
-        text2: `Batch items were added to the shopping cart.`,
+        text2: `Batch items were added to your ${
+          status === 'shopping-list' ? 'shopping list' : 'shopping cart'
+        }.`,
       });
 
       yield put({type: 'SHOP_CART_BATCH_ADD_SUCCESS'});
@@ -1559,7 +1545,7 @@ function* batchToShopCart(action) {
 }
 
 function* resetShopCart(action) {
-  const {shoppingCartID} = action.payload;
+  const {shoppingCartID, profileID} = action.payload;
   try {
     // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
@@ -1571,6 +1557,7 @@ function* resetShopCart(action) {
         updateDoc(shopCartRef, {
           items: [],
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -1606,7 +1593,7 @@ export default function* shopCartSaga() {
   yield takeLatest('UPDATE_ITEM_IN_SHOP_CART', updateItemInShopCart);
   yield takeLatest('DELETE_ITEM_FROM_SHOP_CART', deleteItemFromShopCart);
   yield takeLatest('DELETE_LIST_FROM_SHOP_CART', deleteListFromShopCart);
-  yield takeLatest('BATCH_TO_SHOP_CART', batchToShopCart);
+  yield takeLatest('BATCH_TO_SHOPPING', batchToShopping);
   yield takeLatest('RESET_SHOP_CART', resetShopCart);
 }
 
@@ -1617,7 +1604,6 @@ import {put, takeLatest, call} from 'redux-saga/effects';
 import {getAuth} from '@react-native-firebase/auth';
 import {persistor} from '../../../store';
 
-// Initialize Firebase Auth
 const auth = getAuth();
 
 const getErrorMessage = error => {
@@ -1638,11 +1624,11 @@ const getErrorMessage = error => {
   }
 };
 
+// New Process
 function* loginUser(action) {
   try {
     const {email, password} = action.payload;
 
-    // Authenticate user
     const userCredential = yield call(
       [auth, auth.signInWithEmailAndPassword],
       email,
@@ -1653,10 +1639,7 @@ function* loginUser(action) {
 
     if (user?.emailVerified) {
       yield put({type: 'SET_USER', payload: user});
-      yield put({
-        type: 'FETCH_PROFILE',
-        payload: {uid: user?.uid, role: user?.role},
-      });
+      yield put({type: 'START_LOGIN_SEQUENCE', payload: user.uid});
     } else {
       yield put({
         type: 'LOGIN_FAILED',
@@ -1669,6 +1652,7 @@ function* loginUser(action) {
   }
 }
 
+// No changes needed
 function* logoutUser() {
   try {
     yield call([auth, auth.signOut]);
@@ -1679,6 +1663,7 @@ function* logoutUser() {
   }
 }
 
+// No changes needed
 function* logOutAndClear() {
   try {
     yield call([auth, auth.signOut]);

@@ -8,7 +8,6 @@ import {
   updateDoc,
   doc,
   writeBatch,
-  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
@@ -17,7 +16,6 @@ const db = getFirestore(getApp());
 function* fetchCupboard(action) {
   const {cupboardID} = action.payload;
   try {
-    // Reference to the cupboard document using the cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
@@ -25,7 +23,6 @@ function* fetchCupboard(action) {
       let cupboardData = cupboardDoc.data();
 
       if (!cupboardData.items) {
-        // Ensure items array is initialized
         cupboardData = {...cupboardData, items: []};
 
         yield call(() =>
@@ -51,7 +48,7 @@ function* fetchCupboard(action) {
 }
 
 function* addItemToCupboard(action) {
-  const {cupboardID, newItem} = action.payload;
+  const {cupboardID, newItem, profileID} = action.payload;
   try {
     // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
@@ -71,6 +68,7 @@ function* addItemToCupboard(action) {
         updateDoc(cupboardRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -107,7 +105,7 @@ function* addItemToCupboard(action) {
 }
 
 function* updateItemInCupboard(action) {
-  const {cupboardID, updatedItem} = action.payload;
+  const {cupboardID, updatedItem, profileID} = action.payload;
   try {
     // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
@@ -126,6 +124,7 @@ function* updateItemInCupboard(action) {
         updateDoc(cupboardRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -162,7 +161,7 @@ function* updateItemInCupboard(action) {
 }
 
 function* deleteItemFromCupboard(action) {
-  const {cupboardID, itemId, itemName} = action.payload;
+  const {cupboardID, itemId, itemName, profileID} = action.payload;
   try {
     // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
@@ -181,6 +180,7 @@ function* deleteItemFromCupboard(action) {
         updateDoc(cupboardRef, {
           items: updatedItems,
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -217,7 +217,7 @@ function* deleteItemFromCupboard(action) {
 }
 
 function* batchToCupboard(action) {
-  const {cupboardID, items} = action.payload;
+  const {cupboardID, items, profileID} = action.payload;
 
   try {
     yield put({type: 'CUPBOARD_BATCH_ADD_START'});
@@ -269,6 +269,7 @@ function* batchToCupboard(action) {
       batch.update(cupboardRef, {
         items: updatedItems,
         lastUpdated: new Date().toISOString(),
+        lastUpdatedBy: profileID,
       });
 
       // Commit the batch
@@ -309,7 +310,7 @@ function* batchToCupboard(action) {
 }
 
 function* resetCupboard(action) {
-  const {cupboardID} = action.payload;
+  const {cupboardID, profileID} = action.payload;
   try {
     // Get cupboard document reference
     const cupboardRef = doc(db, 'cupboards', cupboardID);
@@ -321,6 +322,7 @@ function* resetCupboard(action) {
         updateDoc(cupboardRef, {
           items: [],
           lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profileID,
         }),
       );
 
@@ -351,7 +353,7 @@ function* resetCupboard(action) {
 }
 
 export default function* cupboardSaga() {
-  yield takeLatest('LOAD_CUPBOARD', fetchCupboard);
+  yield takeLatest('FETCH_CUPBOARD', fetchCupboard);
   yield takeLatest('ADD_ITEM_TO_CUPBOARD', addItemToCupboard);
   yield takeLatest('UPDATE_ITEM_IN_CUPBOARD', updateItemInCupboard);
   yield takeLatest('DELETE_ITEM_FROM_CUPBOARD', deleteItemFromCupboard);

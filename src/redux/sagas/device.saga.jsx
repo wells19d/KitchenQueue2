@@ -1,3 +1,4 @@
+//* device.saga.jsx
 import {put, takeLatest, call, takeEvery} from 'redux-saga/effects';
 import {
   getBrand,
