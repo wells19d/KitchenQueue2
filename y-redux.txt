@@ -27,7 +27,7 @@ export default rootReducer;
 
 -----
 
-//*account.reducer.jsx
+//* account.reducer.jsx
 const initialState = {
   account: null,
   allowedProfiles: [],
@@ -36,22 +36,26 @@ const initialState = {
 
 const accountReducer = (state = initialState, action) => {
   switch (action.type) {
+    // ✅ Account set or created
     case 'SET_ACCOUNT':
-      return {...state, account: action.payload};
     case 'ACCOUNT_CREATE_SUCCESS':
       return {...state, account: action.payload, error: null};
+
     case 'ACCOUNT_CREATE_FAILURE':
-      return {...state, error: action.payload};
     case 'ACCOUNT_FETCH_FAILED':
       return {...state, error: action.payload};
+
+    // ✅ Allowed profiles
     case 'SET_ALLOWED_PROFILES':
       return {...state, allowedProfiles: action.payload};
     case 'FETCH_ALLOWED_PROFILES_FAILED':
       return {...state, error: action.payload};
+
+    // 🔄 Reset
     case 'RESET_ACCOUNT_STATE':
-      return initialState;
     case 'RESET_ALL_STATE':
       return initialState;
+
     default:
       return state;
   }
@@ -61,7 +65,7 @@ export default accountReducer;
 
 -----
 
-//*cupboard.reducer.jsx
+//* cupboard.reducer.jsx
 const initialState = {
   cupboard: null,
   loading: false,
@@ -70,37 +74,57 @@ const initialState = {
 
 const cupboardReducer = (state = initialState, action) => {
   switch (action.type) {
+    // 🔄 Fetching
     case 'FETCH_CUPBOARD':
       return {...state, loading: true, error: null};
     case 'SET_CUPBOARD':
       return {...state, cupboard: action.payload, loading: false, error: null};
-    case 'CUPBOARD_FETCH_FAILED':
+    case 'CUPBOARD_SET_FAILED': // ✅ fixed name
       return {...state, loading: false, error: action.payload};
-
+    // ➕ Add Item
     case 'ADD_ITEM_TO_CUPBOARD':
       return {...state, loading: true, error: null};
     case 'CUPBOARD_ADD_ITEM_FAILED':
       return {...state, loading: false, error: action.payload};
 
+    // ✏️ Update Item
     case 'UPDATE_ITEM_IN_CUPBOARD':
       return {...state, loading: true, error: null};
     case 'CUPBOARD_UPDATE_ITEM_FAILED':
       return {...state, loading: false, error: action.payload};
 
+    // ❌ Delete Item
     case 'DELETE_ITEM_FROM_CUPBOARD':
       return {...state, loading: true, error: null};
     case 'CUPBOARD_DELETE_ITEM_FAILED':
       return {...state, loading: false, error: action.payload};
 
-    case 'BATCH_ADD_TO_CUPBOARD':
+    // ❌ Delete List
+    case 'DELETE_LIST_FROM_CUPBOARD':
       return {...state, loading: true, error: null};
+    case 'CUPBOARD_DELETE_LIST_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    // 📦 Batch Add
+    case 'BATCH_TO_CUPBOARD':
+      return {...state, loading: true, error: null};
+    case 'CUPBOARD_BATCH_ADD_START':
+      return {...state, loading: true, error: null};
+    case 'CUPBOARD_BATCH_ADD_SUCCESS':
+      return {...state, loading: false, error: null};
     case 'CUPBOARD_BATCH_ADD_FAILED':
       return {...state, loading: false, error: action.payload};
 
+    // ♻️ Reset
+    case 'RESET_CUPBOARD':
+      return {...state, loading: true, error: null};
+    case 'CUPBOARD_RESET_FAILED':
+      return {...state, loading: false, error: action.payload};
+
     case 'RESET_CUPBOARD_STATE':
-      return initialState;
     case 'RESET_ALL_STATE':
       return initialState;
+
     default:
       return state;
   }
@@ -220,7 +244,7 @@ export default invitesReducer;
 
 -----
 
-//*profile.reducer.jsx
+//* profile.reducer.jsx
 const initialState = {
   profile: null,
   error: null,
@@ -228,22 +252,34 @@ const initialState = {
 
 const profileReducer = (state = initialState, action) => {
   switch (action.type) {
+    // ✅ Fetched and set
     case 'SET_PROFILE':
       return {...state, profile: action.payload};
+
+    // ✅ New profile created
     case 'PROFILE_CREATE_SUCCESS':
       return {...state, profile: action.payload, error: null};
     case 'PROFILE_CREATE_FAILURE':
       return {...state, error: action.payload};
+
+    // ✅ Profile updated
     case 'UPDATE_PROFILE_SUCCESS':
-      return {...state, profile: {...state.profile, ...action.payload}};
+      return {
+        ...state,
+        profile: {
+          ...state.profile,
+          ...action.payload,
+        },
+      };
     case 'UPDATE_PROFILE_FAILED':
-      return {...state, error: action.payload};
     case 'PROFILE_FETCH_FAILED':
       return {...state, error: action.payload};
+
+    // 🔄 Reset cases
     case 'RESET_PROFILE_STATE':
-      return initialState;
     case 'RESET_ALL_STATE':
       return initialState;
+
     default:
       return state;
   }
@@ -253,7 +289,7 @@ export default profileReducer;
 
 -----
 
-//*shopping.reducer.jsx
+//*shopCart.reducer.jsx
 const initialState = {
   shopping: null,
   loading: false,
@@ -262,35 +298,55 @@ const initialState = {
 
 const shoppingReducer = (state = initialState, action) => {
   switch (action.type) {
+    // 🔄 Fetching
     case 'FETCH_SHOP_CART':
       return {...state, loading: true, error: null};
     case 'SET_SHOP_CART':
       return {...state, shopping: action.payload, loading: false, error: null};
-    case 'SHOP_CART_FETCH_FAILED':
+    case 'SHOP_CART_SET_FAILED':
       return {...state, loading: false, error: action.payload};
 
+    // ➕ Add Item
     case 'ADD_ITEM_TO_SHOP_CART':
       return {...state, loading: true, error: null};
     case 'SHOP_CART_ADD_ITEM_FAILED':
       return {...state, loading: false, error: action.payload};
 
+    // ✏️ Update Item
     case 'UPDATE_ITEM_IN_SHOP_CART':
       return {...state, loading: true, error: null};
     case 'SHOP_CART_UPDATE_ITEM_FAILED':
       return {...state, loading: false, error: action.payload};
 
+    // ❌ Delete Item
     case 'DELETE_ITEM_FROM_SHOP_CART':
       return {...state, loading: true, error: null};
     case 'SHOP_CART_DELETE_ITEM_FAILED':
       return {...state, loading: false, error: action.payload};
 
+    // ❌ Delete List
+    case 'DELETE_LIST_FROM_SHOP_CART':
+      return {...state, loading: true, error: null};
+    case 'SHOP_CART_DELETE_LIST_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    // 📦 Batch Add
     case 'BATCH_TO_SHOP_CART':
       return {...state, loading: true, error: null};
+    case 'SHOP_CART_BATCH_ADD_START':
+      return {...state, loading: true, error: null};
+    case 'SHOP_CART_BATCH_ADD_SUCCESS':
+      return {...state, loading: false, error: null};
     case 'SHOP_CART_BATCH_ADD_FAILED':
       return {...state, loading: false, error: action.payload};
 
-    case 'RESET_SHOPPING_STATE':
-      return initialState;
+    // ♻️ Reset
+    case 'RESET_SHOP_CART':
+      return {...state, loading: true, error: null};
+    case 'SHOP_CART_RESET_FAILED':
+      return {...state, loading: false, error: action.payload};
+
+    case 'RESET_SHOP_CART_STATE':
     case 'RESET_ALL_STATE':
       return initialState;
 
@@ -303,7 +359,7 @@ export default shoppingReducer;
 
 -----
 
-//*user.reducer.jsx
+//* user.reducer.jsx
 const initialState = {
   data: null,
   loading: false,
@@ -313,6 +369,7 @@ const initialState = {
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
+    // 🔐 Signup Flow
     case 'USER_SIGNUP_REQUEST':
       return {...state, loading: true, error: null};
     case 'USER_SIGNUP_SUCCESS':
@@ -330,6 +387,8 @@ const userReducer = (state = initialState, action) => {
         error: action.error,
         isAuthenticated: false,
       };
+
+    // 🔓 Login Flow
     case 'LOGIN_REQUEST':
       return {...state, loading: true, error: null};
     case 'SET_USER':
@@ -347,14 +406,16 @@ const userReducer = (state = initialState, action) => {
         error: action.payload,
         isAuthenticated: false,
       };
+
+    // 🔒 Logout & Reset
     case 'UNSET_USER':
       return {...initialState, loading: false};
-    case 'RESET_USER_STATE':
-      return initialState;
-    case 'RESET_ALL_STATE':
-      return initialState;
     case 'LOGOUT':
       return initialState;
+    case 'RESET_USER_STATE':
+    case 'RESET_ALL_STATE':
+      return initialState;
+
     default:
       return state;
   }
@@ -529,20 +590,17 @@ function* fetchCupboard(action) {
 function* addItemToCupboard(action) {
   const {cupboardID, newItem, profileID} = action.payload;
   try {
-    // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
     if (cupboardDoc.exists) {
       const cupboardData = cupboardDoc.data();
 
-      // Append new item with a generated UUID and timestamp
       const updatedItems = [
         ...(cupboardData.items || []),
         {...newItem, itemId: uuid.v4(), itemDate: new Date().toISOString()},
       ];
 
-      // Update Firestore cupboard document with new items array
       yield call(() =>
         updateDoc(cupboardRef, {
           items: updatedItems,
@@ -551,10 +609,8 @@ function* addItemToCupboard(action) {
         }),
       );
 
-      // Reload cupboard data
       yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
-      // Show success toast message
       Toast.show({
         type: 'success',
         text1: 'Item Added',
@@ -586,19 +642,15 @@ function* addItemToCupboard(action) {
 function* updateItemInCupboard(action) {
   const {cupboardID, updatedItem, profileID} = action.payload;
   try {
-    // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
     if (cupboardDoc.exists) {
       const cupboardData = cupboardDoc.data();
-
-      // Update the correct item in the items array
       const updatedItems = cupboardData?.items?.map(item =>
         item.itemId === updatedItem.itemId ? updatedItem : item,
       );
 
-      // Update Firestore cupboard document with new items array
       yield call(() =>
         updateDoc(cupboardRef, {
           items: updatedItems,
@@ -607,10 +659,8 @@ function* updateItemInCupboard(action) {
         }),
       );
 
-      // Reload cupboard data
       yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
-      // Show success toast message
       Toast.show({
         type: 'success',
         text1: 'Item Updated',
@@ -642,19 +692,16 @@ function* updateItemInCupboard(action) {
 function* deleteItemFromCupboard(action) {
   const {cupboardID, itemId, itemName, profileID} = action.payload;
   try {
-    // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
     if (cupboardDoc.exists) {
       const cupboardData = cupboardDoc.data();
 
-      // Filter out the item to be deleted
       const updatedItems = cupboardData?.items?.filter(
         item => item.itemId !== itemId,
       );
 
-      // Update Firestore cupboard document with the new filtered items array
       yield call(() =>
         updateDoc(cupboardRef, {
           items: updatedItems,
@@ -663,10 +710,8 @@ function* deleteItemFromCupboard(action) {
         }),
       );
 
-      // Reload cupboard data
       yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
-      // Show success toast message
       Toast.show({
         type: 'success',
         text1: 'Item Deleted',
@@ -701,19 +746,14 @@ function* batchToCupboard(action) {
   try {
     yield put({type: 'CUPBOARD_BATCH_ADD_START'});
 
-    // Get the cupboard document reference
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
     if (cupboardDoc.exists) {
       const cupboardData = cupboardDoc.data();
-
-      // Initialize a Firestore batch
       const batch = writeBatch(db);
-
       let updatedItems = [...(cupboardData.items || [])];
 
-      // Add each item in the batch process
       items.forEach(item => {
         const {
           itemName,
@@ -736,7 +776,7 @@ function* batchToCupboard(action) {
             category: category || '',
             notes: notes || '',
             itemId: uuid.v4(),
-            itemDate: new Date().toISOString(), // ✅ Fix: Ensure consistency with Firestore
+            itemDate: new Date().toISOString(),
             quantity: 1,
           };
 
@@ -744,23 +784,20 @@ function* batchToCupboard(action) {
         }
       });
 
-      // Queue the cupboard update in the batch
       batch.update(cupboardRef, {
         items: updatedItems,
         lastUpdated: new Date().toISOString(),
         lastUpdatedBy: profileID,
       });
 
-      // Commit the batch
       yield call(() => batch.commit());
 
-      // Reload cupboard data
       yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       Toast.show({
         type: 'success',
         text1: 'Items Added',
-        text2: `Shopping cart items were added to the cupboard.`,
+        text2: `Items were added to the cupboard.`,
       });
 
       yield put({type: 'CUPBOARD_BATCH_ADD_SUCCESS'});
@@ -791,12 +828,10 @@ function* batchToCupboard(action) {
 function* resetCupboard(action) {
   const {cupboardID, profileID} = action.payload;
   try {
-    // Get cupboard document reference
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
     if (cupboardDoc.exists) {
-      // Update cupboard to reset items
       yield call(() =>
         updateDoc(cupboardRef, {
           items: [],
@@ -805,7 +840,6 @@ function* resetCupboard(action) {
         }),
       );
 
-      // Reload the updated cupboard
       yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       Toast.show({
@@ -836,7 +870,7 @@ export default function* cupboardSaga() {
   yield takeLatest('ADD_ITEM_TO_CUPBOARD', addItemToCupboard);
   yield takeLatest('UPDATE_ITEM_IN_CUPBOARD', updateItemInCupboard);
   yield takeLatest('DELETE_ITEM_FROM_CUPBOARD', deleteItemFromCupboard);
-  yield takeLatest('BATCH_ADD_TO_CUPBOARD', batchToCupboard);
+  yield takeLatest('BATCH_TO_CUPBOARD', batchToCupboard);
   yield takeLatest('RESET_CUPBOARD', resetCupboard);
 }
 
@@ -1301,20 +1335,17 @@ function* fetchShopCart(action) {
 function* addItemToShopCart(action) {
   const {shoppingCartID, newItem, profileID} = action.payload;
   try {
-    // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
     const shopCartDoc = yield call(getDoc, shopCartRef);
 
     if (shopCartDoc.exists) {
       const shopCartData = shopCartDoc.data();
 
-      // Append new item with a generated UUID and timestamp
       const updatedItems = [
         ...(shopCartData.items || []),
         {...newItem, itemId: uuid.v4(), itemDate: new Date().toISOString()},
       ];
 
-      // Update Firestore shopCart document with new items array
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
@@ -1323,10 +1354,8 @@ function* addItemToShopCart(action) {
         }),
       );
 
-      // Reload shopCart data
       yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
-      // Show success toast message
       Toast.show({
         type: 'success',
         text1: 'Item Added',
@@ -1358,19 +1387,15 @@ function* addItemToShopCart(action) {
 function* updateItemInShopCart(action) {
   const {shoppingCartID, updatedItem, updateType, profileID} = action.payload;
   try {
-    // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
     const shopCartDoc = yield call(getDoc, shopCartRef);
 
     if (shopCartDoc.exists) {
       const shopCartData = shopCartDoc.data();
-
-      // Update the correct item in the items array
       const updatedItems = shopCartData?.items?.map(item =>
         item.itemId === updatedItem.itemId ? updatedItem : item,
       );
 
-      // Update Firestore shopCart document with new items array
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
@@ -1379,10 +1404,8 @@ function* updateItemInShopCart(action) {
         }),
       );
 
-      // Reload shopCart data
       yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
-      // Handle different update types for toast messages
       if (updateType === 'toCart') {
         Toast.show({
           type: 'success',
@@ -1430,19 +1453,16 @@ function* updateItemInShopCart(action) {
 function* deleteItemFromShopCart(action) {
   const {shoppingCartID, itemId, itemName, profileID} = action.payload;
   try {
-    // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
     const shopCartDoc = yield call(getDoc, shopCartRef);
 
     if (shopCartDoc.exists) {
       const shopCartData = shopCartDoc.data();
 
-      // Remove the specified item from the items array
       const updatedItems = shopCartData?.items?.filter(
         item => item.itemId !== itemId,
       );
 
-      // Update Firestore shopCart document with the new filtered items array
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
@@ -1451,10 +1471,8 @@ function* deleteItemFromShopCart(action) {
         }),
       );
 
-      // Reload shopCart data
       yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
-      // Show success toast message
       Toast.show({
         type: 'success',
         text1: 'Item Deleted',
@@ -1487,19 +1505,16 @@ function* deleteListFromShopCart(action) {
   const {shoppingCartID, items, profileID} = action.payload;
 
   try {
-    // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
     const shopCartDoc = yield call(getDoc, shopCartRef);
 
     if (shopCartDoc.exists) {
       const shopCartData = shopCartDoc.data();
 
-      // Remove all items that match those in the `items` list
       const updatedItems = shopCartData?.items?.filter(
         item => !items.some(cartItem => cartItem.itemId === item.itemId),
       );
 
-      // Update Firestore shopCart document with the new filtered items array
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
@@ -1508,7 +1523,6 @@ function* deleteListFromShopCart(action) {
         }),
       );
 
-      // Reload shopCart data
       yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
     }
   } catch (error) {
@@ -1574,7 +1588,7 @@ function* batchToShopping(action) {
       Toast.show({
         type: 'success',
         text1: 'Items Added',
-        text2: `Batch items were added to your ${
+        text2: `Items were added to your ${
           status === 'shopping-list' ? 'shopping list' : 'shopping cart'
         }.`,
       });
@@ -1607,12 +1621,10 @@ function* batchToShopping(action) {
 function* resetShopCart(action) {
   const {shoppingCartID, profileID} = action.payload;
   try {
-    // Reference the shopCart document using shoppingCartID as the document ID
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
     const shopCartDoc = yield call(getDoc, shopCartRef);
 
     if (shopCartDoc.exists) {
-      // Update shopCart to reset items
       yield call(() =>
         updateDoc(shopCartRef, {
           items: [],
@@ -1621,7 +1633,6 @@ function* resetShopCart(action) {
         }),
       );
 
-      // Reload the updated shopCart
       yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
 
       Toast.show({
@@ -1653,7 +1664,7 @@ export default function* shopCartSaga() {
   yield takeLatest('UPDATE_ITEM_IN_SHOP_CART', updateItemInShopCart);
   yield takeLatest('DELETE_ITEM_FROM_SHOP_CART', deleteItemFromShopCart);
   yield takeLatest('DELETE_LIST_FROM_SHOP_CART', deleteListFromShopCart);
-  yield takeLatest('BATCH_TO_SHOPPING', batchToShopping);
+  yield takeLatest('BATCH_TO_SHOP_CART', batchToShopping);
   yield takeLatest('RESET_SHOP_CART', resetShopCart);
 }
 

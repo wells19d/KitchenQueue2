@@ -51,20 +51,17 @@ function* fetchCupboard(action) {
 function* addItemToCupboard(action) {
   const {cupboardID, newItem, profileID} = action.payload;
   try {
-    // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
     if (cupboardDoc.exists) {
       const cupboardData = cupboardDoc.data();
 
-      // Append new item with a generated UUID and timestamp
       const updatedItems = [
         ...(cupboardData.items || []),
         {...newItem, itemId: uuid.v4(), itemDate: new Date().toISOString()},
       ];
 
-      // Update Firestore cupboard document with new items array
       yield call(() =>
         updateDoc(cupboardRef, {
           items: updatedItems,
@@ -73,10 +70,8 @@ function* addItemToCupboard(action) {
         }),
       );
 
-      // Reload cupboard data
       yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
-      // Show success toast message
       Toast.show({
         type: 'success',
         text1: 'Item Added',
@@ -108,19 +103,15 @@ function* addItemToCupboard(action) {
 function* updateItemInCupboard(action) {
   const {cupboardID, updatedItem, profileID} = action.payload;
   try {
-    // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
     if (cupboardDoc.exists) {
       const cupboardData = cupboardDoc.data();
-
-      // Update the correct item in the items array
       const updatedItems = cupboardData?.items?.map(item =>
         item.itemId === updatedItem.itemId ? updatedItem : item,
       );
 
-      // Update Firestore cupboard document with new items array
       yield call(() =>
         updateDoc(cupboardRef, {
           items: updatedItems,
@@ -129,10 +120,8 @@ function* updateItemInCupboard(action) {
         }),
       );
 
-      // Reload cupboard data
       yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
-      // Show success toast message
       Toast.show({
         type: 'success',
         text1: 'Item Updated',
@@ -164,19 +153,16 @@ function* updateItemInCupboard(action) {
 function* deleteItemFromCupboard(action) {
   const {cupboardID, itemId, itemName, profileID} = action.payload;
   try {
-    // Reference the cupboard document using cupboardID as the document ID
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
     if (cupboardDoc.exists) {
       const cupboardData = cupboardDoc.data();
 
-      // Filter out the item to be deleted
       const updatedItems = cupboardData?.items?.filter(
         item => item.itemId !== itemId,
       );
 
-      // Update Firestore cupboard document with the new filtered items array
       yield call(() =>
         updateDoc(cupboardRef, {
           items: updatedItems,
@@ -185,10 +171,8 @@ function* deleteItemFromCupboard(action) {
         }),
       );
 
-      // Reload cupboard data
       yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
-      // Show success toast message
       Toast.show({
         type: 'success',
         text1: 'Item Deleted',
@@ -223,19 +207,14 @@ function* batchToCupboard(action) {
   try {
     yield put({type: 'CUPBOARD_BATCH_ADD_START'});
 
-    // Get the cupboard document reference
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
     if (cupboardDoc.exists) {
       const cupboardData = cupboardDoc.data();
-
-      // Initialize a Firestore batch
       const batch = writeBatch(db);
-
       let updatedItems = [...(cupboardData.items || [])];
 
-      // Add each item in the batch process
       items.forEach(item => {
         const {
           itemName,
@@ -258,7 +237,7 @@ function* batchToCupboard(action) {
             category: category || '',
             notes: notes || '',
             itemId: uuid.v4(),
-            itemDate: new Date().toISOString(), // ✅ Fix: Ensure consistency with Firestore
+            itemDate: new Date().toISOString(),
             quantity: 1,
           };
 
@@ -266,23 +245,20 @@ function* batchToCupboard(action) {
         }
       });
 
-      // Queue the cupboard update in the batch
       batch.update(cupboardRef, {
         items: updatedItems,
         lastUpdated: new Date().toISOString(),
         lastUpdatedBy: profileID,
       });
 
-      // Commit the batch
       yield call(() => batch.commit());
 
-      // Reload cupboard data
       yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       Toast.show({
         type: 'success',
         text1: 'Items Added',
-        text2: `Shopping cart items were added to the cupboard.`,
+        text2: `Items were added to the cupboard.`,
       });
 
       yield put({type: 'CUPBOARD_BATCH_ADD_SUCCESS'});
@@ -313,12 +289,10 @@ function* batchToCupboard(action) {
 function* resetCupboard(action) {
   const {cupboardID, profileID} = action.payload;
   try {
-    // Get cupboard document reference
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
     if (cupboardDoc.exists) {
-      // Update cupboard to reset items
       yield call(() =>
         updateDoc(cupboardRef, {
           items: [],
@@ -327,7 +301,6 @@ function* resetCupboard(action) {
         }),
       );
 
-      // Reload the updated cupboard
       yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       Toast.show({
@@ -358,6 +331,6 @@ export default function* cupboardSaga() {
   yield takeLatest('ADD_ITEM_TO_CUPBOARD', addItemToCupboard);
   yield takeLatest('UPDATE_ITEM_IN_CUPBOARD', updateItemInCupboard);
   yield takeLatest('DELETE_ITEM_FROM_CUPBOARD', deleteItemFromCupboard);
-  yield takeLatest('BATCH_ADD_TO_CUPBOARD', batchToCupboard);
+  yield takeLatest('BATCH_TO_CUPBOARD', batchToCupboard);
   yield takeLatest('RESET_CUPBOARD', resetCupboard);
 }

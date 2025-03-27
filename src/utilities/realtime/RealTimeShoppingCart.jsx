@@ -26,10 +26,9 @@ const useRealTimeShoppingCart = () => {
           const shopCart = {
             ...shopCartData,
             items: shopCartData.items || [],
-            lastUpdated: shopCartData?.lastUpdated || null, // ✅ No need for toDate()
+            lastUpdated: shopCartData?.lastUpdated || null,
           };
 
-          // ✅ Prevent unnecessary updates by checking if data changed
           if (JSON.stringify(persistedCart) !== JSON.stringify(shopCart)) {
             dispatch({type: 'SET_SHOP_CART', payload: shopCart});
           }

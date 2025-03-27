@@ -1,4 +1,4 @@
-//*account.reducer.jsx
+//* account.reducer.jsx
 const initialState = {
   account: null,
   allowedProfiles: [],
@@ -7,22 +7,26 @@ const initialState = {
 
 const accountReducer = (state = initialState, action) => {
   switch (action.type) {
+    // ✅ Account set or created
     case 'SET_ACCOUNT':
-      return {...state, account: action.payload};
     case 'ACCOUNT_CREATE_SUCCESS':
       return {...state, account: action.payload, error: null};
+
     case 'ACCOUNT_CREATE_FAILURE':
-      return {...state, error: action.payload};
     case 'ACCOUNT_FETCH_FAILED':
       return {...state, error: action.payload};
+
+    // ✅ Allowed profiles
     case 'SET_ALLOWED_PROFILES':
       return {...state, allowedProfiles: action.payload};
     case 'FETCH_ALLOWED_PROFILES_FAILED':
       return {...state, error: action.payload};
+
+    // 🔄 Reset
     case 'RESET_ACCOUNT_STATE':
-      return initialState;
     case 'RESET_ALL_STATE':
       return initialState;
+
     default:
       return state;
   }

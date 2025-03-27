@@ -1,4 +1,4 @@
-//*user.reducer.jsx
+//* user.reducer.jsx
 const initialState = {
   data: null,
   loading: false,
@@ -8,6 +8,7 @@ const initialState = {
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
+    // 🔐 Signup Flow
     case 'USER_SIGNUP_REQUEST':
       return {...state, loading: true, error: null};
     case 'USER_SIGNUP_SUCCESS':
@@ -25,6 +26,8 @@ const userReducer = (state = initialState, action) => {
         error: action.error,
         isAuthenticated: false,
       };
+
+    // 🔓 Login Flow
     case 'LOGIN_REQUEST':
       return {...state, loading: true, error: null};
     case 'SET_USER':
@@ -42,14 +45,16 @@ const userReducer = (state = initialState, action) => {
         error: action.payload,
         isAuthenticated: false,
       };
+
+    // 🔒 Logout & Reset
     case 'UNSET_USER':
       return {...initialState, loading: false};
-    case 'RESET_USER_STATE':
-      return initialState;
-    case 'RESET_ALL_STATE':
-      return initialState;
     case 'LOGOUT':
       return initialState;
+    case 'RESET_USER_STATE':
+    case 'RESET_ALL_STATE':
+      return initialState;
+
     default:
       return state;
   }
