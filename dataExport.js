@@ -333,3 +333,56 @@ export const cupboardBatch = [
     quantity: 1,
   },
 ];
+
+let testData = {
+  brandName: 'Tyson', // correct, they all have the same brand
+  category: undefined, // correct, they all have a different category
+  count: 3, // correct, there are 3 items
+  itemName: 'Chicken Breast', // correct, they all have the same name
+  itemId: 'fd0139c4-507e-4a0a-8aba-c35131e77589', // correct, this is the first itemI
+  description: 'Boneless skinless', // correct, they all have the same description
+  measurement: undefined, // correct, they all have a different measurement
+  packageSize: undefined, // incorrect, this should be the total of the package sizes
+  remainingAmount: undefined, // incorrect, this should be the total of the remaining amounts
+  items: [
+    {
+      itemId: 'fd0139c4-507e-4a0a-8aba-c35131e77589',
+      quantity: 1,
+      packageSize: 2.5,
+      itemName: 'Chicken Breast',
+      description: 'Boneless skinless',
+      itemDate: '2025-03-27T23:21:45.129Z',
+      measurement: 'lb',
+      category: 'Meat',
+      notes: 'Frozen',
+      remainingAmount: 2.5,
+      brandName: 'Tyson',
+    },
+    {
+      itemId: 'fd25e1d1-3cae-4732-a7f8-8d4c6cd329f1',
+      quantity: 1,
+      packageSize: 1,
+      itemName: 'Chicken Breast',
+      description: 'Boneless skinless',
+      itemDate: '2025-03-30T17:41:01.976Z',
+      measurement: 'pound',
+      category: 'meats-seafood',
+      notes: '',
+      remainingAmount: 1,
+      brandName: 'Tyson',
+    },
+    {
+      itemId: '0ddf7f20-acfc-4a19-b2c1-ba98157b830a',
+      quantity: 1,
+      packageSize: 1,
+      itemName: 'Chicken Breast',
+      description: 'Boneless skinless',
+      itemDate: '2025-03-30T17:41:01.976Z',
+      measurement: 'pound',
+      category: 'meats-seafood',
+      notes: '',
+      remainingAmount: 1,
+      brandName: 'Tyson',
+    },
+  ],
+};

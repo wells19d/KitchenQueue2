@@ -32,7 +32,7 @@ const NavMenu = props => {
       id: 'cupboard',
       title: 'Cupboard',
       icon: <Icons.Cupboards size={25} color={'#000'} />,
-      screen: 'CupboardList',
+      screen: 'CupboardList-Single',
     },
   ];
 
@@ -67,7 +67,12 @@ const NavMenu = props => {
 
   const handleNavPress = item => {
     setIsSheetOpen(false);
-    const allowedScreens = ['Home', 'ShoppingList', 'CupboardList', 'Account'];
+    const allowedScreens = [
+      'Home',
+      'ShoppingList',
+      'CupboardList-Single',
+      'Account',
+    ];
 
     if (allowedScreens.includes(item.screen)) {
       navigation.navigate(item.screen);

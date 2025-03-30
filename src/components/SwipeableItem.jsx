@@ -1,7 +1,7 @@
 //* SwipeableItem.jsx
 import {FlashList} from '@shopify/flash-list';
 import React, {useCallback, useEffect, useRef} from 'react';
-import FlashShoppingCell from './FlashShoppingCell';
+import FlashCell from './FlashCell';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
 import {ListStyles} from '../styles/Styles';
@@ -17,6 +17,9 @@ const SwipeableItem = props => {
     setShowItemInfo,
     leftButtons = [],
     rightButtons = [],
+    cupboardView = false,
+    groupedView = false,
+    noQuantity = false,
   } = props;
 
   const swipeableRefs = useRef(new Map());
@@ -138,13 +141,16 @@ const SwipeableItem = props => {
         leftThreshold={200}
         friction={1}
         overshootFriction={8}>
-        <FlashShoppingCell
+        <FlashCell
           item={item}
           profile={profile}
           setSelectedItem={setSelectedItem}
           setShowItemInfo={setShowItemInfo}
           showItemInfo={showItemInfo}
           closeAllSwipeables={closeAllSwipeables}
+          cupboardView={cupboardView}
+          groupedView={groupedView}
+          noQuantity={noQuantity}
         />
       </Swipeable>
     ),

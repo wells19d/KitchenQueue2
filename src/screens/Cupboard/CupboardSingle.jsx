@@ -1,68 +1,43 @@
-//* ShoppingList.jsx
+//* CupboardSingle.jsx
 import React, {useCallback, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
-import {useAccount, useProfile, useShoppingCart} from '../../hooks/useHooks';
-import {View} from 'react-native';
-import {ListStyles} from '../../styles/Styles';
-import SwipeableItem from '../../components/SwipeableItem';
+import {useAccount, useCupboard, useProfile} from '../../hooks/useHooks';
 import {useDispatch} from 'react-redux';
+import {ListStyles} from '../../styles/Styles';
+import {View} from 'react-native';
+import SwipeableItem from '../../components/SwipeableItem';
 
-const ShoppingList = () => {
+const CupboardSingle = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const profile = useProfile();
   const account = useAccount();
-  const shopping = useShoppingCart();
+  const cupboard = useCupboard();
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const shoppingList =
-    shopping?.items?.filter(item => item.status === 'shopping-list') ?? [];
+  const cupboardList = cupboard?.items ?? [];
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const handleAddToCart = useCallback(
-    itemId => {
-      const item = shoppingList.find(item => item.itemId === itemId);
-      if (item && profile) {
-        const updatedItem = {
-          ...item,
-          status: 'shopping-cart',
-          lastUpdated: new Date().toISOString(),
-          lastUpdatedBy: profile.id,
-        };
-        dispatch({
-          type: 'UPDATE_ITEM_IN_SHOP_CART',
-          payload: {
-            shoppingCartID: account.shoppingCartID,
-            updatedItem,
-            profileID: profile.id,
-            updateType: 'toCart',
-          },
-        });
-      }
-    },
-    [dispatch, profile, shoppingList],
-  );
-
   const handleUpdateItem = itemId => {
-    navigation.navigate('UpdateShopItems', {
+    navigation.navigate('UpdateCupboardItems', {
       itemId,
-      navigateBackTo: 'ShoppingList',
+      navigateBackTo: 'CupboardList-Single',
     });
   };
 
   const handleDeleteItem = useCallback(
     itemId => {
       if (profile) {
-        const item = shoppingList.find(item => item.itemId === itemId);
+        const item = cupboardList?.find(item => item?.itemId === itemId);
         if (item) {
           dispatch({
-            type: 'DELETE_ITEM_FROM_SHOP_CART',
+            type: 'DELETE_ITEM_FROM_CUPBOARD',
             payload: {
-              shoppingCartID: account.shoppingCartID,
+              cupboardID: account.cupboardID,
               itemId: item.itemId,
               itemName: item.itemName,
               profileID: profile.id,
@@ -71,10 +46,10 @@ const ShoppingList = () => {
         }
       }
     },
-    [dispatch, profile, shoppingList],
+    [dispatch, profile?.account, cupboardList],
   );
 
-  const SelectedItemInfo = ({navigate}) => (
+  const SelectedItemInfo = () => (
     <BottomSheet
       visible={showItemInfo}
       onClose={() => setShowItemInfo(false)}
@@ -89,8 +64,8 @@ const ShoppingList = () => {
       headerTitle={title}
       headerColor={headerColor}
       textColor={textColor}
-      LeftButton=""
-      RightButton="To-Cart"
+      LeftButton="Split"
+      RightButton=""
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
@@ -99,7 +74,7 @@ const ShoppingList = () => {
         alignItems: 'center',
       }}
       outerViewStyles={{paddingBottom: 0}}>
-      {shoppingList.length === 0 ? (
+      {cupboardList.length === 0 ? (
         <View
           style={[
             ListStyles.viewContainer,
@@ -110,21 +85,15 @@ const ShoppingList = () => {
       ) : (
         <View style={ListStyles.viewContainer}>
           <SwipeableItem
-            list={shoppingList}
-            profile={profile}
-            showItemInfo={showItemInfo}
+            list={cupboardList}
             setShowItemInfo={setShowItemInfo}
             setSelectedItem={setSelectedItem}
+            cupboardView
+            noQuantity
             rightButtons={[
               {
-                action: itemId => handleAddToCart(itemId),
-                text1: 'Add',
-                text2: 'to Cart',
-                style: ListStyles.addButton,
-              },
-              {
                 action: itemId => handleUpdateItem(itemId),
-                navigateBackTo: 'ShoppingList',
+                navigateBackTo: 'CupboardList-Single',
                 text1: 'Update',
                 text2: 'Item',
                 style: ListStyles.updateButton,
@@ -137,13 +106,11 @@ const ShoppingList = () => {
             ]}
             leftButtons={[]}
           />
-          <SelectedItemInfo
-            navigate={{to: 'UpdateShopItems', backTo: 'ShoppingList'}}
-          />
+          <SelectedItemInfo />
         </View>
       )}
     </Layout>
   );
 };
 
-export default ShoppingList;
+export default CupboardSingle;

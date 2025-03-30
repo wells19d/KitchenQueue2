@@ -222,12 +222,12 @@ const NavHeader = ({
 
       case 'Merge':
         buttonProps.title = 'Grouped';
+        buttonProps.navigate = 'CupboardList-Single';
         buttonProps.icon = (
           <View style={{marginRight: 5}}>
             <Icons.Merge size={25} color={sheetOpen ? fadeText : textColor} />
           </View>
         );
-        buttonProps.action = () => LeftAction();
         break;
 
       case 'Save':
@@ -248,12 +248,12 @@ const NavHeader = ({
 
       case 'Split':
         buttonProps.title = 'Single';
+        buttonProps.navigate = 'CupboardList-Group';
         buttonProps.icon = (
           <View style={{marginRight: 5}}>
             <Icons.Split size={25} color={sheetOpen ? fadeText : textColor} />
           </View>
         );
-        buttonProps.action = () => LeftAction();
         break;
 
       case 'To-Cart':
