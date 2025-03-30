@@ -1,48 +1,56 @@
 //* RealTimeShoppingCart.jsx
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 import {useDispatch} from 'react-redux';
 import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
-import {useAccount, useShoppingCart} from '../../hooks/useHooks';
+import {useAccount} from '../../hooks/useHooks';
 
 const useRealTimeShoppingCart = () => {
   const dispatch = useDispatch();
   const account = useAccount();
-  const persistedCart = useShoppingCart();
   const db = getFirestore();
+  const prevCartRef = useRef(null);
 
   useEffect(() => {
-    if (!account?.shoppingCartID) {
-      return;
-    }
+    if (!account?.shoppingCartID) return;
 
     const cartRef = doc(db, 'shoppingCarts', account.shoppingCartID);
-    console.log('RealTimeShoppingCart fired');
+    console.log('🔁 RealTimeShoppingCart listener mounted');
 
     const unsubscribe = onSnapshot(
       cartRef,
       snapshot => {
-        if (snapshot.exists) {
-          const shopCartData = snapshot.data();
-          const shopCart = {
-            ...shopCartData,
-            items: shopCartData.items || [],
-            lastUpdated: shopCartData?.lastUpdated || null,
-          };
+        if (!snapshot.exists) return;
 
-          if (JSON.stringify(persistedCart) !== JSON.stringify(shopCart)) {
-            dispatch({type: 'SET_SHOP_CART', payload: shopCart});
-          }
+        const shopCartData = snapshot.data();
+        const nextCart = {
+          ...shopCartData,
+          items: Array.isArray(shopCartData.items) ? shopCartData.items : [],
+          lastUpdated: shopCartData?.lastUpdated || null,
+        };
+
+        const prevCart = prevCartRef.current;
+        const hasChanged =
+          JSON.stringify(prevCart) !== JSON.stringify(nextCart);
+
+        if (hasChanged) {
+          console.log('🟢 RealTimeShoppingCart updated');
+          prevCartRef.current = nextCart;
+          dispatch({type: 'SET_SHOP_CART', payload: nextCart});
+        } else {
+          console.log('⚪ No cart change detected');
         }
       },
       error => {
+        console.error('❌ RealTimeShoppingCart error:', error);
         dispatch({type: 'SHOP_CART_FETCH_FAILED', payload: error.message});
       },
     );
 
     return () => {
+      console.log('🛑 RealTimeShoppingCart listener removed');
       unsubscribe();
     };
-  }, [dispatch, account?.shoppingCartID, persistedCart, db]);
+  }, [dispatch, account?.shoppingCartID, db]);
 };
 
 export default useRealTimeShoppingCart;
