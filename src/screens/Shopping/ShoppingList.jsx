@@ -48,6 +48,7 @@ const ShoppingList = () => {
     },
     [dispatch, profile, shoppingList],
   );
+
   const handleUpdateItem = itemId => {
     navigation.navigate('UpdateShopItems', {
       itemId,
@@ -63,10 +64,10 @@ const ShoppingList = () => {
           dispatch({
             type: 'DELETE_ITEM_FROM_SHOP_CART',
             payload: {
-              accountID: profile.account,
-              profileID: profile.id,
-              itemId,
+              shoppingCartID: account.shoppingCartID,
+              itemId: item.itemId,
               itemName: item.itemName,
+              profileID: profile.id,
             },
           });
         }

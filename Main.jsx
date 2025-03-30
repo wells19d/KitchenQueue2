@@ -231,7 +231,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('ShoppingCart');
               },
@@ -248,7 +248,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('AddShopItems');
               },
@@ -265,7 +265,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('UpdateShopItems');
               },
@@ -302,7 +302,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('AddCupboardItems');
               },
@@ -319,7 +319,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('UpdateCupboardItems');
               },
@@ -336,7 +336,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('RecipeList');
               },
@@ -373,7 +373,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('AccountSettings');
               },
@@ -390,7 +390,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('AccountHelp');
               },
@@ -407,7 +407,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('Vibrations');
               },
@@ -424,7 +424,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('ItemDisplay');
               },
@@ -441,7 +441,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('AdvancedFields');
               },
@@ -458,7 +458,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('DefaultView');
               },
@@ -475,7 +475,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('Resets');
               },
@@ -492,7 +492,7 @@ const Main = () => {
             }}
             listeners={{
               focus: () => {
-                setBgColor('#319177');
+                setBgColor('#ffffff');
                 setTextColor('#fff');
                 setScreenLocation('Passwords');
               },

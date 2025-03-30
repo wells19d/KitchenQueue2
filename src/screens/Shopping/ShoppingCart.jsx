@@ -17,9 +17,10 @@ const ShoppingCart = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const shoppingCart = shopping?.items.filter(
-    item => item?.status === 'shopping-cart',
-  );
+  const shoppingCart =
+    shopping?.items.filter(item => item?.status === 'shopping-cart') ?? [];
+
+  console.log('Shopping Cart:', shoppingCart);
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -28,12 +29,18 @@ const ShoppingCart = () => {
     itemId => {
       const item = shoppingCart.find(item => item.itemId === itemId);
       if (item && profile) {
-        const updatedItem = {...item, status: 'shopping-list'};
+        const updatedItem = {
+          ...item,
+          status: 'shopping-list',
+          lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profile.id,
+        };
         dispatch({
           type: 'UPDATE_ITEM_IN_SHOP_CART',
           payload: {
-            accountID: profile?.account,
+            shoppingCartID: account.shoppingCartID,
             updatedItem,
+            profileID: profile.id,
             updateType: 'toList',
           },
         });
@@ -57,9 +64,10 @@ const ShoppingCart = () => {
           dispatch({
             type: 'DELETE_ITEM_FROM_SHOP_CART',
             payload: {
-              accountID: profile?.account,
-              itemId,
+              shoppingCartID: account.shoppingCartID,
+              itemId: item.itemId,
               itemName: item.itemName,
+              profileID: profile.id,
             },
           });
         }
@@ -72,7 +80,7 @@ const ShoppingCart = () => {
     if (shoppingCart?.length > 0) {
       Alert.alert(
         'Confirm Checkout',
-        'Are you ready move your shopping cart items to your cupboard?',
+        'Are you ready to move your shopping cart items to your cupboard?',
         [
           {
             text: 'Cancel',
@@ -82,19 +90,23 @@ const ShoppingCart = () => {
             text: 'Confirm',
             onPress: () => {
               dispatch({
-                type: 'BATCH_ADD_TO_CUPBOARD',
+                type: 'BATCH_TO_CUPBOARD',
                 payload: {
-                  accountID: profile?.account,
-                  items: cartList,
+                  cupboardID: account.cupboardID,
+                  items: shoppingCart,
+                  profileID: profile.id,
                 },
               });
+
               dispatch({
                 type: 'DELETE_LIST_FROM_SHOP_CART',
                 payload: {
-                  accountID: profile?.account,
-                  items: cartList,
+                  shoppingCartID: account.shoppingCartID,
+                  items: shoppingCart,
+                  profileID: profile.id,
                 },
               });
+
               navigation.navigate('CupboardList');
             },
           },
