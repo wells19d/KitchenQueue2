@@ -366,7 +366,7 @@ const styles = {
   slideRight: {position: 'absolute', left: 12},
 };
 
-export default React.memo(FlashCupboardCell);
+export default __DEV__ ? FlashCupboardCell : React.memo(FlashCupboardCell);
 
 -----
 
@@ -501,7 +501,7 @@ const styles = {
   slideRight: {position: 'absolute', left: 12},
 };
 
-export default React.memo(FlashShoppingCell);
+export default __DEV__ ? FlashShoppingCell : React.memo(FlashShoppingCell);
 
 -----
 
@@ -644,32 +644,65 @@ const NavHeader = ({
         text: 'Confirm',
         onPress: () => {
           useHaptics(profile?.userSettings?.hapticStrength || 'light');
-          dispatch({type: 'LOGOUT'});
+          dispatch({type: 'LOGOUT_AND_CLEAR'});
         },
       },
     ]);
   }, [profile?.userSettings?.hapticStrength, dispatch]);
 
-  const NavButton = React.memo(
-    ({position, action, navigate, goBack, title, icon}) => {
-      const handlePress = useCallback(() => {
-        if (navigate) navigation.navigate(navigate);
-        if (goBack) navigation.goBack();
-        if (action) action();
-        useHaptics(profile?.userSettings?.hapticStrength || 'light');
-      }, [navigate, goBack, action, profile?.userSettings?.hapticStrength]);
+  const NavButtonComponent = ({
+    position,
+    action,
+    navigate,
+    goBack,
+    title,
+    icon,
+  }) => {
+    const handlePress = useCallback(() => {
+      if (navigate) navigation.navigate(navigate);
+      if (goBack) navigation.goBack();
+      if (action) action();
+      useHaptics(profile?.userSettings?.hapticStrength || 'light');
+    }, [navigate, goBack, action, profile?.userSettings?.hapticStrength]);
 
-      const isLeft = position === 'Left';
+    const isLeft = position === 'Left';
 
-      if (sheetOpen) {
-        return (
+    if (sheetOpen) {
+      return (
+        <View
+          style={[
+            isLeft ? NavHeaderStyles.leftWrapper : NavHeaderStyles.rightWrapper,
+            {flex: 1},
+          ]}>
+          {isLeft && icon && (
+            <View style={NavHeaderStyles.iconPosition}>{icon}</View>
+          )}
           <View
-            style={[
+            style={
+              isLeft
+                ? NavHeaderStyles.leftContainer
+                : NavHeaderStyles.rightContainerAlt
+            }>
+            {title && (
+              <Text style={{color: sheetOpen ? fadeText : textColor}}>
+                {title}
+              </Text>
+            )}
+          </View>
+          {!isLeft && icon && (
+            <View style={NavHeaderStyles.iconPosition}>{icon}</View>
+          )}
+        </View>
+      );
+    } else {
+      return (
+        <TouchableOpacity onPress={handlePress}>
+          <View
+            style={
               isLeft
                 ? NavHeaderStyles.leftWrapper
-                : NavHeaderStyles.rightWrapper,
-              {flex: 1},
-            ]}>
+                : NavHeaderStyles.rightWrapper
+            }>
             {isLeft && icon && (
               <View style={NavHeaderStyles.iconPosition}>{icon}</View>
             )}
@@ -679,46 +712,21 @@ const NavHeader = ({
                   ? NavHeaderStyles.leftContainer
                   : NavHeaderStyles.rightContainerAlt
               }>
-              {title && (
-                <Text style={{color: sheetOpen ? fadeText : textColor}}>
-                  {title}
-                </Text>
-              )}
+              {title && <Text style={{color: textColor}}>{title}</Text>}
             </View>
             {!isLeft && icon && (
               <View style={NavHeaderStyles.iconPosition}>{icon}</View>
             )}
           </View>
-        );
-      } else {
-        return (
-          <TouchableOpacity onPress={handlePress}>
-            <View
-              style={
-                isLeft
-                  ? NavHeaderStyles.leftWrapper
-                  : NavHeaderStyles.rightWrapper
-              }>
-              {isLeft && icon && (
-                <View style={NavHeaderStyles.iconPosition}>{icon}</View>
-              )}
-              <View
-                style={
-                  isLeft
-                    ? NavHeaderStyles.leftContainer
-                    : NavHeaderStyles.rightContainerAlt
-                }>
-                {title && <Text style={{color: textColor}}>{title}</Text>}
-              </View>
-              {!isLeft && icon && (
-                <View style={NavHeaderStyles.iconPosition}>{icon}</View>
-              )}
-            </View>
-          </TouchableOpacity>
-        );
-      }
-    },
-  );
+        </TouchableOpacity>
+      );
+    }
+  };
+
+  // ✅ Toggle memo for NavButton
+  const NavButton = __DEV__
+    ? NavButtonComponent
+    : React.memo(NavButtonComponent);
 
   const renderButton = (buttonType, position) => {
     if (!buttonType || buttonType === 'None') return null;
@@ -858,7 +866,7 @@ const NavHeader = ({
 
       case 'To-Cart':
         buttonProps.title = 'Cart';
-        buttonProps.navigate = 'InCart';
+        buttonProps.navigate = 'ShoppingCart';
         buttonProps.icon = <Icons.Forward size={20} color={textColor} />;
         buttonProps.showCondition = cartList?.length > 0;
         break;
@@ -918,7 +926,7 @@ const NavHeader = ({
   );
 };
 
-export default React.memo(NavHeader);
+export default __DEV__ ? NavHeader : React.memo(NavHeader);
 
 -----
 
@@ -1567,7 +1575,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(KQBottomSheet);
+export default __DEV__ ? KQBottomSheet : React.memo(KQBottomSheet);
 
 -----
 
@@ -1648,7 +1656,7 @@ const ButtonStyles = StyleSheet.create({
   },
 });
 
-export default React.memo(KQButton);
+export default __DEV__ ? KQButton : React.memo(KQButton);
 
 -----
 
@@ -1907,7 +1915,7 @@ const styles = {
   },
 };
 
-export default React.memo(KQDropdown);
+export default __DEV__ ? KQDropdown : React.memo(KQDropdown);
 
 -----
 
@@ -2064,7 +2072,7 @@ const styles = {
   },
 };
 
-export default React.memo(KQInput);
+export default __DEV__ ? KQInput : React.memo(KQInput);
 
 -----
 
@@ -2336,7 +2344,7 @@ const KQModal = ({
   );
 };
 
-export default React.memo(KQModal);
+export default __DEV__ ? KQModal : React.memo(KQModal);
 
 const styles = {
   wrapper: {
@@ -2541,7 +2549,7 @@ const KQText = ({
   );
 };
 
-export default React.memo(KQText);
+export default __DEV__ ? KQText : React.memo(KQText);
 
 -----
 
@@ -3608,28 +3616,276 @@ export default function TermsService({
 
 -----
 
-//* Shopping.jsx
-import React, {useState} from 'react';
-import {useRoute} from '@react-navigation/native';
+//* ShoppingCart.jsx
+import React, {useCallback, useState} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useAccount, useProfile, useShoppingCart} from '../../hooks/useHooks';
-import {View} from 'react-native';
+import {Alert, View} from 'react-native';
 import {ListStyles} from '../../styles/Styles';
 import SwipeableItem from '../../components/SwipeableItem';
+import {useDispatch} from 'react-redux';
 
-const Shopping = () => {
+const ShoppingCart = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const profile = useProfile();
   const account = useAccount();
   const shopping = useShoppingCart();
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const shoppingCart = shopping?.items.filter(
+    item => item?.status === 'shopping-cart',
+  );
+
+  const [showItemInfo, setShowItemInfo] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleReturnToList = useCallback(
+    itemId => {
+      const item = shoppingCart.find(item => item.itemId === itemId);
+      if (item && profile) {
+        const updatedItem = {...item, status: 'shopping-list'};
+        dispatch({
+          type: 'UPDATE_ITEM_IN_SHOP_CART',
+          payload: {
+            accountID: profile?.account,
+            updatedItem,
+            updateType: 'toList',
+          },
+        });
+      }
+    },
+    [dispatch, profile, shoppingCart],
+  );
+
+  const handleUpdateItem = itemId => {
+    navigation.navigate('UpdateShopItems', {
+      itemId,
+      navigateBackTo: 'InCart',
+    });
+  };
+
+  const handleDeleteItem = useCallback(
+    itemId => {
+      if (profile) {
+        const item = shoppingCart.find(item => item.itemId === itemId);
+        if (item) {
+          dispatch({
+            type: 'DELETE_ITEM_FROM_SHOP_CART',
+            payload: {
+              accountID: profile?.account,
+              itemId,
+              itemName: item.itemName,
+            },
+          });
+        }
+      }
+    },
+    [dispatch, profile, shoppingCart],
+  );
+
+  const AddToCupboard = () => {
+    if (shoppingCart?.length > 0) {
+      Alert.alert(
+        'Confirm Checkout',
+        'Are you ready move your shopping cart items to your cupboard?',
+        [
+          {
+            text: 'Cancel',
+            style: 'destructive',
+          },
+          {
+            text: 'Confirm',
+            onPress: () => {
+              dispatch({
+                type: 'BATCH_ADD_TO_CUPBOARD',
+                payload: {
+                  accountID: profile?.account,
+                  items: cartList,
+                },
+              });
+              dispatch({
+                type: 'DELETE_LIST_FROM_SHOP_CART',
+                payload: {
+                  accountID: profile?.account,
+                  items: cartList,
+                },
+              });
+              navigation.navigate('CupboardList');
+            },
+          },
+        ],
+      );
+    }
+  };
+
+  const SelectedItemInfo = () => (
+    <BottomSheet
+      visible={showItemInfo}
+      onClose={() => setShowItemInfo(false)}
+      snapPoints={[0.01, 0.9]}>
+      <Text>{JSON.stringify(selectedItem)}</Text>
+    </BottomSheet>
+  );
+
+  return (
+    <Layout
+      bgColor={bgColor}
+      headerTitle={title}
+      headerColor={headerColor}
+      textColor={textColor}
+      LeftButton="To-List"
+      RightButton="Checkout"
+      LeftAction={null}
+      RightAction={AddToCupboard}
+      sheetOpen={false}
+      innerViewStyles={{
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+      outerViewStyles={{paddingBottom: 0}}>
+      {shoppingCart.length === 0 ? (
+        <View
+          style={[
+            ListStyles.viewContainer,
+            {justifyContent: 'center', alignItems: 'center'},
+          ]}>
+          <Text>Shopping List is Empty</Text>
+        </View>
+      ) : (
+        <View style={ListStyles.viewContainer}>
+          <SwipeableItem
+            list={shoppingCart}
+            profile={profile}
+            showItemInfo={showItemInfo}
+            setShowItemInfo={setShowItemInfo}
+            setSelectedItem={setSelectedItem}
+            rightButtons={[
+              {
+                action: itemId => handleReturnToList(itemId),
+                text1: 'Return',
+                text2: 'to List',
+                style: ListStyles.addButton,
+              },
+              {
+                action: itemId => handleUpdateItem(itemId),
+                navigateBackTo: 'InCart',
+                text1: 'Update',
+                text2: 'Item',
+                style: ListStyles.updateButton,
+              },
+              {
+                action: itemId => handleDeleteItem(itemId),
+                text1: 'Delete',
+                style: ListStyles.deleteButton,
+              },
+            ]}
+            leftButtons={[]}
+          />
+          <SelectedItemInfo />
+        </View>
+      )}
+    </Layout>
+  );
+};
+
+export default ShoppingCart;
+
+-----
+
+//* ShoppingList.jsx
+import React, {useCallback, useState} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {BottomSheet, Layout, Text} from '../../KQ-UI';
+import {useAccount, useProfile, useShoppingCart} from '../../hooks/useHooks';
+import {View} from 'react-native';
+import {ListStyles} from '../../styles/Styles';
+import SwipeableItem from '../../components/SwipeableItem';
+import {useDispatch} from 'react-redux';
+
+const ShoppingList = () => {
+  const route = useRoute();
+  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+  const profile = useProfile();
+  const account = useAccount();
+  const shopping = useShoppingCart();
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const shoppingList = shopping?.items.filter(
     item => item?.status === 'shopping-list',
   );
 
+  console.log('Shopping List:', shoppingList);
+
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleAddToCart = useCallback(
+    itemId => {
+      console.log('Item ID:', itemId);
+      const item = shoppingList.find(item => item.itemId === itemId);
+      console.log('Item:', item);
+    },
+    [dispatch, profile, shoppingList],
+  );
+
+  // const handleAddToCart = useCallback(
+  //   itemId => {
+  //     console.log('Item ID:', itemId);
+  //     const item = shoppingList.find(item => item.id === itemId);
+  //     console.log('Item:', item);
+  //     // if (item && profile) {
+  //     //   // const updatedItem = {
+  //     //   //   ...item,
+  //     //   //   status: 'shopping-cart',
+  //     //   //   lastUpdated: new Date().toISOString(),
+  //     //   //   lastUpdatedBy: profile.id,
+  //     //   // };
+
+  //     //   console.log('Updated Item:', updatedItem);
+
+  //     //   // dispatch({
+  //     //   //   type: 'UPDATE_ITEM_IN_SHOP_CART',
+  //     //   //   payload: {
+  //     //   //     accountID: profile.account,
+  //     //   //     updatedItem,
+  //     //   //     profileID: profile.id,
+  //     //   //   },
+  //     //   // });
+  //     // }
+  //   },
+  //   [dispatch, profile, shoppingList],
+  // );
+
+  const handleUpdateItem = itemId => {
+    navigation.navigate('UpdateShopItems', {
+      itemId,
+      navigateBackTo: 'ShoppingList',
+    });
+  };
+
+  const handleDeleteItem = useCallback(
+    itemId => {
+      if (profile) {
+        const item = shoppingList.find(item => item.itemId === itemId);
+        if (item) {
+          dispatch({
+            type: 'DELETE_ITEM_FROM_SHOP_CART',
+            payload: {
+              accountID: profile.account,
+              profileID: profile.id,
+              itemId,
+              itemName: item.itemName,
+            },
+          });
+        }
+      }
+    },
+    [dispatch, profile, shoppingList],
+  );
 
   const SelectedItemInfo = () => (
     <BottomSheet
@@ -3647,7 +3903,7 @@ const Shopping = () => {
       headerColor={headerColor}
       textColor={textColor}
       LeftButton=""
-      RightButton=""
+      RightButton="To-Cart"
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
@@ -3668,28 +3924,26 @@ const Shopping = () => {
         <View style={ListStyles.viewContainer}>
           <SwipeableItem
             list={shoppingList}
+            profile={profile}
             showItemInfo={showItemInfo}
             setShowItemInfo={setShowItemInfo}
             setSelectedItem={setSelectedItem}
             rightButtons={[
               {
-                // action: itemId => handleAddToCart(itemId),
-                action: itemId => console.log('Add to Cart', itemId),
+                action: itemId => handleAddToCart(itemId),
                 text1: 'Add',
                 text2: 'to Cart',
                 style: ListStyles.addButton,
               },
               {
-                // action: itemId => handleUpdateItem(itemId),
-                action: itemId => console.log('Update Item', itemId),
+                action: itemId => handleUpdateItem(itemId),
                 navigateBackTo: 'ShoppingList',
                 text1: 'Update',
                 text2: 'Item',
                 style: ListStyles.updateButton,
               },
               {
-                // action: itemId => handleDeleteItem(itemId),
-                action: itemId => console.log('Delete Item', itemId),
+                action: itemId => handleDeleteItem(itemId),
                 text1: 'Delete',
                 style: ListStyles.deleteButton,
               },
@@ -3703,7 +3957,7 @@ const Shopping = () => {
   );
 };
 
-export default Shopping;
+export default ShoppingList;
 
 -----
 
@@ -5164,8 +5418,8 @@ const Main = () => {
             }}
           />
           {/* <Stack.Screen
-            name="InCart"
-            component={InCart}
+            name="ShoppingCart"
+            component={ShoppingCart}
             options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Shopping Cart',
@@ -5176,7 +5430,7 @@ const Main = () => {
               focus: () => {
                 setBgColor('#319177');
                 setTextColor('#fff');
-                setScreenLocation('InCart');
+                setScreenLocation('ShoppingCart');
               },
             }}
           /> */}
@@ -5802,7 +6056,7 @@ function CenterMenu(props) {
     [dispatchSection],
   );
 
-  const SectionHeader = React.memo(({title, state, onPress}) => {
+  const SectionHeaderComponent = ({title, state, onPress}) => {
     return (
       <View style={CMStyles.shContainer}>
         <View style={CMStyles.shLine}></View>
@@ -5821,16 +6075,20 @@ function CenterMenu(props) {
         </View>
       </View>
     );
-  });
+  };
 
-  const Section = React.memo(({title, state, onPress, data}) => {
+  const SectionHeader = __DEV__
+    ? SectionHeaderComponent
+    : React.memo(SectionHeaderComponent);
+
+  const SectionComponent = ({title, state, onPress, data}) => {
     return (
       <>
         <SectionHeader title={title} state={state} onPress={onPress} />
         {state ? (
           <View style={CMStyles.sectionExpanded}>
             {data.map((item, index) =>
-              item.action === 'InCart' && cartList.length === 0 ? null : (
+              item.action === 'ShoppingCart' && cartList.length === 0 ? null : (
                 <TouchableOpacity
                   key={index}
                   onPress={() => handleOnPress(item.action)}
@@ -5848,7 +6106,9 @@ function CenterMenu(props) {
         )}
       </>
     );
-  });
+  };
+
+  const Section = __DEV__ ? SectionComponent : React.memo(SectionComponent);
 
   return (
     <ScrollView style={{backgroundColor: '#fff'}}>
@@ -5896,7 +6156,7 @@ export const menuArray = [
       {
         title: 'View Cart',
         icon: <Icons.Shopping />,
-        action: 'InCart',
+        action: 'ShoppingCart',
       },
     ],
   },
@@ -6603,7 +6863,7 @@ const DevModals = () => {
   );
 };
 
-export default React.memo(DevModals);
+export default __DEV__ ? DevModals : React.memo(DevModals);
 
 -----
 

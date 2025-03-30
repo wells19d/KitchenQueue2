@@ -129,4 +129,4 @@ const styles = {
   slideRight: {position: 'absolute', left: 12},
 };
 
-export default React.memo(FlashCupboardCell);
+export default __DEV__ ? FlashCupboardCell : React.memo(FlashCupboardCell);

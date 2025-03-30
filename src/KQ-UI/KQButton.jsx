@@ -75,4 +75,4 @@ const ButtonStyles = StyleSheet.create({
   },
 });
 
-export default React.memo(KQButton);
+export default __DEV__ ? KQButton : React.memo(KQButton);

@@ -253,4 +253,4 @@ const styles = {
   },
 };
 
-export default React.memo(KQDropdown);
+export default __DEV__ ? KQDropdown : React.memo(KQDropdown);

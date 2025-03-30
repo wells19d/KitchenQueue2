@@ -20,4 +20,4 @@ const KQText = ({
   );
 };
 
-export default React.memo(KQText);
+export default __DEV__ ? KQText : React.memo(KQText);

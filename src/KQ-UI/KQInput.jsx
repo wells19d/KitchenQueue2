@@ -151,4 +151,4 @@ const styles = {
   },
 };
 
-export default React.memo(KQInput);
+export default __DEV__ ? KQInput : React.memo(KQInput);

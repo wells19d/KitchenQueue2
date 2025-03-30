@@ -12,7 +12,7 @@ import {useAuth, useDeviceInfo, useProfile} from './src/hooks/useHooks';
 import {setHapticFeedback} from './src/hooks/setHapticFeedback';
 import Account from './src/screens/Account/Account';
 import Cupboards from './src/screens/Cupboard/Cupboard';
-import Shopping from './src/screens/Shopping/Shopping';
+import ShoppingList from './src/screens/Shopping/ShoppingList';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
 import {BottomSheet, Modal, Text} from './src/KQ-UI';
 import DevInputs from './src/screens/Dev/DevInputs';
@@ -36,6 +36,7 @@ import TermsService from './src/screens/Legal/TermsService';
 import PrivacyPolicy from './src/screens/Legal/PrivacyPolicy';
 import {AppInfo} from './AppInfo';
 import {enableScreens} from 'react-native-screens';
+import ShoppingCart from './src/screens/Shopping/ShoppingCart';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -201,7 +202,7 @@ const Main = () => {
           />
           <Stack.Screen
             name="ShoppingList"
-            component={Shopping}
+            component={ShoppingList}
             options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Shopping List',
@@ -219,10 +220,10 @@ const Main = () => {
               },
             }}
           />
-          {/* <Stack.Screen
-            name="InCart"
-            component={InCart}
-            options={{ freezeOnBlur: true }} 
+          <Stack.Screen
+            name="ShoppingCart"
+            component={ShoppingCart}
+            options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Shopping Cart',
               bgColor: bgColor,
@@ -232,10 +233,10 @@ const Main = () => {
               focus: () => {
                 setBgColor('#319177');
                 setTextColor('#fff');
-                setScreenLocation('InCart');
+                setScreenLocation('ShoppingCart');
               },
             }}
-          /> */}
+          />
           {/* <Stack.Screen
             name="AddShopItems"
             component={AddShopItems}

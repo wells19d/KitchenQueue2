@@ -80,7 +80,7 @@
 |-|-|-| PrivacyPolicy.jsx
 |-|-|-| TermsService.jsx
 |-|-| Shopping
-|-|-|-| Shopping.jsx
+|-|-|-| ShoppingList.jsx
 |-| styles
 |-|-| Styles.jsx
 |-| utilities

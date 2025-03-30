@@ -174,7 +174,7 @@ const KQModal = ({
   );
 };
 
-export default React.memo(KQModal);
+export default __DEV__ ? KQModal : React.memo(KQModal);
 
 const styles = {
   wrapper: {
