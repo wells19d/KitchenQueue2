@@ -1,5 +1,4 @@
 //* Main.jsx
-
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Alert, Dimensions, View} from 'react-native';
@@ -18,9 +17,9 @@ import CenterMenu from './src/screens/CenterMenu/CenterMenu';
 import {BottomSheet, Modal, Text} from './src/KQ-UI';
 import DevInputs from './src/screens/Dev/DevInputs';
 import DevButtons from './src/screens/Dev/DevButtons';
-import DevModals from './src/screens/Dev/DevModals';
 import DevDropdowns from './src/screens/Dev/DevDropdowns';
 import DevPlayground from './src/screens/Dev/DevPlayground';
+import DevModals from './src/screens/Dev/DevModals';
 import DevText from './src/screens/Dev/DevText';
 import {getAuth} from '@react-native-firebase/auth';
 import {getApp} from '@react-native-firebase/app';
@@ -36,6 +35,7 @@ import {
 import TermsService from './src/screens/Legal/TermsService';
 import PrivacyPolicy from './src/screens/Legal/PrivacyPolicy';
 import {AppInfo} from './AppInfo';
+import {enableScreens} from 'react-native-screens';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -54,6 +54,7 @@ const Main = () => {
   const [showPPModal, setShowPPModal] = useState(false);
   const [showTOSModal, setShowTOSModal] = useState(true);
   const [currentModal, setCurrentModal] = useState('');
+  enableScreens(true);
 
   RTUsers();
   RTAccounts();
@@ -181,6 +182,7 @@ const Main = () => {
           <Stack.Screen
             name="Home"
             component={Home}
+            options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Home',
               bgColor: bgColor,
@@ -200,6 +202,7 @@ const Main = () => {
           <Stack.Screen
             name="ShoppingList"
             component={Shopping}
+            options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Shopping List',
               bgColor: bgColor,
@@ -219,6 +222,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="InCart"
             component={InCart}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Shopping Cart',
               bgColor: bgColor,
@@ -235,6 +239,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="AddShopItems"
             component={AddShopItems}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Add Item(s)',
               bgColor: bgColor,
@@ -251,6 +256,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="UpdateShopItems"
             component={UpdateShopItems}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Update Item',
               bgColor: bgColor,
@@ -267,6 +273,7 @@ const Main = () => {
           <Stack.Screen
             name="CupboardList"
             component={Cupboards}
+            options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Cupboards',
               bgColor: bgColor,
@@ -286,6 +293,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="AddCupboardItems"
             component={AddCupboardItems}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Add Item(s)',
               bgColor: bgColor,
@@ -302,6 +310,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="UpdateCupboardItems"
             component={UpdateCupboardItems}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Update Item',
               bgColor: bgColor,
@@ -318,6 +327,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="RecipeList"
             component={Recipes}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Recipes',
               bgColor: bgColor,
@@ -334,6 +344,7 @@ const Main = () => {
           <Stack.Screen
             name="Account"
             component={Account}
+            options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Account',
               bgColor: bgColor,
@@ -353,6 +364,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="AccountSettings"
             component={Settings}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Settings',
               bgColor: bgColor,
@@ -369,6 +381,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="AccountHelp"
             component={Help}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Help',
               bgColor: bgColor,
@@ -385,6 +398,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="Vibrations"
             component={Vibrations}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Vibration Settings',
               bgColor: bgColor,
@@ -401,6 +415,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="ItemDisplay"
             component={ItemDisplay}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Item Display',
               bgColor: bgColor,
@@ -417,6 +432,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="AdvancedFields"
             component={AdvancedFields}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Advanced Fields',
               bgColor: bgColor,
@@ -433,6 +449,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="DefaultView"
             component={DefaultGroupView}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Group View',
               bgColor: bgColor,
@@ -449,6 +466,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="Resets"
             component={Resets}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Resets',
               bgColor: bgColor,
@@ -465,6 +483,7 @@ const Main = () => {
           {/* <Stack.Screen
             name="Passwords"
             component={Passwords}
+            options={{ freezeOnBlur: true }} 
             initialParams={{
               title: 'Passwords',
               bgColor: bgColor,
@@ -483,6 +502,7 @@ const Main = () => {
               <Stack.Screen
                 name="DevPlayground"
                 component={DevPlayground}
+                options={{freezeOnBlur: true}}
                 initialParams={{
                   title: 'Dev Playground',
                   bgColor: bgColor,
@@ -502,6 +522,7 @@ const Main = () => {
               <Stack.Screen
                 name="DevText"
                 component={DevText}
+                options={{freezeOnBlur: true}}
                 initialParams={{
                   title: 'Dev Text',
                   bgColor: bgColor,
@@ -521,6 +542,7 @@ const Main = () => {
               <Stack.Screen
                 name="DevInputs"
                 component={DevInputs}
+                options={{freezeOnBlur: true}}
                 initialParams={{
                   title: 'Dev Inputs',
                   bgColor: bgColor,
@@ -540,6 +562,7 @@ const Main = () => {
               <Stack.Screen
                 name="DevButtons"
                 component={DevButtons}
+                options={{freezeOnBlur: true}}
                 initialParams={{
                   title: 'Dev Buttons',
                   bgColor: bgColor,
@@ -559,6 +582,7 @@ const Main = () => {
               <Stack.Screen
                 name="DevModals"
                 component={DevModals}
+                options={{freezeOnBlur: true}}
                 initialParams={{
                   title: 'Dev Modals',
                   bgColor: bgColor,
@@ -578,6 +602,7 @@ const Main = () => {
               <Stack.Screen
                 name="DevDropdowns"
                 component={DevDropdowns}
+                options={{freezeOnBlur: true}}
                 initialParams={{
                   title: 'Dev Dropdowns',
                   bgColor: bgColor,

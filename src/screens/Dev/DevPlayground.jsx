@@ -1,7 +1,7 @@
 //* DevPlayground.jsx
 import React from 'react';
 import {useIsFocused, useRoute} from '@react-navigation/native';
-import {Button, Layout, ScrollView, Text} from '../../KQ-UI';
+import {Layout, ScrollView, Text} from '../../KQ-UI';
 import {
   useAccount,
   useCupboard,
@@ -9,8 +9,6 @@ import {
   useShoppingCart,
 } from '../../hooks/useHooks';
 import {View} from 'react-native';
-import {useDispatch} from 'react-redux';
-import {shoppingBatch, cupboardBatch} from '../../../dataExport';
 
 const DevPlayground = () => {
   const isFocused = useIsFocused();
@@ -18,26 +16,8 @@ const DevPlayground = () => {
   const profile = useProfile();
   const account = useAccount();
   const shopping = useShoppingCart();
-  // console.log('shopping', shopping);
-  // const shoppingList =
-  //   shoppingBatch?.filter(item => item.status === 'shopping-list') ?? [];
-
-  // const shoppingCart =
-  //   shoppingBatch?.filter(item => item.status === 'shopping-cart') ?? [];
-
   const cupboard = useCupboard();
-  console.log('cupboard', cupboard);
-  const dispatch = useDispatch();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-
-  // useEffect(() => {
-  //   if (isFocused) {
-  //     console.log('profile', profile);
-  //     console.log('account', account);
-  //     console.log('shopping', shopping);
-  //     console.log('cupboard', cupboard);
-  //   }
-  // }, [isFocused, profile, account, shopping, cupboard]);
 
   const renderValue = value => {
     if (Array.isArray(value)) {
@@ -45,13 +25,17 @@ const DevPlayground = () => {
         if (typeof item === 'object' && item !== null) {
           return (
             <View key={idx} style={{marginLeft: 8, marginBottom: 12}}>
-              <Text font="open-6" style={{marginBottom: 4}}>
+              <Text font="open-6" size="xSmall" style={{marginBottom: 4}}>
                 {idx}:
               </Text>
               {Object.entries(item)
                 .sort(([a, b]) => a.localeCompare(b))
                 .map(([k, v], subIdx) => (
-                  <Text key={subIdx} font="open-5" style={{marginLeft: 16}}>
+                  <Text
+                    key={subIdx}
+                    font="open-5"
+                    size="xSmall"
+                    style={{marginLeft: 16}}>
                     • {k}:{' '}
                     {typeof v === 'object' ? JSON.stringify(v) : String(v)}
                   </Text>
@@ -64,6 +48,7 @@ const DevPlayground = () => {
           <Text
             key={idx}
             font="open-5"
+            size="xSmall"
             style={{marginLeft: 16, marginBottom: 8}}>
             {idx}: {String(item)}
           </Text>
@@ -78,6 +63,7 @@ const DevPlayground = () => {
           <Text
             key={idx}
             font="open-5"
+            size="xSmall"
             style={{marginLeft: 16, marginBottom: 4}}>
             • {k}: {typeof v === 'object' ? JSON.stringify(v) : String(v)}
           </Text>
@@ -85,57 +71,10 @@ const DevPlayground = () => {
     }
 
     return (
-      <Text font="open-5" style={{marginLeft: 16}}>
+      <Text font="open-5" size="xSmall" style={{marginLeft: 16}}>
         {String(value)}
       </Text>
     );
-  };
-
-  const handleBatch = () => {
-    console.log('cupboardBatch', cupboardBatch);
-    console.log('cupboard?.id', cupboard?.id);
-    console.log('profile?.id', profile?.id);
-    dispatch({
-      type: 'BATCH_TO_CUPBOARD',
-      payload: {
-        cupboardID: cupboard?.id,
-        items: cupboardBatch,
-        profileID: profile?.id,
-      },
-    });
-  };
-
-  // const handleBatch = () => {
-  // console.log('shoppingList', shoppingList);
-  // console.log('shoppingCart', shoppingCart);
-  // console.log('shopping?.id', shopping?.id);
-  // console.log('profile?.id', profile?.id);
-  // dispatch({
-  //   type: 'BATCH_TO_SHOP_CART',
-  //   payload: {
-  //     shoppingCartID: shopping?.id,
-  //     items: shoppingList,
-  //     profileID: profile?.id,
-  //     status: 'shopping-list',
-  //   },
-  // });
-  // };
-
-  const handleReset = () => {
-    dispatch({
-      type: 'RESET_CUPBOARD',
-      payload: {
-        cupboardID: cupboard?.id,
-        profileID: profile?.id,
-      },
-    });
-    // dispatch({
-    //   type: 'RESET_SHOP_CART',
-    //   payload: {
-    //     shoppingCartID: shopping?.id,
-    //     profileID: profile?.id,
-    //   },
-    // });
   };
 
   return (
@@ -151,15 +90,15 @@ const DevPlayground = () => {
       sheetOpen={false}
       innerViewStyles={{}}>
       <ScrollView>
-        <Button onPress={() => handleBatch()}>Batch</Button>
-        <Button onPress={() => handleReset()}>Reset</Button>
         <View style={{borderWidth: 1, padding: 5}}>
           <Text>Profile</Text>
           {Object.entries(profile)
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([key, value]) => (
               <View key={key} style={{marginBottom: 8}}>
-                <Text font="open-7">{key}:</Text>
+                <Text font="open-7" size="xSmall">
+                  {key}:
+                </Text>
                 {renderValue(value)}
               </View>
             ))}
@@ -170,7 +109,9 @@ const DevPlayground = () => {
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([key, value]) => (
               <View key={key} style={{marginBottom: 8}}>
-                <Text font="open-7">{key}:</Text>
+                <Text font="open-7" size="xSmall">
+                  {key}:
+                </Text>
                 {renderValue(value)}
               </View>
             ))}
@@ -181,7 +122,9 @@ const DevPlayground = () => {
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([key, value]) => (
               <View key={key} style={{marginBottom: 8}}>
-                <Text font="open-7">{key}:</Text>
+                <Text font="open-7" size="xSmall">
+                  {key}:
+                </Text>
                 {renderValue(value)}
               </View>
             ))}
@@ -192,7 +135,9 @@ const DevPlayground = () => {
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([key, value]) => (
               <View key={key} style={{marginBottom: 8}}>
-                <Text font="open-7">{key}:</Text>
+                <Text font="open-7" size="xSmall">
+                  {key}:
+                </Text>
                 {renderValue(value)}
               </View>
             ))}

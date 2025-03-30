@@ -33,6 +33,9 @@ export const Icons = {
   ChevronUp: props => (
     <FEIcons name="chevron-up" size={20} color="#000" {...props} />
   ),
+  ChevronLeft: props => (
+    <FEIcons name="chevron-left" size={20} color="#000" {...props} />
+  ),
   CirclePlus: props => (
     <ADIcons name="pluscircleo" size={20} color="#000" {...props} />
   ),
