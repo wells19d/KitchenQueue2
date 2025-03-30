@@ -20,8 +20,6 @@ const ShoppingCart = () => {
   const shoppingCart =
     shopping?.items.filter(item => item?.status === 'shopping-cart') ?? [];
 
-  console.log('Shopping Cart:', shoppingCart);
-
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -107,7 +105,7 @@ const ShoppingCart = () => {
                 },
               });
 
-              navigation.navigate('CupboardList');
+              navigation.navigate('CupboardList-Single');
             },
           },
         ],

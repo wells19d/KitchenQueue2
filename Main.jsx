@@ -11,7 +11,7 @@ import Home from './src/screens/Home/Home';
 import {useAuth, useDeviceInfo, useProfile} from './src/hooks/useHooks';
 import {setHapticFeedback} from './src/hooks/setHapticFeedback';
 import Account from './src/screens/Account/Account';
-import Cupboards from './src/screens/Cupboard/Cupboard';
+import CupboardSingle from './src/screens/Cupboard/CupboardSingle';
 import ShoppingList from './src/screens/Shopping/ShoppingList';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
 import {BottomSheet, Modal, Text} from './src/KQ-UI';
@@ -37,6 +37,7 @@ import PrivacyPolicy from './src/screens/Legal/PrivacyPolicy';
 import {AppInfo} from './AppInfo';
 import {enableScreens} from 'react-native-screens';
 import ShoppingCart from './src/screens/Shopping/ShoppingCart';
+import CupboardGroup from './src/screens/Cupboard/CupboardGroup';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -81,8 +82,8 @@ const Main = () => {
   }, []);
 
   const borrowedParams = useMemo(
-    () => ({bgColor, textColor, screenLocation}),
-    [bgColor, textColor, screenLocation],
+    () => ({bgColor, textColor, headerColor, screenLocation}),
+    [bgColor, textColor, headerColor, screenLocation],
   );
 
   useEffect(() => {
@@ -232,7 +233,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('ShoppingCart');
               },
             }}
@@ -249,7 +251,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('AddShopItems');
               },
             }}
@@ -266,14 +269,15 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('UpdateShopItems');
               },
             }}
           /> */}
           <Stack.Screen
-            name="CupboardList"
-            component={Cupboards}
+            name="CupboardList-Single"
+            component={CupboardSingle}
             options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Cupboards',
@@ -287,7 +291,27 @@ const Main = () => {
                 setBgColor('#ffffff');
                 setHeaderColor('#319177');
                 setTextColor('#ffffff');
-                setScreenLocation('CupboardList');
+                setScreenLocation('CupboardList-Single');
+              },
+            }}
+          />
+          <Stack.Screen
+            name="CupboardList-Group"
+            component={CupboardGroup}
+            options={{freezeOnBlur: true}}
+            initialParams={{
+              title: 'Cupboards',
+              bgColor: bgColor,
+              headerColor: headerColor,
+              textColor: textColor,
+              screenLocation: screenLocation,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('CupboardList-Group');
               },
             }}
           />
@@ -303,7 +327,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('AddCupboardItems');
               },
             }}
@@ -320,7 +345,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('UpdateCupboardItems');
               },
             }}
@@ -337,7 +363,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('RecipeList');
               },
             }}
@@ -374,7 +401,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('AccountSettings');
               },
             }}
@@ -391,7 +419,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('AccountHelp');
               },
             }}
@@ -408,7 +437,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('Vibrations');
               },
             }}
@@ -425,7 +455,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('ItemDisplay');
               },
             }}
@@ -442,7 +473,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('AdvancedFields');
               },
             }}
@@ -459,7 +491,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('DefaultView');
               },
             }}
@@ -476,7 +509,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('Resets');
               },
             }}
@@ -493,7 +527,8 @@ const Main = () => {
             listeners={{
               focus: () => {
                 setBgColor('#ffffff');
-                setTextColor('#fff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
                 setScreenLocation('Passwords');
               },
             }}
@@ -606,7 +641,7 @@ const Main = () => {
                 options={{freezeOnBlur: true}}
                 initialParams={{
                   title: 'Dev Dropdowns',
-                  bgColor: bgColor,
+                  bgColor: 'white',
                   headerColor: headerColor,
                   textColor: textColor,
                   screenLocation: screenLocation,

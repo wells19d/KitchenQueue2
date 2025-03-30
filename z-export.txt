@@ -964,7 +964,7 @@ const NavMenu = props => {
       id: 'cupboard',
       title: 'Cupboard',
       icon: <Icons.Cupboards size={25} color={'#000'} />,
-      screen: 'CupboardList',
+      screen: 'CupboardList-Single',
     },
   ];
 
@@ -999,7 +999,7 @@ const NavMenu = props => {
 
   const handleNavPress = item => {
     setIsSheetOpen(false);
-    const allowedScreens = ['Home', 'ShoppingList', 'CupboardList', 'Account'];
+    const allowedScreens = ['Home', 'ShoppingList', 'CupboardList-Single', 'Account'];
 
     if (allowedScreens.includes(item.screen)) {
       navigation.navigate(item.screen);
@@ -3713,7 +3713,7 @@ const ShoppingCart = () => {
                   items: cartList,
                 },
               });
-              navigation.navigate('CupboardList');
+              navigation.navigate('CupboardList-Single');
             },
           },
         ],
@@ -5469,7 +5469,7 @@ const Main = () => {
             }}
           /> */}
           <Stack.Screen
-            name="CupboardList"
+            name="CupboardList-Single"
             component={Cupboards}
             options={{freezeOnBlur: true}}
             initialParams={{
@@ -5484,7 +5484,7 @@ const Main = () => {
                 setBgColor('#ffffff');
                 setHeaderColor('#319177');
                 setTextColor('#ffffff');
-                setScreenLocation('CupboardList');
+                setScreenLocation('CupboardList-Single');
               },
             }}
           />
@@ -6178,7 +6178,7 @@ export const menuArray = [
       {
         title: 'View List',
         icon: <Icons.Cupboards />,
-        action: 'CupboardList',
+        action: 'CupboardList-Single',
       },
     ],
   },

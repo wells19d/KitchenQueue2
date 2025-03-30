@@ -47,7 +47,7 @@ export const menuArray = [
       {
         title: 'View List',
         icon: <Icons.Cupboards />,
-        action: 'CupboardList',
+        action: 'CupboardList-Single',
       },
     ],
   },

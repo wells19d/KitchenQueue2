@@ -1,4 +1,4 @@
-//* FlashCupboardCell.jsx
+//* FlashCell.jsx
 import React from 'react';
 import {Pressable, View} from 'react-native';
 import {Text} from '../KQ-UI';
@@ -6,8 +6,16 @@ import {formatMeasurement} from '../utilities/measurements';
 import pluralize from 'pluralize';
 import {Icons} from './IconListRouter';
 
-const FlashCupboardCell = props => {
-  const {item, setShowItemInfo, setSelectedItem, profile} = props;
+const FlashCell = props => {
+  const {
+    item,
+    setShowItemInfo,
+    setSelectedItem,
+    profile,
+    cupboardView,
+    groupedView,
+    noQuantity,
+  } = props;
 
   const renderDisplayText = item => {
     const flashCellOrder = profile?.userSettings?.flashCellOrder || [];
@@ -35,6 +43,67 @@ const FlashCupboardCell = props => {
       }`;
     }
   };
+
+  const displayRemaining = (packageSize, remainingAmount) => {
+    let percent = (remainingAmount / packageSize) * 100;
+    return ` (${percent.toFixed(0)}% left)`;
+  };
+
+  const QuantityDisplay = () => {
+    if (noQuantity) {
+      return null;
+    }
+    return (
+      <View style={styles.qtyWrapper}>
+        <View style={styles.qtyContainer}>
+          <View style={styles.qtyTop}>
+            <Text size="tiny">Qty</Text>
+          </View>
+          <View style={styles.qtyBottom}>
+            <Text size="medium" numberOfLines={1}>
+              {item.quantity || item.count}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  const InfoDisplay = () => {
+    return (
+      <View style={styles.display}>
+        <Text numberOfLines={1} size="small" font="open-7">
+          {renderDisplayText(item)}
+        </Text>
+        <Text size="xSmall" numberOfLines={1}>
+          {formatMeasurementWithPlural(
+            item.packageSize,
+            item.measurement,
+            item.itemName,
+          )}
+          {item?.remainingAmount &&
+            displayRemaining(item.packageSize, item.remainingAmount)}
+        </Text>
+      </View>
+    );
+  };
+
+  const SlideDisplay = () => {
+    if (cupboardView && groupedView) {
+      return null;
+    }
+    return (
+      <View style={styles.slideWrapper}>
+        <View style={styles.slideLeft}>
+          <Icons.ChevronLeft color="#373d4390" />
+        </View>
+        <View style={styles.slideRight}>
+          <Icons.ChevronLeft color="#373d4390" />
+        </View>
+      </View>
+    );
+  };
+
   return (
     <Pressable
       onPress={() => {
@@ -42,38 +111,9 @@ const FlashCupboardCell = props => {
         setShowItemInfo(true);
       }}>
       <View style={styles.cellContainer}>
-        <View style={styles.qtyWrapper}>
-          <View style={styles.qtyContainer}>
-            <View style={styles.qtyTop}>
-              <Text size="tiny">Qty</Text>
-            </View>
-            <View style={styles.qtyBottom}>
-              <Text size="medium" numberOfLines={1}>
-                {item.quantity}
-              </Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.display}>
-          <Text numberOfLines={1} size="small" font="open-7">
-            {renderDisplayText(item)}
-          </Text>
-          <Text size="xSmall" numberOfLines={1}>
-            {formatMeasurementWithPlural(
-              item.packageSize,
-              item.measurement,
-              item.itemName,
-            )}
-          </Text>
-        </View>
-        <View style={styles.slideWrapper}>
-          <View style={styles.slideLeft}>
-            <Icons.ChevronLeft color="#373d4390" />
-          </View>
-          <View style={styles.slideRight}>
-            <Icons.ChevronLeft color="#373d4390" />
-          </View>
-        </View>
+        <QuantityDisplay />
+        <InfoDisplay />
+        <SlideDisplay />
       </View>
     </Pressable>
   );
@@ -129,4 +169,4 @@ const styles = {
   slideRight: {position: 'absolute', left: 12},
 };
 
-export default __DEV__ ? FlashCupboardCell : React.memo(FlashCupboardCell);
+export default __DEV__ ? FlashCell : React.memo(FlashCell);

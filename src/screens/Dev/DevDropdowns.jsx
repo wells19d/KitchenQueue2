@@ -10,7 +10,6 @@ const DevDropdowns = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const [value, setValue] = useState(null);
-  console.log('value:', value);
   const [value2, setValue2] = useState('');
 
   return (
