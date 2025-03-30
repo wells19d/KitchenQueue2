@@ -25,7 +25,7 @@ export const menuArray = [
       {
         title: 'View Cart',
         icon: <Icons.Shopping />,
-        action: 'InCart',
+        action: 'ShoppingCart',
       },
     ],
   },

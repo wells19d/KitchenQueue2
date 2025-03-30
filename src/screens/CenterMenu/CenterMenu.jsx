@@ -66,7 +66,7 @@ function CenterMenu(props) {
     [dispatchSection],
   );
 
-  const SectionHeader = React.memo(({title, state, onPress}) => {
+  const SectionHeaderComponent = ({title, state, onPress}) => {
     return (
       <View style={CMStyles.shContainer}>
         <View style={CMStyles.shLine}></View>
@@ -85,16 +85,20 @@ function CenterMenu(props) {
         </View>
       </View>
     );
-  });
+  };
 
-  const Section = React.memo(({title, state, onPress, data}) => {
+  const SectionHeader = __DEV__
+    ? SectionHeaderComponent
+    : React.memo(SectionHeaderComponent);
+
+  const SectionComponent = ({title, state, onPress, data}) => {
     return (
       <>
         <SectionHeader title={title} state={state} onPress={onPress} />
         {state ? (
           <View style={CMStyles.sectionExpanded}>
             {data.map((item, index) =>
-              item.action === 'InCart' && cartList.length === 0 ? null : (
+              item.action === 'ShoppingCart' && cartList.length === 0 ? null : (
                 <TouchableOpacity
                   key={index}
                   onPress={() => handleOnPress(item.action)}
@@ -112,7 +116,9 @@ function CenterMenu(props) {
         )}
       </>
     );
-  });
+  };
+
+  const Section = __DEV__ ? SectionComponent : React.memo(SectionComponent);
 
   return (
     <ScrollView style={{backgroundColor: '#fff'}}>

@@ -125,4 +125,4 @@ const DevModals = () => {
   );
 };
 
-export default React.memo(DevModals);
+export default __DEV__ ? DevModals : React.memo(DevModals);

@@ -42,26 +42,59 @@ const NavHeader = ({
     ]);
   }, [profile?.userSettings?.hapticStrength, dispatch]);
 
-  const NavButton = React.memo(
-    ({position, action, navigate, goBack, title, icon}) => {
-      const handlePress = useCallback(() => {
-        if (navigate) navigation.navigate(navigate);
-        if (goBack) navigation.goBack();
-        if (action) action();
-        useHaptics(profile?.userSettings?.hapticStrength || 'light');
-      }, [navigate, goBack, action, profile?.userSettings?.hapticStrength]);
+  const NavButtonComponent = ({
+    position,
+    action,
+    navigate,
+    goBack,
+    title,
+    icon,
+  }) => {
+    const handlePress = useCallback(() => {
+      if (navigate) navigation.navigate(navigate);
+      if (goBack) navigation.goBack();
+      if (action) action();
+      useHaptics(profile?.userSettings?.hapticStrength || 'light');
+    }, [navigate, goBack, action, profile?.userSettings?.hapticStrength]);
 
-      const isLeft = position === 'Left';
+    const isLeft = position === 'Left';
 
-      if (sheetOpen) {
-        return (
+    if (sheetOpen) {
+      return (
+        <View
+          style={[
+            isLeft ? NavHeaderStyles.leftWrapper : NavHeaderStyles.rightWrapper,
+            {flex: 1},
+          ]}>
+          {isLeft && icon && (
+            <View style={NavHeaderStyles.iconPosition}>{icon}</View>
+          )}
           <View
-            style={[
+            style={
+              isLeft
+                ? NavHeaderStyles.leftContainer
+                : NavHeaderStyles.rightContainerAlt
+            }>
+            {title && (
+              <Text style={{color: sheetOpen ? fadeText : textColor}}>
+                {title}
+              </Text>
+            )}
+          </View>
+          {!isLeft && icon && (
+            <View style={NavHeaderStyles.iconPosition}>{icon}</View>
+          )}
+        </View>
+      );
+    } else {
+      return (
+        <TouchableOpacity onPress={handlePress}>
+          <View
+            style={
               isLeft
                 ? NavHeaderStyles.leftWrapper
-                : NavHeaderStyles.rightWrapper,
-              {flex: 1},
-            ]}>
+                : NavHeaderStyles.rightWrapper
+            }>
             {isLeft && icon && (
               <View style={NavHeaderStyles.iconPosition}>{icon}</View>
             )}
@@ -71,46 +104,21 @@ const NavHeader = ({
                   ? NavHeaderStyles.leftContainer
                   : NavHeaderStyles.rightContainerAlt
               }>
-              {title && (
-                <Text style={{color: sheetOpen ? fadeText : textColor}}>
-                  {title}
-                </Text>
-              )}
+              {title && <Text style={{color: textColor}}>{title}</Text>}
             </View>
             {!isLeft && icon && (
               <View style={NavHeaderStyles.iconPosition}>{icon}</View>
             )}
           </View>
-        );
-      } else {
-        return (
-          <TouchableOpacity onPress={handlePress}>
-            <View
-              style={
-                isLeft
-                  ? NavHeaderStyles.leftWrapper
-                  : NavHeaderStyles.rightWrapper
-              }>
-              {isLeft && icon && (
-                <View style={NavHeaderStyles.iconPosition}>{icon}</View>
-              )}
-              <View
-                style={
-                  isLeft
-                    ? NavHeaderStyles.leftContainer
-                    : NavHeaderStyles.rightContainerAlt
-                }>
-                {title && <Text style={{color: textColor}}>{title}</Text>}
-              </View>
-              {!isLeft && icon && (
-                <View style={NavHeaderStyles.iconPosition}>{icon}</View>
-              )}
-            </View>
-          </TouchableOpacity>
-        );
-      }
-    },
-  );
+        </TouchableOpacity>
+      );
+    }
+  };
+
+  // ✅ Toggle memo for NavButton
+  const NavButton = __DEV__
+    ? NavButtonComponent
+    : React.memo(NavButtonComponent);
 
   const renderButton = (buttonType, position) => {
     if (!buttonType || buttonType === 'None') return null;
@@ -250,7 +258,7 @@ const NavHeader = ({
 
       case 'To-Cart':
         buttonProps.title = 'Cart';
-        buttonProps.navigate = 'InCart';
+        buttonProps.navigate = 'ShoppingCart';
         buttonProps.icon = <Icons.Forward size={20} color={textColor} />;
         buttonProps.showCondition = cartList?.length > 0;
         break;
@@ -310,4 +318,4 @@ const NavHeader = ({
   );
 };
 
-export default React.memo(NavHeader);
+export default __DEV__ ? NavHeader : React.memo(NavHeader);

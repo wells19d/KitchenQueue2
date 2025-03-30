@@ -129,4 +129,4 @@ const styles = {
   slideRight: {position: 'absolute', left: 12},
 };
 
-export default React.memo(FlashShoppingCell);
+export default __DEV__ ? FlashShoppingCell : React.memo(FlashShoppingCell);

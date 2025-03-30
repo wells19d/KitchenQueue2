@@ -1,25 +1,79 @@
-//* Shopping.jsx
-import React, {useState} from 'react';
-import {useRoute} from '@react-navigation/native';
+//* ShoppingList.jsx
+import React, {useCallback, useState} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useAccount, useProfile, useShoppingCart} from '../../hooks/useHooks';
 import {View} from 'react-native';
 import {ListStyles} from '../../styles/Styles';
 import SwipeableItem from '../../components/SwipeableItem';
+import {useDispatch} from 'react-redux';
 
-const Shopping = () => {
+const ShoppingList = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const profile = useProfile();
   const account = useAccount();
   const shopping = useShoppingCart();
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
-  const shoppingList = shopping?.items.filter(
-    item => item?.status === 'shopping-list',
-  );
+  const shoppingList =
+    shopping?.items?.filter(item => item.status === 'shopping-list') ?? [];
+
+  console.log('Shopping List:', shoppingList);
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleAddToCart = useCallback(
+    itemId => {
+      const item = shoppingList.find(item => item.itemId === itemId);
+      if (item && profile) {
+        const updatedItem = {
+          ...item,
+          status: 'shopping-cart',
+          lastUpdated: new Date().toISOString(),
+          lastUpdatedBy: profile.id,
+        };
+        dispatch({
+          type: 'UPDATE_ITEM_IN_SHOP_CART',
+          payload: {
+            shoppingCartID: account.shoppingCartID,
+            updatedItem,
+            profileID: profile.id,
+            updateType: 'toCart',
+          },
+        });
+      }
+    },
+    [dispatch, profile, shoppingList],
+  );
+  const handleUpdateItem = itemId => {
+    navigation.navigate('UpdateShopItems', {
+      itemId,
+      navigateBackTo: 'ShoppingList',
+    });
+  };
+
+  const handleDeleteItem = useCallback(
+    itemId => {
+      if (profile) {
+        const item = shoppingList.find(item => item.itemId === itemId);
+        if (item) {
+          dispatch({
+            type: 'DELETE_ITEM_FROM_SHOP_CART',
+            payload: {
+              accountID: profile.account,
+              profileID: profile.id,
+              itemId,
+              itemName: item.itemName,
+            },
+          });
+        }
+      }
+    },
+    [dispatch, profile, shoppingList],
+  );
 
   const SelectedItemInfo = () => (
     <BottomSheet
@@ -37,7 +91,7 @@ const Shopping = () => {
       headerColor={headerColor}
       textColor={textColor}
       LeftButton=""
-      RightButton=""
+      RightButton="To-Cart"
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
@@ -64,23 +118,20 @@ const Shopping = () => {
             setSelectedItem={setSelectedItem}
             rightButtons={[
               {
-                // action: itemId => handleAddToCart(itemId),
-                action: itemId => console.log('Add to Cart', itemId),
+                action: itemId => handleAddToCart(itemId),
                 text1: 'Add',
                 text2: 'to Cart',
                 style: ListStyles.addButton,
               },
               {
-                // action: itemId => handleUpdateItem(itemId),
-                action: itemId => console.log('Update Item', itemId),
+                action: itemId => handleUpdateItem(itemId),
                 navigateBackTo: 'ShoppingList',
                 text1: 'Update',
                 text2: 'Item',
                 style: ListStyles.updateButton,
               },
               {
-                // action: itemId => handleDeleteItem(itemId),
-                action: itemId => console.log('Delete Item', itemId),
+                action: itemId => handleDeleteItem(itemId),
                 text1: 'Delete',
                 style: ListStyles.deleteButton,
               },
@@ -94,4 +145,4 @@ const Shopping = () => {
   );
 };
 
-export default Shopping;
+export default ShoppingList;
