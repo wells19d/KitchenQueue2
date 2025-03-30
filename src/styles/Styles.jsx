@@ -78,17 +78,18 @@ export const ListStyles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     justifyContent: 'center',
-    marginHorizontal: 2,
+    marginHorizontal: 3,
     width: 90,
-    height: 60,
+    // height: 60,
   },
   actionsContainer: {
     alignItems: 'top',
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    paddingHorizontal: 2,
+    paddingRight: 10,
+    paddingLeft: 5,
     paddingVertical: 5,
-    borderBottomWidth: 1,
+    // borderBottomWidth: 1,
     borderColor: '#c4c4c4',
   },
   addButton: {
@@ -115,7 +116,7 @@ export const ListStyles = StyleSheet.create({
   buttonContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 2,
+    // padding: 2,
     width: '100%',
     height: '100%',
     backgroundColor: 'transparent',
@@ -126,6 +127,7 @@ export const ListStyles = StyleSheet.create({
   },
   container: {
     backgroundColor: '#ffffff',
+    width: '100%',
     flex: 1,
   },
   deleteButton: {
@@ -134,8 +136,7 @@ export const ListStyles = StyleSheet.create({
   viewContainer: {
     flex: 1,
     backgroundColor: '#ffffff',
-    padding: 5,
-    marginBottom: 18,
+    width: '100%',
   },
   updateButton: {
     backgroundColor: '#0077A2',

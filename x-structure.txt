@@ -7,10 +7,14 @@
 | src
 |-| components
 |-|-| CurvedBottomBar.jsx
+|-|-| FlashCupboardCell.jsx
+|-|-| FlashShoppingCell.jsx
+|-|-| IconListRouter.jsx
 |-|-| IconListRouter.jsx
 |-|-| NavHeader.jsx
 |-|-| NavMenu.jsx
 |-|-| SplashScreen.jsx
+|-|-| SwipeableItem.jsx
 |-| fonts (already setup)
 |-| hooks
 |-|-| setHapticFeedback.jsx
