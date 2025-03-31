@@ -11,7 +11,7 @@ import {Text} from '../KQ-UI';
 const SwipeableItem = props => {
   const {
     list,
-    profile,
+    core,
     showItemInfo,
     setSelectedItem,
     setShowItemInfo,
@@ -79,7 +79,7 @@ const SwipeableItem = props => {
               onPress={() => {
                 button.action(itemId);
                 closeSwipeable(itemId);
-                useHaptics(profile?.userSettings?.hapticStrength || 'light');
+                useHaptics(core?.userSettings?.hapticStrength || 'light');
               }}>
               <View style={ListStyles.buttonContainer}>
                 <Text size="xSmall" font="open-7" kqColor="white">
@@ -111,7 +111,7 @@ const SwipeableItem = props => {
               onPress={() => {
                 button.action(itemId);
                 closeSwipeable(itemId);
-                useHaptics(profile?.userSettings?.hapticStrength || 'light');
+                useHaptics(core?.userSettings?.hapticStrength || 'light');
               }}>
               <View style={ListStyles.buttonContainer}>
                 <Text size="xSmall" font="open-7" kqColor="white">
@@ -143,7 +143,7 @@ const SwipeableItem = props => {
         overshootFriction={8}>
         <FlashCell
           item={item}
-          profile={profile}
+          core={core}
           setSelectedItem={setSelectedItem}
           setShowItemInfo={setShowItemInfo}
           showItemInfo={showItemInfo}
@@ -154,7 +154,7 @@ const SwipeableItem = props => {
         />
       </Swipeable>
     ),
-    [profile, setSelectedItem, setShowItemInfo],
+    [setSelectedItem, setShowItemInfo],
   );
 
   return (

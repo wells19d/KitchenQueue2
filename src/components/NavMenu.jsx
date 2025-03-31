@@ -11,9 +11,13 @@ import {
   NavMenuStyles,
 } from '../styles/Styles';
 import {Text} from '../KQ-UI';
+import {useCoreInfo} from '../utilities/coreInfo';
+import {setHapticFeedback} from '../hooks/setHapticFeedback';
 
 const NavMenu = props => {
   const {bottomHeight, bottomWidth, toggleMenu, device, setIsSheetOpen} = props;
+  const core = useCoreInfo();
+  const useHaptics = setHapticFeedback();
   const navigation = useNavigation();
 
   const navHeight = useMemo(
@@ -66,6 +70,7 @@ const NavMenu = props => {
   const navItems = getNavBarLayout(userItems);
 
   const handleNavPress = item => {
+    useHaptics(core?.userSettings?.hapticStrength || 'light');
     setIsSheetOpen(false);
     const allowedScreens = [
       'Home',

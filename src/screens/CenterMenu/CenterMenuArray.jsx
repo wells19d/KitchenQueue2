@@ -15,8 +15,16 @@ export const menuArray = [
       {
         title: 'Add to',
         icon: <Icons.AddList />,
-        action: 'AddShopItems',
+        action: {
+          screen: 'ShoppingItems',
+          params: {
+            title: 'Add Item(s)',
+            itemId: null,
+            navigateBackTo: 'ShoppingList',
+          },
+        },
       },
+
       {
         title: 'View List',
         icon: <Icons.MenuList />,
@@ -42,7 +50,14 @@ export const menuArray = [
       {
         title: 'Add to',
         icon: <Icons.AddList />,
-        action: 'AddCupboardItems',
+        action: {
+          screen: 'CupboardItems',
+          params: {
+            title: 'Add Item(s)',
+            itemId: null,
+            navigateBackTo: 'CupboardList-Single',
+          },
+        },
       },
       {
         title: 'View List',

@@ -2,23 +2,26 @@
 import React from 'react';
 import {Pressable, View} from 'react-native';
 import {Text} from '../KQ-UI';
-import {formatMeasurement} from '../utilities/measurements';
+import {
+  displayMeasurements,
+  formatMeasurement,
+} from '../utilities/measurements';
 import pluralize from 'pluralize';
 import {Icons} from './IconListRouter';
 
 const FlashCell = props => {
   const {
     item,
+    core,
     setShowItemInfo,
     setSelectedItem,
-    profile,
     cupboardView,
     groupedView,
     noQuantity,
   } = props;
 
   const renderDisplayText = item => {
-    const flashCellOrder = profile?.userSettings?.flashCellOrder || [];
+    const flashCellOrder = core?.userSettings?.flashCellOrder || [];
     const displayText = flashCellOrder
       .map(field => item[field.key])
       .filter(Boolean)
@@ -34,14 +37,24 @@ const FlashCell = props => {
       }
 
       if (measurement === 'each') {
-        return `${packageSize} ${itemName}`;
+        return `${packageSize} ${pluralize(itemName)}`;
       }
 
-      const formattedMeasurement = formatMeasurement(measurement);
+      const match = displayMeasurements.find(m => m.key === measurement);
+
+      if (match) {
+        const label = match.label;
+        return `${packageSize} ${packageSize > 1 ? pluralize(label) : label}`;
+      }
+
+      // Custom value fallback
+      const formatted = formatMeasurement(measurement);
       return `${packageSize} ${
-        packageSize > 1 ? pluralize(formattedMeasurement) : formattedMeasurement
+        packageSize > 1 ? pluralize(formatted) : formatted
       }`;
     }
+
+    return '';
   };
 
   const displayRemaining = (packageSize, remainingAmount) => {

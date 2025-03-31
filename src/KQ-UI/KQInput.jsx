@@ -1,6 +1,6 @@
 //* KQInput.jsx
 import React, {useMemo} from 'react';
-import {View, TextInput, StyleSheet} from 'react-native';
+import {View, TextInput, StyleSheet, Keyboard} from 'react-native';
 import {Text} from '../KQ-UI/';
 import {useColors, useFontStyles} from './KQUtilities';
 
@@ -21,6 +21,8 @@ const KQInput = ({
   accessoryRight = null,
   counter = false,
   maxCount = 250,
+  containerStyles = {},
+  wrapperStyles = {},
   ...props
 }) => {
   const fontStyles = useFontStyles('open-6', 'small', 'black');
@@ -46,7 +48,7 @@ const KQInput = ({
   );
 
   const InputInfoContainer = ({children}) => {
-    if (caption || counter) {
+    if (caption || counter || validationMessage) {
       return (
         <View
           style={{
@@ -69,7 +71,7 @@ const KQInput = ({
   };
 
   return (
-    <View style={styles.inputContainer}>
+    <View style={[styles.inputContainer, {...containerStyles}]}>
       {label && (
         <View style={styles.labelContainer}>
           <Text
@@ -80,7 +82,7 @@ const KQInput = ({
           </Text>
         </View>
       )}
-      <View style={styles.inputWrapper}>
+      <View style={[styles.inputWrapper, {...wrapperStyles}]}>
         <View style={styles.textInputContainer}>
           <TextInput
             value={value}
@@ -89,6 +91,7 @@ const KQInput = ({
             multiline={multiline}
             allowFontScaling={false}
             style={[fontStyles, multiMode, {padding: 0}]}
+            onSubmitEditing={Keyboard.dismiss}
             {...props}
           />
         </View>
@@ -105,6 +108,17 @@ const KQInput = ({
               font="open-5"
               numberOfLines={1}>
               ({caption})
+            </Text>
+          </View>
+        )}
+        {validation && (
+          <View style={{flex: 1}}>
+            <Text
+              size="xSmall"
+              kqColor="danger"
+              font="open-5"
+              numberOfLines={1}>
+              ({validationMessage})
             </Text>
           </View>
         )}
@@ -132,7 +146,7 @@ const styles = {
   },
   labelContainer: {position: 'relative', left: 0},
   label: (validation, disabled) => ({
-    color: validation ? '#fE4949' : disabled ? '#373d4390' : '#373d43',
+    color: validation ? '#DA2C43' : disabled ? '#373d4390' : '#373d43',
   }),
   inputWrapper: {
     flexDirection: 'row',

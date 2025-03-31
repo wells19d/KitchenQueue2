@@ -3,13 +3,13 @@ import React, {useCallback} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text} from '../KQ-UI/';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
-import {useProfile} from '../hooks/useHooks';
 import {
   useColors,
   useFontStyles,
   useButtonStyles,
   useButtonSizes,
 } from './KQUtilities';
+import {useCoreInfo} from '../utilities/coreInfo';
 
 const KQButton = ({
   children,
@@ -28,7 +28,7 @@ const KQButton = ({
   ...props
 }) => {
   const useHaptics = setHapticFeedback();
-  const profile = useProfile();
+  const core = useCoreInfo();
   const buttonColor = useColors(disabled ? 'basic' : color);
   const buttonStyle = useButtonStyles(type, buttonColor);
   const buttonSize = useButtonSizes(size);
@@ -40,9 +40,9 @@ const KQButton = ({
   );
 
   const handlePress = useCallback(() => {
-    useHaptics(profile?.userSettings?.hapticStrength || hapticFeedback);
+    useHaptics(core?.userSettings?.hapticStrength || hapticFeedback);
     if (onPress) onPress();
-  }, [profile?.userSettings?.hapticStrength, hapticFeedback, onPress]);
+  }, [core?.userSettings?.hapticStrength, hapticFeedback, onPress]);
 
   return (
     <TouchableOpacity

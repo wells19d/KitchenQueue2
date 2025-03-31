@@ -2,16 +2,17 @@
 import React, {useCallback, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
-import {useAccount, useCupboard, useProfile} from '../../hooks/useHooks';
+import {useAccount, useCupboard} from '../../hooks/useHooks';
 import {useDispatch} from 'react-redux';
 import {ListStyles} from '../../styles/Styles';
 import {View} from 'react-native';
 import SwipeableItem from '../../components/SwipeableItem';
+import {useCoreInfo} from '../../utilities/coreInfo';
 
 const CupboardSingle = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-  const profile = useProfile();
+  const core = useCoreInfo();
   const account = useAccount();
   const cupboard = useCupboard();
   const navigation = useNavigation();
@@ -23,7 +24,8 @@ const CupboardSingle = () => {
   const [selectedItem, setSelectedItem] = useState(null);
 
   const handleUpdateItem = itemId => {
-    navigation.navigate('UpdateCupboardItems', {
+    navigation.navigate('CupboardItems', {
+      title: 'Update Item',
       itemId,
       navigateBackTo: 'CupboardList-Single',
     });
@@ -31,22 +33,22 @@ const CupboardSingle = () => {
 
   const handleDeleteItem = useCallback(
     itemId => {
-      if (profile) {
+      if (core.profileID) {
         const item = cupboardList?.find(item => item?.itemId === itemId);
         if (item) {
           dispatch({
             type: 'DELETE_ITEM_FROM_CUPBOARD',
             payload: {
-              cupboardID: account.cupboardID,
+              cupboardID: core.cupboardID,
               itemId: item.itemId,
               itemName: item.itemName,
-              profileID: profile.id,
+              profileID: core.profileID,
             },
           });
         }
       }
     },
-    [dispatch, profile?.account, cupboardList],
+    [dispatch, core, cupboardList],
   );
 
   const SelectedItemInfo = () => (
@@ -80,7 +82,7 @@ const CupboardSingle = () => {
             ListStyles.viewContainer,
             {justifyContent: 'center', alignItems: 'center'},
           ]}>
-          <Text>Shopping List is Empty</Text>
+          <Text>Cupboard List is Empty</Text>
         </View>
       ) : (
         <View style={ListStyles.viewContainer}>
