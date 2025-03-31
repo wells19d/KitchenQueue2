@@ -3,35 +3,42 @@ import React, {useCallback, useReducer} from 'react';
 import {Alert, ScrollView, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
-import {useProfile, useShoppingCart} from '../../hooks/useHooks';
+import {useShoppingCart} from '../../hooks/useHooks';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 import {menuArray} from './CenterMenuArray';
 import {Icons} from '../../components/IconListRouter';
 import {CMStyles} from '../../styles/Styles';
 import {Text} from '../../KQ-UI';
+import {useCoreInfo} from '../../utilities/coreInfo';
 
 function CenterMenu(props) {
   const {toggleMenu} = props;
   const navigation = useNavigation();
   const useHaptics = setHapticFeedback();
   const dispatch = useDispatch();
-  const profile = useProfile();
+  const core = useCoreInfo();
   const shopping = useShoppingCart();
   const cartList =
     shopping?.items?.filter(item => item.status === 'shopping-cart') ?? [];
 
   const handleOnPress = useCallback(
-    navigate => {
-      if (navigate === 'console') return;
-      if (navigate === 'Logout') {
+    action => {
+      if (action === 'console') return;
+      if (action === 'Logout') {
         handleSignOut();
         return;
       }
-      useHaptics(profile?.userSettings?.hapticStrength || 'light');
+
+      useHaptics(core?.userSettings?.hapticStrength || 'light');
       toggleMenu();
-      navigation.navigate(navigate);
+
+      if (typeof action === 'string') {
+        navigation.navigate(action);
+      } else if (typeof action === 'object' && action.screen) {
+        navigation.navigate(action.screen, action.params || {});
+      }
     },
-    [profile?.userSettings?.hapticStrength, toggleMenu, navigation],
+    [core?.userSettings?.hapticStrength, toggleMenu, navigation],
   );
 
   const handleSignOut = useCallback(() => {
@@ -40,12 +47,12 @@ function CenterMenu(props) {
       {
         text: 'Confirm',
         onPress: () => {
-          useHaptics(profile?.userSettings?.hapticStrength || 'light');
+          useHaptics(core?.userSettings?.hapticStrength || 'light');
           dispatch({type: 'LOGOUT'});
         },
       },
     ]);
-  }, [profile?.userSettings?.hapticStrength, dispatch]);
+  }, [core?.userSettings?.hapticStrength, dispatch]);
 
   const sectionReducer = (state, action) => {
     return {...state, [action]: !state[action]};

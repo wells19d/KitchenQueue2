@@ -2,16 +2,17 @@
 import React, {useCallback, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
-import {useAccount, useProfile, useShoppingCart} from '../../hooks/useHooks';
+import {useAccount, useShoppingCart} from '../../hooks/useHooks';
 import {Alert, View} from 'react-native';
 import {ListStyles} from '../../styles/Styles';
 import SwipeableItem from '../../components/SwipeableItem';
 import {useDispatch} from 'react-redux';
+import {useCoreInfo} from '../../utilities/coreInfo';
 
 const ShoppingCart = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-  const profile = useProfile();
+  const core = useCoreInfo();
   const account = useAccount();
   const shopping = useShoppingCart();
   const navigation = useNavigation();
@@ -26,52 +27,54 @@ const ShoppingCart = () => {
   const handleReturnToList = useCallback(
     itemId => {
       const item = shoppingCart.find(item => item.itemId === itemId);
-      if (item && profile) {
+      if (item && core.profileID) {
         const updatedItem = {
           ...item,
           status: 'shopping-list',
           lastUpdated: new Date().toISOString(),
-          lastUpdatedBy: profile.id,
+          lastUpdatedBy: core.profileID,
         };
         dispatch({
           type: 'UPDATE_ITEM_IN_SHOP_CART',
           payload: {
-            shoppingCartID: account.shoppingCartID,
+            shoppingCartID: core.shoppingCartID,
             updatedItem,
-            profileID: profile.id,
+            profileID: core.profileID,
             updateType: 'toList',
           },
         });
       }
     },
-    [dispatch, profile, shoppingCart],
+    [dispatch, core, shoppingCart],
   );
 
   const handleUpdateItem = itemId => {
-    navigation.navigate('UpdateShopItems', {
+    navigation.navigate('ShoppingItems', {
+      title: 'Update Item',
       itemId,
-      navigateBackTo: 'InCart',
+      navigateBackTo: 'ShoppingCart',
+      statusTo: 'shopping-cart',
     });
   };
 
   const handleDeleteItem = useCallback(
     itemId => {
-      if (profile) {
+      if (core.profileID) {
         const item = shoppingCart.find(item => item.itemId === itemId);
         if (item) {
           dispatch({
             type: 'DELETE_ITEM_FROM_SHOP_CART',
             payload: {
-              shoppingCartID: account.shoppingCartID,
+              shoppingCartID: core.shoppingCartID,
               itemId: item.itemId,
               itemName: item.itemName,
-              profileID: profile.id,
+              profileID: core.profileID,
             },
           });
         }
       }
     },
-    [dispatch, profile, shoppingCart],
+    [dispatch, core, shoppingCart],
   );
 
   const AddToCupboard = () => {
@@ -90,9 +93,9 @@ const ShoppingCart = () => {
               dispatch({
                 type: 'BATCH_TO_CUPBOARD',
                 payload: {
-                  cupboardID: account.cupboardID,
+                  cupboardID: core.cupboardID,
                   items: shoppingCart,
-                  profileID: profile.id,
+                  profileID: core.profileID,
                 },
               });
 
@@ -101,7 +104,7 @@ const ShoppingCart = () => {
                 payload: {
                   shoppingCartID: account.shoppingCartID,
                   items: shoppingCart,
-                  profileID: profile.id,
+                  profileID: core.profileID,
                 },
               });
 
@@ -150,7 +153,7 @@ const ShoppingCart = () => {
         <View style={ListStyles.viewContainer}>
           <SwipeableItem
             list={shoppingCart}
-            profile={profile}
+            core={core}
             showItemInfo={showItemInfo}
             setShowItemInfo={setShowItemInfo}
             setSelectedItem={setSelectedItem}

@@ -1,14 +1,20 @@
 //* KQDropdown.jsx
 
 import React, {useMemo, useState} from 'react';
-import {View, TouchableOpacity, Platform} from 'react-native';
-import {Modal, Text, ScrollView} from '../KQ-UI/';
+import {
+  View,
+  TouchableOpacity,
+  Platform,
+  KeyboardAvoidingView,
+} from 'react-native';
+import {Modal, Text, ScrollView, Input} from '../KQ-UI/';
 import {Icons} from '../components/IconListRouter';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
-import {useProfile} from '../hooks/useHooks';
+import {useCoreInfo} from '../utilities/coreInfo';
 
 const KQDropdown = ({
   label = '',
+  customLabel = '',
   labelStyles = {},
   required = false,
   validation = false,
@@ -24,12 +30,13 @@ const KQDropdown = ({
 }) => {
   const isIOS = Platform.OS === 'ios';
   const useHaptics = setHapticFeedback();
-  const profile = useProfile();
+  const core = useCoreInfo();
   const [showDropModal, setShowDropModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [customValue, setCustomValue] = useState('');
 
   const handleOnPress = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || hapticFeedback);
+    useHaptics(core?.userSettings?.hapticStrength || hapticFeedback);
     setSelectedItem(value); // set to current value on open
     setShowDropModal(true);
     onPress();
@@ -55,16 +62,29 @@ const KQDropdown = ({
   const handleCancel = () => {
     setShowDropModal(false);
     setSelectedItem(null);
+    setCustomValue('');
   };
 
   const handleSave = item => {
     setShowDropModal(false);
-    setValue(item);
+
+    if (item?.key === 'custom') {
+      const cleaned = customValue.trim();
+      const newItem = {
+        index: -1,
+        key: cleaned.toLowerCase().replace(/\s+/g, '-'),
+        label: cleaned,
+      };
+      setValue(newItem);
+    } else {
+      setValue(item);
+    }
   };
 
   const handleClear = () => {
     setSelectedItem(null);
     setValue(null);
+    setCustomValue('');
   };
 
   return (
@@ -123,7 +143,7 @@ const KQDropdown = ({
             <TouchableOpacity
               style={styles.headerButtonContainer}
               onPress={handleCancel}>
-              <View style={styles.headerButtonIcon}>
+              <View style={styles.headerButtonIconLeft}>
                 <View style={{position: 'relative', left: 4}}>
                   <Icons.Back />
                 </View>
@@ -136,10 +156,10 @@ const KQDropdown = ({
               style={styles.headerButtonContainer}
               onPress={() => handleSave(selectedItem)}>
               <View style={styles.headerButtonTextRight}>
-                <Text>Save</Text>
+                <Text>Select</Text>
               </View>
-              <View style={styles.headerButtonIcon}>
-                <Icons.Save />
+              <View style={styles.headerButtonIconRight}>
+                <Icons.Check size={20} />
               </View>
             </TouchableOpacity>
           </View>
@@ -147,41 +167,77 @@ const KQDropdown = ({
             <ScrollView>
               <View style={{flex: 1}}>
                 {mapData?.map((item, index) => {
+                  const isCustomField = item.key === 'custom';
                   return (
                     <View
                       key={index}
                       style={{borderBottomWidth: 1, borderColor: '#373d4380'}}>
-                      <TouchableOpacity
-                        style={{
-                          height: 48,
-                          alignItems: 'flex-start',
-                          justifyContent: 'center',
-                          paddingHorizontal: 5,
-                        }}
-                        onPress={() => setSelectedItem(item)}>
-                        <View style={{flexDirection: 'row'}}>
-                          <View style={{flex: 1}}>
-                            <Text
-                              size={
-                                selectedItem?.index === item.index
-                                  ? 'small'
-                                  : 'xSmall'
-                              }
-                              font={
-                                selectedItem?.index === item.index
-                                  ? 'open-7'
-                                  : 'open-5'
-                              }>
-                              {item.label}
+                      {isCustomField ? (
+                        <View
+                          style={{
+                            paddingHorizontal: 5,
+                            paddingVertical: 8,
+                          }}>
+                          {customLabel && (
+                            <Text size="xSmall" font="open-5" style={{}}>
+                              {customLabel}
                             </Text>
-                          </View>
-                          {selectedItem?.index === item.index && (
-                            <View>
-                              <Icons.Check color={'#63B76C'} size={20} />
-                            </View>
                           )}
+                          <KeyboardAvoidingView>
+                            <Input
+                              value={customValue}
+                              onChangeText={text => {
+                                setCustomValue(text);
+                                setSelectedItem({
+                                  index: 0,
+                                  key: 'custom',
+                                  label: 'Custom (Enter Your Own)',
+                                });
+                              }}
+                              placeholder="Type here..."
+                              containerStyles={{
+                                marginHorizontal: 0,
+                                marginVertical: 0,
+                                paddingHorizontal: 0,
+                                marginTop: 5,
+                              }}
+                              wrapperStyles={{borderBottomWidth: 0}}
+                            />
+                          </KeyboardAvoidingView>
                         </View>
-                      </TouchableOpacity>
+                      ) : (
+                        <TouchableOpacity
+                          style={{
+                            height: 48,
+                            alignItems: 'flex-start',
+                            justifyContent: 'center',
+                            paddingHorizontal: 5,
+                          }}
+                          onPress={() => setSelectedItem(item)}>
+                          <View style={{flexDirection: 'row'}}>
+                            <View style={{flex: 1}}>
+                              <Text
+                                size={
+                                  selectedItem?.index === item.index
+                                    ? 'small'
+                                    : 'xSmall'
+                                }
+                                font={
+                                  selectedItem?.index === item.index
+                                    ? 'open-7'
+                                    : 'open-5'
+                                }>
+                                {item.label}
+                              </Text>
+                            </View>
+                            {selectedItem?.index === item.index && (
+                              <View>
+                                <Icons.Check color={'#63B76C'} size={20} />
+                              </View>
+                            )}
+                          </View>
+                        </TouchableOpacity>
+                      )}
                     </View>
                   );
                 })}
@@ -232,7 +288,13 @@ const styles = {
     flex: 1,
     flexDirection: 'row',
   },
-  headerButtonIcon: {
+  headerButtonIconRight: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 5,
+  },
+  headerButtonIconLeft: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -250,6 +312,7 @@ const styles = {
     justifyContent: 'flex-end',
     alignItems: 'center',
     paddingHorizontal: 5,
+    marginRight: 5,
   },
 };
 

@@ -12,9 +12,9 @@ import {
 import {Icons} from '../components/IconListRouter';
 import {Text} from '../KQ-UI';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
-import {useProfile} from '../hooks/useHooks';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useColors} from './KQUtilities';
+import {useCoreInfo} from '../utilities/coreInfo';
 
 const KQModal = ({
   visible,
@@ -35,7 +35,7 @@ const KQModal = ({
   onClose,
 }) => {
   const useHaptics = setHapticFeedback();
-  const profile = useProfile();
+  const core = useCoreInfo();
   const insets = useSafeAreaInsets();
   const isClosingRef = useRef(false);
 
@@ -46,7 +46,7 @@ const KQModal = ({
     if ((isBackdropTap || isManualCall) && !isClosingRef.current) {
       isClosingRef.current = true;
 
-      useHaptics(profile?.userSettings?.hapticStrength || hapticFeedback);
+      useHaptics(core?.userSettings?.hapticStrength || hapticFeedback);
       Keyboard.dismiss();
 
       setTimeout(() => {

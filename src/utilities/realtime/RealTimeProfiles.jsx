@@ -1,7 +1,7 @@
 import {useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
-import {useProfile, useUser} from '../../hooks/useHooks';
+import {useUser} from '../../hooks/useHooks';
 
 const useRealTimeProfiles = () => {
   const dispatch = useDispatch();

@@ -6,8 +6,9 @@ import {Text} from '../KQ-UI';
 import {Icons} from './IconListRouter';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
 import {useDispatch} from 'react-redux';
-import {useProfile, useShoppingCart} from '../hooks/useHooks';
+import {useShoppingCart} from '../hooks/useHooks';
 import {NavHeaderStyles} from '../styles/Styles';
+import {useCoreInfo} from '../utilities/coreInfo';
 
 const NavHeader = ({
   title = '',
@@ -23,7 +24,7 @@ const NavHeader = ({
   const useHaptics = setHapticFeedback();
   const dispatch = useDispatch();
   const shopping = useShoppingCart();
-  const profile = useProfile();
+  const core = useCoreInfo();
   let fadeText = '#ffffff60';
 
   const cartList =
@@ -35,12 +36,12 @@ const NavHeader = ({
       {
         text: 'Confirm',
         onPress: () => {
-          useHaptics(profile?.userSettings?.hapticStrength || 'light');
+          useHaptics(core?.userSettings?.hapticStrength || 'light');
           dispatch({type: 'LOGOUT_AND_CLEAR'});
         },
       },
     ]);
-  }, [profile?.userSettings?.hapticStrength, dispatch]);
+  }, [core?.userSettings?.hapticStrength, dispatch]);
 
   const NavButtonComponent = ({
     position,
@@ -54,8 +55,8 @@ const NavHeader = ({
       if (navigate) navigation.navigate(navigate);
       if (goBack) navigation.goBack();
       if (action) action();
-      useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    }, [navigate, goBack, action, profile?.userSettings?.hapticStrength]);
+      useHaptics(core?.userSettings?.hapticStrength || 'light');
+    }, [navigate, goBack, action, core?.userSettings?.hapticStrength]);
 
     const isLeft = position === 'Left';
 

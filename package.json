@@ -13,6 +13,7 @@
     "clean-project": "rm -rf node_modules && yarn cache clean && yarn install && yarn pod-clean && yarn gradle-clean",
     "clean-and-start": "rm -rf node_modules && yarn cache clean && yarn install && yarn pod-clean && yarn gradle-clean && yarn start-clean",
     "open-studio": "open -a 'Android Studio'",
+    "export-project": "node exportComponents.js",
     "test": "jest"
   },
   "dependencies": {

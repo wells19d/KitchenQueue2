@@ -1,7 +1,7 @@
 //* measurements.js
 
 export const displayMeasurements = [
-  {index: 0, key: 'each', label: 'Single'},
+  {index: 0, key: 'each', label: 'Single (Each)'},
   {index: 1, key: 'slice', label: 'Slice'},
   {index: 2, key: 'bag', label: 'Bag'},
   {index: 3, key: 'roll', label: 'Roll'},
@@ -22,19 +22,18 @@ export const displayMeasurements = [
   {index: 18, key: 'cup', label: 'Cup'},
   {index: 19, key: 'tablespoon', label: 'Tablespoon'},
   {index: 20, key: 'teaspoon', label: 'Teaspoon'},
-  {index: 21, key: 'custom', label: 'Custom (Enter Your Own)'},
+  {index: 99, key: 'custom', label: 'Custom (Enter Your Own)'},
 ];
 
 export const formatMeasurement = measurement => {
-  const found = displayMeasurements.find(meas => meas.key === measurement);
-  if (measurement === undefined || measurement === null) {
-    // do nothing
-  } else if (found) {
-    return found.label;
-  } else {
-    return measurement
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  }
+  if (!measurement) return '';
+
+  // Replace dashes with spaces
+  const cleaned = measurement.replace(/-/g, ' ');
+
+  // Capitalize each word
+  return cleaned
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 };

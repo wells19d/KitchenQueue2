@@ -38,6 +38,8 @@ import {AppInfo} from './AppInfo';
 import {enableScreens} from 'react-native-screens';
 import ShoppingCart from './src/screens/Shopping/ShoppingCart';
 import CupboardGroup from './src/screens/Cupboard/CupboardGroup';
+import ShoppingItems from './src/screens/Shopping/ShoppingItems';
+import CupboardItems from './src/screens/Cupboard/CupboardItems';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -239,12 +241,12 @@ const Main = () => {
               },
             }}
           />
-          {/* <Stack.Screen
-            name="AddShopItems"
-            component={AddShopItems}
-            options={{ freezeOnBlur: true }} 
+          <Stack.Screen
+            name="ShoppingItems"
+            component={ShoppingItems}
+            options={{freezeOnBlur: true}}
             initialParams={{
-              title: 'Add Item(s)',
+              title: 'Items',
               bgColor: bgColor,
               textColor: textColor,
             }}
@@ -256,25 +258,7 @@ const Main = () => {
                 setScreenLocation('AddShopItems');
               },
             }}
-          /> */}
-          {/* <Stack.Screen
-            name="UpdateShopItems"
-            component={UpdateShopItems}
-            options={{ freezeOnBlur: true }} 
-            initialParams={{
-              title: 'Update Item',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('UpdateShopItems');
-              },
-            }}
-          /> */}
+          />
           <Stack.Screen
             name="CupboardList-Single"
             component={CupboardSingle}
@@ -315,12 +299,12 @@ const Main = () => {
               },
             }}
           />
-          {/* <Stack.Screen
-            name="AddCupboardItems"
-            component={AddCupboardItems}
-            options={{ freezeOnBlur: true }} 
+          <Stack.Screen
+            name="CupboardItems"
+            component={CupboardItems}
+            options={{freezeOnBlur: true}}
             initialParams={{
-              title: 'Add Item(s)',
+              title: 'Items',
               bgColor: bgColor,
               textColor: textColor,
             }}
@@ -329,28 +313,10 @@ const Main = () => {
                 setBgColor('#ffffff');
                 setHeaderColor('#319177');
                 setTextColor('#ffffff');
-                setScreenLocation('AddCupboardItems');
+                setScreenLocation('AddShopItems');
               },
             }}
-          /> */}
-          {/* <Stack.Screen
-            name="UpdateCupboardItems"
-            component={UpdateCupboardItems}
-            options={{ freezeOnBlur: true }} 
-            initialParams={{
-              title: 'Update Item',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('UpdateCupboardItems');
-              },
-            }}
-          /> */}
+          />
           {/* <Stack.Screen
             name="RecipeList"
             component={Recipes}

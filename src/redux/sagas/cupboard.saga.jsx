@@ -70,8 +70,6 @@ function* addItemToCupboard(action) {
         }),
       );
 
-      // yield put({type: 'SET_CUPBOARD', payload: {cupboardID}}); // RealTime listener will handle this
-
       Toast.show({
         type: 'success',
         text1: 'Item Added',
@@ -119,8 +117,6 @@ function* updateItemInCupboard(action) {
           lastUpdatedBy: profileID,
         }),
       );
-
-      yield put({type: 'SET_CUPBOARD', payload: {cupboardID}});
 
       Toast.show({
         type: 'success',
@@ -170,8 +166,6 @@ function* deleteItemFromCupboard(action) {
           lastUpdatedBy: profileID,
         }),
       );
-
-      // yield put({type: 'SET_CUPBOARD', payload: {cupboardID}}); // RealTime listener will handle this
 
       Toast.show({
         type: 'success',
@@ -253,8 +247,6 @@ function* batchToCupboard(action) {
 
       yield call(() => batch.commit());
 
-      // yield put({type: 'SET_CUPBOARD', payload: {cupboardID}}); // RealTime listener will handle this
-
       Toast.show({
         type: 'success',
         text1: 'Items Added',
@@ -300,8 +292,6 @@ function* resetCupboard(action) {
           lastUpdatedBy: profileID,
         }),
       );
-
-      // yield put({type: 'SET_CUPBOARD', payload: {cupboardID}}); // RealTime listener will handle this
 
       Toast.show({
         type: 'success',

@@ -16,21 +16,20 @@ export const displayCategories = [
   {index: 12, key: 'snacks', label: 'Snacks & Candy', bg: '#FF6347'},
   {index: 13, key: 'beverages', label: 'Beverages', bg: '#4682B4'},
   {index: 14, key: 'other', label: 'Other', bg: '#319177'},
-  {index: 99, key: 'custom', label: 'Custom', bg: '#319177'},
+  {index: 99, key: 'custom', label: 'Custom (Enter Your Own)', bg: '#319177'},
 ];
 
 export const formatCategories = category => {
-  const found = displayCategories.find(cat => cat.key === category);
+  if (!category) return '';
 
-  if (category === undefined || category === null) {
-  } else if (found) {
-    return found.label;
-  } else {
-    return category
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  }
+  // Replace dashes with spaces
+  const cleaned = category.replace(/-/g, ' ');
+
+  // Capitalize each word
+  return cleaned
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 };
 
 export const categoryColors = category => {

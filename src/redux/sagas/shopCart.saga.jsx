@@ -70,8 +70,6 @@ function* addItemToShopCart(action) {
         }),
       );
 
-      // yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}}); // RealTime listener will handle this
-
       Toast.show({
         type: 'success',
         text1: 'Item Added',
@@ -120,9 +118,19 @@ function* updateItemInShopCart(action) {
         }),
       );
 
-      // yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}}); // RealTime listener will handle this
-
-      if (updateType === 'toCart') {
+      if (updateType === 'updateList') {
+        Toast.show({
+          type: 'success',
+          text1: 'Item Updated',
+          text2: `${updatedItem.itemName} was updated in the shopping list.`,
+        });
+      } else if (updateType === 'updateCart') {
+        Toast.show({
+          type: 'success',
+          text1: 'Item Updated',
+          text2: `${updatedItem.itemName} was updated in the shopping cart.`,
+        });
+      } else if (updateType === 'toCart') {
         Toast.show({
           type: 'success',
           text1: 'Item Added',
@@ -187,8 +195,6 @@ function* deleteItemFromShopCart(action) {
         }),
       );
 
-      // yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}}); // RealTime listener will handle this
-
       Toast.show({
         type: 'success',
         text1: 'Item Deleted',
@@ -238,8 +244,6 @@ function* deleteListFromShopCart(action) {
           lastUpdatedBy: profileID,
         }),
       );
-
-      // yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});  // RealTime listener will handle this
     }
   } catch (error) {
     yield put({type: 'SHOP_CART_DELETE_LIST_FAILED', payload: error.message});
