@@ -3,7 +3,6 @@ AppInfo.js
 Main.jsx
 app.json
 babel.config.js
-exportComponents.js
 index.js
 jest.config.js
 metro.config.js

@@ -24,8 +24,9 @@ const ignoreFiles = [
   '.gitignore',
   '.prettierrc.js',
   '.watchmanconfig',
-  'y-structure.txt',
-  'z-export.txt',
+  'y-structure.txt', // na
+  'z-export.txt', // na
+  'exportComponents.js', //na
 ];
 
 function walk(dir, validExtensions) {
