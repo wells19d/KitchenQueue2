@@ -8,6 +8,7 @@ import {ListStyles} from '../../styles/Styles';
 import SwipeableItem from '../../components/SwipeableItem';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
+import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const ShoppingCart = () => {
   const route = useRoute();
@@ -116,12 +117,16 @@ const ShoppingCart = () => {
     }
   };
 
-  const SelectedItemInfo = () => (
+  const SelectedItem = () => (
     <BottomSheet
       visible={showItemInfo}
       onClose={() => setShowItemInfo(false)}
       snapPoints={[0.01, 0.9]}>
-      <Text>{JSON.stringify(selectedItem)}</Text>
+      <SelectedItemInfo
+        selectedItem={selectedItem}
+        setShowItemInfo={setShowItemInfo}
+        navigate={{to: 'ShoppingItems', backTo: 'ShoppingCart'}}
+      />
     </BottomSheet>
   );
 
@@ -179,7 +184,7 @@ const ShoppingCart = () => {
             ]}
             leftButtons={[]}
           />
-          <SelectedItemInfo />
+          <SelectedItem />
         </View>
       )}
     </Layout>

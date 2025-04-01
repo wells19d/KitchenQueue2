@@ -255,7 +255,7 @@ const Main = () => {
                 setBgColor('#ffffff');
                 setHeaderColor('#319177');
                 setTextColor('#ffffff');
-                setScreenLocation('AddShopItems');
+                setScreenLocation('ShoppingItems');
               },
             }}
           />
@@ -313,7 +313,7 @@ const Main = () => {
                 setBgColor('#ffffff');
                 setHeaderColor('#319177');
                 setTextColor('#ffffff');
-                setScreenLocation('AddShopItems');
+                setScreenLocation('CupboardItems');
               },
             }}
           />

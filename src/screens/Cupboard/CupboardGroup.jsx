@@ -6,6 +6,7 @@ import {useCupboard} from '../../hooks/useHooks';
 import {ListStyles} from '../../styles/Styles';
 import {View} from 'react-native';
 import SwipeableItem from '../../components/SwipeableItem';
+import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const CupboardGroup = () => {
   const route = useRoute();
@@ -69,12 +70,18 @@ const CupboardGroup = () => {
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const SelectedItemInfo = () => (
+  const SelectedItem = () => (
     <BottomSheet
       visible={showItemInfo}
       onClose={() => setShowItemInfo(false)}
       snapPoints={[0.01, 0.9]}>
-      <Text>{JSON.stringify(selectedItem)}</Text>
+      <SelectedItemInfo
+        cupboardView
+        groupedView
+        selectedItem={selectedItem}
+        setShowItemInfo={setShowItemInfo}
+        // navigate={{to: 'UpdateShopItems', backTo: 'ShoppingList'}}
+      />
     </BottomSheet>
   );
 
@@ -110,7 +117,7 @@ const CupboardGroup = () => {
             cupboardView
             groupedView
           />
-          <SelectedItemInfo />
+          <SelectedItem />
         </View>
       )}
     </Layout>
