@@ -26,6 +26,7 @@ src/components/FlashCell.jsx
 src/components/IconListRouter.jsx
 src/components/NavHeader.jsx
 src/components/NavMenu.jsx
+src/components/SelectedItemInfo.jsx
 src/components/SplashScreen.jsx
 src/components/SwipeableItem.jsx
 src/hooks/setHapticFeedback.jsx

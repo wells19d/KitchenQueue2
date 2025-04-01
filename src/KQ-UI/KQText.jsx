@@ -5,6 +5,8 @@ import {useFontStyles} from './KQUtilities';
 
 const KQText = ({
   children,
+  italic = false,
+  centered = false,
   style,
   size = 'small',
   kqColor = 'black',
@@ -14,7 +16,17 @@ const KQText = ({
   const fontStyles = useFontStyles(font, size, kqColor);
 
   return (
-    <Text allowFontScaling={false} style={[fontStyles, style]} {...props}>
+    <Text
+      allowFontScaling={false}
+      style={[
+        fontStyles,
+        {
+          fontStyle: italic ? 'italic' : 'normal',
+          textAlign: centered ? 'center' : 'left',
+        },
+        style,
+      ]}
+      {...props}>
       {children}
     </Text>
   );

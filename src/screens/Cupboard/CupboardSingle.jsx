@@ -8,6 +8,7 @@ import {ListStyles} from '../../styles/Styles';
 import {View} from 'react-native';
 import SwipeableItem from '../../components/SwipeableItem';
 import {useCoreInfo} from '../../utilities/coreInfo';
+import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const CupboardSingle = () => {
   const route = useRoute();
@@ -51,12 +52,17 @@ const CupboardSingle = () => {
     [dispatch, core, cupboardList],
   );
 
-  const SelectedItemInfo = () => (
+  const SelectedItem = () => (
     <BottomSheet
       visible={showItemInfo}
       onClose={() => setShowItemInfo(false)}
       snapPoints={[0.01, 0.9]}>
-      <Text>{JSON.stringify(selectedItem)}</Text>
+      <SelectedItemInfo
+        cupboardView
+        selectedItem={selectedItem}
+        setShowItemInfo={setShowItemInfo}
+        navigate={{to: 'CupboardItems', backTo: 'CupboardList-Single'}}
+      />
     </BottomSheet>
   );
 
@@ -108,7 +114,7 @@ const CupboardSingle = () => {
             ]}
             leftButtons={[]}
           />
-          <SelectedItemInfo />
+          <SelectedItem />
         </View>
       )}
     </Layout>

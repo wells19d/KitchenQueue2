@@ -364,7 +364,7 @@ const Main = () => {
                 setBgColor('#ffffff');
                 setHeaderColor('#319177');
                 setTextColor('#ffffff');
-                setScreenLocation('AddShopItems');
+                setScreenLocation('ShoppingItems');
               },
             }}
           />
@@ -422,7 +422,7 @@ const Main = () => {
                 setBgColor('#ffffff');
                 setHeaderColor('#319177');
                 setTextColor('#ffffff');
-                setScreenLocation('AddShopItems');
+                setScreenLocation('CupboardItems');
               },
             }}
           />
@@ -2617,6 +2617,8 @@ import {useFontStyles} from './KQUtilities';
 
 const KQText = ({
   children,
+  italic = false,
+  centered = false,
   style,
   size = 'small',
   kqColor = 'black',
@@ -2626,7 +2628,17 @@ const KQText = ({
   const fontStyles = useFontStyles(font, size, kqColor);
 
   return (
-    <Text allowFontScaling={false} style={[fontStyles, style]} {...props}>
+    <Text
+      allowFontScaling={false}
+      style={[
+        fontStyles,
+        {
+          fontStyle: italic ? 'italic' : 'normal',
+          textAlign: centered ? 'center' : 'left',
+        },
+        style,
+      ]}
+      {...props}>
       {children}
     </Text>
   );
@@ -3769,6 +3781,174 @@ const NavMenu = props => {
 };
 
 export default NavMenu;
+
+
+--- FILE: src/components/SelectedItemInfo.jsx ---
+
+//* SelectedItemInfo.jsx
+import {useNavigation} from '@react-navigation/native';
+import React from 'react';
+import {View} from 'react-native';
+import {ListStyles, SelectItemStyles} from '../styles/Styles';
+import {categoryColors, formatCategories} from '../utilities/categories';
+import {formatMeasurement} from '../utilities/measurements';
+import {Button, Text, ScrollView} from '../KQ-UI';
+
+const SelectedItemInfo = props => {
+  const {
+    selectedItem,
+    setShowItemInfo,
+    navigate,
+    groupedView = false,
+    cupboardView = false,
+  } = props;
+  console.log('selectedItem', selectedItem);
+
+  const navigation = useNavigation();
+
+  const handleUpdateItem = itemId => {
+    navigation.navigate(navigate?.to, {
+      itemId,
+      navigateBackTo: navigate?.backTo,
+    });
+    setShowItemInfo(false);
+  };
+
+  const ItemRow = ({title, info, info2}) => {
+    const asNote = title === 'Notes';
+    const remain = title === 'Remaining Amount' || title === 'Total Remaining';
+
+    if (!info) {
+      return null;
+    } else {
+      return (
+        <View
+          style={
+            asNote
+              ? SelectItemStyles.itemNoteContainer
+              : SelectItemStyles.itemContainer
+          }>
+          <View style={SelectItemStyles.titleWrap}>
+            <Text size="small">{title}:</Text>
+          </View>
+          <View
+            style={[
+              asNote
+                ? SelectItemStyles.infoNoteWrap
+                : SelectItemStyles.infoWrap,
+            ]}>
+            <Text
+              size="small"
+              style={[
+                asNote
+                  ? SelectItemStyles.textNoteStyles
+                  : SelectItemStyles?.textStyles,
+              ]}
+              numberOfLines={asNote ? 0 : 1}>
+              {info}
+            </Text>
+          </View>
+          {remain && (
+            <View>
+              <Text size="small" style={{paddingTop: 3, paddingHorizontal: 1}}>
+                ({((info / info2) * 100).toFixed(0)}% left)
+              </Text>
+            </View>
+          )}
+        </View>
+      );
+    }
+  };
+
+  const BannerField = ({children, backgroundColor}) => {
+    return (
+      <View
+        style={{
+          marginHorizontal: 5,
+          marginBottom: 5,
+          borderRadius: 10,
+          backgroundColor: backgroundColor || '#319177',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text
+          font="banana"
+          centered
+          style={{
+            fontSize: 65,
+            color: 'white',
+            position: 'relative',
+            top: -9,
+          }}
+          numberOfLines={1}>
+          {children}
+        </Text>
+      </View>
+    );
+  };
+
+  return (
+    <View style={{flex: 1}}>
+      {selectedItem && (
+        <View style={SelectItemStyles.container}>
+          <BannerField backgroundColor={categoryColors(selectedItem?.category)}>
+            {formatCategories(selectedItem?.category)}
+          </BannerField>
+          {groupedView ? (
+            <View
+              style={{
+                marginHorizontal: 5,
+                padding: 5,
+              }}>
+              <Text centered size="xSmall">
+                Can't update grouped items.
+              </Text>
+              <Text centered size="xSmall">
+                Please close and select single view.
+              </Text>
+            </View>
+          ) : (
+            <View style={SelectItemStyles.updateContainer}>
+              <Button
+                color="info"
+                type="outline"
+                size="small"
+                onPress={() => handleUpdateItem(selectedItem?.itemId)}>
+                Update Item
+              </Button>
+            </View>
+          )}
+          <ScrollView contentContainerStyle={SelectItemStyles.infoContainer}>
+            <ItemRow title="Item Name" info={selectedItem?.itemName} />
+            <ItemRow title="Brand" info={selectedItem?.brandName} />
+            <ItemRow title="Description" info={selectedItem?.description} />
+            {!cupboardView && (
+              <ItemRow title="Quantity" info={selectedItem?.quantity} />
+            )}
+            <ItemRow
+              title={groupedView ? 'Total Remaining' : 'Remaining Amount'}
+              info={selectedItem?.remainingAmount}
+              info2={selectedItem?.packageSize}
+            />
+            <ItemRow
+              title={groupedView ? 'Total Package Size' : 'Package Size'}
+              info={selectedItem?.packageSize}
+            />
+            <ItemRow
+              title="Measurement"
+              info={formatMeasurement(selectedItem?.measurement)}
+            />
+            {selectedItem?.notes && (
+              <ItemRow title="Notes" info={selectedItem?.notes} />
+            )}
+          </ScrollView>
+        </View>
+      )}
+    </View>
+  );
+};
+
+export default SelectedItemInfo;
 
 
 --- FILE: src/components/SplashScreen.jsx ---
@@ -6410,6 +6590,7 @@ import {useCupboard} from '../../hooks/useHooks';
 import {ListStyles} from '../../styles/Styles';
 import {View} from 'react-native';
 import SwipeableItem from '../../components/SwipeableItem';
+import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const CupboardGroup = () => {
   const route = useRoute();
@@ -6473,12 +6654,18 @@ const CupboardGroup = () => {
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const SelectedItemInfo = () => (
+  const SelectedItem = () => (
     <BottomSheet
       visible={showItemInfo}
       onClose={() => setShowItemInfo(false)}
       snapPoints={[0.01, 0.9]}>
-      <Text>{JSON.stringify(selectedItem)}</Text>
+      <SelectedItemInfo
+        cupboardView
+        groupedView
+        selectedItem={selectedItem}
+        setShowItemInfo={setShowItemInfo}
+        // navigate={{to: 'UpdateShopItems', backTo: 'ShoppingList'}}
+      />
     </BottomSheet>
   );
 
@@ -6514,7 +6701,7 @@ const CupboardGroup = () => {
             cupboardView
             groupedView
           />
-          <SelectedItemInfo />
+          <SelectedItem />
         </View>
       )}
     </Layout>
@@ -6780,6 +6967,7 @@ import {ListStyles} from '../../styles/Styles';
 import {View} from 'react-native';
 import SwipeableItem from '../../components/SwipeableItem';
 import {useCoreInfo} from '../../utilities/coreInfo';
+import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const CupboardSingle = () => {
   const route = useRoute();
@@ -6823,12 +7011,17 @@ const CupboardSingle = () => {
     [dispatch, core, cupboardList],
   );
 
-  const SelectedItemInfo = () => (
+  const SelectedItem = () => (
     <BottomSheet
       visible={showItemInfo}
       onClose={() => setShowItemInfo(false)}
       snapPoints={[0.01, 0.9]}>
-      <Text>{JSON.stringify(selectedItem)}</Text>
+      <SelectedItemInfo
+        cupboardView
+        selectedItem={selectedItem}
+        setShowItemInfo={setShowItemInfo}
+        navigate={{to: 'CupboardItems', backTo: 'CupboardList-Single'}}
+      />
     </BottomSheet>
   );
 
@@ -6880,7 +7073,7 @@ const CupboardSingle = () => {
             ]}
             leftButtons={[]}
           />
-          <SelectedItemInfo />
+          <SelectedItem />
         </View>
       )}
     </Layout>
@@ -8363,6 +8556,7 @@ import {ListStyles} from '../../styles/Styles';
 import SwipeableItem from '../../components/SwipeableItem';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
+import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const ShoppingCart = () => {
   const route = useRoute();
@@ -8471,12 +8665,16 @@ const ShoppingCart = () => {
     }
   };
 
-  const SelectedItemInfo = () => (
+  const SelectedItem = () => (
     <BottomSheet
       visible={showItemInfo}
       onClose={() => setShowItemInfo(false)}
       snapPoints={[0.01, 0.9]}>
-      <Text>{JSON.stringify(selectedItem)}</Text>
+      <SelectedItemInfo
+        selectedItem={selectedItem}
+        setShowItemInfo={setShowItemInfo}
+        navigate={{to: 'ShoppingItems', backTo: 'ShoppingCart'}}
+      />
     </BottomSheet>
   );
 
@@ -8534,7 +8732,7 @@ const ShoppingCart = () => {
             ]}
             leftButtons={[]}
           />
-          <SelectedItemInfo />
+          <SelectedItem />
         </View>
       )}
     </Layout>
@@ -8789,6 +8987,7 @@ import {ListStyles} from '../../styles/Styles';
 import SwipeableItem from '../../components/SwipeableItem';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
+import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const ShoppingList = () => {
   const route = useRoute();
@@ -8857,12 +9056,16 @@ const ShoppingList = () => {
     [dispatch, core.profileID, shoppingList],
   );
 
-  const SelectedItemInfo = ({navigate}) => (
+  const SelectedItem = () => (
     <BottomSheet
       visible={showItemInfo}
       onClose={() => setShowItemInfo(false)}
       snapPoints={[0.01, 0.9]}>
-      <Text>{JSON.stringify(selectedItem)}</Text>
+      <SelectedItemInfo
+        selectedItem={selectedItem}
+        setShowItemInfo={setShowItemInfo}
+        navigate={{to: 'ShoppingItems', backTo: 'ShoppingList'}}
+      />
     </BottomSheet>
   );
 
@@ -8920,9 +9123,7 @@ const ShoppingList = () => {
             ]}
             leftButtons={[]}
           />
-          <SelectedItemInfo
-            navigate={{to: 'UpdateShopItems', backTo: 'ShoppingList'}}
-          />
+          <SelectedItem />
         </View>
       )}
     </Layout>
