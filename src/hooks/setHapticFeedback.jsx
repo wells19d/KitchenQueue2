@@ -7,7 +7,6 @@ export const setHapticFeedback = () => {
       enableVibrateFallback: true,
       ignoreAndroidSystemSettings: false,
     };
-    // console.log('props:', props);
     switch (props) {
       case 'off':
         break;

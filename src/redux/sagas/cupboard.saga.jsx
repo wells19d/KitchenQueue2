@@ -39,7 +39,6 @@ function* fetchCupboard(action) {
       };
 
       yield put({type: 'SET_CUPBOARD', payload: cupboard});
-      console.log('Cupboard Set');
     } else {
       yield put({type: 'SET_CUPBOARD', payload: null});
     }

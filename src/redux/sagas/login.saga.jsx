@@ -4,7 +4,6 @@ import {put, takeLatest, select, call} from 'redux-saga/effects';
 // Step 1: Fetch profile using user.uid
 function* handleLogin(action) {
   try {
-    console.log('Starting login...');
     const uid = action.payload;
 
     // ✅ Step 1: Fetch Profile
@@ -25,7 +24,6 @@ function* handleLogin(action) {
     yield put({type: 'FETCH_SHOP_CART', payload: {shoppingCartID}});
     yield put({type: 'FETCH_CUPBOARD', payload: {cupboardID}});
   } catch (error) {
-    console.log('Login failed');
     yield put({type: 'LOGIN_SEQUENCE_FAILED', payload: error.message});
   }
 }

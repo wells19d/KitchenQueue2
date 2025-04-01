@@ -15,7 +15,6 @@ const SelectedItemInfo = props => {
     groupedView = false,
     cupboardView = false,
   } = props;
-  console.log('selectedItem', selectedItem);
 
   const navigation = useNavigation();
 

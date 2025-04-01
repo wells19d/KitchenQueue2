@@ -8,7 +8,6 @@ const db = getFirestore(getApp());
 // New Process
 function* fetchAccount(action) {
   const {account, id} = action.payload;
-  // console.log('[Saga] Fetching account for ID:', accountId);
 
   try {
     const accountRef = doc(db, 'accounts', account);
@@ -16,7 +15,6 @@ function* fetchAccount(action) {
 
     if (accountDoc.exists) {
       const accountData = accountDoc.data();
-      // console.log('[Saga] ✅ Account Data:', accountData);
 
       const isAllowed = accountData?.allowedUsers?.includes(id);
 
@@ -29,7 +27,6 @@ function* fetchAccount(action) {
             createdOn: accountData?.createdOn || null,
           },
         });
-        console.log('Account Set');
       } else {
         yield put({type: 'SET_ACCOUNT', payload: null});
       }

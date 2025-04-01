@@ -187,7 +187,6 @@ const Main = () => {
         dispatch({type: 'LOGOUT'});
       }
     } catch (e) {
-      console.log('[Main] Firebase not ready yet:', e.message);
       dispatch({type: 'LOGOUT'});
     }
   }, []);
@@ -3802,7 +3801,6 @@ const SelectedItemInfo = props => {
     groupedView = false,
     cupboardView = false,
   } = props;
-  console.log('selectedItem', selectedItem);
 
   const navigation = useNavigation();
 
@@ -4181,7 +4179,6 @@ export const setHapticFeedback = () => {
       enableVibrateFallback: true,
       ignoreAndroidSystemSettings: false,
     };
-    // console.log('props:', props);
     switch (props) {
       case 'off':
         break;
@@ -4761,7 +4758,6 @@ const db = getFirestore(getApp());
 // New Process
 function* fetchAccount(action) {
   const {account, id} = action.payload;
-  // console.log('[Saga] Fetching account for ID:', accountId);
 
   try {
     const accountRef = doc(db, 'accounts', account);
@@ -4769,7 +4765,6 @@ function* fetchAccount(action) {
 
     if (accountDoc.exists) {
       const accountData = accountDoc.data();
-      // console.log('[Saga] ✅ Account Data:', accountData);
 
       const isAllowed = accountData?.allowedUsers?.includes(id);
 
@@ -4782,7 +4777,6 @@ function* fetchAccount(action) {
             createdOn: accountData?.createdOn || null,
           },
         });
-        console.log('Account Set');
       } else {
         yield put({type: 'SET_ACCOUNT', payload: null});
       }
@@ -4876,7 +4870,6 @@ function* fetchCupboard(action) {
       };
 
       yield put({type: 'SET_CUPBOARD', payload: cupboard});
-      console.log('Cupboard Set');
     } else {
       yield put({type: 'SET_CUPBOARD', payload: null});
     }
@@ -5448,7 +5441,6 @@ import {put, takeLatest, select, call} from 'redux-saga/effects';
 // Step 1: Fetch profile using user.uid
 function* handleLogin(action) {
   try {
-    console.log('Starting login...');
     const uid = action.payload;
 
     // ✅ Step 1: Fetch Profile
@@ -5469,7 +5461,6 @@ function* handleLogin(action) {
     yield put({type: 'FETCH_SHOP_CART', payload: {shoppingCartID}});
     yield put({type: 'FETCH_CUPBOARD', payload: {cupboardID}});
   } catch (error) {
-    console.log('Login failed');
     yield put({type: 'LOGIN_SEQUENCE_FAILED', payload: error.message});
   }
 }
@@ -5528,7 +5519,6 @@ function* fetchProfile(action) {
           createdOn: profileData?.createdOn || null,
         },
       });
-      console.log('Profile Set');
     } else {
       yield put({type: 'SET_PROFILE', payload: null});
     }
@@ -5616,7 +5606,6 @@ function* fetchShopCart(action) {
       };
 
       yield put({type: 'SET_SHOP_CART', payload: shopCart});
-      console.log('ShopCart Set');
     } else {
       yield put({type: 'SET_SHOP_CART', payload: null});
     }
@@ -5976,7 +5965,6 @@ import {persistor} from '../../../store';
 const auth = getAuth();
 
 const getErrorMessage = error => {
-  console.log(error.code);
   switch (error.code) {
     case 'auth/invalid-credential':
     case 'auth/wrong-password':
@@ -6008,7 +5996,6 @@ function* loginUser(action) {
 
     if (user?.emailVerified) {
       yield put({type: 'SET_USER', payload: user});
-      console.log('User Set');
       yield put({type: 'START_LOGIN', payload: user.uid});
     } else {
       yield put({
@@ -6735,8 +6722,6 @@ const CupboardItems = () => {
   const core = useCoreInfo();
   const navigation = useNavigation();
   const cupboard = useCupboard();
-
-  console.log('core', core);
 
   const itemToUpdate =
     cupboard?.items?.find(item => item.itemId === itemId) ?? null;
@@ -10210,7 +10195,7 @@ const useRealTimeAccounts = () => {
       return;
     }
 
-    console.log(`🔄 Fetching Account data from Firestore`);
+    // console.log(`🔄 Fetching Account data from Firestore`);
     const accountRef = doc(db, 'accounts', profile.account);
 
     const unsubscribe = onSnapshot(
@@ -10266,7 +10251,7 @@ const useRealTimeAllowedProfiles = () => {
       return;
     }
 
-    console.log(`🔄 Fetching Allowed Profiles data from Firestore`);
+    // console.log(`🔄 Fetching Allowed Profiles data from Firestore`);
 
     const profilesQuery = query(
       collection(db, 'profiles'),
@@ -10322,7 +10307,7 @@ const useRealTimeCupboard = () => {
     if (!account?.cupboardID) return;
 
     const cupboardRef = doc(db, 'cupboards', account.cupboardID);
-    console.log('🔁 RealTimeCupboard listener mounted');
+    // console.log('🔁 RealTimeCupboard listener mounted');
 
     const unsubscribe = onSnapshot(
       cupboardRef,
@@ -10341,21 +10326,21 @@ const useRealTimeCupboard = () => {
           JSON.stringify(prev) !== JSON.stringify(nextCupboard);
 
         if (hasChanged) {
-          console.log('🟢 RealTimeCupboard updated');
+          // console.log('🟢 RealTimeCupboard updated');
           prevCupboardRef.current = nextCupboard;
           dispatch({type: 'SET_CUPBOARD', payload: nextCupboard});
         } else {
-          console.log('⚪ No cupboard change detected');
+          // console.log('⚪ No cupboard change detected');
         }
       },
       error => {
-        console.error('❌ RealTimeCupboard error:', error);
+        // console.error('❌ RealTimeCupboard error:', error);
         dispatch({type: 'CUPBOARD_FETCH_FAILED', payload: error.message});
       },
     );
 
     return () => {
-      console.log('🛑 RealTimeCupboard listener removed');
+      // console.log('🛑 RealTimeCupboard listener removed');
       unsubscribe();
     };
   }, [dispatch, account?.cupboardID, db]);
@@ -10381,7 +10366,7 @@ const useRealTimeProfiles = () => {
       return;
     }
 
-    console.log(`🔄 Fetching Profile data from Firestore`);
+    // console.log(`🔄 Fetching Profile data from Firestore`);
     const profileRef = doc(db, 'profiles', user.uid);
 
     const unsubscribe = onSnapshot(
@@ -10430,7 +10415,7 @@ const useRealTimeShoppingCart = () => {
     if (!account?.shoppingCartID) return;
 
     const cartRef = doc(db, 'shoppingCarts', account.shoppingCartID);
-    console.log('🔁 RealTimeShoppingCart listener mounted');
+    // console.log('🔁 RealTimeShoppingCart listener mounted');
 
     const unsubscribe = onSnapshot(
       cartRef,
@@ -10449,21 +10434,21 @@ const useRealTimeShoppingCart = () => {
           JSON.stringify(prevCart) !== JSON.stringify(nextCart);
 
         if (hasChanged) {
-          console.log('🟢 RealTimeShoppingCart updated');
+          // console.log('🟢 RealTimeShoppingCart updated');
           prevCartRef.current = nextCart;
           dispatch({type: 'SET_SHOP_CART', payload: nextCart});
         } else {
-          console.log('⚪ No cart change detected');
+          // console.log('⚪ No cart change detected');
         }
       },
       error => {
-        console.error('❌ RealTimeShoppingCart error:', error);
+        // console.error('❌ RealTimeShoppingCart error:', error);
         dispatch({type: 'SHOP_CART_FETCH_FAILED', payload: error.message});
       },
     );
 
     return () => {
-      console.log('🛑 RealTimeShoppingCart listener removed');
+      // console.log('🛑 RealTimeShoppingCart listener removed');
       unsubscribe();
     };
   }, [dispatch, account?.shoppingCartID, db]);
@@ -10485,7 +10470,7 @@ const useRealTimeUsers = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(`🔄 Fetching User data from Firebase Auth`);
+    // console.log(`🔄 Fetching User data from Firebase Auth`);
 
     const unsubscribe = onAuthStateChanged(auth, currentUser => {
       if (currentUser) {

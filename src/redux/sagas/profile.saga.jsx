@@ -29,7 +29,6 @@ function* fetchProfile(action) {
           createdOn: profileData?.createdOn || null,
         },
       });
-      console.log('Profile Set');
     } else {
       yield put({type: 'SET_PROFILE', payload: null});
     }
