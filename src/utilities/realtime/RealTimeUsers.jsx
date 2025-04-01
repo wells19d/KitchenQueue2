@@ -9,7 +9,7 @@ const useRealTimeUsers = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(`🔄 Fetching User data from Firebase Auth`);
+    // console.log(`🔄 Fetching User data from Firebase Auth`);
 
     const unsubscribe = onAuthStateChanged(auth, currentUser => {
       if (currentUser) {

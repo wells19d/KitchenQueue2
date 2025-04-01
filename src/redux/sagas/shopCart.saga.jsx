@@ -39,7 +39,6 @@ function* fetchShopCart(action) {
       };
 
       yield put({type: 'SET_SHOP_CART', payload: shopCart});
-      console.log('ShopCart Set');
     } else {
       yield put({type: 'SET_SHOP_CART', payload: null});
     }

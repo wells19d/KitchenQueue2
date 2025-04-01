@@ -13,7 +13,7 @@ const useRealTimeProfiles = () => {
       return;
     }
 
-    console.log(`🔄 Fetching Profile data from Firestore`);
+    // console.log(`🔄 Fetching Profile data from Firestore`);
     const profileRef = doc(db, 'profiles', user.uid);
 
     const unsubscribe = onSnapshot(

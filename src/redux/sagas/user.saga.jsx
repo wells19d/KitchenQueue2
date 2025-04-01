@@ -6,7 +6,6 @@ import {persistor} from '../../../store';
 const auth = getAuth();
 
 const getErrorMessage = error => {
-  console.log(error.code);
   switch (error.code) {
     case 'auth/invalid-credential':
     case 'auth/wrong-password':
@@ -38,7 +37,6 @@ function* loginUser(action) {
 
     if (user?.emailVerified) {
       yield put({type: 'SET_USER', payload: user});
-      console.log('User Set');
       yield put({type: 'START_LOGIN', payload: user.uid});
     } else {
       yield put({

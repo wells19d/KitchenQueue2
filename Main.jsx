@@ -78,7 +78,6 @@ const Main = () => {
         dispatch({type: 'LOGOUT'});
       }
     } catch (e) {
-      console.log('[Main] Firebase not ready yet:', e.message);
       dispatch({type: 'LOGOUT'});
     }
   }, []);

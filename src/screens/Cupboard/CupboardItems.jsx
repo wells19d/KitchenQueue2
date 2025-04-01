@@ -21,8 +21,6 @@ const CupboardItems = () => {
   const navigation = useNavigation();
   const cupboard = useCupboard();
 
-  console.log('core', core);
-
   const itemToUpdate =
     cupboard?.items?.find(item => item.itemId === itemId) ?? null;
 
