@@ -1,97 +1,129 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# KitchenQueue
 
-# Getting Started
+**KitchenQueue** is a comprehensive mobile application designed for families to share and streamline meal planning, grocery shopping, and kitchen inventory management. The app is built with React Native, leveraging Redux and Redux-Saga for state management, Firebase for authentication and Firestore for real-time database syncing. It uses a custom-built UI library (`KQ-UI`) for performance-focused, brand-consistent components.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## Core Features
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### MVP Stage 1 (Free Version)
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+1. **User Management**
 
-```sh
-# Using npm
-npm start
+   - Firebase Authentication is used to securely manage user sign-up and login.
 
-# OR using Yarn
-yarn start
-```
+2. **Profile Management**
 
-## Step 2: Build and run your app
+   - Users can create and manage their profiles, including personal information and settings.
+   - Profiles are an extension of the user and are tied to a shared account.
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+3. **Account Management**
 
-### Android
+   - A primary account owner manages the account, which connects to all shared data including Shopping, Cupboard, and Recipes.
+   - Each account can support up to 4 users/profiles.
+   - Each account is limited to one shared Shopping list/cart, one Cupboard, and one Recipe Box.
 
-```sh
-# Using npm
-npm run android
+4. **Shopping (List / Cart)**
 
-# OR using Yarn
-yarn android
-```
+   - A single Shopping (List / Cart) is shared across the account.
+   - Users can add, edit, and move items between the List and the Cart.
+   - Real-time updates are synced via Firestore across all connected users.
+   - A “Checkout” action moves all Cart items into the Cupboard inventory.
 
-### iOS
+5. **Cupboard Inventory Management**
+   - A single Cupboard is shared across the account.
+   - Users can track inventory across multiple storage types (e.g., pantry, fridge, freezer).
+   - Item quantities are updated as users add, consume, or use ingredients via recipes.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+---
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### MVP Stage 2 (Free Version)
 
-```sh
-bundle install
-```
+1. **Recipe Box**
 
-Then, and every time you update your native dependencies, run:
+   - Users can create and manage their own recipes.
+   - Recipes check against the Cupboard to flag missing ingredients.
+   - Missing items can be added directly to the Shopping list.
+   - When a recipe is marked as "made," it deducts used ingredients from the Cupboard.
 
-```sh
-bundle exec pod install
-```
+2. **Favorite Items**
+   - Users can create and store frequently used or purchased items for quick access when building Shopping lists.
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+---
 
-```sh
-# Using npm
-npm run ios
+### Future Enhancements (Subscription-Based Features)
 
-# OR using Yarn
-yarn ios
-```
+1. **UPC Scanning**
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+   - Scan barcodes to quickly add items to Shopping or Cupboard inventories.
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+2. **Recipe Searching**
 
-## Step 3: Modify your app
+   - Search online recipes and save them to your personal Recipe Box.
 
-Now that you have successfully run the app, let's make changes!
+3. **Community Recipe Box**
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+   - Shared recipe library with community-contributed meals.
+   - Users can browse, favorite, and add recipes to their box.
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+4. **Meal Planning**
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+   - Plan meals by day, week, or month.
+   - Automatically generate shopping lists for missing ingredients.
 
-## Congratulations! :tada:
+5. **Nutritional Information**
+   - Analyze and display nutritional facts for recipes.
+   - Help users make informed dietary choices.
 
-You've successfully run and modified your React Native App. :partying_face:
+---
 
-### Now what?
+### Long-Term Vision
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+1. **Enhanced Inventory Management (AI)**
 
-# Troubleshooting
+   - Use the camera and AI to batch-scan and add items to the app.
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+2. **Advanced Meal Planning and Suggestions (AI)**
 
-# Learn More
+   - Suggest meals based on dietary preferences, inventory, and store deals.
+   - Minimize food waste and maximize cost efficiency.
 
-To learn more about React Native, take a look at the following resources:
+3. **Voice Integration**
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+   - Add items or query the system via Alexa, Google Assistant, or Siri.
+   - Hands-free inventory checks and recipe suggestions.
+
+4. **Nutrition Tracking and Health Insights**
+
+   - Sync with wearables and health apps.
+   - Provide tailored nutrition advice based on user goals.
+
+5. **Grocery Delivery Integration**
+
+   - Order items directly from Shopping lists via partnered delivery services.
+   - Compare prices across stores for savings.
+
+6. **Budget Management**
+
+   - Track spending and generate budget-friendly meal suggestions.
+   - Visualize trends and saving opportunities.
+
+7. **Recipe Scaling and Conversion**
+   - Adjust recipes for desired servings.
+   - Support unit conversions between metric and imperial systems.
+
+---
+
+## Technology Stack
+
+- **React Native**: Cross-platform mobile development.
+- **Redux + Redux-Saga**: Scalable state and side-effect management.
+- **Firebase**: Authentication and Firestore real-time database.
+- **FlashList**: High-performance rendering of dynamic lists.
+- **Custom UI Library (KQ-UI)**: Optimized, modular component system for future library extraction.
+
+---
+
+## License
+
+This project's copyright is currently pending.
