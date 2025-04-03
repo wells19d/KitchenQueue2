@@ -19,6 +19,7 @@ src/KQ-UI/KQText.jsx
 src/KQ-UI/KQToast.jsx
 src/KQ-UI/KQUtilities.jsx
 src/KQ-UI/index.js
+src/components/Avatar.jsx
 src/components/CurvedBottomBar.jsx
 src/components/FlashCell.jsx
 src/components/IconListRouter.jsx
@@ -72,6 +73,7 @@ src/screens/Shopping/ShoppingCart.jsx
 src/screens/Shopping/ShoppingItems.jsx
 src/screens/Shopping/ShoppingList.jsx
 src/styles/Styles.jsx
+src/utilities/avatarOptions.js
 src/utilities/categories.js
 src/utilities/coreInfo.js
 src/utilities/deviceUtils.js
