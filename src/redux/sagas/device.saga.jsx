@@ -37,13 +37,10 @@ function* watchDeviceDimensions() {
 function* fetchDeviceInfo() {
   try {
     const {width, height} = Dimensions.get('window');
-    const pixelRatio = PixelRatio.get();
-    const pixelWidth = width * pixelRatio;
-    const pixelHeight = height * pixelRatio;
 
     const ratio = (
-      Math.sqrt(Math.pow(pixelWidth, 2) + Math.pow(pixelHeight, 2)) / 100
-    ).toFixed(2);
+      Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / 100
+    ).toFixed(1);
 
     const brand = yield call(getBrand);
     const formattedBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
@@ -51,27 +48,22 @@ function* fetchDeviceInfo() {
     // Calculate device size
     let sizeForDevice = 'xSmall';
 
-    if (pixelWidth >= 1300) {
-      sizeForDevice = 'xLarge'; // Ultra-sized phones
-    } else if (pixelWidth >= 1250) {
-      sizeForDevice = 'large'; // Large phones
-    } else if (pixelWidth >= 1200) {
-      sizeForDevice = 'medium'; // Standard flagships
-    } else if (pixelWidth >= 1000) {
-      sizeForDevice = 'small'; // Smaller phones
+    if (ratio >= 10.0) {
+      sizeForDevice = 'xLarge';
+    } else if (ratio >= 9.6) {
+      sizeForDevice = 'large';
+    } else if (ratio >= 8.9) {
+      sizeForDevice = 'medium';
+    } else if (ratio >= 8.3) {
+      sizeForDevice = 'small';
     } else {
-      sizeForDevice = 'xSmall'; // Compact phones
+      sizeForDevice = 'xSmall';
     }
 
     const deviceInfo = {
       dimensions: {
-        height: Number(height.toFixed(0)),
-        width: Number(width.toFixed(0)),
-      },
-      screen: {
-        pixelHeight: pixelHeight,
-        pixelWidth: pixelWidth,
-        ratio: Number(ratio),
+        height: Number(height.toFixed(2)),
+        width: Number(width.toFixed(2)),
       },
       system: {
         brand: formattedBrand,

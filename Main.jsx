@@ -40,6 +40,9 @@ import ShoppingCart from './src/screens/Shopping/ShoppingCart';
 import CupboardGroup from './src/screens/Cupboard/CupboardGroup';
 import ShoppingItems from './src/screens/Shopping/ShoppingItems';
 import CupboardItems from './src/screens/Cupboard/CupboardItems';
+import Settings from './src/screens/Account/Settings';
+import Help from './src/screens/Account/Help';
+import Profile from './src/screens/Account/Profile';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -354,10 +357,27 @@ const Main = () => {
               },
             }}
           />
-          {/* <Stack.Screen
+          <Stack.Screen
+            name="AccountProfile"
+            component={Profile}
+            initialParams={{
+              title: 'Profile',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('AccountProfile');
+              },
+            }}
+          />
+          <Stack.Screen
             name="AccountSettings"
             component={Settings}
-            options={{ freezeOnBlur: true }} 
+            options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Settings',
               bgColor: bgColor,
@@ -371,11 +391,11 @@ const Main = () => {
                 setScreenLocation('AccountSettings');
               },
             }}
-          /> */}
-          {/* <Stack.Screen
+          />
+          <Stack.Screen
             name="AccountHelp"
             component={Help}
-            options={{ freezeOnBlur: true }} 
+            options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Help',
               bgColor: bgColor,
@@ -389,7 +409,7 @@ const Main = () => {
                 setScreenLocation('AccountHelp');
               },
             }}
-          /> */}
+          />
           {/* <Stack.Screen
             name="Vibrations"
             component={Vibrations}

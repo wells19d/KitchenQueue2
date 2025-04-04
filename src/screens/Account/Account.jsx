@@ -1,8 +1,8 @@
 //* Account.jsx
 import React, {useMemo} from 'react';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {Layout, Text} from '../../KQ-UI';
-import {TouchableOpacity, View} from 'react-native';
+import {Dimensions, TouchableOpacity, View} from 'react-native';
 import {Icons} from '../../components/IconListRouter';
 import Avatar from '../../components/Avatar';
 import {
@@ -12,31 +12,38 @@ import {
 } from '../../hooks/useHooks';
 import {createAvatar} from '@dicebear/core';
 import {avataaars} from '@dicebear/collection';
-import {SvgXml} from 'react-native-svg';
+import {setHapticFeedback} from '../../hooks/setHapticFeedback';
+import {useDispatch} from 'react-redux';
 
 const Account = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-  const allowedProfiles = useAllowedProfiles();
+  const useHaptics = setHapticFeedback();
+  const navigation = useNavigation();
   const profile = useProfile();
-  const isOwner = profile?.role === 'owner';
+  const allowedProfiles = useAllowedProfiles();
   const device = useDeviceInfo();
+  const dispatch = useDispatch();
+
+  const isOwner = profile?.role === 'owner';
+
+  console.log('device', device);
 
   const blankAvatar = createAvatar(avataaars, {
     scale: 90,
     translateY: 9,
     randomizeIds: true,
     backgroundColor: ['eeeeee'],
-    accessories: [' '],
-    accessoriesColor: [' '],
+    accessories: [''],
+    accessoriesColor: [''],
     accessoriesProbability: 100,
     clothesColor: ['666666'],
     clothing: ['graphicShirt'],
     clothingGraphic: [''],
     eyebrows: [''],
     eyes: [''],
-    facialHair: [' '],
-    facialHairColor: [' '],
+    facialHair: [''],
+    facialHairColor: [''],
     facialHairProbability: 100,
     hairColor: [''],
     mouth: [''],
@@ -47,15 +54,15 @@ const Account = () => {
   const customAvatarWidth = useMemo(() => {
     switch (device?.system?.deviceSize) {
       case 'small':
-        return {height: 65, width: 65};
-      case 'medium':
         return {height: 70, width: 70};
+      case 'medium':
+        return {height: 75, width: 75};
       case 'large':
-        return {height: 80, width: 80};
+        return {height: 75, width: 75};
       case 'xLarge':
-        return {height: 85, width: 85};
+        return {height: 80, width: 80};
       default:
-        return {height: 100, width: 100};
+        return {height: 85, width: 85};
     }
   }, [device?.system?.deviceSize]);
 
@@ -85,12 +92,12 @@ const Account = () => {
 
     const avatars = allowedProfiles?.map((profile, index) => (
       <View key={`profile-${index}`} style={{padding: 5}}>
-        <TouchableOpacity onPress={() => console.log('View Profile')}>
-          <Avatar
-            profilePicture={profile?.pictureURL}
-            viewStyles={customAvatarWidth}
-          />
-        </TouchableOpacity>
+        {/* <TouchableOpacity onPress={() => console.log('View Profile')}> */}
+        <Avatar
+          profilePicture={profile?.pictureURL}
+          viewStyles={customAvatarWidth}
+        />
+        {/* </TouchableOpacity> */}
         <View style={{justifyContent: 'center', alignItems: 'center'}}>
           <Text size="xSmall">{profile?.firstName}</Text>
           <Text size="tiny">{profile?.role}</Text>
@@ -100,7 +107,7 @@ const Account = () => {
 
     const addAvatar = (
       <View key="add-avatar" style={{padding: 5}}>
-        <TouchableOpacity onPress={() => console.log('Add User')}>
+        {/* <TouchableOpacity onPress={() => console.log('Add User')}>
           <View style={[AccountStyles.avatarView, customAvatarWidth]}>
             <SvgXml xml={blankAvatar} />
           </View>
@@ -108,7 +115,7 @@ const Account = () => {
         <View style={{justifyContent: 'center', alignItems: 'center'}}>
           <Text size="xSmall">Add</Text>
           <Text size="tiny">User</Text>
-        </View>
+        </View> */}
       </View>
     );
 
