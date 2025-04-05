@@ -27,7 +27,6 @@ const ignoreFiles = [
   'y-structure.txt', // na
   'z-export.txt', // na
   'exportComponents.js', //na
-  'notes.txt', // na
 ];
 
 function walk(dir, validExtensions) {

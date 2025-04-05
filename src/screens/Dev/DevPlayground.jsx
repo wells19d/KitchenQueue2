@@ -5,6 +5,7 @@ import {Layout, ScrollView, Text} from '../../KQ-UI';
 import {
   useAccount,
   useCupboard,
+  useDeviceInfo,
   useProfile,
   useShoppingCart,
 } from '../../hooks/useHooks';
@@ -18,6 +19,7 @@ const DevPlayground = () => {
   const shopping = useShoppingCart();
   const cupboard = useCupboard();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+  const device = useDeviceInfo();
 
   const renderValue = value => {
     if (Array.isArray(value)) {
@@ -90,6 +92,19 @@ const DevPlayground = () => {
       sheetOpen={false}
       innerViewStyles={{}}>
       <ScrollView>
+        <View style={{borderWidth: 1, padding: 5}}>
+          <Text>Device Info</Text>
+          {Object.entries(device)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([key, value]) => (
+              <View key={key} style={{marginBottom: 8}}>
+                <Text font="open-7" size="xSmall">
+                  {key}:
+                </Text>
+                {renderValue(value)}
+              </View>
+            ))}
+        </View>
         <View style={{borderWidth: 1, padding: 5}}>
           <Text>Profile</Text>
           {Object.entries(profile)

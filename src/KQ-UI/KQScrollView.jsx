@@ -2,7 +2,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {ScrollView, View, StyleSheet} from 'react-native';
 
-const KQScrollView = ({children, style}) => {
+const KQScrollView = ({children, style, noBar = false}) => {
   const [scrollBarHeight, setScrollBarHeight] = useState(0);
   const [scrollBarTop, setScrollBarTop] = useState(0);
   const [layoutHeight, setLayoutHeight] = useState(0);
@@ -49,7 +49,7 @@ const KQScrollView = ({children, style}) => {
         onLayout={handleLayout}
         onContentSizeChange={handleContentSizeChange}
         scrollEventThrottle={16}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={noBar ? {} : styles.scrollContent}
         showsVerticalScrollIndicator={false}>
         {children}
       </ScrollView>
