@@ -14,6 +14,8 @@ import {createAvatar} from '@dicebear/core';
 import {avataaars} from '@dicebear/collection';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 import {useDispatch} from 'react-redux';
+import {SvgXml} from 'react-native-svg';
+import {AvatarStyles} from '../../styles/Styles';
 
 const Account = () => {
   const route = useRoute();
@@ -58,9 +60,9 @@ const Account = () => {
       case 'medium':
         return {height: 75, width: 75};
       case 'large':
-        return {height: 75, width: 75};
-      case 'xLarge':
         return {height: 80, width: 80};
+      case 'xLarge':
+        return {height: 85, width: 85};
       default:
         return {height: 85, width: 85};
     }
@@ -91,31 +93,33 @@ const Account = () => {
     const showAddAvatar = isOwner && allowedProfiles?.length < 4;
 
     const avatars = allowedProfiles?.map((profile, index) => (
-      <View key={`profile-${index}`} style={{padding: 5}}>
+      <View key={`profile-${index}`} style={AccountStyles.avatarCard}>
         {/* <TouchableOpacity onPress={() => console.log('View Profile')}> */}
         <Avatar
           profilePicture={profile?.pictureURL}
           viewStyles={customAvatarWidth}
         />
         {/* </TouchableOpacity> */}
-        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <View style={AccountStyles.avatarTitle}>
           <Text size="xSmall">{profile?.firstName}</Text>
-          <Text size="tiny">{profile?.role}</Text>
+          <Text size="tiny">({profile?.role})</Text>
         </View>
       </View>
     ));
 
     const addAvatar = (
-      <View key="add-avatar" style={{padding: 5}}>
-        {/* <TouchableOpacity onPress={() => console.log('Add User')}>
+      <View key="add-avatar" style={{padding: 0}}>
+        {/* <View key="add-avatar" style={AccountStyles.avatarCard}>
+        <TouchableOpacity onPress={() => console.log('Add User')}>
           <View style={[AccountStyles.avatarView, customAvatarWidth]}>
             <SvgXml xml={blankAvatar} />
           </View>
         </TouchableOpacity>
-        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <View style={AccountStyles.avatarTitle}>
           <Text size="xSmall">Add</Text>
           <Text size="tiny">User</Text>
-        </View> */}
+        </View>
+      </View> */}
       </View>
     );
 
@@ -154,7 +158,8 @@ const Account = () => {
           />
         </View>
       </View>
-      <View style={AccountStyles.bottomSection}>
+
+      <View style={AccountStyles.userSection}>
         <View style={AccountStyles.sectionUsers}>
           <View style={AccountStyles.usersHeader}>
             <Text size="small">Users:</Text>
@@ -165,6 +170,22 @@ const Account = () => {
           <View style={AccountStyles.avatarWrapper}>
             <BuildAvatars />
           </View>
+        </View>
+      </View>
+      <View style={AccountStyles.midSection}>
+        <View style={AccountStyles.usersHeader}>
+          <Text size="small">Collections:</Text>
+        </View>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text size="xSmall">Coming Soon</Text>
+        </View>
+      </View>
+      <View style={AccountStyles.midSection}>
+        <View style={AccountStyles.usersHeader}>
+          <Text size="small">Limits:</Text>
+        </View>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text size="xSmall">Coming Soon</Text>
         </View>
       </View>
     </Layout>
@@ -178,12 +199,38 @@ const AccountStyles = {
     marginBottom: 5,
     marginHorizontal: 5,
   },
-  bottomSection: {
+  midSection: {
+    minHeight: 125,
     backgroundColor: '#fff',
     marginTop: 5,
     marginBottom: 5,
     marginHorizontal: 10,
-    flex: 1,
+    borderWidth: 1,
+    borderColor: '#c4c4c4',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    shadowColor: '#373d4380',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    elevation: 4,
+  },
+  collectionHeader: {
+    borderBottomWidth: 1,
+    borderColor: '#c4c4c4',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  userSection: {
+    backgroundColor: '#fff',
+    marginTop: 5,
+    marginBottom: 5,
+    marginHorizontal: 10,
+    // flex: 1,
+    // height: 100,
   },
   sectionNav: {flexDirection: 'row'},
   sectionUsers: {
@@ -198,9 +245,9 @@ const AccountStyles = {
     },
     shadowOpacity: 0.25,
     shadowRadius: 2,
-    elevation: 5,
-    paddingBottom: 15,
-    flex: 1,
+    elevation: 4,
+    // paddingBottom: 15,
+    // flex: 1,
   },
   usersHeader: {
     borderBottomWidth: 1,
@@ -212,8 +259,20 @@ const AccountStyles = {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginHorizontal: 10,
-    marginTop: 5,
+    // alignItems: 'center',
+    // marginHorizontal: 10,
+    // marginTop: 5,
+  },
+  avatarCard: {
+    paddingTop: 15,
+    paddingBottom: 10,
+    paddingHorizontal: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarTitle: {
+    paddingTop: 2,
+    alignItems: 'center',
   },
   subWrapper: {
     height: 65,
@@ -228,7 +287,7 @@ const AccountStyles = {
     },
     shadowOpacity: 0.25,
     shadowRadius: 2,
-    elevation: 5,
+    elevation: 4,
     marginHorizontal: 5,
   },
   subIcon: {
