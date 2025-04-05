@@ -72,7 +72,6 @@ const ItemDisplay = () => {
 
   const handleSave = () => {
     if (!canSave) return;
-    if (!areArraysEqual(flashCellOrder, userSettings)) return;
     dispatch({
       type: 'UPDATE_PROFILE_REQUEST',
       payload: {
