@@ -287,8 +287,8 @@ export const ScreenStyles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   scrollContainer: {
-    flex: 1,
-    paddingVertical: 10,
+    marginTop: 5,
+    flex: 0,
   },
 });
 
