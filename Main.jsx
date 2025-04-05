@@ -43,6 +43,8 @@ import CupboardItems from './src/screens/Cupboard/CupboardItems';
 import Settings from './src/screens/Account/Settings';
 import Help from './src/screens/Account/Help';
 import Profile from './src/screens/Account/Profile';
+import Vibrations from './src/screens/Account/Vibrations';
+import ItemDisplay from './src/screens/Account/ItemDisplay';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -410,10 +412,10 @@ const Main = () => {
               },
             }}
           />
-          {/* <Stack.Screen
+          <Stack.Screen
             name="Vibrations"
             component={Vibrations}
-            options={{ freezeOnBlur: true }} 
+            options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Vibration Settings',
               bgColor: bgColor,
@@ -427,11 +429,11 @@ const Main = () => {
                 setScreenLocation('Vibrations');
               },
             }}
-          /> */}
-          {/* <Stack.Screen
+          />
+          <Stack.Screen
             name="ItemDisplay"
             component={ItemDisplay}
-            options={{ freezeOnBlur: true }} 
+            options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Item Display',
               bgColor: bgColor,
@@ -445,7 +447,7 @@ const Main = () => {
                 setScreenLocation('ItemDisplay');
               },
             }}
-          /> */}
+          />
           {/* <Stack.Screen
             name="AdvancedFields"
             component={AdvancedFields}
