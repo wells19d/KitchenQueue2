@@ -29,8 +29,6 @@ const Account = () => {
 
   const isOwner = profile?.role === 'owner';
 
-  console.log('device', device);
-
   const blankAvatar = createAvatar(avataaars, {
     scale: 90,
     translateY: 9,
@@ -229,8 +227,6 @@ const AccountStyles = {
     marginTop: 5,
     marginBottom: 5,
     marginHorizontal: 10,
-    // flex: 1,
-    // height: 100,
   },
   sectionNav: {flexDirection: 'row'},
   sectionUsers: {
@@ -246,8 +242,6 @@ const AccountStyles = {
     shadowOpacity: 0.25,
     shadowRadius: 2,
     elevation: 4,
-    // paddingBottom: 15,
-    // flex: 1,
   },
   usersHeader: {
     borderBottomWidth: 1,
@@ -259,9 +253,6 @@ const AccountStyles = {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    // alignItems: 'center',
-    // marginHorizontal: 10,
-    // marginTop: 5,
   },
   avatarCard: {
     paddingTop: 15,
