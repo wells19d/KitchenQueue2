@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import NavHeader from '../components/NavHeader';
+import KQScrollView from './KQScrollView';
 
 const KQLayout = ({
   children,
@@ -23,8 +24,10 @@ const KQLayout = ({
   sheetOpen = false,
   useHeader = true,
   useKeyboardHandling = false,
+  useScrolling = false,
   innerViewStyles = {},
   outerViewStyles = {},
+  noBar = false,
 }) => {
   if (useKeyboardHandling) {
     return (
@@ -59,6 +62,30 @@ const KQLayout = ({
             </KeyboardAvoidingView>
           </View>
         </TouchableWithoutFeedback>
+      </View>
+    );
+  } else if (useScrolling) {
+    return (
+      <View
+        style={[
+          {flex: 1, backgroundColor: bgColor, paddingBottom: 25},
+          outerViewStyles,
+        ]}>
+        {useHeader && (
+          <NavHeader
+            title={headerTitle}
+            headerColor={headerColor}
+            textColor={textColor}
+            LeftButton={LeftButton}
+            RightButton={RightButton}
+            LeftAction={LeftAction}
+            RightAction={RightAction}
+            sheetOpen={sheetOpen}
+          />
+        )}
+        <KQScrollView noBar={noBar}>
+          <View style={[{flex: 1}, innerViewStyles]}>{children}</View>
+        </KQScrollView>
       </View>
     );
   } else {

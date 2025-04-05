@@ -48,13 +48,13 @@ function* fetchDeviceInfo() {
     // Calculate device size
     let sizeForDevice = 'xSmall';
 
-    if (ratio >= 10.0) {
+    if (ratio >= 10.5) {
       sizeForDevice = 'xLarge';
-    } else if (ratio >= 9.6) {
+    } else if (ratio >= 9.7) {
       sizeForDevice = 'large';
-    } else if (ratio >= 8.9) {
+    } else if (ratio >= 9.4) {
       sizeForDevice = 'medium';
-    } else if (ratio >= 8.3) {
+    } else if (ratio >= 9.0) {
       sizeForDevice = 'small';
     } else {
       sizeForDevice = 'xSmall';
@@ -64,6 +64,7 @@ function* fetchDeviceInfo() {
       dimensions: {
         height: Number(height.toFixed(2)),
         width: Number(width.toFixed(2)),
+        ratio: Number(ratio),
       },
       system: {
         brand: formattedBrand,

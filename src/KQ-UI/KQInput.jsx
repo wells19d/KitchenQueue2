@@ -23,6 +23,7 @@ const KQInput = ({
   maxCount = 250,
   containerStyles = {},
   wrapperStyles = {},
+  disabled = false,
   ...props
 }) => {
   const fontStyles = useFontStyles('open-6', 'small', 'black');
@@ -84,16 +85,22 @@ const KQInput = ({
       )}
       <View style={[styles.inputWrapper, {...wrapperStyles}]}>
         <View style={styles.textInputContainer}>
-          <TextInput
-            value={value}
-            onChangeText={handleTextChange}
-            autoCapitalize={capMode}
-            multiline={multiline}
-            allowFontScaling={false}
-            style={[fontStyles, multiMode, {padding: 0}]}
-            onSubmitEditing={Keyboard.dismiss}
-            {...props}
-          />
+          {disabled ? (
+            <Text style={[fontStyles, {padding: 0, color: '#c4c4c4'}]}>
+              {value}
+            </Text>
+          ) : (
+            <TextInput
+              value={value}
+              onChangeText={handleTextChange}
+              autoCapitalize={capMode}
+              multiline={multiline}
+              allowFontScaling={false}
+              style={[fontStyles, multiMode, {padding: 0}]}
+              onSubmitEditing={Keyboard.dismiss}
+              {...props}
+            />
+          )}
         </View>
         {accessoryRight && (
           <View style={styles.accessoriesContainer}>{accessoryRight()}</View>
@@ -141,7 +148,7 @@ const KQInput = ({
 const styles = {
   inputContainer: {
     marginHorizontal: 5,
-    marginVertical: 10,
+    marginVertical: 5,
     paddingHorizontal: 2,
   },
   labelContainer: {position: 'relative', left: 0},

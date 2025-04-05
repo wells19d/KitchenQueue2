@@ -66,6 +66,17 @@ const Account = () => {
     }
   }, [device?.system?.deviceSize]);
 
+  const setScrolling = useMemo(() => {
+    switch (device?.system?.deviceSize) {
+      case 'small':
+        return true;
+      case 'xSmall':
+        return true;
+      default:
+        return false;
+    }
+  }, [device?.system?.deviceSize]);
+
   const SubAccountButton = props => {
     const {location, icon, title} = props;
     return (
@@ -135,6 +146,8 @@ const Account = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
+      useScrolling={setScrolling}
+      noBar={setScrolling}
       // outerViewStyles={{paddingBottom: 0}}
     >
       <View style={AccountStyles.topSection}>
