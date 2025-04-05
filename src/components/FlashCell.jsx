@@ -156,7 +156,7 @@ const styles = {
     borderColor: '#373d4380',
     borderRadius: 8,
     flexDirection: 'column',
-    elevation: 5,
+    elevation: 4,
     shadowColor: '#373d4380',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.2,

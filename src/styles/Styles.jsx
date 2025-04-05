@@ -199,7 +199,7 @@ export const NavHeaderStyles = StyleSheet.create({
     backgroundColor: '#fff',
     borderColor: '#c4c4c490',
     borderBottomWidth: 1,
-    elevation: 5,
+    elevation: 4,
     shadowColor: '#c4c4c490',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.8,
@@ -473,7 +473,7 @@ export const SettingsStyles = StyleSheet.create({
     gap: 10,
   },
   hapticButton: {
-    elevation: 3,
+    elevation: 4,
     shadowColor: '#373d43',
     shadowOffset: {width: 1, height: 2},
     shadowOpacity: 0.3,
@@ -579,7 +579,7 @@ export const ProfileStyles = StyleSheet.create({
     shadowColor: 'black',
     shadowOffset: {width: 1, height: 2},
     shadowOpacity: 0.3,
-    elevation: 5,
+    elevation: 4,
   },
   olInner: {
     position: 'relative',
@@ -599,7 +599,7 @@ export const ProfileStyles = StyleSheet.create({
     shadowColor: 'black',
     shadowOffset: {width: 2, height: 3},
     shadowOpacity: 0.3,
-    elevation: 5,
+    elevation: 4,
   },
   orInner: {
     height: '100%',
@@ -618,7 +618,7 @@ export const ProfileStyles = StyleSheet.create({
     shadowColor: 'black',
     shadowOffset: {width: 2, height: 3},
     shadowOpacity: 0.3,
-    elevation: 5,
+    elevation: 4,
   },
 });
 
@@ -637,7 +637,7 @@ export const AccountStyles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 2,
-    elevation: 5,
+    elevation: 4,
     paddingBottom: 15,
   },
   usersHeader: {
@@ -666,7 +666,7 @@ export const AccountStyles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 2,
-    elevation: 5,
+    elevation: 4,
   },
   subIcon: {
     flex: 1,
