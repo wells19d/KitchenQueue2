@@ -110,7 +110,9 @@ const Account = () => {
         />
         {/* </TouchableOpacity> */}
         <View style={AccountStyles.avatarTitle}>
-          <Text size="xSmall">{profile?.firstName}</Text>
+          <Text size="xSmall" font="open-7">
+            {profile?.firstName}
+          </Text>
           <Text size="tiny">({profile?.role})</Text>
         </View>
       </View>
@@ -155,17 +157,17 @@ const Account = () => {
           <SubAccountButton
             title="Profile"
             location="AccountProfile"
-            icon={<Icons.Profile size={22.5} color="#373d43" />}
+            icon={<Icons.Profile size={20} color="#373d43" />}
           />
           <SubAccountButton
             title="Settings"
             location="AccountSettings"
-            icon={<Icons.Settings size={22.5} color="#373d43" />}
+            icon={<Icons.Settings size={20} color="#373d43" />}
           />
           <SubAccountButton
             title="Help"
             location="AccountHelp"
-            icon={<Icons.Help size={22.5} color="#373d43" />}
+            icon={<Icons.Help size={20} color="#373d43" />}
           />
         </View>
       </View>
@@ -173,7 +175,9 @@ const Account = () => {
       <View style={AccountStyles.userSection}>
         <View style={AccountStyles.sectionUsers}>
           <View style={AccountStyles.usersHeader}>
-            <Text size="small">Users:</Text>
+            <Text size="small" font="open-7">
+              Users:
+            </Text>
             <Text size="xSmall" font="open-5">
               Have up to 4 users on your account
             </Text>
@@ -185,7 +189,9 @@ const Account = () => {
       </View>
       <View style={AccountStyles.midSection}>
         <View style={AccountStyles.usersHeader}>
-          <Text size="small">Collections:</Text>
+          <Text size="small" font="open-7">
+            Collections:
+          </Text>
         </View>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <Text size="xSmall">Coming Soon</Text>
@@ -193,7 +199,9 @@ const Account = () => {
       </View>
       <View style={AccountStyles.midSection}>
         <View style={AccountStyles.usersHeader}>
-          <Text size="small">Limits:</Text>
+          <Text size="small" font="open-7">
+            Limits:
+          </Text>
         </View>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <Text size="xSmall">Coming Soon</Text>

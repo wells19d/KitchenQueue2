@@ -33,6 +33,16 @@ function Profile() {
   const [canSave, setCanSave] = useState(false);
   const device = useDeviceInfo();
 
+  const [avatarSize, setAvatarSize] = useState({
+    width: 200,
+  });
+  const [buttonHeight, setButtonHeight] = useState({
+    height: 35,
+  });
+  const [buttonWidth, setButtonWidth] = useState({
+    width: 150,
+  });
+
   useEffect(() => {
     if (
       firstName !== profile?.firstName ||
@@ -163,6 +173,21 @@ function Profile() {
     }
   }, [avatarOptions, profile?.pictureURL]);
 
+  const shouldShowGraphic =
+    shirtOptions[avatarOptions.shirtStyle] === 'graphicShirt';
+
+  const filteredAvatarConfig = useMemo(() => {
+    const configCopy = {...avatarConfig};
+
+    if (!shouldShowGraphic) {
+      configCopy['Shirt'] = configCopy['Shirt']?.filter(
+        option => option.optionKey !== 'clothingGraphic',
+      );
+    }
+
+    return configCopy;
+  }, [avatarOptions.shirtStyle]);
+
   const [currentCatIndex, setCurrentCatIndex] = useState(0);
 
   const [currentCat, setCurrentCat] = useState(categoryOptions[0]);
@@ -197,7 +222,7 @@ function Profile() {
           style={ProfileStyles.optionLeft}
           onPress={handlePrevCat}>
           <View style={ProfileStyles.olInner}>
-            <Icons.Back />
+            <Icons.Back size={18} />
           </View>
         </TouchableOpacity>
         <View style={[ProfileStyles.optionView, buttonWidth]}>
@@ -207,7 +232,7 @@ function Profile() {
           style={ProfileStyles.optionRight}
           onPress={handleNextCat}>
           <View style={ProfileStyles.orInner}>
-            <Icons.Forward />
+            <Icons.Forward size={18} />
           </View>
         </TouchableOpacity>
         <View style={{flex: 1}}></View>
@@ -222,7 +247,7 @@ function Profile() {
         style={ProfileStyles.optionLeft}
         onPress={() => leftAction()}>
         <View style={ProfileStyles.olInner}>
-          <Icons.Back />
+          <Icons.Back size={18} />
         </View>
       </TouchableOpacity>
       <View style={[ProfileStyles.optionView, buttonWidth]}>
@@ -232,7 +257,7 @@ function Profile() {
         style={ProfileStyles.optionRight}
         onPress={() => rightAction()}>
         <View style={ProfileStyles.orInner}>
-          <Icons.Forward />
+          <Icons.Forward size={18} />
         </View>
       </TouchableOpacity>
       <View style={{flex: 1}}></View>
@@ -246,16 +271,6 @@ function Profile() {
       rightAction={() => handleAvatarOptionChange(optionKey, optionsArray, 1)}
     />
   );
-
-  const [avatarSize, setAvatarSize] = useState({
-    width: 200,
-  });
-  const [buttonHeight, setButtonHeight] = useState({
-    height: 35,
-  });
-  const [buttonWidth, setButtonWidth] = useState({
-    width: 150,
-  });
 
   const [buttonTextSize, setButtonTextSize] = useState('small');
 
@@ -277,13 +292,13 @@ function Profile() {
         setAvatarSize({width: 150, height: 150});
         setButtonHeight({height: 35});
         setButtonWidth({width: 175});
-        setButtonTextSize('medium');
+        setButtonTextSize('small');
         break;
       default:
         setAvatarSize({width: 175, height: 175});
         setButtonHeight({height: 40});
-        setButtonWidth({width: 200});
-        setButtonTextSize('large');
+        setButtonWidth({width: 175});
+        setButtonTextSize('small');
     }
   }, [device?.system?.deviceSize]);
 
@@ -343,7 +358,7 @@ function Profile() {
         </View>
 
         <AvCategory />
-        {avatarConfig[currentCat]?.map(
+        {filteredAvatarConfig[currentCat]?.map(
           ({text, optionKey, optionsArray}, index) => (
             <AvButtonDynamic
               key={`${currentCat}-${index}`}
