@@ -24,29 +24,30 @@ const ShoppingList = () => {
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const handleAddToCart = useCallback(
-    itemId => {
-      const item = shoppingList.find(item => item.itemId === itemId);
-      if (item && core.profileID) {
-        const updatedItem = {
-          ...item,
-          status: 'shopping-cart',
-          lastUpdated: new Date().toISOString(),
-          lastUpdatedBy: core.profileID,
-        };
-        dispatch({
-          type: 'UPDATE_ITEM_IN_SHOP_CART',
-          payload: {
-            shoppingCartID: core.shoppingCartID,
-            updatedItem,
-            profileID: core.profileID,
-            updateType: 'toCart',
-          },
-        });
-      }
-    },
-    [dispatch, core.profileID, shoppingList],
-  );
+  const handleAddToCart = itemId => {
+    const latestItem = shopping?.items?.find(i => i.itemId === itemId);
+    const fallbackItem = selectedItem?.itemId === itemId ? selectedItem : null;
+    const item = latestItem || fallbackItem;
+
+    if (item && core.profileID) {
+      const updatedItem = {
+        ...item,
+        status: 'shopping-cart',
+        lastUpdated: new Date().toISOString(),
+        lastUpdatedBy: core.profileID,
+      };
+
+      dispatch({
+        type: 'UPDATE_ITEM_IN_SHOP_CART',
+        payload: {
+          shoppingCartID: core.shoppingCartID,
+          updatedItem,
+          profileID: core.profileID,
+          updateType: 'toCart',
+        },
+      });
+    }
+  };
 
   const handleUpdateItem = itemId => {
     navigation.navigate('ShoppingItems', {
@@ -85,7 +86,11 @@ const ShoppingList = () => {
       <SelectedItemInfo
         selectedItem={selectedItem}
         setShowItemInfo={setShowItemInfo}
-        navigate={{to: 'ShoppingItems', backTo: 'ShoppingList'}}
+        navigate={{
+          to: 'ShoppingItems',
+          backTo: 'ShoppingList',
+          statusTo: 'shopping-list',
+        }}
       />
     </BottomSheet>
   );

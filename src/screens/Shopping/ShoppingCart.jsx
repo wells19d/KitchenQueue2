@@ -27,7 +27,11 @@ const ShoppingCart = () => {
 
   const handleReturnToList = useCallback(
     itemId => {
-      const item = shoppingCart.find(item => item.itemId === itemId);
+      const item =
+        selectedItem?.itemId === itemId
+          ? selectedItem
+          : shoppingCart.find(item => item.itemId === itemId);
+
       if (item && core.profileID) {
         const updatedItem = {
           ...item,
