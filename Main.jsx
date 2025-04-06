@@ -45,6 +45,7 @@ import Help from './src/screens/Account/Help';
 import Profile from './src/screens/Account/Profile';
 import Vibrations from './src/screens/Account/Vibrations';
 import ItemDisplay from './src/screens/Account/ItemDisplay';
+import Resets from './src/screens/Account/Resets';
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -484,10 +485,10 @@ const Main = () => {
               },
             }}
           /> */}
-          {/* <Stack.Screen
+          <Stack.Screen
             name="Resets"
             component={Resets}
-            options={{ freezeOnBlur: true }} 
+            options={{freezeOnBlur: true}}
             initialParams={{
               title: 'Resets',
               bgColor: bgColor,
@@ -501,7 +502,7 @@ const Main = () => {
                 setScreenLocation('Resets');
               },
             }}
-          /> */}
+          />
           {/* <Stack.Screen
             name="Passwords"
             component={Passwords}

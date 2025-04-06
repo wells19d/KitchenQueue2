@@ -5,7 +5,7 @@ import {Text} from '../KQ-UI';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
 import {Icons} from './IconListRouter';
 
-export default TellMeButton = ({action, tt1, tt2, profile}) => {
+const TellMeButton = ({action, tt1, tt2, profile}) => {
   const useHaptics = setHapticFeedback();
 
   const handlePress = () => {
@@ -51,3 +51,5 @@ export default TellMeButton = ({action, tt1, tt2, profile}) => {
     </TouchableOpacity>
   );
 };
+
+export default React.memo(TellMeButton);
