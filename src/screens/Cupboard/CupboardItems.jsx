@@ -6,7 +6,11 @@ import {Dropdown, Input, Layout} from '../../KQ-UI';
 import {useCupboard} from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
 import {displayCategories} from '../../utilities/categories';
-import {displayCustom, setNumericValue} from '../../utilities/helpers';
+import {
+  displayCustom,
+  limitToThreeDecimals,
+  setNumericValue,
+} from '../../utilities/helpers';
 import {View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
@@ -33,13 +37,13 @@ const CupboardItems = () => {
     String(itemToUpdate?.packageSize ?? '1'),
   );
   const [remainingAmount, setRemainingAmount] = useState(
-    String(itemToUpdate?.quantity ?? '1'),
+    String(itemToUpdate?.remainingAmount ?? '1'),
   );
   const [measurement, setMeasurement] = useState(
     displayCustom(itemToUpdate?.measurement, displayMeasurements) ?? null,
   );
   const [category, setCategory] = useState(
-    displayCustom(itemToUpdate?.category, displayMeasurements) ?? null,
+    displayCustom(itemToUpdate?.category, displayCategories) ?? null,
   );
   const [notes, setNotes] = useState(itemToUpdate?.notes ?? '');
 
@@ -61,22 +65,26 @@ const CupboardItems = () => {
   }, [itemName]);
 
   useEffect(() => {
-    setRemainingAmount(packageSize);
-  }, [packageSize]);
+    if (!itemToUpdate?.remainingAmount) {
+      setRemainingAmount(packageSize);
+    }
+  }, [packageSize, itemToUpdate?.remainingAmount]);
 
   const handleRemainingAmountChange = value => {
-    const numericValue = Number(value);
-    if (numericValue > Number(packageSize)) {
+    let cleaned = limitToThreeDecimals(value);
+    const numericValue = parseFloat(cleaned);
+    if (numericValue > parseFloat(packageSize)) {
       setRemainValidation(true);
     } else {
       setRemainValidation(false);
     }
-    setRemainingAmount(value);
+    setRemainingAmount(cleaned);
   };
 
   const handlePackageChange = value => {
-    setNumericValue(setPackageSize(value));
-    setNumericValue(setRemainingAmount(value));
+    const cleaned = limitToThreeDecimals(value);
+    setPackageSize(cleaned);
+    setRemainingAmount(cleaned); // default remaining = full package
   };
 
   const resetForm = () => {
@@ -102,7 +110,7 @@ const CupboardItems = () => {
         description: description || '',
         packageSize: Number(packageSize) > 0 ? Number(packageSize) : 1,
         remainingAmount:
-          Number(remainingAmount) > 0 ? Number(remainingAmount) : 1,
+          parseFloat(remainingAmount) > 0 ? parseFloat(remainingAmount) : 1,
         measurement: measurement?.key || '',
         category: category?.key || '',
         notes: notes || '',
@@ -191,7 +199,7 @@ const CupboardItems = () => {
           <Input
             label="Package Size"
             value={packageSize}
-            onChangeText={setNumericValue(setPackageSize)}
+            onChangeText={handlePackageChange}
             caption="Example: 12 Eggs"
             capitalMode="sentences"
           />
@@ -217,6 +225,7 @@ const CupboardItems = () => {
       />
       <Dropdown
         label="Category"
+        customLabel="Custom Category"
         placeholder="Select a category"
         value={category}
         setValue={setCategory}

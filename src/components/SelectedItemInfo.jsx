@@ -16,6 +16,8 @@ const SelectedItemInfo = props => {
     cupboardView = false,
   } = props;
 
+  console.log('SelectedItemInfo', selectedItem);
+
   const navigation = useNavigation();
 
   const handleUpdateItem = itemId => {

@@ -6,7 +6,12 @@ import {Dropdown, Input, Layout} from '../../KQ-UI';
 import {useShoppingCart} from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
 import {displayCategories} from '../../utilities/categories';
-import {displayCustom, setNumericValue} from '../../utilities/helpers';
+import {
+  displayCustom,
+  setNumericValue,
+  limitToThreeDecimals,
+} from '../../utilities/helpers';
+
 import {View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
@@ -46,7 +51,7 @@ const ShoppingItems = () => {
     displayCustom(itemToUpdate?.measurement, displayMeasurements) ?? null,
   );
   const [category, setCategory] = useState(
-    displayCustom(itemToUpdate?.category, displayMeasurements) ?? null,
+    displayCustom(itemToUpdate?.category, displayCategories) ?? null,
   );
   const [notes, setNotes] = useState(itemToUpdate?.notes ?? '');
 
@@ -73,6 +78,11 @@ const ShoppingItems = () => {
       setCanSave(true);
     }
   }, [itemName]);
+
+  const handlePackageChange = value => {
+    const cleaned = limitToThreeDecimals(value);
+    setPackageSize(cleaned);
+  };
 
   const resetForm = () => {
     setItemName(null);
@@ -191,7 +201,7 @@ const ShoppingItems = () => {
           <Input
             label="Package Size"
             value={packageSize}
-            onChangeText={setNumericValue(setPackageSize)}
+            onChangeText={handlePackageChange}
             caption="Example: 12 Eggs"
             capitalMode="sentences"
           />
@@ -208,6 +218,7 @@ const ShoppingItems = () => {
       />
       <Dropdown
         label="Category"
+        customLabel="Custom Category"
         placeholder="Select a category"
         value={category}
         setValue={setCategory}

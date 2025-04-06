@@ -37,7 +37,7 @@ const KQDropdown = ({
 
   const handleOnPress = () => {
     useHaptics(core?.userSettings?.hapticStrength || hapticFeedback);
-    setSelectedItem(value); // set to current value on open
+    setSelectedItem(value);
     setShowDropModal(true);
     onPress();
   };
@@ -49,7 +49,6 @@ const KQDropdown = ({
         padding: 0,
       };
     }
-
     if (!isIOS && value === null) {
       return {
         color: '#373d43',
@@ -102,20 +101,20 @@ const KQDropdown = ({
         </View>
       )}
       <View style={styles.dropWrapper}>
-        <TouchableOpacity onPress={() => handleOnPress()} style={{flex: 1}}>
+        <TouchableOpacity onPress={handleOnPress} style={{flex: 1}}>
           <Text style={renderStyles}>{value?.label || placeholder}</Text>
         </TouchableOpacity>
 
         {value && (
           <TouchableOpacity
-            onPress={() => handleClear()}
+            onPress={handleClear}
             style={{paddingHorizontal: 5}}>
             <Icons.Close />
           </TouchableOpacity>
         )}
 
         <TouchableOpacity
-          onPress={() => handleOnPress()}
+          onPress={handleOnPress}
           style={{paddingHorizontal: 5}}>
           <Icons.ChevronDown />
         </TouchableOpacity>
@@ -165,13 +164,40 @@ const KQDropdown = ({
           </View>
           <View style={{flex: 1}}>
             <ScrollView>
-              <View style={{flex: 1}}>
+              <View
+                style={{flex: 1, borderTopWidth: 1.5, borderColor: '#c4c4c4'}}>
                 {mapData?.map((item, index) => {
+                  if (item.isHeader) {
+                    return (
+                      <View
+                        key={index}
+                        style={{
+                          paddingVertical: 10,
+                          paddingHorizontal: 10,
+                          borderBottomWidth: 1,
+                          borderColor: '#373d4380',
+                          backgroundColor: '#f2f2f2',
+                        }}>
+                        <Text
+                          size="xSmall"
+                          font="open-5"
+                          kqColor="dark90"
+                          centered>
+                          {item.label}
+                        </Text>
+                      </View>
+                    );
+                  }
+
                   const isCustomField = item.key === 'custom';
+
                   return (
                     <View
                       key={index}
-                      style={{borderBottomWidth: 1, borderColor: '#373d4380'}}>
+                      style={{
+                        borderBottomWidth: 1,
+                        borderColor: '#373d4380',
+                      }}>
                       {isCustomField ? (
                         <View
                           style={{
@@ -179,7 +205,7 @@ const KQDropdown = ({
                             paddingVertical: 8,
                           }}>
                           {customLabel && (
-                            <Text size="xSmall" font="open-5" style={{}}>
+                            <Text size="xSmall" font="open-5">
                               {customLabel}
                             </Text>
                           )}
