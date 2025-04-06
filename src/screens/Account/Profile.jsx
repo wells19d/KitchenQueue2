@@ -21,6 +21,7 @@ import {
 import {Icons} from '../../components/IconListRouter';
 import {Input, Layout, ScrollView, Text} from '../../KQ-UI';
 import Avatar from '../../components/Avatar';
+import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 
 function Profile() {
   const route = useRoute();
@@ -32,6 +33,7 @@ function Profile() {
   const [onlineName, setOnlineName] = useState(profile?.onlineName || '');
   const [canSave, setCanSave] = useState(false);
   const device = useDeviceInfo();
+  const useHaptics = setHapticFeedback();
 
   const [avatarSize, setAvatarSize] = useState({
     width: 200,
@@ -136,6 +138,7 @@ function Profile() {
   });
 
   const handleAvatarOptionChange = (optionKey, optionsArray, direction) => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
     setAvatarOptions(prev => {
       const updatedOptions = {
         ...prev,
@@ -193,6 +196,7 @@ function Profile() {
   const [currentCat, setCurrentCat] = useState(categoryOptions[0]);
 
   const handleNextCat = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
     setCurrentCatIndex(prevIndex => {
       const nextIndex = (prevIndex + 1) % categoryOptions.length;
       setCurrentCat(categoryOptions[nextIndex]);
@@ -201,12 +205,17 @@ function Profile() {
   };
 
   const handlePrevCat = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
     setCurrentCatIndex(prevIndex => {
       const prevIndexAdjusted =
         (prevIndex - 1 + categoryOptions.length) % categoryOptions.length;
       setCurrentCat(categoryOptions[prevIndexAdjusted]);
       return prevIndexAdjusted;
     });
+  };
+
+  const handleBtnPress = (optionKey, optionsArray, direction) => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
   };
 
   const AvCategory = () => {
