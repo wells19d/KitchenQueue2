@@ -95,11 +95,30 @@ const ShoppingItems = () => {
     setNotes('');
   };
 
+  const [pendingUpdate, setPendingUpdate] = useState(null);
+
+  useEffect(() => {
+    if (!pendingUpdate) return;
+
+    const liveItem = shopping.items.find(
+      i => i.itemId === pendingUpdate.itemId,
+    );
+    if (!liveItem) return;
+
+    const isSynced = JSON.stringify(liveItem) === JSON.stringify(pendingUpdate);
+    if (isSynced) {
+      setPendingUpdate(null);
+      navigation.navigate(navigateBackTo);
+    }
+  }, [shopping.items, pendingUpdate]);
+
   const SaveItem = () => {
     if (itemName === '' || itemName === null) {
       setValidation(true);
     } else {
       setValidation(false);
+
+      console.log('statusTo', statusTo);
 
       const newItem = {
         itemName: itemName || '',
@@ -128,6 +147,7 @@ const ShoppingItems = () => {
             profileID: core.profileID,
           },
         });
+        setPendingUpdate(updatedItem);
       } else {
         dispatch({
           type: 'ADD_ITEM_TO_SHOP_CART',

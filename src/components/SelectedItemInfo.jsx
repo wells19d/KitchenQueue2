@@ -16,14 +16,13 @@ const SelectedItemInfo = props => {
     cupboardView = false,
   } = props;
 
-  console.log('SelectedItemInfo', selectedItem);
-
   const navigation = useNavigation();
 
   const handleUpdateItem = itemId => {
     navigation.navigate(navigate?.to, {
       itemId,
       navigateBackTo: navigate?.backTo,
+      statusTo: navigate?.statusTo,
     });
     setShowItemInfo(false);
   };
