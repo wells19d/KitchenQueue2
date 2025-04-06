@@ -26,9 +26,11 @@ const Settings = () => {
       sheetOpen={false}
       // outerViewStyles={{paddingBottom: 0}}
     >
-      <View flex={1} style={ScreenStyles.viewContainer}>
+      <View style={[ScreenStyles.viewContainer, {flex: 1}]}>
         <View style={ScreenStyles.viewInnerTopContainer}>
-          <Text centered>Customize settings for...</Text>
+          <Text size="small" font="open-7" centered>
+            Customize settings for...
+          </Text>
         </View>
         <ScrollView contentContainerStyle={ScreenStyles.scrollContainer}>
           <TellMeButton

@@ -49,7 +49,7 @@ const KQScrollView = ({children, style, noBar = false}) => {
         onLayout={handleLayout}
         onContentSizeChange={handleContentSizeChange}
         scrollEventThrottle={16}
-        contentContainerStyle={noBar ? {} : styles.scrollContent}
+        contentContainerStyle={noBar ? {flex: 1} : styles.scrollContent}
         showsVerticalScrollIndicator={false}>
         {children}
       </ScrollView>

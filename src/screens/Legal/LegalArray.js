@@ -270,23 +270,27 @@ export const LegalArray = {
       sections: [
         {
           index: 1,
-          title: 'Discover Kitchen Queue',
+          title: 'Welcome to Kitchen Queue',
           clauses: [
             {
               index: 1,
-              info: 'Kitchen Queue is your ultimate household companion for managing shopping, inventory, and meal planning.',
+              info: 'Kitchen Queue helps you organize your kitchen, track groceries, and plan meals together as a household.',
               subClause: [
                 {
                   index: 1,
-                  info: 'Create shopping lists and move items between list/cart/cupboard.',
+                  info: 'Add items to your shopping list and move them to your cart when you`re ready.',
                 },
                 {
                   index: 2,
-                  info: 'Up to 4 users per household, collaborating in real-time.',
+                  info: 'After shopping, transfer items to your cupboard to keep track of what you already have.',
                 },
                 {
                   index: 3,
-                  info: 'Barcode scanning and recipe searching powered by Edamam.',
+                  info: 'Supports real-time updates for up to 4 users per household, keeping everyone in sync.',
+                },
+                {
+                  index: 4,
+                  info: 'Clean design, smooth interaction, and easy-to-use features that make managing your kitchen simple and fun.',
                 },
               ],
             },
@@ -294,36 +298,136 @@ export const LegalArray = {
         },
         {
           index: 2,
-          title: 'What’s Coming Soon',
+          title: 'What You Can Do Today',
           clauses: [
             {
               index: 1,
-              info: 'Recipe Box and Community Recipes',
+              info: 'Shared Shopping List and Cart',
               subClause: [
-                {index: 1, info: 'Store and share your favorite meals.'},
+                {
+                  index: 1,
+                  info: 'Add, edit, or remove items across your household in real-time.',
+                },
                 {
                   index: 2,
-                  info: 'Auto-check your cupboard for required ingredients.',
+                  info: 'Use the Cart for in-store shopping and check items off as you go.',
+                },
+                {
+                  index: 3,
+                  info: 'One-tap checkout moves everything to your cupboard automatically.',
                 },
               ],
             },
             {
               index: 2,
-              info: 'Smart Meal Planning and UPC History',
+              info: 'Cupboard Inventory',
               subClause: [
                 {
                   index: 1,
-                  info: 'View past scanned items and plan meals accordingly.',
+                  info: 'Keep track of what’s already in your pantry, fridge, or freezer.',
+                },
+                {
+                  index: 2,
+                  info: 'Monitor how much is left of each item so nothing goes to waste.',
                 },
               ],
             },
             {
               index: 3,
-              info: 'Events and Guest Lists',
+              info: 'Profiles and Shared Accounts',
               subClause: [
                 {
                   index: 1,
-                  info: 'Organize shared meals and let guests claim food items.',
+                  info: 'Invite up to 4 users to join your household account.',
+                },
+                {
+                  index: 2,
+                  info: 'Each person can customize their own profile and avatar.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          index: 3,
+          title: 'What’s Coming Next',
+          clauses: [
+            {
+              index: 1,
+              info: 'Recipe Box',
+              subClause: [
+                {index: 1, info: 'Save and organize your favorite recipes.'},
+                {
+                  index: 2,
+                  info: 'Automatically check your cupboard for ingredients you already have.',
+                },
+                {
+                  index: 3,
+                  info: 'Add missing ingredients to your shopping list with one tap.',
+                },
+              ],
+            },
+            {
+              index: 2,
+              info: 'Favorites List',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Quickly add frequent items to your shopping list without re-entering them.',
+                },
+              ],
+            },
+            {
+              index: 3,
+              info: 'Barcode Scanning',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Scan UPC codes to instantly add items to your cart or cupboard.',
+                },
+              ],
+            },
+            {
+              index: 4,
+              info: 'Recipe Search',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Find new recipes online and save them to your box.',
+                },
+              ],
+            },
+            {
+              index: 5,
+              info: 'Community Recipes',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Browse and favorite meals shared by other users.',
+                },
+              ],
+            },
+            {
+              index: 6,
+              info: 'Event Planning',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Create events like dinners or holidays and build lists for them.',
+                },
+                {
+                  index: 2,
+                  info: 'Let guests sign up for food contributions, even if they don’t have an account.',
+                },
+              ],
+            },
+            {
+              index: 7,
+              info: 'Nutrition Insights',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'View nutritional info for recipes and ingredients (optional future feature).',
                 },
               ],
             },
