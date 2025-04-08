@@ -3,6 +3,7 @@ import React, {useMemo} from 'react';
 import {View, TextInput, StyleSheet, Keyboard} from 'react-native';
 import {Text} from '../KQ-UI/';
 import {useColors, useFontStyles} from './KQUtilities';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const KQInput = ({
   label = '',
@@ -98,6 +99,7 @@ const KQInput = ({
               allowFontScaling={false}
               style={[fontStyles, multiMode, {padding: 0}]}
               onSubmitEditing={Keyboard.dismiss}
+              placeholderTextColor="#C4C4C4"
               {...props}
             />
           )}
@@ -135,7 +137,8 @@ const KQInput = ({
               size="xSmall"
               kqColor={showCount >= maxCount ? 'danger' : 'dark90'}
               font="open-5"
-              numberOfLines={1}>
+              numberOfLines={1}
+              style={{color: Colors.darkText}}>
               ({showCount} / {maxCount})
             </Text>
           </View>
