@@ -379,6 +379,16 @@ export const LegalArray = {
             },
             {
               index: 3,
+              info: 'Dark Mode Theme',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Switch between light, dark, or auto theme depending on your device settings.',
+                },
+              ],
+            },
+            {
+              index: 4,
               info: 'Barcode Scanning',
               subClause: [
                 {
@@ -388,7 +398,7 @@ export const LegalArray = {
               ],
             },
             {
-              index: 4,
+              index: 5,
               info: 'Recipe Search',
               subClause: [
                 {
@@ -397,8 +407,19 @@ export const LegalArray = {
                 },
               ],
             },
+
             {
-              index: 5,
+              index: 6,
+              info: 'Meal Planning',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Plan meals for the week and automatically add ingredients to your shopping list.',
+                },
+              ],
+            },
+            {
+              index: 7,
               info: 'Community Recipes',
               subClause: [
                 {
@@ -408,7 +429,7 @@ export const LegalArray = {
               ],
             },
             {
-              index: 6,
+              index: 8,
               info: 'Event Planning',
               subClause: [
                 {
@@ -422,7 +443,7 @@ export const LegalArray = {
               ],
             },
             {
-              index: 7,
+              index: 9,
               info: 'Nutrition Insights',
               subClause: [
                 {

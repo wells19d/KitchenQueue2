@@ -47,7 +47,11 @@
    - When a recipe is marked as "made," it deducts used ingredients from the Cupboard.
 
 2. **Favorite Items**
+
    - Users can create and store frequently used or purchased items for quick access when building Shopping lists.
+
+3. **Dark Mode (Theme)**
+   - Users can select between light, dark, or auto theme.
 
 ---
 
