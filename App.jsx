@@ -61,15 +61,6 @@ const App = () => {
     });
   }, []);
 
-  if (!appReady || isSplashVisible) {
-    return (
-      <>
-        <SplashScreen />
-        <StatusBar barStyle="light-content" />
-      </>
-    );
-  }
-
   return (
     <Provider store={store}>
       <PersistGate loading={<SplashScreen />} persistor={persistor}>
@@ -77,7 +68,7 @@ const App = () => {
           <SafeAreaProvider>
             <View style={{flex: 1, backgroundColor: '#fff'}}>
               <StatusBar barStyle="light-content" />
-              <Main />
+              <Main appReady={appReady} isSplashVisible={isSplashVisible} />
               <Toast config={toastConfig} />
             </View>
           </SafeAreaProvider>

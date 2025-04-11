@@ -169,7 +169,7 @@ const CupboardItems = () => {
       RightAction={canSave ? SaveItem : null}
       sheetOpen={false}
       outerViewStyles={{paddingBottom: 0}}
-      useKeyboardHandling={true}>
+      mode="keyboard-scroll">
       <Input
         required
         label="Item Name"

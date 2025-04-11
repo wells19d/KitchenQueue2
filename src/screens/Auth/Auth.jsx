@@ -1,91 +1,96 @@
 //* Auth.jsx
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
+  ActivityIndicator,
   Animated,
+  Easing,
   Image,
   Platform,
   StatusBar,
   TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 import MCIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch} from 'react-redux';
-import {Button, Input, Layout} from '../../KQ-UI';
+import {Button, Input, Layout, ScrollView} from '../../KQ-UI';
 import {useDeviceInfo} from '../../hooks/useHooks';
 
+const UserLogin = props => {
+  const {
+    isSplashVisible,
+    logoSet,
+    logoHeight,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    handleSignIn,
+    canSignIn,
+    renderIcon,
+    secureTextEntry,
+  } = props;
+  if (!isSplashVisible && logoSet) {
+    return (
+      <ScrollView
+        noBar
+        style={{
+          flex: 1,
+          marginTop: logoHeight * 1.25,
+          paddingTop: logoHeight,
+          marginHorizontal: -5,
+        }}>
+        <Input
+          placeholder="Email"
+          capitalize={false}
+          value={email}
+          onChangeText={setEmail}
+        />
+        <Input
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          accessoryRight={renderIcon}
+          secureTextEntry={secureTextEntry}
+          capitalize={false}
+        />
+        <Button
+          status={canSignIn ? 'primary' : 'basic'}
+          onPress={handleSignIn}
+          disabled={!canSignIn}>
+          Sign In
+        </Button>
+      </ScrollView>
+    );
+  }
+};
+
 function Auth(props) {
-  const {bgColor} = props;
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [secureTextEntry, setSecureTextEntry] = React.useState(true);
+  const {bgColor, isSplashVisible} = props;
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
   const dispatch = useDispatch();
   const device = useDeviceInfo();
 
-  const logoPosition = useRef(
-    new Animated.Value(Platform.OS === 'ios' ? 330 : 370),
-  ).current;
-  const formOpacity = useRef(new Animated.Value(0)).current;
-  const formTranslateY = useRef(new Animated.Value(50)).current;
+  const deviceWidth = device?.dimensions?.width;
+  const deviceHeight = device?.dimensions?.height;
 
-  useEffect(() => {
-    const screenHeight = device?.dimensions?.height || 800; // Default fallback
-    const deviceSize = device?.system?.deviceSize || 'unknown';
-    const os = device?.system?.os || 'unknown';
+  const logoWidth = 350;
+  const logoHeight = 175;
 
-    const getLogoFinalPosition = (screenHeight, deviceSize, os) => {
-      switch (`${deviceSize}-${os}`) {
-        case 'xSmall-iOS':
-          return screenHeight * 0.1;
-        case 'xSmall-Android':
-          return screenHeight * 0.12;
+  const xPosition = useMemo(() => {
+    if (!deviceWidth || !logoWidth) return 0;
+    return deviceWidth / 2 - logoWidth / 2 - 5;
+  }, [deviceWidth]);
 
-        case 'small-iOS':
-          return screenHeight * 0.12;
-        case 'small-Android':
-          return screenHeight * 0.14;
+  const yPosition = useMemo(() => {
+    if (!deviceHeight || !logoHeight) return 0;
+    return deviceHeight / 2.25 - logoHeight / 1.37;
+  }, [deviceHeight]);
 
-        case 'medium-iOS':
-          return screenHeight * 0.14;
-        case 'medium-Android':
-          return screenHeight * 0.16;
-
-        case 'large-iOS':
-          return screenHeight * 0.16;
-        case 'large-Android':
-          return screenHeight * 0.18;
-
-        case 'xLarge-iOS': // iPhone Pro Max / Large Tablets
-          return screenHeight * 0.18;
-        case 'xLarge-Android': // Android XL devices
-          return screenHeight * 0.2;
-
-        default:
-          return screenHeight * 0.18; // Fallback for unknown sizes
-      }
-    };
-
-    const finalPosition = getLogoFinalPosition(screenHeight, deviceSize, os);
-
-    Animated.timing(logoPosition, {
-      toValue: finalPosition,
-      duration: 1000,
-      useNativeDriver: false,
-    }).start();
-
-    setTimeout(() => {
-      Animated.parallel([
-        Animated.timing(formOpacity, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(formTranslateY, {
-          toValue: 0,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }, 800);
-  }, [device]); // Recalculate when `device` changes
+  const [logoSet, setLogoSet] = useState(false);
+  const logoTop = useRef(new Animated.Value(2)).current;
+  const hasAnimated = useRef(false); // Prevent double animation
 
   const toggleSecureEntry = () => {
     setSecureTextEntry(!secureTextEntry);
@@ -114,46 +119,58 @@ function Auth(props) {
     }
   };
 
-  const logo = require('../../images/AppLogo_350.png');
+  useEffect(() => {
+    if (!isSplashVisible && !hasAnimated.current) {
+      hasAnimated.current = true;
+
+      Animated.timing(logoTop, {
+        toValue: -(deviceHeight / 2.25 - logoHeight),
+        duration: 800,
+        useNativeDriver: false,
+        easing: Easing.inOut(Easing.ease),
+      }).start(() => {
+        setLogoSet(true);
+      });
+    }
+  }, [isSplashVisible]);
 
   return (
-    <Layout useHeader={false} innerViewStyles={{justifyContent: 'center'}}>
+    <Layout useHeader={false} mode="keyboard-static">
       <StatusBar backgroundColor={bgColor} barStyle="light-content" />
       <Animated.View
+        pointerEvents="none"
         style={{
           position: 'absolute',
-          top: logoPosition,
-          width: '100%',
-          alignItems: 'center',
+          top: yPosition,
+          left: xPosition,
+          zIndex: 999,
+          transform: [{translateY: logoTop}],
         }}>
-        <Image source={logo} />
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          {isSplashVisible && (
+            <View style={{position: 'relative', top: 70}}>
+              <ActivityIndicator size="large" color="#319177" />
+            </View>
+          )}
+          <Image
+            source={require('../../images/AppLogo_350.png')}
+            style={{width: 350, height: 175}}
+          />
+        </View>
       </Animated.View>
-      <Animated.View
-        style={{
-          opacity: formOpacity,
-          transform: [{translateY: formTranslateY}],
-        }}>
-        <Input
-          placeholder="Email"
-          capitalize={false}
-          value={email}
-          onChangeText={setEmail}
-        />
-        <Input
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          accessoryRight={renderIcon}
-          secureTextEntry={secureTextEntry}
-          capitalize={false}
-        />
-        <Button
-          status={canSignIn ? 'primary' : 'basic'}
-          onPress={handleSignIn}
-          disabled={!canSignIn}>
-          Sign In
-        </Button>
-      </Animated.View>
+      <UserLogin
+        isSplashVisible={isSplashVisible}
+        logoSet={logoSet}
+        logoHeight={logoHeight}
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        handleSignIn={handleSignIn}
+        canSignIn={canSignIn}
+        renderIcon={renderIcon}
+        secureTextEntry={secureTextEntry}
+      />
     </Layout>
   );
 }

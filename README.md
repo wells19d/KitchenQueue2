@@ -130,4 +130,6 @@
 
 ## License
 
-This project's copyright is currently pending.
+© 2025 Kitchen Queue. All rights reserved.
+
+This software is proprietary and confidential. Unauthorized copying, distribution, or modification of this code, in whole or in part, is strictly prohibited.

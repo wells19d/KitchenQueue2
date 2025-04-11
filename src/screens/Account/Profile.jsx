@@ -322,7 +322,7 @@ function Profile() {
       RightAction={handleProfileUpdate}
       LeftAction={false}
       sheetOpen={false}
-      useScrolling={true}
+      mode="scroll-only"
       noBar={true}
       // outerViewStyles={{paddingBottom: 0}}
     >

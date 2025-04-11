@@ -36,7 +36,7 @@ const DevInputs = ({}) => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      useKeyboardHandling={true}>
+      mode="keyboard-scroll">
       <Input
         label="Email"
         placeholder="Email"
