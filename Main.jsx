@@ -1,7 +1,7 @@
 //* Main.jsx
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Alert, Dimensions, View} from 'react-native';
+import {Alert, Dimensions, Image, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import NavMenu from './src/components/NavMenu';
@@ -47,7 +47,8 @@ import Vibrations from './src/screens/Account/Vibrations';
 import ItemDisplay from './src/screens/Account/ItemDisplay';
 import Resets from './src/screens/Account/Resets';
 
-const Main = () => {
+const Main = props => {
+  const {appReady, isSplashVisible} = props;
   const dispatch = useDispatch();
   const device = useDeviceInfo();
   const profile = useProfile();
@@ -651,10 +652,26 @@ const Main = () => {
     );
   };
 
-  if (!isAuthenticated) {
+  if (!appReady) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#fff',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <View style={{position: 'relative', top: 10}}>
+          <Image source={require('./src/images/AppLogo_350.png')} />
+        </View>
+      </View>
+    );
+  }
+
+  if (!isAuthenticated && appReady) {
     return (
       <SafeAreaView style={{flex: 1, margin: 5}}>
-        <Auth bgColor={bgColor} />
+        <Auth bgColor={bgColor} isSplashVisible={isSplashVisible} />
       </SafeAreaView>
     );
   } else {

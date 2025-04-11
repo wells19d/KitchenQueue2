@@ -148,7 +148,7 @@ const Account = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      useScrolling={setScrolling}
+      mode="scroll-only"
       noBar={setScrolling}
       // outerViewStyles={{paddingBottom: 0}}
     >
