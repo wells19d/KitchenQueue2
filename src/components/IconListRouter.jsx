@@ -10,6 +10,7 @@ import FIcons from 'react-native-vector-icons/Fontisto';
 import FEIcons from 'react-native-vector-icons/Feather';
 import SIIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MIcons from 'react-native-vector-icons/MaterialIcons';
+import OctIcons from 'react-native-vector-icons/Octicons';
 import ZOIcons from 'react-native-vector-icons/Zocial';
 import {Keyboard} from 'react-native';
 
@@ -27,9 +28,19 @@ export const Icons = {
     <FAIcons name="barcode" size={20} color="#000" {...props} />
   ),
   Check: props => <FA5Icons name="check" size={20} color="#000" {...props} />,
+  CheckFilledCircle: props => (
+    <OctIcons name="check-circle-fill" size={20} color="#000" {...props} />
+  ),
+  EmptyCircle: props => (
+    <OctIcons name="circle" size={20} color="#000" {...props} />
+  ),
+  XCircle: props => (
+    <OctIcons name="x-circle-fill" size={20} color="#000" {...props} />
+  ),
   ChevronDown: props => (
     <FEIcons name="chevron-down" size={20} color="#000" {...props} />
   ),
+
   ChevronUp: props => (
     <FEIcons name="chevron-up" size={20} color="#000" {...props} />
   ),
