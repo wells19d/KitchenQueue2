@@ -3,13 +3,13 @@ import {useDispatch} from 'react-redux';
 import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
 import {useUser} from '../../hooks/useHooks';
 
-const useRealTimeProfiles = () => {
+const useRealTimeProfiles = enabled => {
   const dispatch = useDispatch();
   const user = useUser();
   const db = getFirestore();
 
   useEffect(() => {
-    if (!user?.uid) {
+    if (!enabled || !user?.uid) {
       return;
     }
 
@@ -38,7 +38,7 @@ const useRealTimeProfiles = () => {
     return () => {
       unsubscribe();
     };
-  }, [dispatch, user?.uid, db]); // ✅ Removed `storedProfile`
+  }, [dispatch, user?.uid, db, enabled]); // ✅ Removed `storedProfile`
 };
 
 export default useRealTimeProfiles;

@@ -74,16 +74,14 @@ const Main = props => {
   const [currentModal, setCurrentModal] = useState('');
   enableScreens(true);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      RTUsers();
-      RTAccounts();
-      RTProfiles();
-      RTShopping();
-      RTCupboards();
-      RTAllowedProfiles();
-    }
-  }, [isAuthenticated]);
+  const RTEnabled = isAuthenticated && profile?.id && profile?.account;
+  RTAccounts(RTEnabled);
+  RTUsers(RTEnabled);
+  RTAccounts(RTEnabled);
+  RTProfiles(RTEnabled);
+  RTShopping(RTEnabled);
+  RTCupboards(RTEnabled);
+  RTAllowedProfiles(RTEnabled);
 
   useEffect(() => {
     try {
@@ -689,7 +687,7 @@ const Main = props => {
     );
   }
 
-  if (isAuthenticated && appReady) {
+  if (isAuthenticated && appReady && account !== null) {
     return (
       <NavigationContainer>
         <SafeAreaView
@@ -735,6 +733,14 @@ const Main = props => {
           </Modal>
         )}
       </NavigationContainer>
+    );
+  }
+
+  if (isAuthenticated && appReady && account === null) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text>FTU</Text>
+      </View>
     );
   }
 };
