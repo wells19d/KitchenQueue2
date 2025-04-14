@@ -8,6 +8,7 @@ import deviceSaga from './device.saga';
 import {invitesSaga} from './invites.saga';
 import edamamSaga from './edamam.saga';
 import loginSaga from './login.saga';
+import signupSaga from './signup.saga';
 
 export default function* rootSaga() {
   yield all([
@@ -20,5 +21,6 @@ export default function* rootSaga() {
     fork(invitesSaga),
     fork(edamamSaga),
     fork(loginSaga),
+    fork(signupSaga),
   ]);
 }
