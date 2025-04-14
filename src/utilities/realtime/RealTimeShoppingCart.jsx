@@ -4,14 +4,14 @@ import {useDispatch} from 'react-redux';
 import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
 import {useAccount} from '../../hooks/useHooks';
 
-const useRealTimeShoppingCart = () => {
+const useRealTimeShoppingCart = enabled => {
   const dispatch = useDispatch();
   const account = useAccount();
   const db = getFirestore();
   const prevCartRef = useRef(null);
 
   useEffect(() => {
-    if (!account?.shoppingCartID) return;
+    if (!enabled || !account?.shoppingCartID) return;
 
     const cartRef = doc(db, 'shoppingCarts', account.shoppingCartID);
     // console.log('🔁 RealTimeShoppingCart listener mounted');
@@ -50,7 +50,7 @@ const useRealTimeShoppingCart = () => {
       // console.log('🛑 RealTimeShoppingCart listener removed');
       unsubscribe();
     };
-  }, [dispatch, account?.shoppingCartID, db]);
+  }, [dispatch, account?.shoppingCartID, db, enabled]);
 };
 
 export default useRealTimeShoppingCart;

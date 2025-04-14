@@ -10,13 +10,13 @@ import {
 } from '@react-native-firebase/firestore';
 import {useAccount} from '../../hooks/useHooks';
 
-const useRealTimeAllowedProfiles = () => {
+const useRealTimeAllowedProfiles = enabled => {
   const dispatch = useDispatch();
   const account = useAccount();
   const db = getFirestore();
 
   useEffect(() => {
-    if (!account?.allowedUsers?.length) {
+    if (!enabled || !account?.allowedUsers?.length) {
       return;
     }
 
@@ -52,7 +52,7 @@ const useRealTimeAllowedProfiles = () => {
     return () => {
       unsubscribe();
     };
-  }, [dispatch, account?.allowedUsers, db]); // ✅ Removed `persistedProfiles`
+  }, [dispatch, account?.allowedUsers, db, enabled]); // ✅ Removed `persistedProfiles`
 };
 
 export default useRealTimeAllowedProfiles;

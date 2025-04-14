@@ -5,10 +5,11 @@ import {getAuth, onAuthStateChanged} from '@react-native-firebase/auth';
 
 const auth = getAuth();
 
-const useRealTimeUsers = () => {
+const useRealTimeUsers = enabled => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    if (!enabled) return;
     // console.log(`🔄 Fetching User data from Firebase Auth`);
 
     const unsubscribe = onAuthStateChanged(auth, currentUser => {
@@ -22,7 +23,7 @@ const useRealTimeUsers = () => {
     return () => {
       unsubscribe();
     };
-  }, [dispatch]);
+  }, [dispatch, enabled]);
 };
 
 export default useRealTimeUsers;

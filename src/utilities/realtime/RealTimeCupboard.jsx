@@ -4,14 +4,14 @@ import {useDispatch} from 'react-redux';
 import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
 import {useAccount} from '../../hooks/useHooks';
 
-const useRealTimeCupboard = () => {
+const useRealTimeCupboard = enabled => {
   const dispatch = useDispatch();
   const account = useAccount();
   const db = getFirestore();
   const prevCupboardRef = useRef(null);
 
   useEffect(() => {
-    if (!account?.cupboardID) return;
+    if (!enabled || !account?.cupboardID) return;
 
     const cupboardRef = doc(db, 'cupboards', account.cupboardID);
     // console.log('🔁 RealTimeCupboard listener mounted');
@@ -50,7 +50,7 @@ const useRealTimeCupboard = () => {
       // console.log('🛑 RealTimeCupboard listener removed');
       unsubscribe();
     };
-  }, [dispatch, account?.cupboardID, db]);
+  }, [dispatch, account?.cupboardID, db, enabled]);
 };
 
 export default useRealTimeCupboard;
