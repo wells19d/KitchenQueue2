@@ -1,14 +1,19 @@
 //* Main.jsx
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Alert, Dimensions, Image, View} from 'react-native';
+import {Alert, Dimensions, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import NavMenu from './src/components/NavMenu';
 import {useDispatch} from 'react-redux';
 import {getNavMenuHeight} from './src/utilities/deviceUtils';
 import Home from './src/screens/Home/Home';
-import {useAuth, useDeviceInfo, useProfile} from './src/hooks/useHooks';
+import {
+  useAccount,
+  useAuth,
+  useDeviceInfo,
+  useProfile,
+} from './src/hooks/useHooks';
 import {setHapticFeedback} from './src/hooks/setHapticFeedback';
 import Account from './src/screens/Account/Account';
 import CupboardSingle from './src/screens/Cupboard/CupboardSingle';
@@ -52,9 +57,11 @@ const Main = props => {
   const dispatch = useDispatch();
   const device = useDeviceInfo();
   const profile = useProfile();
+  const account = useAccount();
   const useHaptics = setHapticFeedback();
   const Stack = createNativeStackNavigator();
   const isAuthenticated = useAuth();
+
   const [headerColor, setHeaderColor] = useState('black');
   const [screenLocation, setScreenLocation] = useState('');
   const [bgColor, setBgColor] = useState('#ffffff');
@@ -67,17 +74,23 @@ const Main = props => {
   const [currentModal, setCurrentModal] = useState('');
   enableScreens(true);
 
-  RTUsers();
-  RTAccounts();
-  RTProfiles();
-  RTShopping();
-  RTCupboards();
-  RTAllowedProfiles();
+  useEffect(() => {
+    if (isAuthenticated) {
+      RTUsers();
+      RTAccounts();
+      RTProfiles();
+      RTShopping();
+      RTCupboards();
+      RTAllowedProfiles();
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     try {
       const auth = getAuth(getApp());
+      console.log('Auth:', auth);
       const user = auth.currentUser;
+      console.log('User:', user);
 
       if (user) {
         dispatch({type: 'SET_USER', payload: user});
@@ -95,7 +108,7 @@ const Main = props => {
   );
 
   useEffect(() => {
-    if (isAuthenticated && profile) {
+    if (isAuthenticated && profile && account !== null) {
       if (!profile?.tosVersion || profile?.tosVersion !== AppInfo.tosVersion) {
         setCurrentModal('TOS');
         setShowTOSModal(true);
@@ -107,7 +120,7 @@ const Main = props => {
         setShowPPModal(true);
       }
     }
-  }, [isAuthenticated, profile]);
+  }, [isAuthenticated, profile, account]);
 
   useEffect(() => {
     dispatch({type: 'FETCH_DEVICE_INFO'});
@@ -674,7 +687,9 @@ const Main = props => {
         <Auth bgColor={bgColor} isSplashVisible={isSplashVisible} />
       </SafeAreaView>
     );
-  } else {
+  }
+
+  if (isAuthenticated && appReady) {
     return (
       <NavigationContainer>
         <SafeAreaView
