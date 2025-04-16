@@ -13,7 +13,7 @@ const KQText = ({
   font = 'open-6',
   ...props
 }) => {
-  const fontStyles = useFontStyles(font, size, kqColor);
+  const fontStyles = useFontStyles(font, size, kqColor, italic);
 
   return (
     <Text
@@ -21,7 +21,6 @@ const KQText = ({
       style={[
         fontStyles,
         {
-          fontStyle: italic ? 'italic' : 'normal',
           textAlign: centered ? 'center' : 'left',
         },
         style,

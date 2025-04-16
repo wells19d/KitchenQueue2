@@ -1,7 +1,14 @@
 //* Main.jsx
 import {NavigationContainer} from '@react-navigation/native';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Alert, Dimensions, View} from 'react-native';
+import React, {use, useCallback, useEffect, useMemo, useState} from 'react';
+import {
+  Alert,
+  Dimensions,
+  View,
+  Image,
+  StatusBar,
+  ActivityIndicator,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import NavMenu from './src/components/NavMenu';
@@ -51,6 +58,7 @@ import Profile from './src/screens/Account/Profile';
 import Vibrations from './src/screens/Account/Vibrations';
 import ItemDisplay from './src/screens/Account/ItemDisplay';
 import Resets from './src/screens/Account/Resets';
+import FTUAccountSetup from './src/screens/FTU/FTUAccountSetup';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -74,7 +82,36 @@ const Main = props => {
   const [currentModal, setCurrentModal] = useState('');
   enableScreens(true);
 
-  const RTEnabled = isAuthenticated && profile?.id && profile?.account;
+  const [renderDisplay, setRenderDisplay] = useState('logo');
+  const [loading, setLoading] = useState(false);
+
+  console.log('auth', isAuthenticated);
+
+  useEffect(() => {
+    if (renderDisplay === 'main' && isAuthenticated) return;
+
+    if (appReady && isAuthenticated) {
+      if (account !== null) {
+        if (renderDisplay === 'firstTimeUser') {
+          setLoading(true);
+          setTimeout(() => {
+            setLoading(false);
+            setRenderDisplay('main');
+          }, 1500);
+        } else {
+          setRenderDisplay('main');
+        }
+      } else {
+        setRenderDisplay('firstTimeUser');
+      }
+    } else if (appReady && !isAuthenticated) {
+      setRenderDisplay('auth');
+    } else {
+      setRenderDisplay('logo');
+    }
+  }, [appReady, isAuthenticated, profile, account]);
+
+  const RTEnabled = isAuthenticated && account !== null;
   RTAccounts(RTEnabled);
   RTUsers(RTEnabled);
   RTAccounts(RTEnabled);
@@ -86,9 +123,7 @@ const Main = props => {
   useEffect(() => {
     try {
       const auth = getAuth(getApp());
-      console.log('Auth:', auth);
       const user = auth.currentUser;
-      console.log('User:', user);
 
       if (user) {
         dispatch({type: 'SET_USER', payload: user});
@@ -663,7 +698,26 @@ const Main = props => {
     );
   };
 
-  if (!appReady) {
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#fff',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <View style={{margin: 20}}>
+          <ActivityIndicator size="large" color="#319177" />
+        </View>
+        <Text size="medium" font="open-6">
+          Just getting things ready...
+        </Text>
+      </View>
+    );
+  }
+
+  if (renderDisplay === 'logo') {
     return (
       <View
         style={{
@@ -679,7 +733,7 @@ const Main = props => {
     );
   }
 
-  if (!isAuthenticated && appReady) {
+  if (renderDisplay === 'auth') {
     return (
       <SafeAreaView style={{flex: 1, margin: 5}}>
         <Auth bgColor={bgColor} isSplashVisible={isSplashVisible} />
@@ -687,7 +741,7 @@ const Main = props => {
     );
   }
 
-  if (isAuthenticated && appReady && account !== null) {
+  if (renderDisplay === 'main') {
     return (
       <NavigationContainer>
         <SafeAreaView
@@ -736,11 +790,12 @@ const Main = props => {
     );
   }
 
-  if (isAuthenticated && appReady && account === null) {
+  if (renderDisplay === 'firstTimeUser') {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>FTU</Text>
-      </View>
+      <SafeAreaView style={{flex: 1, margin: 5}}>
+        <StatusBar backgroundColor={bgColor} barStyle="light-content" />
+        <FTUAccountSetup />
+      </SafeAreaView>
     );
   }
 };

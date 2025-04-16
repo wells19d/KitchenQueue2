@@ -42,44 +42,156 @@ export const useColors = color => {
 
 const fontLookup = {
   // NotoSans mappings
-  'noto-1': {ios: 'NotoSans', android: 'NotoSans-Thin', weight: 100},
-  'noto-2': {ios: 'NotoSans', android: 'NotoSans-ExtraLight', weight: 200},
-  'noto-3': {ios: 'NotoSans', android: 'NotoSans-Light', weight: 300},
-  'noto-4': {ios: 'NotoSans', android: 'NotoSans-Regular', weight: 400},
-  'noto-5': {ios: 'NotoSans', android: 'NotoSans-Medium', weight: 500},
-  'noto-6': {ios: 'NotoSans', android: 'NotoSans-SemiBold', weight: 600},
-  'noto-7': {ios: 'NotoSans', android: 'NotoSans-Bold', weight: 700},
-  'noto-8': {ios: 'NotoSans', android: 'NotoSans-ExtraBold', weight: 800},
-  'noto-9': {ios: 'NotoSans', android: 'NotoSans-Black', weight: 900},
+  'noto-1': {
+    ios: 'NotoSans',
+    android: 'NotoSans-Thin',
+    androidItalic: 'NotoSans-ThinItalic',
+    weight: 100,
+  },
+  'noto-2': {
+    ios: 'NotoSans',
+    android: 'NotoSans-ExtraLight',
+    androidItalic: 'NotoSans-ExtraLightItalic',
+    weight: 200,
+  },
+  'noto-3': {
+    ios: 'NotoSans',
+    android: 'NotoSans-Light',
+    androidItalic: 'NotoSans-LightItalic',
+    weight: 300,
+  },
+  'noto-4': {
+    ios: 'NotoSans',
+    android: 'NotoSans-Regular',
+    androidItalic: 'NotoSans-Italic',
+    weight: 400,
+  },
+  'noto-5': {
+    ios: 'NotoSans',
+    android: 'NotoSans-Medium',
+    androidItalic: 'NotoSans-MediumItalic',
+    weight: 500,
+  },
+  'noto-6': {
+    ios: 'NotoSans',
+    android: 'NotoSans-SemiBold',
+    androidItalic: 'NotoSans-SemiBoldItalic',
+    weight: 600,
+  },
+  'noto-7': {
+    ios: 'NotoSans',
+    android: 'NotoSans-Bold',
+    androidItalic: 'NotoSans-BoldItalic',
+    weight: 700,
+  },
+  'noto-8': {
+    ios: 'NotoSans',
+    android: 'NotoSans-ExtraBold',
+    androidItalic: 'NotoSans-ExtraBoldItalic',
+    weight: 800,
+  },
+  'noto-9': {
+    ios: 'NotoSans',
+    android: 'NotoSans-Black',
+    androidItalic: 'NotoSans-BlackItalic',
+    weight: 900,
+  },
 
   // Montserrat mappings
-  'mont-1': {ios: 'Montserrat', android: 'Montserrat-Thin', weight: 100},
-  'mont-2': {ios: 'Montserrat', android: 'Montserrat-ExtraLight', weight: 200},
-  'mont-3': {ios: 'Montserrat', android: 'Montserrat-Light', weight: 300},
-  'mont-4': {ios: 'Montserrat', android: 'Montserrat-Regular', weight: 400},
-  'mont-5': {ios: 'Montserrat', android: 'Montserrat-Medium', weight: 500},
-  'mont-6': {ios: 'Montserrat', android: 'Montserrat-SemiBold', weight: 600},
-  'mont-7': {ios: 'Montserrat', android: 'Montserrat-Bold', weight: 700},
-  'mont-8': {ios: 'Montserrat', android: 'Montserrat-ExtraBold', weight: 800},
-  'mont-9': {ios: 'Montserrat', android: 'Montserrat-Black', weight: 900},
+  'mont-1': {
+    ios: 'Montserrat',
+    android: 'Montserrat-Thin',
+    androidItalic: 'Montserrat-ThinItalic',
+    weight: 100,
+  },
+  'mont-2': {
+    ios: 'Montserrat',
+    android: 'Montserrat-ExtraLight',
+    androidItalic: 'Montserrat-ExtraLightItalic',
+    weight: 200,
+  },
+  'mont-3': {
+    ios: 'Montserrat',
+    android: 'Montserrat-Light',
+    androidItalic: 'Montserrat-LightItalic',
+    weight: 300,
+  },
+  'mont-4': {
+    ios: 'Montserrat',
+    android: 'Montserrat-Regular',
+    androidItalic: 'Montserrat-Italic',
+    weight: 400,
+  },
+  'mont-5': {
+    ios: 'Montserrat',
+    android: 'Montserrat-Medium',
+    androidItalic: 'Montserrat-MediumItalic',
+    weight: 500,
+  },
+  'mont-6': {
+    ios: 'Montserrat',
+    android: 'Montserrat-SemiBold',
+    androidItalic: 'Montserrat-SemiBoldItalic',
+    weight: 600,
+  },
+  'mont-7': {
+    ios: 'Montserrat',
+    android: 'Montserrat-Bold',
+    androidItalic: 'Montserrat-BoldItalic',
+    weight: 700,
+  },
+  'mont-8': {
+    ios: 'Montserrat',
+    android: 'Montserrat-ExtraBold',
+    androidItalic: 'Montserrat-ExtraBoldItalic',
+    weight: 800,
+  },
+  'mont-9': {
+    ios: 'Montserrat',
+    android: 'Montserrat-Black',
+    androidItalic: 'Montserrat-BlackItalic',
+    weight: 900,
+  },
 
   // OpenSans mappings
-  'open-3': {ios: 'OpenSans-Light', android: 'OpenSans-Light', weight: 300},
-  'open-4': {ios: 'OpenSans-Regular', android: 'OpenSans-Regular', weight: 400},
-  'open-5': {ios: 'OpenSans-Medium', android: 'OpenSans-Medium', weight: 500}, // Default
+  'open-3': {
+    ios: 'OpenSans-Light',
+    android: 'OpenSans-Light',
+    androidItalic: 'OpenSans-LightItalic',
+    weight: 300,
+  },
+  'open-4': {
+    ios: 'OpenSans-Regular',
+    android: 'OpenSans-Regular',
+    androidItalic: 'OpenSans-Italic',
+    weight: 400,
+  },
+  'open-5': {
+    ios: 'OpenSans-Medium',
+    android: 'OpenSans-Medium',
+    androidItalic: 'OpenSans-MediumItalic',
+    weight: 500,
+  },
   'open-6': {
     ios: 'OpenSans-SemiBold',
     android: 'OpenSans-SemiBold',
+    androidItalic: 'OpenSans-SemiBoldItalic',
     weight: 600,
   },
-  'open-7': {ios: 'OpenSans-Bold', android: 'OpenSans-Bold', weight: 700},
+  'open-7': {
+    ios: 'OpenSans-Bold',
+    android: 'OpenSans-Bold',
+    androidItalic: 'OpenSans-BoldItalic',
+    weight: 700,
+  },
   'open-8': {
     ios: 'OpenSans-ExtraBold',
     android: 'OpenSans-ExtraBold',
+    androidItalic: 'OpenSans-ExtraBoldItalic',
     weight: 800,
   },
 
-  // Special cases (no weight variations)
+  // Special cases
   cherry: {
     ios: 'CherryBlossom',
     android: 'Cherry-Blossom',
@@ -89,20 +201,30 @@ const fontLookup = {
     ios: 'BananaChips-Regular',
     android: 'BananaChips-Regular',
     weight: 500,
-    lineHeightFactor: 0.8, // Adjusts large vertical space
+    lineHeightFactor: 0.8,
   },
 };
 
-// Default settings
 const DEFAULT_FONT = 'open-5';
 
-export const useFonts = (font = DEFAULT_FONT) => {
+export const useFonts = (font = DEFAULT_FONT, italic = false) => {
   const normalizedFont = font.trim().toLowerCase();
   const fontData = fontLookup[normalizedFont] || fontLookup[DEFAULT_FONT];
 
-  return Platform.OS === 'ios'
-    ? {fontFamily: fontData.ios, fontWeight: fontData.weight}
-    : {fontFamily: fontData.android};
+  if (Platform.OS === 'ios') {
+    return {
+      fontFamily: fontData.ios,
+      fontWeight: fontData.weight,
+      fontStyle: italic ? 'italic' : 'normal',
+    };
+  }
+
+  return {
+    fontFamily:
+      italic && fontData.androidItalic
+        ? fontData.androidItalic
+        : fontData.android,
+  };
 };
 
 export const useFontSizes = (size = 'medium', font = 'OpenSans') => {
@@ -110,7 +232,7 @@ export const useFontSizes = (size = 'medium', font = 'OpenSans') => {
     tiny: 12,
     xSmall: 14,
     small: 16,
-    medium: 18, // Default
+    medium: 18,
     large: 20,
     xLarge: 24,
     giant: 28,
@@ -118,10 +240,9 @@ export const useFontSizes = (size = 'medium', font = 'OpenSans') => {
     gargantuan: 48,
   };
 
-  // Scaling factors based on font
   const fontScale = {
-    cherry: 1.1, // Slightly larger
-    banana: 2, // Twice the size
+    cherry: 1.1,
+    banana: 2,
   };
 
   const baseSize = sizes[size] || sizes.medium;
@@ -133,11 +254,12 @@ export const useFontStyles = (
   font = 'open-5',
   size = 'medium',
   color = 'black',
+  italic = false,
 ) => {
   return {
-    ...useFonts(font), // ✅ Returns { fontFamily, fontWeight }
-    ...useFontSizes(size, font), // ✅ Returns { fontSize }
-    color: useColors(color), // ✅ Assign color as a string
+    ...useFonts(font, italic),
+    ...useFontSizes(size, font),
+    color: useColors(color),
   };
 };
 

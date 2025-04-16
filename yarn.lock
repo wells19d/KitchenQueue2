@@ -1842,24 +1842,24 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
-"@react-native-firebase/app@21.13.0":
-  version "21.13.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-21.13.0.tgz#25247c0a8200fbfcf7dd22a5b627af20bea7c352"
-  integrity sha512-UjM+yTTuBTQkGQHSTmJtKoXumgWxN+G90q6TCBqf2fQzAGhWpeMQSKOpD3arW+gmmO2eNIb1P8wyMYQk9GeGVA==
+"@react-native-firebase/app@21.14.0":
+  version "21.14.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-21.14.0.tgz#5061c94f37331b89fb50d20d3c71c6120978b4f8"
+  integrity sha512-vBNfn7PoQrZfANLJnJiWZSHVu7WG6hjM5w3MDfmG8DLdr8VsAVBUgsn8lGpqobSuno1vTgwDIhR8PYZjMGsuvg==
   dependencies:
     firebase "11.3.1"
 
-"@react-native-firebase/auth@21.13.0":
-  version "21.13.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/auth/-/auth-21.13.0.tgz#685146588bc537e1e6de5adbfcdf1972c4d09e1f"
-  integrity sha512-oM4PgOmh5xSB+pDQil5ATbEZ48AxBU2lC6EJCDCcSf5LqdWwOm8LA3Ew1ffJnCQJ0RafH7eSrYpFgnxR2y2sPg==
+"@react-native-firebase/auth@21.14.0":
+  version "21.14.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/auth/-/auth-21.14.0.tgz#d5ba902567dfd94ba995815bdcf34da90be9e744"
+  integrity sha512-m4BFrq/pC4OlPPLZJjDu0n/3QHM+pE5KlYc7dvnE8zavtlqKclvZ6cchcfm4DsPVqmuQOJ1QQqrYdOfRm3hsHA==
   dependencies:
     plist "^3.1.0"
 
-"@react-native-firebase/firestore@21.13.0":
-  version "21.13.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-21.13.0.tgz#cff82b71693e23516bd1f819af8677340a36d48e"
-  integrity sha512-2fbr4VWp3x3Ej6BUUzvJ0xBLuMfT14t2QXAIIixbfvMLk3d9DkxdmgdRZaC2VKW9x47ts/iub4g0OPdoJN0Zpg==
+"@react-native-firebase/firestore@21.14.0":
+  version "21.14.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-21.14.0.tgz#76a946a35cb7856e838ce34e99d4372de2343671"
+  integrity sha512-nk8i4le8uQeydRo1JymUCUOWprVK8FUlgtjG0ZG3ne7qt7NvmzgoK59KGwP+G5e8th2wWgACDHmvRrQK6ctXlA==
 
 "@react-native/assets-registry@0.78.2":
   version "0.78.2"
@@ -4067,7 +4067,7 @@ ignore@^5.0.5, ignore@^5.2.0, ignore@^5.3.1:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.3.2.tgz#3cd40e729f3643fd87cb04e50bf0eb722bc596f5"
   integrity sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==
 
-image-size@^1.0.2, image-size@^1.2.1:
+image-size@1.2.1, image-size@^1.0.2:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/image-size/-/image-size-1.2.1.tgz#ee118aedfe666db1a6ee12bed5821cde3740276d"
   integrity sha512-rH+46sQJ2dlwfjfhCyNx5thzrv+dtmBIhPHk0zgRUukHzZ/kRueTJXoYYsclBaKcSMBWuGbOFXtioLpzTb5euw==
@@ -5561,10 +5561,10 @@ react-native-reanimated@3.17.3:
     invariant "^2.2.4"
     react-native-is-edge-to-edge "1.1.7"
 
-react-native-safe-area-context@5.3.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-5.3.0.tgz#272e6786a58aafe3362fde4d3233713b66158179"
-  integrity sha512-glV9bwuozTjf/JDBIBm+ITnukHNaUT3nucgdeADwjtHsfEN3RL5UO6nq99vvdWv5j/O9yCZBvFncM1BBQ+UvpQ==
+react-native-safe-area-context@5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-5.4.0.tgz#04b51940408c114f75628a12a93569d30c525454"
+  integrity sha512-JaEThVyJcLhA+vU0NU8bZ0a1ih6GiF4faZ+ArZLqpYbL6j7R3caRqj+mE3lEtKCuHgwjLg3bCxLL1GPUJZVqUA==
 
 react-native-screens@4.10.0:
   version "4.10.0"
