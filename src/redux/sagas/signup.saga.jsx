@@ -63,7 +63,7 @@ function* createNewUser(action) {
 
 function* createNewAccount(action) {
   try {
-    const {userID} = action.payload;
+    const {userID, profileID} = action.payload;
     const accountID = uuid.v4();
     const cupboardID = uuid.v4();
     const shoppingCartID = uuid.v4();
@@ -142,6 +142,7 @@ function* createNewAccount(action) {
       doc(db, 'profiles', userID),
       {
         account: accountID,
+        role: 'owner',
         lastUpdated: new Date().toISOString(),
       },
       {merge: true},
