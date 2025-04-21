@@ -1,130 +1,113 @@
-//* invites.saga.jsx
+// invites.saga.jsx
 import {put, call, takeLatest} from 'redux-saga/effects';
 import {
   getFirestore,
   getDoc,
+  setDoc,
   updateDoc,
+  deleteDoc,
   doc,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
 const db = getFirestore(getApp());
 
-function* addInviteSaga(action) {
-  if (!action.payload?.email) {
-    console.error('Email is missing in action payload.');
-    return;
-  }
+function* queueInviteSaga(action) {
+  const {invite, accountID, resolve, reject} = action.payload;
+
   try {
-    const docRef = doc(db, 'accountInvites', 'bGk0rcOM1lpPyV1WdG7c');
-    const docSnapshot = yield call(getDoc, docRef);
+    const accountRef = doc(db, 'accounts', accountID);
+    const accountSnap = yield call(getDoc, accountRef);
+    if (!accountSnap.exists) throw new Error('Account not found.');
 
-    let updatedInvites = [];
+    const accountData = accountSnap.data();
+    const currentUsers = accountData.allowedUsers?.length || 0;
+    const currentInviteCodes = accountData.accountInvites || [];
 
-    if (docSnapshot.exists) {
-      const docData = docSnapshot.data();
-      updatedInvites = docData.invites
-        ? [...docData.invites, action.payload]
-        : [action.payload];
-    } else {
-      updatedInvites = [action.payload];
-    }
+    const now = Date.now();
+    const cutoff = now - 7 * 24 * 60 * 60 * 1000; // 7 days
 
-    yield call(() => updateDoc(docRef, {invites: updatedInvites}));
-  } catch (error) {
-    console.error('Failed to add invite:', error);
-  }
-}
+    let activeInvites = [];
+    let reusedInvite = null;
+    let expiredCodes = [];
 
-function* checkInvitesSaga(action) {
-  try {
-    const docRef = doc(db, 'accountInvites', 'bGk0rcOM1lpPyV1WdG7c');
-    const docSnapshot = yield call(getDoc, docRef);
+    // 🔍 Check each invite code
+    for (let code of currentInviteCodes) {
+      const ref = doc(db, 'accountInvites', code);
+      const snap = yield call(getDoc, ref);
 
-    if (docSnapshot.exists) {
-      const {invites = []} = docSnapshot.data();
-      const foundInvite = invites.find(
-        invite => invite.email === action.payload.email,
-      );
+      if (snap.exists) {
+        const data = snap.data();
+        const expireTime = new Date(data.toExpire).getTime();
 
-      if (foundInvite) {
-        action.payload.resolve(foundInvite); // Resolve with the found invite
-        yield put({type: 'SET_EXISTING_INVITE', payload: foundInvite});
+        if (expireTime < cutoff) {
+          // expired, delete it
+          yield call(deleteDoc, ref);
+          expiredCodes.push(code);
+        } else {
+          // reused email logic
+          if (data.email === invite.email) reusedInvite = data;
+          activeInvites.push(data);
+        }
       } else {
-        action.payload.resolve(null); // Resolve with null if no invite found
-        yield put({type: 'INVITE_NOT_FOUND'});
+        // dangling ref
+        expiredCodes.push(code);
       }
-    } else {
-      action.payload.resolve(null); // Resolve with null if no doc found
-      yield put({type: 'INVITE_NOT_FOUND'});
     }
-  } catch (error) {
-    console.error('Error checking invites:', error);
-    action.payload.reject(error); // Reject with the error
-    yield put({type: 'CHECK_INVITES_FAILED', payload: error.message});
-  }
-}
 
-function* updateInviteSaga(action) {
-  if (!action.payload?.email) {
-    console.error('Email is missing in action payload.');
-    return;
-  }
-  try {
-    const docRef = doc(db, 'accountInvites', 'bGk0rcOM1lpPyV1WdG7c');
-    const docSnapshot = yield call(getDoc, docRef);
+    // 🧹 Clean up account's invite array
+    if (expiredCodes.length > 0) {
+      const cleanedCodes = currentInviteCodes.filter(
+        code => !expiredCodes.includes(code),
+      );
+      yield call(updateDoc, accountRef, {accountInvites: cleanedCodes});
+    }
 
-    if (!docSnapshot.exists) {
-      console.error('Document not found.');
+    // 🔁 Reuse existing invite
+    if (reusedInvite) {
+      const inviteRef = doc(db, 'accountInvites', reusedInvite.inviteCode);
+      const updated = {
+        ...reusedInvite,
+        toExpire: new Date().toISOString(),
+      };
+      yield call(setDoc, inviteRef, updated);
+      yield put({type: 'SET_EXISTING_INVITE', payload: updated});
+      resolve?.({existing: true, invite: updated});
       return;
     }
 
-    const {invites = []} = docSnapshot.data();
-    const updatedInvites = invites.map(invite =>
-      invite.email === action.payload.email
-        ? {...invite, toExpire: invite.toExpire || new Date().toISOString()}
-        : invite,
+    // ✅ Now check available slots AFTER cleaning
+    const cleanedInviteCodes = currentInviteCodes.filter(
+      code => !expiredCodes.includes(code),
     );
+    const cleanedInviteCount = activeInvites.length;
+    const slotsRemaining = Math.max(0, 4 - (currentUsers + cleanedInviteCount));
 
-    yield call(updateDoc, docRef, {invites: updatedInvites});
-    yield put({type: 'INVITE_UPDATED', payload: action.payload.email});
-  } catch (error) {
-    console.error('Failed to update invite:', error);
-    yield put({type: 'UPDATE_INVITE_FAILED', payload: error.message});
-  }
-}
-
-function* deleteInviteSaga(action) {
-  if (!action.payload?.email) {
-    console.error('Email is missing in action payload.');
-    return;
-  }
-  try {
-    const docRef = doc(db, 'accountInvites', 'bGk0rcOM1lpPyV1WdG7c');
-    const docSnapshot = yield call(getDoc, docRef);
-
-    if (!docSnapshot.exists) {
-      console.error('Document not found.');
+    if (slotsRemaining <= 0) {
+      yield put({type: 'SET_EXCEEDING_LIMITS'});
+      yield put({type: 'SET_EXISTING_INVITE', payload: null});
+      resolve?.({existing: false, invite: null, exceeding: true});
       return;
     }
 
-    const {invites = []} = docSnapshot.data();
-    const updatedInvites = invites.filter(
-      invite => invite.email !== action.payload.email,
-    );
+    // ✳️ Create new invite
+    const inviteRef = doc(db, 'accountInvites', invite.inviteCode);
+    yield call(setDoc, inviteRef, invite);
 
-    yield call(updateDoc, docRef, {invites: updatedInvites});
-    yield put({type: 'INVITE_DELETED', payload: action.payload.email});
+    const updatedInviteCodes = [...cleanedInviteCodes, invite.inviteCode];
+    yield call(updateDoc, accountRef, {
+      accountInvites: updatedInviteCodes,
+    });
+
+    yield put({type: 'SET_EXISTING_INVITE', payload: invite});
+    resolve?.({existing: false, invite});
   } catch (error) {
-    console.error('Failed to delete invite:', error);
-    yield put({type: 'DELETE_INVITE_FAILED', payload: error.message});
+    console.error('🔥 queueInviteSaga error:', error);
+    yield put({type: 'INVITE_ACTION_FAILED', payload: error.message});
+    reject?.(error);
   }
 }
 
-// Watcher saga
 export function* invitesSaga() {
-  yield takeLatest('ADD_INVITE', addInviteSaga);
-  yield takeLatest('CHECK_INVITES', checkInvitesSaga);
-  yield takeLatest('UPDATE_INVITE', updateInviteSaga);
-  yield takeLatest('DELETE_INVITE', deleteInviteSaga);
+  yield takeLatest('QUEUE_INVITE_REQUEST', queueInviteSaga);
 }
