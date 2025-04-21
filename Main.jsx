@@ -85,36 +85,35 @@ const Main = props => {
   const [renderDisplay, setRenderDisplay] = useState('logo');
   const [loading, setLoading] = useState(false);
 
-  console.log('auth', isAuthenticated);
-
+  // Step 1: Handle base state – app readiness and auth
   useEffect(() => {
-    if (renderDisplay === 'main' && isAuthenticated) return;
-
-    if (appReady && isAuthenticated) {
-      if (account !== null) {
-        if (renderDisplay === 'firstTimeUser') {
-          setLoading(true);
-          setTimeout(() => {
-            setLoading(false);
-            setRenderDisplay('main');
-          }, 1500);
-        } else {
-          setRenderDisplay('main');
-        }
-      } else {
-        setRenderDisplay('firstTimeUser');
-      }
-    } else if (appReady && !isAuthenticated) {
-      setRenderDisplay('auth');
-    } else {
+    if (!appReady) {
       setRenderDisplay('logo');
+      return;
     }
-  }, [appReady, isAuthenticated, profile, account]);
+
+    if (!isAuthenticated) {
+      setRenderDisplay('auth');
+      return;
+    }
+  }, [appReady, isAuthenticated]);
+
+  // Step 2: Wait until profile.account is fully resolved
+  useEffect(() => {
+    if (!appReady || !isAuthenticated) return;
+
+    if (profile && 'account' in profile) {
+      if (profile.account === null) {
+        setRenderDisplay('firstTimeUser');
+      } else {
+        setRenderDisplay('main');
+      }
+    }
+  }, [appReady, isAuthenticated, profile]);
 
   const RTEnabled = isAuthenticated && account !== null;
   RTAccounts(RTEnabled);
   RTUsers(RTEnabled);
-  RTAccounts(RTEnabled);
   RTProfiles(RTEnabled);
   RTShopping(RTEnabled);
   RTCupboards(RTEnabled);
@@ -698,7 +697,8 @@ const Main = props => {
     );
   };
 
-  if (loading) {
+  if (renderDisplay === 'loading') {
+    console.log('loading displays');
     return (
       <View
         style={{
@@ -718,6 +718,7 @@ const Main = props => {
   }
 
   if (renderDisplay === 'logo') {
+    console.log('logo displays');
     return (
       <View
         style={{
@@ -734,6 +735,7 @@ const Main = props => {
   }
 
   if (renderDisplay === 'auth') {
+    console.log('auth displays');
     return (
       <SafeAreaView style={{flex: 1, margin: 5}}>
         <Auth bgColor={bgColor} isSplashVisible={isSplashVisible} />
@@ -742,6 +744,7 @@ const Main = props => {
   }
 
   if (renderDisplay === 'main') {
+    console.log('main displays');
     return (
       <NavigationContainer>
         <SafeAreaView
@@ -791,6 +794,7 @@ const Main = props => {
   }
 
   if (renderDisplay === 'firstTimeUser') {
+    console.log('firstTimeUser displays');
     return (
       <SafeAreaView style={{flex: 1, margin: 5}}>
         <StatusBar backgroundColor={bgColor} barStyle="light-content" />
