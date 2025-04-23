@@ -14,7 +14,7 @@ import {useDispatch} from 'react-redux';
 import uuid from 'react-native-uuid';
 import BuildAvatar from '../../components/BuildAvatar';
 import {AccountStyles} from '../../styles/Styles';
-import SubAccountButton from './SubAccountButton';
+import SAButton from './SAButton';
 
 const Account = () => {
   const route = useRoute();
@@ -98,6 +98,7 @@ const Account = () => {
       fromEmail: profile?.email,
       joinCode: account?.joinCode,
       toExpire: new Date().toISOString(),
+      accountID: account?.id,
     };
 
     setLoadingStatus(true);
@@ -168,17 +169,17 @@ const Account = () => {
     >
       <View style={AccountStyles.topSection}>
         <View style={AccountStyles.sectionNav}>
-          <SubAccountButton
+          <SAButton
             title="Profile"
             location="AccountProfile"
             icon={<Icons.Profile size={20} color="#373d43" />}
           />
-          <SubAccountButton
+          <SAButton
             title="Settings"
             location="AccountSettings"
             icon={<Icons.Settings size={20} color="#373d43" />}
           />
-          <SubAccountButton
+          <SAButton
             title="Help"
             location="AccountHelp"
             icon={<Icons.Help size={20} color="#373d43" />}

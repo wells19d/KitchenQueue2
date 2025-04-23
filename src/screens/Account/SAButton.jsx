@@ -1,4 +1,4 @@
-//* SubAccountButton.jsx
+//* SAButton.jsx
 import React from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import {AccountStyles} from '../../styles/Styles';
@@ -7,7 +7,7 @@ import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 import {useProfile} from '../../hooks/useHooks';
 import {Text} from '../../KQ-UI';
 
-const SubAccountButton = props => {
+const SAButton = props => {
   const {location, icon, title} = props;
   const useHaptics = setHapticFeedback();
   const navigation = useNavigation();
@@ -31,4 +31,4 @@ const SubAccountButton = props => {
   );
 };
 
-export default React.memo(SubAccountButton);
+export default React.memo(SAButton);

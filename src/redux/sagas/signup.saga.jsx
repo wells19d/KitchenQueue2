@@ -66,16 +66,22 @@ function* createNewAccount(action) {
     const {userID, profileID} = action.payload;
     const accountID = uuid.v4();
     const cupboardID = uuid.v4();
+    const cupboardLimit = 100;
     const shoppingCartID = uuid.v4();
+    const shoppingCartLimit = 25;
     const recipeBoxID = uuid.v4();
+    const recipeBoxLimit = 5;
     const favoriteItemsID = uuid.v4();
+    const favoriteItemsLimit = 10;
     const joinCode = uuid.v4().replace(/-/g, '');
 
     const newAccount = {
       allowedUsers: [userID],
       createdOn: new Date().toISOString(),
       cupboardID: cupboardID,
+      cupboardLimit: cupboardLimit,
       favoriteItemsID: favoriteItemsID,
+      favoriteItemsLimit: favoriteItemsLimit,
       id: accountID,
       isActive: true,
       joinCode: joinCode,
@@ -83,7 +89,9 @@ function* createNewAccount(action) {
       lastUpdatedBy: userID,
       owner: userID,
       recipeBoxID: recipeBoxID,
+      recipeBoxLimit: recipeBoxLimit,
       shoppingCartID: shoppingCartID,
+      shoppingCartLimit: shoppingCartLimit,
       subType: 'Free',
     };
 
@@ -165,10 +173,7 @@ function* createNewAccount(action) {
   }
 }
 
-function* joinAccount(action) {}
-
 export default function* signupSaga() {
   yield takeLatest('SIGNUP_REQUEST', createNewUser);
   yield takeLatest('CREATE_NEW_ACCOUNT', createNewAccount);
-  yield takeLatest('JOIN_ACCOUNT', joinAccount);
 }
