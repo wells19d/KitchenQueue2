@@ -58,7 +58,7 @@ import Profile from './src/screens/Account/Profile';
 import Vibrations from './src/screens/Account/Vibrations';
 import ItemDisplay from './src/screens/Account/ItemDisplay';
 import Resets from './src/screens/Account/Resets';
-import FTUAccountSetup from './src/screens/FTU/FTUAccountSetup';
+import AccountSetup from './src/screens/Account/AccountSetup';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -104,7 +104,7 @@ const Main = props => {
 
     if (profile && 'account' in profile) {
       if (profile.account === null) {
-        setRenderDisplay('firstTimeUser');
+        setRenderDisplay('accountSetup');
       } else {
         setRenderDisplay('main');
       }
@@ -698,7 +698,6 @@ const Main = props => {
   };
 
   if (renderDisplay === 'loading') {
-    console.log('loading displays');
     return (
       <View
         style={{
@@ -718,7 +717,6 @@ const Main = props => {
   }
 
   if (renderDisplay === 'logo') {
-    console.log('logo displays');
     return (
       <View
         style={{
@@ -735,7 +733,6 @@ const Main = props => {
   }
 
   if (renderDisplay === 'auth') {
-    console.log('auth displays');
     return (
       <SafeAreaView style={{flex: 1, margin: 5}}>
         <Auth bgColor={bgColor} isSplashVisible={isSplashVisible} />
@@ -744,7 +741,6 @@ const Main = props => {
   }
 
   if (renderDisplay === 'main') {
-    console.log('main displays');
     return (
       <NavigationContainer>
         <SafeAreaView
@@ -793,12 +789,11 @@ const Main = props => {
     );
   }
 
-  if (renderDisplay === 'firstTimeUser') {
-    console.log('firstTimeUser displays');
+  if (renderDisplay === 'accountSetup') {
     return (
       <SafeAreaView style={{flex: 1, margin: 5}}>
         <StatusBar backgroundColor={bgColor} barStyle="light-content" />
-        <FTUAccountSetup />
+        <AccountSetup />
       </SafeAreaView>
     );
   }

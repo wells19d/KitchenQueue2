@@ -9,6 +9,7 @@ import {invitesSaga} from './invites.saga';
 import edamamSaga from './edamam.saga';
 import loginSaga from './login.saga';
 import signupSaga from './signup.saga';
+import joinSaga from './join.saga';
 
 export default function* rootSaga() {
   yield all([
@@ -22,5 +23,6 @@ export default function* rootSaga() {
     fork(edamamSaga),
     fork(loginSaga),
     fork(signupSaga),
+    fork(joinSaga),
   ]);
 }
