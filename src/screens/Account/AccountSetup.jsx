@@ -3,24 +3,17 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {Image, View} from 'react-native';
 import {Button, Input, ScrollView, Text} from '../../KQ-UI';
-import {useAccount, useDeviceInfo} from '../../hooks/useHooks';
+import {useAccount, useDeviceInfo, useInvite} from '../../hooks/useHooks';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {useDispatch} from 'react-redux';
 import {Icons} from '../../components/IconListRouter';
-import {
-  getFirestore,
-  collection,
-  doc,
-  getDoc,
-} from '@react-native-firebase/firestore';
-import moment from 'moment';
 
 const AccountSetup = () => {
   const device = useDeviceInfo();
   const dispatch = useDispatch();
   const core = useCoreInfo();
   const account = useAccount();
-  // console.log('Account:', account);
+  const {inviteFound, inviteData, error, errorMsg1, errorMsg2} = useInvite();
 
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [showJoinAccount, setShowJoinAccount] = useState(false);
@@ -32,7 +25,17 @@ const AccountSetup = () => {
   const [accountErrorMsg2, setAccountErrorMsg2] = useState('');
 
   useEffect(() => {
+    setAccountFound(inviteFound);
+    setAccountFoundData(inviteData);
+    setAccountError(error);
+    setAccountErrorMsg1(errorMsg1);
+    setAccountErrorMsg2(errorMsg2);
+  }, [inviteFound, inviteData, error, errorMsg1, errorMsg2]);
+
+  useEffect(() => {
     if (inviteCode) {
+      setAccountFound(false);
+      setAccountFoundData(null);
       setAccountError(false);
       setAccountErrorMsg1('');
       setAccountErrorMsg2('');
@@ -87,61 +90,25 @@ const AccountSetup = () => {
     // we are then going to force the user to log out and back in so the join saga properly triggers to set the profile and account redux
   };
 
-  const handleSearchCode = async () => {
+  const handleSearchCode = () => {
     //54A238
     const code = inviteCode.trim();
 
     if (code && code.length === 6) {
       console.log('Code is valid');
-      setAccountError(false);
-      setAccountErrorMsg1('');
-      setAccountErrorMsg2('');
 
-      try {
-        const db = getFirestore(); // new modular style
-        const inviteRef = doc(collection(db, 'accountInvites'), code); // modular style
-        const inviteSnap = await getDoc(inviteRef);
-
-        if (inviteSnap.exists) {
-          const inviteData = inviteSnap.data();
-          console.log('✅ Invite found:', inviteData);
-
-          const expireMoment = moment
-            .utc(inviteData?.toExpire)
-            .add(7, 'days')
-            .startOf('day');
-          const nowMoment = moment().startOf('day');
-          const isExpired = nowMoment.isSameOrAfter(expireMoment);
-
-          if (!isExpired) {
-            console.log('✅ Invite is valid');
-            setAccountFound(true);
-            setAccountFoundData(inviteData);
-          } else {
-            console.log('❌ Invite has expired');
-            setAccountError(true);
-            setAccountErrorMsg1('Invitation Expired');
-            setAccountErrorMsg2('Please check with the account owner.');
-          }
-        } else {
-          console.log('❌ Invite not found');
-          setAccountFound(false);
-          setAccountFoundData(null);
-          setAccountError(true);
-          setAccountErrorMsg1('Invitation Not Found');
-          setAccountErrorMsg2('Please check the code and try again.');
-        }
-      } catch (error) {
-        console.error('Error looking up invite:', error.message);
-        setAccountError(true);
-        setAccountErrorMsg1('Something Went Wrong');
-        setAccountErrorMsg2('We couldn’t verify your code. Try again later.');
-      }
+      dispatch({
+        type: 'CHECK_JOIN_ACCOUNT',
+        payload: {
+          inviteCode: code,
+        },
+      });
     } else {
       console.log('Code is invalid');
       setAccountError(true);
       setAccountErrorMsg1('Invalid Code');
-      setAccountErrorMsg2('You must enter a 6 alphanumeric code');
+      setAccountErrorMsg2('Please check the code and try again.');
+      return;
     }
   };
 
@@ -151,6 +118,10 @@ const AccountSetup = () => {
     setAccountError(false);
     setAccountErrorMsg1('');
     setAccountErrorMsg2('');
+    dispatch({
+      type: 'CLEAR_INVITE_DATA',
+    });
+    setInviteCode('');
   };
 
   const ListItem = ({children}) => (

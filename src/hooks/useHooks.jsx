@@ -68,3 +68,16 @@ export const useFoodDataError = () => {
 export const useFoodDataLoading = () => {
   return useSelector(state => state.edamam?.loading);
 };
+
+export const useInvite = () => {
+  const {inviteFound, inviteData, error, errorMsg1, errorMsg2} = useSelector(
+    state => state.join || {},
+  );
+  return {
+    inviteFound: inviteFound || false,
+    inviteData: inviteData || null,
+    error: error || false,
+    errorMsg1: errorMsg1 || '',
+    errorMsg2: errorMsg2 || '',
+  };
+};
