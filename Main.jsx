@@ -58,7 +58,7 @@ import Profile from './src/screens/Account/Profile';
 import Vibrations from './src/screens/Account/Vibrations';
 import ItemDisplay from './src/screens/Account/ItemDisplay';
 import Resets from './src/screens/Account/Resets';
-import FTUAccountSetup from './src/screens/FTU/FTUAccountSetup';
+import AccountSetup from './src/screens/Account/AccountSetup';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -85,36 +85,35 @@ const Main = props => {
   const [renderDisplay, setRenderDisplay] = useState('logo');
   const [loading, setLoading] = useState(false);
 
-  console.log('auth', isAuthenticated);
-
+  // Step 1: Handle base state – app readiness and auth
   useEffect(() => {
-    if (renderDisplay === 'main' && isAuthenticated) return;
-
-    if (appReady && isAuthenticated) {
-      if (account !== null) {
-        if (renderDisplay === 'firstTimeUser') {
-          setLoading(true);
-          setTimeout(() => {
-            setLoading(false);
-            setRenderDisplay('main');
-          }, 1500);
-        } else {
-          setRenderDisplay('main');
-        }
-      } else {
-        setRenderDisplay('firstTimeUser');
-      }
-    } else if (appReady && !isAuthenticated) {
-      setRenderDisplay('auth');
-    } else {
+    if (!appReady) {
       setRenderDisplay('logo');
+      return;
     }
-  }, [appReady, isAuthenticated, profile, account]);
+
+    if (!isAuthenticated) {
+      setRenderDisplay('auth');
+      return;
+    }
+  }, [appReady, isAuthenticated]);
+
+  // Step 2: Wait until profile.account is fully resolved
+  useEffect(() => {
+    if (!appReady || !isAuthenticated) return;
+
+    if (profile && 'account' in profile) {
+      if (profile.account === null) {
+        setRenderDisplay('accountSetup');
+      } else {
+        setRenderDisplay('main');
+      }
+    }
+  }, [appReady, isAuthenticated, profile]);
 
   const RTEnabled = isAuthenticated && account !== null;
   RTAccounts(RTEnabled);
   RTUsers(RTEnabled);
-  RTAccounts(RTEnabled);
   RTProfiles(RTEnabled);
   RTShopping(RTEnabled);
   RTCupboards(RTEnabled);
@@ -698,7 +697,7 @@ const Main = props => {
     );
   };
 
-  if (loading) {
+  if (renderDisplay === 'loading') {
     return (
       <View
         style={{
@@ -790,11 +789,11 @@ const Main = props => {
     );
   }
 
-  if (renderDisplay === 'firstTimeUser') {
+  if (renderDisplay === 'accountSetup') {
     return (
       <SafeAreaView style={{flex: 1, margin: 5}}>
         <StatusBar backgroundColor={bgColor} barStyle="light-content" />
-        <FTUAccountSetup />
+        <AccountSetup />
       </SafeAreaView>
     );
   }

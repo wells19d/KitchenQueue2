@@ -1,6 +1,11 @@
 //*account.saga.jsx
 import {put, takeLatest, call, all} from 'redux-saga/effects';
-import {getFirestore, getDoc, doc} from '@react-native-firebase/firestore';
+import {
+  getFirestore,
+  getDoc,
+  updateDoc,
+  doc,
+} from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
 const db = getFirestore(getApp());
@@ -71,7 +76,26 @@ function* fetchAllowedProfiles(action) {
   }
 }
 
+function* updateAccount(action) {
+  const {profileID, accountID, updatedData} = action.payload;
+  try {
+    const accountRef = doc(db, 'accounts', accountID);
+    const updatedAccount = {
+      ...updatedData,
+      lastUpdated: new Date().toISOString(),
+      lastUpdatedBy: profileID,
+    };
+
+    yield call(updateDoc, accountRef, updatedAccount);
+    yield put({type: 'UPDATE_ACCOUNT_SUCCESS', payload: updatedAccount});
+  } catch (error) {
+    // console.error('[Saga] ❌ Update Profile Error:', error);
+    yield put({type: 'UPDATE_ACCOUNT_FAILED', payload: error.message});
+  }
+}
+
 export default function* accountSaga() {
   yield takeLatest('FETCH_ACCOUNT', fetchAccount);
   yield takeLatest('FETCH_ALLOWED_PROFILES', fetchAllowedProfiles);
+  yield takeLatest('UPDATE_ACCOUNT', updateAccount);
 }
