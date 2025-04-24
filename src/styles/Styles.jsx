@@ -623,7 +623,37 @@ export const ProfileStyles = StyleSheet.create({
 });
 
 export const AccountStyles = StyleSheet.create({
-  section: {flex: 1, backgroundColor: '#fff', padding: 5, marginBottom: 10},
+  topSection: {
+    backgroundColor: '#fff',
+    marginTop: 10,
+    marginBottom: 5,
+    marginHorizontal: 5,
+  },
+  midSection: {
+    minHeight: 125,
+    backgroundColor: '#fff',
+    marginTop: 5,
+    marginBottom: 5,
+    marginHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#c4c4c4',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    shadowColor: '#373d4380',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    elevation: 4,
+  },
+  userSection: {
+    backgroundColor: '#fff',
+    marginTop: 5,
+    marginBottom: 5,
+    marginHorizontal: 10,
+  },
   sectionNav: {flexDirection: 'row'},
   sectionUsers: {
     borderWidth: 1,
@@ -638,7 +668,6 @@ export const AccountStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 2,
     elevation: 4,
-    paddingBottom: 15,
   },
   usersHeader: {
     borderBottomWidth: 1,
@@ -650,8 +679,6 @@ export const AccountStyles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginHorizontal: 10,
-    marginTop: 5,
   },
   subWrapper: {
     height: 65,
@@ -667,6 +694,7 @@ export const AccountStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 2,
     elevation: 4,
+    marginHorizontal: 5,
   },
   subIcon: {
     flex: 1,
