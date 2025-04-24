@@ -6,7 +6,7 @@ import moment from 'moment';
 
 const db = getFirestore(getApp());
 
-function* checkJoinAccount(action) {
+function* checkJoinInvite(action) {
   const {inviteCode} = action.payload;
 
   try {
@@ -60,7 +60,23 @@ function* checkJoinAccount(action) {
   }
 }
 
+function* checkJoinAccount(action) {
+  const {accountID} = action.payload;
+  try {
+    const accountRef = doc(db, 'accounts', accountID);
+    const accountSnap = yield call(getDoc, accountRef);
+    if (accountSnap.exists) {
+      const accountData = accountSnap.data();
+
+      yield put({type: 'SET_TEMP_ACCOUNT_DATA', payload: accountData});
+    }
+  } catch (error) {
+    yield put({type: 'TEMP_ACCOUNT_DATA_FAILED', payload: error.message});
+  }
+}
+
 export default function* joinSaga() {
+  yield takeLatest('CHECK_JOIN_INVITE', checkJoinInvite);
   yield takeLatest('CHECK_JOIN_ACCOUNT', checkJoinAccount);
   // Add other sagas here if needed
 }

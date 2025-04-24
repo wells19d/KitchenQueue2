@@ -69,9 +69,9 @@ export const useFoodDataLoading = () => {
   return useSelector(state => state.edamam?.loading);
 };
 
-export const useInvite = () => {
+export const useFoundInvite = () => {
   const {inviteFound, inviteData, error, errorMsg1, errorMsg2} = useSelector(
-    state => state.join || {},
+    state => state.joinInvite || {},
   );
   return {
     inviteFound: inviteFound || false,
@@ -79,5 +79,16 @@ export const useInvite = () => {
     error: error || false,
     errorMsg1: errorMsg1 || '',
     errorMsg2: errorMsg2 || '',
+  };
+};
+
+export const useFoundAccount = () => {
+  const {accountFound, accountData, error} = useSelector(
+    state => state.joinInvite || {},
+  );
+  return {
+    accountFound: accountFound || false,
+    accountData: accountData || null,
+    error: error || false,
   };
 };
