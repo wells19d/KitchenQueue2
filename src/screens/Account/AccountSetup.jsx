@@ -1,8 +1,8 @@
 //* AccountSetup.jsx
 
 import React, {useEffect, useMemo, useState} from 'react';
-import {Image, View} from 'react-native';
-import {Button, Input, ScrollView, Text} from '../../KQ-UI';
+import {Image, Keyboard, View} from 'react-native';
+import {Button, Input, Modal, ScrollView, Text} from '../../KQ-UI';
 import {
   useDeviceInfo,
   useFoundAccount,
@@ -130,12 +130,14 @@ const AccountSetup = () => {
           inviteCode: foundInviteData?.inviteCode,
         },
       });
-      dispatch({type: 'LOGOUT_AND_CLEAR'});
+      setTimeout(() => {
+        dispatch({type: 'START_LOGIN', payload: core?.userID});
+      }, 2000);
     }
   };
 
   const handleSearchCode = () => {
-    //54A238
+    Keyboard.dismiss();
     const code = inviteCode.trim();
 
     if (code && code.length === 6) {
@@ -209,9 +211,8 @@ const AccountSetup = () => {
               </View>
               <View style={styles.introPadding}>
                 <Text size="medium" centered>
-                  To join an account, please enter the 6 alphanumeric code
-                  provided by either the account owner or the email you
-                  received, then press the button below.
+                  Please enter the 6 alphanumeric code provided by the account
+                  owner or the email you received, then press search.
                 </Text>
               </View>
               <View style={styles.divider} />

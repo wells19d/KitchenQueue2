@@ -319,7 +319,7 @@ function Auth(props) {
             style={{
               flex: 1,
               marginTop: logoHeight * 1.25,
-              paddingTop: 30,
+              paddingTop: 20,
               paddingLeft: 10,
               marginHorizontal: -5,
               backgroundColor: '#fff',
