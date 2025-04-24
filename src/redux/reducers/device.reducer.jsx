@@ -10,7 +10,6 @@ const deviceReducer = (state = initialState, action) => {
       return {...state, deviceInfo: action.payload, error: null};
     case 'DEVICE_INFO_FETCH_FAILED':
       return {...state, error: action.payload};
-    case 'RESET_ALL_STATE':
     case 'RESET_DEVICE_INFO_STATE':
       return initialState;
     default:
