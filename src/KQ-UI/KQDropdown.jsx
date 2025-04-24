@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Platform,
   KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 import {Modal, Text, ScrollView, Input} from '../KQ-UI/';
 import {Icons} from '../components/IconListRouter';
@@ -36,6 +37,7 @@ const KQDropdown = ({
   const [customValue, setCustomValue] = useState('');
 
   const handleOnPress = () => {
+    Keyboard.dismiss();
     useHaptics(core?.userSettings?.hapticStrength || hapticFeedback);
     setSelectedItem(value);
     setShowDropModal(true);

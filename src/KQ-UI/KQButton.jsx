@@ -1,6 +1,6 @@
 //* KQButton.jsx
 import React, {useCallback} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Keyboard, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text} from '../KQ-UI/';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
 import {
@@ -41,6 +41,7 @@ const KQButton = ({
   );
 
   const handlePress = useCallback(() => {
+    Keyboard.dismiss();
     useHaptics(core?.userSettings?.hapticStrength || hapticFeedback);
     if (onPress) onPress();
   }, [core?.userSettings?.hapticStrength, hapticFeedback, onPress]);

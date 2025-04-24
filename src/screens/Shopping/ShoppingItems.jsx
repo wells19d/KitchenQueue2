@@ -100,7 +100,7 @@ const ShoppingItems = () => {
   useEffect(() => {
     if (!pendingUpdate) return;
 
-    const liveItem = shopping.items.find(
+    const liveItem = shopping?.items.find(
       i => i.itemId === pendingUpdate.itemId,
     );
     if (!liveItem) return;
@@ -110,7 +110,7 @@ const ShoppingItems = () => {
       setPendingUpdate(null);
       navigation.navigate(navigateBackTo);
     }
-  }, [shopping.items, pendingUpdate]);
+  }, [shopping?.items, pendingUpdate]);
 
   const SaveItem = () => {
     if (itemName === '' || itemName === null) {

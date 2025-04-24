@@ -22,7 +22,7 @@ function Auth(props) {
   const loginError = useLoginError();
 
   // ---------- View + Animation State ----------
-  const [authView, setAuthView] = useState('create'); // 'login' | 'create' | 'completed'
+  const [authView, setAuthView] = useState('login'); // 'login' | 'create' | 'completed'
   const [logoSet, setLogoSet] = useState(false);
   const [delayedError, setDelayedError] = useState(null);
   const logoTop = useRef(new Animated.Value(2)).current;
