@@ -83,8 +83,8 @@ const AccountSetup = () => {
   const logoHeight = 175 / logoSizeConfig.scale;
 
   const handleCreateAccount = () => {
-    if (isCreatingAccount) return; // 🔐 Prevent double-tap
-    setIsCreatingAccount(true); // 🔒 Lock dispatch
+    if (isCreatingAccount) return;
+    setIsCreatingAccount(true);
     dispatch({
       type: 'CREATE_NEW_ACCOUNT',
       payload: {
