@@ -53,6 +53,8 @@ const invitesReducer = (state = initialState, action) => {
         ...state,
         error: action.payload,
       };
+    case 'RESET_ALL_STATE':
+      initialState;
     default:
       return state;
   }

@@ -8,7 +8,7 @@ import shoppingReducer from './shopCart.reducer';
 import cupboardReducer from './cupboard.reducer';
 import deviceReducer from './device.reducer';
 import invitesReducer from './invites.reducer';
-import joinReducer from './join.reducer';
+import joinInviteReducer from './join.reducer';
 import edamamReducer from './edamam.reducer';
 
 const rootReducer = combineReducers({
@@ -19,7 +19,7 @@ const rootReducer = combineReducers({
   cupboard: cupboardReducer,
   deviceInfo: deviceReducer,
   invites: invitesReducer,
-  join: joinReducer,
+  joinInvite: joinInviteReducer,
   edamam: edamamReducer,
 });
 

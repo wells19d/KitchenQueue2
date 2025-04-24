@@ -1,14 +1,16 @@
 //* join.reducer.jsx
 
-const initialState = {
+const initialInviteState = {
   inviteFound: false,
   inviteData: null,
+  accountFound: false,
+  accountData: null,
   error: false,
   errorMsg1: '',
   errorMsg2: '',
 };
 
-const joinReducer = (state = initialState, action) => {
+const joinInviteReducer = (state = initialInviteState, action) => {
   switch (action.type) {
     case 'SET_INVITE_DATA':
       return {
@@ -32,12 +34,28 @@ const joinReducer = (state = initialState, action) => {
         errorMsg2: action.payload.msg2,
       };
 
+    case 'SET_TEMP_ACCOUNT_DATA':
+      return {
+        ...state,
+        accountFound: true,
+        accountData: action.payload,
+        error: false,
+      };
+    case 'TEMP_ACCOUNT_DATA_FAILED':
+      return {
+        ...state,
+        accountFound: false,
+        accountData: null,
+        error: true,
+      };
+    case 'RESET_ALL_STATE':
+    case 'CLEAR_TEMP_ACCOUNT_DATA':
     case 'CLEAR_INVITE_DATA':
-      return initialState;
+      return initialInviteState;
 
     default:
       return state;
   }
 };
 
-export default joinReducer;
+export default joinInviteReducer;

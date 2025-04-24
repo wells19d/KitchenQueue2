@@ -3,7 +3,11 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {Image, View} from 'react-native';
 import {Button, Input, ScrollView, Text} from '../../KQ-UI';
-import {useAccount, useDeviceInfo, useInvite} from '../../hooks/useHooks';
+import {
+  useDeviceInfo,
+  useFoundAccount,
+  useFoundInvite,
+} from '../../hooks/useHooks';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {useDispatch} from 'react-redux';
 import {Icons} from '../../components/IconListRouter';
@@ -12,35 +16,52 @@ const AccountSetup = () => {
   const device = useDeviceInfo();
   const dispatch = useDispatch();
   const core = useCoreInfo();
-  const account = useAccount();
-  const {inviteFound, inviteData, error, errorMsg1, errorMsg2} = useInvite();
+  const {inviteFound, inviteData, error, errorMsg1, errorMsg2} =
+    useFoundInvite();
+  const {accountData} = useFoundAccount();
 
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [showJoinAccount, setShowJoinAccount] = useState(false);
   const [inviteCode, setInviteCode] = useState('');
-  const [accountFound, setAccountFound] = useState(false);
-  const [accountFoundData, setAccountFoundData] = useState(null);
-  const [accountError, setAccountError] = useState(false);
-  const [accountErrorMsg1, setAccountErrorMsg1] = useState('');
-  const [accountErrorMsg2, setAccountErrorMsg2] = useState('');
+  const [foundInvite, setFoundInvite] = useState(false);
+  const [foundInviteData, setFoundInviteData] = useState(null);
+  const [inviteError, setInviteError] = useState(false);
+  const [inviteErrorMsg1, setInviteErrorMsg1] = useState('');
+  const [inviteErrorMsg2, setInviteErrorMsg2] = useState('');
+  const [foundAccountData, setFoundAccountData] = useState(null);
 
   useEffect(() => {
-    setAccountFound(inviteFound);
-    setAccountFoundData(inviteData);
-    setAccountError(error);
-    setAccountErrorMsg1(errorMsg1);
-    setAccountErrorMsg2(errorMsg2);
+    setFoundInvite(inviteFound);
+    setFoundInviteData(inviteData);
+    setInviteError(error);
+    setInviteErrorMsg1(errorMsg1);
+    setInviteErrorMsg2(errorMsg2);
   }, [inviteFound, inviteData, error, errorMsg1, errorMsg2]);
 
   useEffect(() => {
     if (inviteCode) {
-      setAccountFound(false);
-      setAccountFoundData(null);
-      setAccountError(false);
-      setAccountErrorMsg1('');
-      setAccountErrorMsg2('');
+      setFoundInvite(false);
+      setFoundInviteData(null);
+      setInviteError(false);
+      setInviteErrorMsg1('');
+      setInviteErrorMsg2('');
     }
   }, [inviteCode]);
+
+  useEffect(() => {
+    if (foundInviteData) {
+      dispatch({
+        type: 'CHECK_JOIN_ACCOUNT',
+        payload: {
+          accountID: foundInviteData?.accountID,
+        },
+      });
+    }
+  }, [foundInviteData]);
+
+  useEffect(() => {
+    setFoundAccountData(accountData);
+  }, [accountData]);
 
   const logoSizeConfig = useMemo(() => {
     const type = device?.system?.deviceSize;
@@ -77,17 +98,40 @@ const AccountSetup = () => {
   };
 
   const handleJoinAccount = () => {
-    // this is the function that will be called when the user accepts the invitation
-    // first we will search for the account using the accountID
-    // then we will check and match if the joinCode match on both the account and the invite
-    // if they match, we will add the profile.id to the allowedUsers array in the account
-    // then we will set the account field on the profile to the accountID
-    // and set the role on the profile to 'user'
-    // then we will delete the invite from the account.accountInvites and on the accountInvites collection
-    // we will then clear all the fields on this screen
-    //most of this will been to be done with a setTimeout to allow the user to see the success message and allowing the data to be updated.
-    // we will display a message to the user that they have joined the account and the will need to log back in.
-    // we are then going to force the user to log out and back in so the join saga properly triggers to set the profile and account redux
+    const code1 = foundInviteData?.joinCode;
+    const code2 = foundAccountData?.joinCode;
+    if (code1 === code2) {
+      dispatch({
+        type: 'UPDATE_PROFILE_REQUEST',
+        payload: {
+          userId: core.profileID,
+          updatedData: {
+            account: foundInviteData?.accountID,
+            role: 'user',
+          },
+        },
+      });
+      dispatch({
+        type: 'UPDATE_ACCOUNT',
+        payload: {
+          profileID: core.profileID,
+          accountID: foundInviteData?.accountID,
+          updatedData: {
+            allowedUsers: [...foundAccountData?.allowedUsers, core.profileID],
+            accountInvites: foundAccountData?.accountInvites?.filter(
+              code => code !== foundInviteData?.inviteCode,
+            ),
+          },
+        },
+      });
+      dispatch({
+        type: 'DELETE_INVITE_REQUEST',
+        payload: {
+          inviteCode: foundInviteData?.inviteCode,
+        },
+      });
+      dispatch({type: 'LOGOUT_AND_CLEAR'});
+    }
   };
 
   const handleSearchCode = () => {
@@ -95,33 +139,49 @@ const AccountSetup = () => {
     const code = inviteCode.trim();
 
     if (code && code.length === 6) {
-      console.log('Code is valid');
-
       dispatch({
-        type: 'CHECK_JOIN_ACCOUNT',
+        type: 'CHECK_JOIN_INVITE',
         payload: {
           inviteCode: code,
         },
       });
     } else {
-      console.log('Code is invalid');
-      setAccountError(true);
-      setAccountErrorMsg1('Invalid Code');
-      setAccountErrorMsg2('Please check the code and try again.');
+      setInviteError(true);
+      setInviteErrorMsg1('Invalid Code');
+      setInviteErrorMsg2('Please check the code and try again.');
       return;
     }
   };
 
   const handleCancelJoin = () => {
-    setAccountFound(false);
-    setAccountFoundData(null);
-    setAccountError(false);
-    setAccountErrorMsg1('');
-    setAccountErrorMsg2('');
+    setFoundInvite(false);
+    setFoundInviteData(null);
+    setInviteError(false);
+    setInviteErrorMsg1('');
+    setInviteErrorMsg2('');
     dispatch({
       type: 'CLEAR_INVITE_DATA',
     });
+    dispatch({
+      type: 'CLEAR_TEMP_ACCOUNT_DATA',
+    });
     setInviteCode('');
+  };
+
+  const handleGoBack = () => {
+    setFoundInvite(false);
+    setFoundInviteData(null);
+    setInviteError(false);
+    setInviteErrorMsg1('');
+    setInviteErrorMsg2('');
+    dispatch({
+      type: 'CLEAR_INVITE_DATA',
+    });
+    dispatch({
+      type: 'CLEAR_TEMP_ACCOUNT_DATA',
+    });
+    setInviteCode('');
+    setShowJoinAccount(false);
   };
 
   const ListItem = ({children}) => (
@@ -167,11 +227,11 @@ const AccountSetup = () => {
                 counter
                 maxCount={6}
               />
-              <Button disabled={accountFound} onPress={handleSearchCode}>
+              <Button disabled={foundInvite} onPress={handleSearchCode}>
                 Search for Account
               </Button>
             </View>
-            {accountFound && (
+            {foundInvite && (
               <View style={{margin: 30}}>
                 <View style={{alignItems: 'center'}}>
                   <View style={{borderBottomWidth: 1}}>
@@ -182,10 +242,10 @@ const AccountSetup = () => {
                 </View>
                 <View style={{marginVertical: 20}}>
                   <Text size="medium" font="open-7" centered>
-                    {accountFoundData?.fromEmail}
+                    {foundInviteData?.fromEmail}
                   </Text>
                   <Text size="medium" font="open-7" centered>
-                    {accountFoundData?.fromFirst} {accountFoundData?.fromLast}
+                    {foundInviteData?.fromFirst} {foundInviteData?.fromLast}
                   </Text>
                 </View>
                 <View
@@ -193,11 +253,7 @@ const AccountSetup = () => {
                     flexDirection: 'row',
                   }}>
                   <View style={{flex: 1}}>
-                    <Button
-                    // onPress={() => handleJoinAccount()}
-                    >
-                      Join Account
-                    </Button>
+                    <Button onPress={handleJoinAccount}>Join Account</Button>
                   </View>
                   <View style={{flex: 1}}>
                     <Button color="danger" onPress={handleCancelJoin}>
@@ -207,19 +263,19 @@ const AccountSetup = () => {
                 </View>
               </View>
             )}
-            {accountError && (
+            {inviteError && (
               <View style={{margin: 30}}>
                 <Text kqColor="danger" size="large" font="open-7" centered>
-                  {accountErrorMsg1}
+                  {inviteErrorMsg1}
                 </Text>
                 <Text size="medium" font="open-7" centered italic>
-                  {accountErrorMsg2}
+                  {inviteErrorMsg2}
                 </Text>
               </View>
             )}
             <Button
               type="ghost"
-              onPress={() => setShowJoinAccount(false)}
+              onPress={handleGoBack}
               textStyle={{position: 'relative', left: -5}}>
               <Icons.ChevronLeft size={15} color={'#319177'} />
               Go Back

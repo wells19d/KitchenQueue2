@@ -108,6 +108,19 @@ function* queueInviteSaga(action) {
   }
 }
 
+function* deleteInvite(action) {
+  const {inviteCode} = action.payload;
+  try {
+    const inviteRef = doc(db, 'accountInvites', inviteCode);
+    yield call(deleteDoc, inviteRef);
+    yield put({type: 'DELETE_INVITE_SUCCESS', payload: inviteCode});
+  } catch (error) {
+    console.error('🔥 deleteInvite error:', error);
+    yield put({type: 'DELETE_INVITE_FAILED', payload: error.message});
+  }
+}
+
 export function* invitesSaga() {
   yield takeLatest('QUEUE_INVITE_REQUEST', queueInviteSaga);
+  yield takeLatest('DELETE_INVITE_REQUEST', deleteInvite);
 }
