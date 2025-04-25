@@ -22,7 +22,7 @@ function Auth(props) {
   const loginError = useLoginError();
 
   // ---------- View + Animation State ----------
-  const [authView, setAuthView] = useState('login'); // 'login' | 'create' | 'completed'
+  const [authView, setAuthView] = useState('create'); // 'login' | 'create' | 'completed'
   const [logoSet, setLogoSet] = useState(false);
   const [delayedError, setDelayedError] = useState(null);
   const logoTop = useRef(new Animated.Value(2)).current;
@@ -80,7 +80,7 @@ function Auth(props) {
 
   const isValidPassword = useCallback(
     password =>
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*])[A-Za-z\d!@#$%&*]{8,}$/.test(
         password,
       ),
     [],
@@ -93,7 +93,8 @@ function Auth(props) {
     const upperCase = /[A-Z]/.test(createPassword);
     const lowerCase = /[a-z]/.test(createPassword);
     const number = /\d/.test(createPassword);
-    const special = /[@$!%*?&]/.test(createPassword);
+    const special = /[!@#$%&*]/.test(createPassword);
+    const onlyAllowedChars = /^[a-zA-Z0-9!@#$%&*]*$/.test(createPassword);
     const match =
       confirmedPassword.length > 0 && createPassword === confirmedPassword;
 
@@ -104,6 +105,7 @@ function Auth(props) {
       lowerCase,
       number,
       special,
+      onlyAllowedChars,
       match,
     };
   }, [createEmail, createPassword, confirmedPassword, isValidEmail]);
@@ -137,7 +139,7 @@ function Auth(props) {
 
   useEffect(() => {
     if (!isSplashVisible && logoSet) {
-      setAuthView('create');
+      setAuthView('login');
     }
   }, [isSplashVisible, logoSet]);
 
@@ -244,26 +246,16 @@ function Auth(props) {
     </View>
   );
 
-  const renderIcon = () => (
-    <TouchableWithoutFeedback
-      onPress={() => setSecureTextEntry(!secureTextEntry)}>
-      {secureTextEntry ? <Icons.EyeOff /> : <Icons.Eye />}
-    </TouchableWithoutFeedback>
-  );
+  const renderEyeIcon = (visible, setVisible) => {
+    const IconComponent = visible ? Icons.EyeOff : Icons.EyeOn;
+    if (!IconComponent) return null;
 
-  const renderIcon1 = () => (
-    <TouchableWithoutFeedback
-      onPress={() => setSecureTextEntry1(!secureTextEntry1)}>
-      {secureTextEntry1 ? <Icons.EyeOff /> : <Icons.Eye />}
-    </TouchableWithoutFeedback>
-  );
-
-  const renderIcon2 = () => (
-    <TouchableWithoutFeedback
-      onPress={() => setSecureTextEntry2(!secureTextEntry2)}>
-      {secureTextEntry2 ? <Icons.EyeOff /> : <Icons.Eye />}
-    </TouchableWithoutFeedback>
-  );
+    return (
+      <TouchableWithoutFeedback onPress={() => setVisible(!visible)}>
+        <IconComponent />
+      </TouchableWithoutFeedback>
+    );
+  };
 
   const RenderDisplay = () => {
     switch (authView) {
@@ -287,7 +279,9 @@ function Auth(props) {
               placeholder="Password"
               value={password}
               onChangeText={handleInputChange(setPassword)}
-              accessoryRight={renderIcon}
+              accessoryRight={() =>
+                renderEyeIcon(secureTextEntry, setSecureTextEntry)
+              }
               secureTextEntry={secureTextEntry}
               capitalize={false}
             />
@@ -297,13 +291,27 @@ function Auth(props) {
               disabled={!canSignIn}>
               Sign In
             </Button>
-            <Button
-              type="ghost"
-              color="primary"
-              underline
-              onPress={() => setAuthView('create')}>
-              New User?
-            </Button>
+            <View style={{marginVertical: 10}}>
+              <Button
+                type="ghost"
+                color="primary"
+                size="giant"
+                textSize="medium"
+                font="open-6"
+                underline
+                underlineWidth={2}
+                onPress={() => setAuthView('create')}>
+                <View style={{flexDirection: 'column', alignItems: 'center'}}>
+                  <Text
+                    // size="medium"
+                    font="open-7"
+                    kqColor="primary">{`New User?`}</Text>
+                  <Text
+                    font="open-7"
+                    kqColor="primary">{`Let's get started!`}</Text>
+                </View>
+              </Button>
+            </View>
             <View style={{height: 100, justifyContent: 'center'}}>
               {delayedError && (
                 <Text size="small" centered kqColor="danger">
@@ -334,7 +342,9 @@ function Auth(props) {
               placeholder="Password"
               value={createPassword}
               onChangeText={setCreatePassword}
-              accessoryRight={renderIcon1}
+              accessoryRight={() =>
+                renderEyeIcon(secureTextEntry1, setSecureTextEntry1)
+              }
               secureTextEntry={secureTextEntry1}
               capitalize={false}
             />
@@ -342,7 +352,9 @@ function Auth(props) {
               placeholder="Verify Password"
               value={confirmedPassword}
               onChangeText={setConfirmedPassword}
-              accessoryRight={renderIcon2}
+              accessoryRight={() =>
+                renderEyeIcon(secureTextEntry2, setSecureTextEntry2)
+              }
               secureTextEntry={secureTextEntry2}
               capitalize={false}
             />
@@ -395,6 +407,16 @@ function Auth(props) {
                 )}
                 message="Passwords match"
               />
+              {!passwordValidation.onlyAllowedChars && (
+                <CheckListItem
+                  mode={checkMode(
+                    'default',
+                    passwordValidation.onlyAllowedChars,
+                    createPassword.length,
+                  )}
+                  message="Unsupported Character Used"
+                />
+              )}
             </CheckListWrap>
             <Button
               status={allValid ? 'primary' : 'basic'}
@@ -402,13 +424,27 @@ function Auth(props) {
               onPress={handleCreateUser}>
               Create User
             </Button>
-            <Button
-              type="ghost"
-              color="primary"
-              underline
-              onPress={() => setAuthView('login')}>
-              Already a User?
-            </Button>
+            <View style={{marginVertical: 10}}>
+              <Button
+                type="ghost"
+                color="primary"
+                size="giant"
+                textSize="medium"
+                font="open-6"
+                underline
+                underlineWidth={2}
+                onPress={() => setAuthView('login')}>
+                <View style={{flexDirection: 'column', alignItems: 'center'}}>
+                  <Text
+                    // size="medium"
+                    font="open-7"
+                    kqColor="primary">{`Returning user?`}</Text>
+                  <Text
+                    font="open-7"
+                    kqColor="primary">{`Press here to sign in.`}</Text>
+                </View>
+              </Button>
+            </View>
           </ScrollView>
         );
       case 'completed':
