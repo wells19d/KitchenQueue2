@@ -293,7 +293,10 @@ export const useButtonSizes = (size = 'medium') => {
     small: 35,
     medium: 40,
     large: 50,
-    giant: 60,
+    xLarge: 60,
+    giant: 70,
+    massive: 80,
+    gargantuan: 90,
   };
 
   return {

@@ -104,7 +104,11 @@ const KQInput = ({
           )}
         </View>
         {accessoryRight && (
-          <View style={styles.accessoriesContainer}>{accessoryRight()}</View>
+          <View style={styles.accessoriesContainer}>
+            {typeof accessoryRight === 'function'
+              ? accessoryRight()
+              : accessoryRight}
+          </View>
         )}
       </View>
       <InputInfoContainer>

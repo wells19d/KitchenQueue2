@@ -26,6 +26,8 @@ const KQButton = ({
   hapticFeedback = 'light',
   disabled = false,
   underline = false,
+  underlineColor = null,
+  underlineWidth = 1,
   ...props
 }) => {
   const useHaptics = setHapticFeedback();
@@ -55,7 +57,10 @@ const KQButton = ({
       <View
         style={[
           outerTextStyle,
-          {borderBottomWidth: underline ? 1 : 0, borderColor: buttonColor},
+          {
+            borderBottomWidth: underline ? underlineWidth : 0,
+            borderColor: underlineColor || buttonColor,
+          },
         ]}>
         <Text
           numberOfLines={1}
