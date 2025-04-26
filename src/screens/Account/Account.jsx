@@ -15,6 +15,9 @@ import uuid from 'react-native-uuid';
 import BuildAvatar from '../../components/BuildAvatar';
 import {AccountStyles} from '../../styles/Styles';
 import SAButton from './SAButton';
+import Clipboard from '@react-native-clipboard/clipboard';
+import {Animated} from 'react-native';
+import {AppInfo} from '../../../AppInfo';
 
 const Account = () => {
   const route = useRoute();
@@ -24,6 +27,18 @@ const Account = () => {
   const dispatch = useDispatch();
   const account = useAccount();
   const existingInvite = useExistingInvite();
+  const isIOS = device?.system?.os === 'iOS';
+  const isAndroid = device?.system?.os === 'Android';
+  const deviceAppVersion = isIOS
+    ? `(iOS) App Version: ${AppInfo?.appleAppVersion}`
+    : isAndroid
+    ? `(Android) App Version: ${AppInfo?.googleAppVersion}`
+    : '';
+  const buildVersion = isIOS
+    ? `Build: ${AppInfo?.appleBuildVersion}`
+    : isAndroid
+    ? `Build: ${AppInfo?.googleBuildVersion}`
+    : '';
 
   const [showModal, setShowModal] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
@@ -152,6 +167,168 @@ const Account = () => {
     }
   }, [device?.system?.deviceSize]);
 
+  const RenderModal = () => {
+    const [confirmCopy, setConfirmCopy] = useState(false); // 👈 moved inside
+    const fadeAnim = useState(new Animated.Value(0))[0];
+
+    const copyToClipboard = () => {
+      Clipboard.setString(displayCode);
+      setConfirmCopy(true);
+
+      // Start the fade-in
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300, // 300ms fade-in
+        useNativeDriver: true,
+      }).start(() => {
+        // After showing, wait 2 seconds, then fade out
+        setTimeout(() => {
+          Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 500, // 500ms fade-out
+            useNativeDriver: true,
+          }).start(() => {
+            setConfirmCopy(false); // Reset when faded
+          });
+        }, 5000);
+      });
+    };
+    const isInviteModal = showModal;
+    const isCodeModal = showCodeModal;
+    const isLoading = loadingStatus;
+
+    const getModalTitle = () => {
+      if (showExceeding) return 'Maxed Invitations';
+      if (invitationMsg) return 'Existing Code';
+      if (codeGenerated) return 'Code Generated';
+      return 'Invite User';
+    };
+
+    const renderInviteContent = () => {
+      if (isLoading) {
+        return (
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <ActivityIndicator size="large" color="#319177" />
+            <Text size="medium" font="open-7">
+              Generating Invite...
+            </Text>
+          </View>
+        );
+      }
+
+      return (
+        <View style={{flex: 1}}>
+          <Input
+            label="User Email"
+            value={inviteEmail}
+            onChangeText={text => {
+              setInviteEmail(text.trim());
+              setEmailError(false);
+              setEmailErrorMsg('');
+            }}
+            validation={emailError}
+            validationMessage={emailErrorMsg}
+          />
+          <Button onPress={handleInvite} disabled={!canGenerate}>
+            Generate Invite
+          </Button>
+        </View>
+      );
+    };
+
+    const renderCodeContent = () => (
+      <View
+        style={{
+          flex: 1,
+          borderWidth: 1,
+          justifyContent: 'center',
+          alignContent: 'center',
+          alignItems: 'center',
+        }}>
+        {!showExceeding && (
+          <View style={{marginHorizontal: 20, marginVertical: 10}}>
+            <Text size="large" font="open-7" centered>
+              Invitation Code: {existingInvite?.inviteCode}
+            </Text>
+          </View>
+        )}
+        {showExceeding && (
+          <View style={{marginHorizontal: 20, marginVertical: 10}}>
+            <Text size="medium" font="open-6" centered>
+              Sorry, but you've reached the maximum number of invitations on
+              your account.
+            </Text>
+          </View>
+        )}
+        {invitationMsg && (
+          <View style={{marginHorizontal: 20, marginVertical: 10}}>
+            <Text size="medium" font="open-6" centered>
+              {invitationMsg}
+            </Text>
+          </View>
+        )}
+        {/* 
+        This is commented out for future feature of sending an automated email to the invited user
+        {!showExceeding && !invitationMsg && (
+          <View>
+            <Text size="medium" font="open-6" centered>
+              This invitation will be sent to {existingInvite?.email}
+            </Text>
+          </View>
+        )} */}
+        {!showExceeding && !invitationMsg && (
+          <View style={{marginHorizontal: 20, marginVertical: 10}}>
+            <Text size="small" font="open-6" centered>
+              An invitation has been generated for {existingInvite?.email}. Use
+              this code to invite them to your account. You can also press the
+              button below to copy and send it via text or email.
+            </Text>
+            <View style={{marginTop: 30}}>
+              <Button status="primary" size="small" onPress={copyToClipboard}>
+                Copy Join Code
+              </Button>
+            </View>
+            <Animated.View style={{opacity: fadeAnim, marginTop: 10}}>
+              <Text size="small" font="open-5" centered>
+                {confirmCopy && `Code copied!`}
+              </Text>
+            </Animated.View>
+          </View>
+        )}
+        {showExceeding && (
+          <View style={{marginHorizontal: 20, marginVertical: 10}}>
+            <Text size="small" font="open-5" centered italic>
+              You currently have {account?.allowedUsers?.length} of 4 users and{' '}
+              {account?.accountInvites?.length} active invitations on your
+              account.
+            </Text>
+          </View>
+        )}
+        {invitationMsg && (
+          <View style={{marginHorizontal: 20, marginVertical: 10}}>
+            <Text size="xSmall" font="open-5" centered italic>
+              {invitationMsg}
+            </Text>
+          </View>
+        )}
+      </View>
+    );
+
+    return (
+      <Modal
+        visible={isInviteModal || isCodeModal}
+        title={getModalTitle()}
+        onClose={closeModal}
+        height="75%"
+        width="95%"
+        headerFont="open-7">
+        {isInviteModal && renderInviteContent()}
+        {isCodeModal && renderCodeContent()}
+      </Modal>
+    );
+  };
+
   return (
     <Layout
       bgColor={bgColor}
@@ -222,94 +399,19 @@ const Account = () => {
           <Text size="xSmall">Coming Soon</Text>
         </View>
       </View>
-      <Modal
-        visible={showModal}
-        title={`Invite User`}
-        onClose={closeModal}
-        height="50%"
-        width="95%"
-        headerFont="open-7">
-        {loadingStatus ? (
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <ActivityIndicator size="large" color="#319177" />
-            <Text size="medium" font="open-7">
-              Generating Invite...
-            </Text>
-          </View>
-        ) : (
-          <View style={{flex: 1}}>
-            <Input
-              label="User Email"
-              value={inviteEmail}
-              onChangeText={text => {
-                setInviteEmail(text.trim());
-                setEmailError(false);
-                setEmailErrorMsg('');
-              }}
-              validation={emailError}
-              validationMessage={emailErrorMsg}
-            />
-            <Button onPress={handleInvite} disabled={!canGenerate}>
-              Generate Invite
-            </Button>
-          </View>
-        )}
-      </Modal>
-      <Modal
-        visible={showCodeModal}
-        title={
-          showExceeding
-            ? `Maxed Invitations`
-            : invitationMsg
-            ? `Existing Code`
-            : `Code Generated`
-        }
-        onClose={closeModal}
-        height="50%"
-        width="95%"
-        headerFont="open-7">
-        <View style={{flex: 1}}>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              position: 'relative',
-              top: showExceeding ? -30 : invitationMsg ? -5 : -20,
-            }}>
-            <View style={{marginHorizontal: 25, marginVertical: 10}}>
-              <Text size="large" font="open-7" centered>
-                {showExceeding
-                  ? ``
-                  : `Invitation Code: ${existingInvite?.inviteCode}`}
-              </Text>
-            </View>
-            <View
-              style={{
-                marginHorizontal: showExceeding ? 10 : 25,
-                marginVertical: showExceeding ? 0 : 10,
-              }}>
-              <Text size="medium" font="open-6" centered>
-                {showExceeding
-                  ? `Sorry, but you've reached the maximum number of invitations on your account.`
-                  : invitationMsg
-                  ? invitationMsg
-                  : `This invitation will be sent to ${existingInvite?.email}`}
-              </Text>
-            </View>
-            <View style={{marginHorizontal: 25, marginVertical: 10}}>
-              <Text size="xSmall" font="open-5" centered italic>
-                {showExceeding
-                  ? `You currently have ${account?.allowedUsers?.length} of 4 users and ${account?.accountInvites?.length} active invitations on your account. Invitations can not exceed the max number of allowed users on your account.`
-                  : invitationMsg
-                  ? `If the user did not receive a code, have them check their spam
-                  folder. You can also manually give them this code for entry.`
-                  : ``}
-              </Text>
-            </View>
-          </View>
+      <View style={{flexDirection: 'row', marginHorizontal: 20, marginTop: 2}}>
+        <View style={{alignItems: 'flex-start'}}>
+          <Text size="xSmall" italic>
+            {deviceAppVersion}
+          </Text>
         </View>
-      </Modal>
+        <View style={{flex: 1, alignItems: 'flex-end'}}>
+          <Text size="xSmall" italic>
+            {buildVersion}
+          </Text>
+        </View>
+      </View>
+      <RenderModal />
     </Layout>
   );
 };
