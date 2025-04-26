@@ -56,7 +56,6 @@ function syncNative(versionData) {
   );
 
   fs.writeFileSync(infoPlistPath, infoPlist, 'utf8');
-  console.log('✅ Updated Info.plist');
 
   // --- Update build.gradle ---
   let buildGradle = fs.readFileSync(buildGradlePath, 'utf8');
@@ -72,7 +71,6 @@ function syncNative(versionData) {
   );
 
   fs.writeFileSync(buildGradlePath, buildGradle, 'utf8');
-  console.log('✅ Updated build.gradle');
 }
 
 // --- Main Execution ---
@@ -99,16 +97,10 @@ if (bumpTarget === 'apple') {
   const oldVersion = versionData.appleAppVersion;
   versionData.appleAppVersion = bumpVersion(oldVersion, bumpType);
   versionData.appleBuildVersion++;
-  console.log(
-    `✅ Bumped Apple: ${oldVersion} → ${versionData.appleAppVersion}`,
-  );
 } else if (bumpTarget === 'android') {
   const oldVersion = versionData.androidAppVersion;
   versionData.androidAppVersion = bumpVersion(oldVersion, bumpType);
   versionData.googleBuildVersion++;
-  console.log(
-    `✅ Bumped Android: ${oldVersion} → ${versionData.androidAppVersion}`,
-  );
 } else if (bumpTarget === 'global') {
   const oldApple = versionData.appleAppVersion;
   const oldAndroid = versionData.androidAppVersion;
@@ -116,17 +108,10 @@ if (bumpTarget === 'apple') {
   versionData.androidAppVersion = bumpVersion(oldAndroid, bumpType);
   versionData.appleBuildVersion++;
   versionData.googleBuildVersion++;
-  console.log(`✅ Bumped BOTH:`);
-  console.log(`Apple: ${oldApple} → ${versionData.appleAppVersion}`);
-  console.log(`Android: ${oldAndroid} → ${versionData.androidAppVersion}`);
 }
 
 // Save updated version.json
 fs.writeFileSync(versionPath, JSON.stringify(versionData, null, 2), 'utf8');
-console.log('✅ Saved version.json');
 
 // Sync to native files
 syncNative(versionData);
-
-// Done
-console.log('✅ Finished bump + sync!');

@@ -36,7 +36,6 @@ infoPlist = infoPlist.replace(
 
 // Write back Info.plist
 fs.writeFileSync(infoPlistPath, infoPlist, 'utf8');
-console.log('✅ Updated Info.plist');
 
 // --- Update build.gradle ---
 let buildGradle = fs.readFileSync(buildGradlePath, 'utf8');
@@ -55,7 +54,3 @@ buildGradle = buildGradle.replace(
 
 // Write back build.gradle
 fs.writeFileSync(buildGradlePath, buildGradle, 'utf8');
-console.log('✅ Updated build.gradle');
-
-// --- All Done ---
-console.log('✅ Version sync complete!');

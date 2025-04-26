@@ -49,6 +49,14 @@ function* createNewUser(action) {
         completedOn: null, // this is the date the last step was completed
         forceShowFTU: false, // this lets the user force to show the ftu again
       },
+      userSettings: {
+        flashCellOrder: [
+          {index: 0, key: 'brandName', label: 'Brand Name'},
+          {index: 1, key: 'description', label: 'Description'},
+          {index: 2, key: 'itemName', label: 'Item Name'},
+        ],
+        hapticStrength: 'light',
+      },
     };
 
     // Create the profile document in Firestore
