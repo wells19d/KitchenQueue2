@@ -14,7 +14,6 @@ const useRealTimeCupboard = enabled => {
     if (!enabled || !account?.cupboardID) return;
 
     const cupboardRef = doc(db, 'cupboards', account.cupboardID);
-    // console.log('🔁 RealTimeCupboard listener mounted');
 
     const unsubscribe = onSnapshot(
       cupboardRef,
@@ -33,21 +32,18 @@ const useRealTimeCupboard = enabled => {
           JSON.stringify(prev) !== JSON.stringify(nextCupboard);
 
         if (hasChanged) {
-          // console.log('🟢 RealTimeCupboard updated');
           prevCupboardRef.current = nextCupboard;
           dispatch({type: 'SET_CUPBOARD', payload: nextCupboard});
         } else {
-          // console.log('⚪ No cupboard change detected');
+          // na
         }
       },
       error => {
-        // console.error('❌ RealTimeCupboard error:', error);
         dispatch({type: 'CUPBOARD_FETCH_FAILED', payload: error.message});
       },
     );
 
     return () => {
-      // console.log('🛑 RealTimeCupboard listener removed');
       unsubscribe();
     };
   }, [dispatch, account?.cupboardID, db, enabled]);

@@ -118,8 +118,6 @@ const ShoppingItems = () => {
     } else {
       setValidation(false);
 
-      console.log('statusTo', statusTo);
-
       const newItem = {
         itemName: itemName || '',
         brandName: brandName || '',

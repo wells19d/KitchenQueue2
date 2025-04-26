@@ -6,7 +6,6 @@ import {persistor} from '../../../store';
 const auth = getAuth();
 
 const getErrorMessage = error => {
-  console.log('Error Code:', error?.code);
   switch (error?.code) {
     // 🔐 Signup + Account Creation
     case 'auth/email-already-in-use':

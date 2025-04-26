@@ -10,7 +10,6 @@ const useRealTimeUsers = enabled => {
 
   useEffect(() => {
     if (!enabled) return;
-    // console.log(`🔄 Fetching User data from Firebase Auth`);
 
     const unsubscribe = onAuthStateChanged(auth, currentUser => {
       if (currentUser) {
