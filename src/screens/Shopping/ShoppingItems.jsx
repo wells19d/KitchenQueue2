@@ -80,8 +80,14 @@ const ShoppingItems = () => {
   }, [itemName]);
 
   const handlePackageChange = value => {
-    const cleaned = limitToThreeDecimals(value);
-    setPackageSize(cleaned);
+    // Allow typing decimals freely
+    const safeValue = value.replace(/[^0-9.]/g, '');
+
+    // Prevent more than one "."
+    const parts = safeValue.split('.');
+    if (parts.length > 2) return;
+
+    setPackageSize(safeValue);
   };
 
   const resetForm = () => {
