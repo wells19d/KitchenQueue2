@@ -93,6 +93,7 @@ const CupboardSingle = () => {
       ) : (
         <View style={ListStyles.viewContainer}>
           <SwipeableItem
+            core={core}
             list={cupboardList}
             setShowItemInfo={setShowItemInfo}
             setSelectedItem={setSelectedItem}
