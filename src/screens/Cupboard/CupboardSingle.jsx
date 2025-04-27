@@ -77,10 +77,6 @@ const CupboardSingle = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      innerViewStyles={{
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
       outerViewStyles={{paddingBottom: 0}}>
       {cupboardList.length === 0 ? (
         <View

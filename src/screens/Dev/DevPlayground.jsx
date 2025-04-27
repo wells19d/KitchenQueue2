@@ -89,8 +89,7 @@ const DevPlayground = () => {
       RightButton=""
       LeftAction={null}
       RightAction={null}
-      sheetOpen={false}
-      innerViewStyles={{}}>
+      sheetOpen={false}>
       <ScrollView>
         <View style={{borderWidth: 1, padding: 5}}>
           <Text>Device Info</Text>

@@ -106,10 +106,6 @@ const ShoppingList = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      innerViewStyles={{
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
       outerViewStyles={{paddingBottom: 0}}>
       {shoppingList.length === 0 ? (
         <View
