@@ -399,7 +399,7 @@ const Account = () => {
           <Text size="xSmall">Coming Soon</Text>
         </View>
       </View>
-      <View style={{flexDirection: 'row', marginHorizontal: 20, marginTop: 2}}>
+      {/* <View style={{flexDirection: 'row', marginHorizontal: 20, marginTop: 2}}>
         <View style={{alignItems: 'flex-start'}}>
           <Text size="xSmall" italic>
             {deviceAppVersion}
@@ -410,7 +410,7 @@ const Account = () => {
             {buildVersion}
           </Text>
         </View>
-      </View>
+      </View> */}
       <RenderModal />
     </Layout>
   );

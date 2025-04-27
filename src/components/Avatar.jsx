@@ -104,4 +104,4 @@ const AvatarStyles = {
   },
 };
 
-export default Avatar;
+export default __DEV__ ? Avatar : React.memo(Avatar);

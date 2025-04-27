@@ -137,42 +137,42 @@ export const menuArray = [
       },
     ],
   },
-  __DEV__
-    ? {
-        section: '(Development)',
-        defaultOpen: true,
-        items: [
-          {
-            title: 'Dev Playground',
-            icon: <Icons.Dev />,
-            action: 'DevPlayground',
-          },
-          {
-            title: 'Text',
-            icon: <Icons.Dev />,
-            action: 'DevText',
-          },
-          {
-            title: 'Inputs',
-            icon: <Icons.Dev />,
-            action: 'DevInputs',
-          },
-          {
-            title: 'Buttons',
-            icon: <Icons.Dev />,
-            action: 'DevButtons',
-          },
-          {
-            title: 'Modals',
-            icon: <Icons.Dev />,
-            action: 'DevModals',
-          },
-          {
-            title: 'Dropdowns',
-            icon: <Icons.Dev />,
-            action: 'DevDropdowns',
-          },
-        ],
-      }
-    : null,
+  // __DEV__
+  //   ? {
+  //       section: '(Development)',
+  //       defaultOpen: true,
+  //       items: [
+  //         {
+  //           title: 'Dev Playground',
+  //           icon: <Icons.Dev />,
+  //           action: 'DevPlayground',
+  //         },
+  //         {
+  //           title: 'Text',
+  //           icon: <Icons.Dev />,
+  //           action: 'DevText',
+  //         },
+  //         {
+  //           title: 'Inputs',
+  //           icon: <Icons.Dev />,
+  //           action: 'DevInputs',
+  //         },
+  //         {
+  //           title: 'Buttons',
+  //           icon: <Icons.Dev />,
+  //           action: 'DevButtons',
+  //         },
+  //         {
+  //           title: 'Modals',
+  //           icon: <Icons.Dev />,
+  //           action: 'DevModals',
+  //         },
+  //         {
+  //           title: 'Dropdowns',
+  //           icon: <Icons.Dev />,
+  //           action: 'DevDropdowns',
+  //         },
+  //       ],
+  //     }
+  //   : null,
 ].filter(Boolean);
