@@ -97,7 +97,6 @@ const CupboardGroup = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}
       outerViewStyles={{paddingBottom: 0}}>
       {groupedList.length === 0 ? (
         <View
