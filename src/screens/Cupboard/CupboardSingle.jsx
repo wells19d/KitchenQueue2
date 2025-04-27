@@ -72,7 +72,7 @@ const CupboardSingle = () => {
       headerTitle={title}
       headerColor={headerColor}
       textColor={textColor}
-      LeftButton="Split"
+      LeftButton={cupboardList.length === 0 ? null : 'Split'}
       RightButton=""
       LeftAction={null}
       RightAction={null}
@@ -88,7 +88,7 @@ const CupboardSingle = () => {
             ListStyles.viewContainer,
             {justifyContent: 'center', alignItems: 'center'},
           ]}>
-          <Text>Cupboard List is Empty</Text>
+          <Text>Cupboards are Empty</Text>
         </View>
       ) : (
         <View style={ListStyles.viewContainer}>

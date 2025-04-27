@@ -105,7 +105,7 @@ const CupboardGroup = () => {
             ListStyles.viewContainer,
             {justifyContent: 'center', alignItems: 'center'},
           ]}>
-          <Text>Cupboard is Empty</Text>
+          <Text>Cupboards are Empty</Text>
         </View>
       ) : (
         <View style={ListStyles.viewContainer}>
