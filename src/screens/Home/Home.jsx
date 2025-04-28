@@ -167,7 +167,7 @@ const Home = () => {
         />
       </DisplayRow>
 
-      {/* <DisplayRow>
+      <DisplayRow>
         <DisplayCell color="basic" shadow="dark90" title="My Recipes" blank />
       </DisplayRow>
       <DisplayRow>
@@ -193,7 +193,7 @@ const Home = () => {
           title="Recipe Searches"
           blank
         />
-      </DisplayRow> */}
+      </DisplayRow>
     </Layout>
   );
 };
