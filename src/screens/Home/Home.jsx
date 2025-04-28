@@ -141,9 +141,12 @@ const Home = () => {
           color="white"
           shadow="white"
           header
-          style={{minHeight: 75, justifyContent: 'top'}}
+          style={{minHeight: 100, justifyContent: 'top'}}
         />
       </DisplayRow>
+      <Text centered italic>
+        Allowances:
+      </Text>
       <DisplayRow>
         <DisplayCell
           color="success10"
@@ -156,24 +159,41 @@ const Home = () => {
       </DisplayRow>
       <DisplayRow>
         <DisplayCell
-          color="info10"
-          shadow="info90"
+          color="success10"
+          shadow="success90"
           title="Cupboard"
           value1={core?.cupboardLength}
           value2={core?.maxCupboardItems}
         />
       </DisplayRow>
+
+      {/* <DisplayRow>
+        <DisplayCell color="basic" shadow="dark90" title="My Recipes" blank />
+      </DisplayRow>
       <DisplayRow>
         <DisplayCell
-          color="warning10"
-          shadow="warning90"
-          title="Favorites"
+          color="basic"
+          shadow="dark90"
+          title="Favorite Items"
           blank
         />
       </DisplayRow>
       <DisplayRow>
-        <DisplayCell color="danger10" shadow="danger90" title="Recipes" blank />
+        <DisplayCell
+          color="basic"
+          shadow="dark90"
+          title="Barcode Scans"
+          blank
+        />
       </DisplayRow>
+      <DisplayRow>
+        <DisplayCell
+          color="basic"
+          shadow="dark90"
+          title="Recipe Searches"
+          blank
+        />
+      </DisplayRow> */}
     </Layout>
   );
 };
