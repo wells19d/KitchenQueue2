@@ -379,7 +379,7 @@ const Account = () => {
           </View>
         </View>
       </View>
-      <View style={AccountStyles.midSection}>
+      {/* <View style={AccountStyles.midSection}>
         <View style={AccountStyles.usersHeader}>
           <Text size="small" font="open-7">
             Collections:
@@ -398,7 +398,7 @@ const Account = () => {
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <Text size="xSmall">Coming Soon</Text>
         </View>
-      </View>
+      </View> */}
       {/* <View style={{flexDirection: 'row', marginHorizontal: 20, marginTop: 2}}>
         <View style={{alignItems: 'flex-start'}}>
           <Text size="xSmall" italic>

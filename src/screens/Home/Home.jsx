@@ -1,5 +1,5 @@
 //* Home.jsx
-import React, {use, useEffect} from 'react';
+import React, {useMemo} from 'react';
 import {useRoute} from '@react-navigation/native';
 import {Layout, Text} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
@@ -26,44 +26,76 @@ const Home = () => {
     return `${day}, ${date}`;
   };
 
-  const DisplayRow = ({children}) => {
-    return <View style={{flexDirection: 'row'}}>{children}</View>;
-  };
-  const DisplayCell = ({
-    title,
-    subTitle,
-    color,
-    border,
-    shadow,
-    style,
-    value1,
-    value2,
-    blank,
-    header,
-  }) => {
+  const DisplayCell = React.memo(props => {
+    const {
+      title,
+      subTitle,
+      style,
+      value1,
+      value2,
+      blank = false,
+      header,
+    } = props;
+    const {color, shadow, border} = useMemo(() => {
+      const newValue1 = value1 || 0;
+      const newValue2 = value2 || 0;
+      const percent = newValue2 !== 0 ? (newValue1 / newValue2) * 100 : 0;
+      let mode = 'basic';
+
+      if (blank) {
+        mode = 'basic';
+      } else if (header) {
+        mode = 'header';
+      } else if (percent <= 50) {
+        mode = 'success';
+      } else if (percent <= 85) {
+        mode = 'warning';
+      } else if (percent <= 100) {
+        mode = 'danger';
+      }
+
+      const modeStyles = {
+        success: {
+          color: 'success10',
+          shadow: 'success90',
+          border: 'success10',
+        },
+        warning: {
+          color: 'warning10',
+          shadow: 'warning90',
+          border: 'warning10',
+        },
+        danger: {color: 'danger10', shadow: 'danger90', border: 'danger10'},
+        basic: {color: 'basic', shadow: 'dark90', border: 'basic'},
+        header: {color: 'white', shadow: 'white', border: 'white'},
+      };
+
+      const selected = modeStyles[mode] || modeStyles.basic;
+
+      return {
+        color: useColors(selected.color),
+        shadow: useColors(selected.shadow),
+        border: useColors(selected.border),
+      };
+    }, [value1, value2, header]);
+
     return (
       <View
         style={{
-          flex: 1,
           borderWidth: border ? 1.5 : 0,
           borderRadius: 10,
           margin: 6,
           paddingVertical: 5,
           paddingHorizontal: 10,
-          backgroundColor: useColors(color || 'primary30'),
-          borderColor: border
-            ? useColors(border || 'primary30')
-            : useColors(color || 'primary30'),
-          shadowColor: useColors(shadow || 'primary90'),
-          shadowOffset: {
-            width: 1,
-            height: 2,
-          },
+          backgroundColor: color,
+          borderColor: border,
+          shadowColor: shadow,
+          shadowOffset: {width: 1, height: 2},
           shadowOpacity: 0.5,
           shadowRadius: 1.5,
           elevation: 8,
           justifyContent: 'center',
-          minHeight: 45,
+          height: 45,
           ...style,
         }}>
         {header ? (
@@ -77,10 +109,7 @@ const Home = () => {
           </>
         ) : (
           <View style={{flexDirection: 'row'}}>
-            <View
-              style={{
-                justifyContent: 'center',
-              }}>
+            <View style={{justifyContent: 'center'}}>
               <Text size="medium" font="mont-7" numberOfLines={1}>
                 {title}:{' '}
               </Text>
@@ -116,7 +145,7 @@ const Home = () => {
         )}
       </View>
     );
-  };
+  });
 
   return (
     <Layout
@@ -136,64 +165,28 @@ const Home = () => {
         paddingLeft: 4,
         paddingRight: 6,
       }}>
-      <DisplayRow>
-        <DisplayCell
-          color="white"
-          shadow="white"
-          header
-          style={{minHeight: 100, justifyContent: 'top'}}
-        />
-      </DisplayRow>
+      <DisplayCell
+        header
+        style={{minHeight: 100, justifyContent: 'flex-start'}}
+      />
       <Text centered italic>
         Allowances:
       </Text>
-      <DisplayRow>
-        <DisplayCell
-          color="success10"
-          shadow="success90"
-          title="Shopping"
-          subTitle="List & Cart"
-          value1={core?.shoppingAllItemsLength}
-          value2={core?.maxShoppingItems}
-        />
-      </DisplayRow>
-      <DisplayRow>
-        <DisplayCell
-          color="success10"
-          shadow="success90"
-          title="Cupboard"
-          value1={core?.cupboardLength}
-          value2={core?.maxCupboardItems}
-        />
-      </DisplayRow>
-
-      <DisplayRow>
-        <DisplayCell color="basic" shadow="dark90" title="My Recipes" blank />
-      </DisplayRow>
-      <DisplayRow>
-        <DisplayCell
-          color="basic"
-          shadow="dark90"
-          title="Favorite Items"
-          blank
-        />
-      </DisplayRow>
-      <DisplayRow>
-        <DisplayCell
-          color="basic"
-          shadow="dark90"
-          title="Barcode Scans"
-          blank
-        />
-      </DisplayRow>
-      <DisplayRow>
-        <DisplayCell
-          color="basic"
-          shadow="dark90"
-          title="Recipe Searches"
-          blank
-        />
-      </DisplayRow>
+      <DisplayCell
+        title="Shopping"
+        subTitle="List & Cart"
+        value1={core?.shoppingAllItemsLength}
+        value2={core?.maxShoppingItems}
+      />
+      <DisplayCell
+        title="Cupboard"
+        value1={core?.cupboardLength}
+        value2={core?.maxCupboardItems}
+      />
+      {/* <DisplayCell title="My Recipes" blank />
+      <DisplayCell title="Favorite Items" blank />
+      <DisplayCell title="Barcode Scans" blank />
+      <DisplayCell title="Recipe Searches" blank /> */}
     </Layout>
   );
 };
