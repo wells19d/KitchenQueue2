@@ -243,7 +243,7 @@ const Home = () => {
           icon={<Icons.Chest size={25} />}
         />
       </DisplayRow>
-      <DisplayRow>
+      {/* <DisplayRow>
         <DisplayCell
           height={200}
           icon={<Icons.Chest size={20} />}
@@ -257,7 +257,7 @@ const Home = () => {
             This is a custom cell!
           </Text>
         </DisplayCell>
-      </DisplayRow>
+      </DisplayRow> */}
     </Layout>
   );
 };
