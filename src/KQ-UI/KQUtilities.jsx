@@ -268,6 +268,8 @@ export const useFonts = (font = DEFAULT_FONT, italic = false) => {
 
 export const useFontSizes = (size = 'medium', font = 'OpenSans') => {
   const sizes = {
+    micro: 8,
+    xTiny: 10,
     tiny: 12,
     xSmall: 14,
     small: 16,

@@ -4,49 +4,60 @@ import {useRoute} from '@react-navigation/native';
 import {Layout, Text} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import moment from 'moment';
-import {View} from 'react-native';
+import {Image, View} from 'react-native';
 import {useColors} from '../../KQ-UI/KQUtilities';
+import {useDeviceInfo} from '../../hooks/useHooks';
+import {Icons} from '../../components/IconListRouter';
 
 const Home = () => {
   const route = useRoute();
   const core = useCoreInfo();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+  const device = useDeviceInfo();
 
-  const greetingMsg = () => {
-    if (core?.firstName) {
-      return `Hello, ${core?.firstName}!`;
-    } else {
-      return `Hello new user!`;
-    }
-  };
+  let screenWidth = device?.dimensions?.width;
+  const imageCutRatio = 1000 / (screenWidth / 1.5);
+  const imageWidth = 1000 / imageCutRatio;
+  const imageHeight = 500 / imageCutRatio;
 
-  const displayDate = () => {
-    let day = moment(new Date()).format('ddd');
-    let date = moment(new Date()).format('MMM DD, YYYY');
-    return `${day}, ${date}`;
-  };
+  console.log('core', core);
+
+  // const greetingMsg = () => {
+  //   if (core?.firstName) {
+  //     return `Hello, ${core?.firstName}!`;
+  //   } else {
+  //     return `Hello new user!`;
+  //   }
+  // };
+
+  // const displayDate = () => {
+  //   let day = moment(new Date()).format('ddd');
+  //   let date = moment(new Date()).format('MMM DD, YYYY');
+  //   return `${day}, ${date}`;
+  // };
 
   const DisplayCell = React.memo(props => {
     const {
       title,
       subTitle,
-      style,
+      icon,
       value1,
       value2,
       blank = false,
-      header,
+      blankStyle = {},
+      iconStyles = {},
+      height,
+      infoCentered,
+      children,
     } = props;
-    const {color, shadow, border} = useMemo(() => {
+    const fixedHeight = height || 90;
+    const {color, border} = useMemo(() => {
       const newValue1 = value1 || 0;
       const newValue2 = value2 || 0;
       const percent = newValue2 !== 0 ? (newValue1 / newValue2) * 100 : 0;
       let mode = 'basic';
 
-      if (blank) {
-        mode = 'basic';
-      } else if (header) {
-        mode = 'header';
-      } else if (percent <= 50) {
+      if (percent <= 50) {
         mode = 'success';
       } else if (percent <= 85) {
         mode = 'warning';
@@ -57,95 +68,116 @@ const Home = () => {
       const modeStyles = {
         success: {
           color: 'success10',
-          shadow: 'success90',
-          border: 'success10',
+          border: 'success30',
         },
         warning: {
           color: 'warning10',
-          shadow: 'warning90',
-          border: 'warning10',
+          border: 'warning30',
         },
-        danger: {color: 'danger10', shadow: 'danger90', border: 'danger10'},
-        basic: {color: 'basic', shadow: 'dark90', border: 'basic'},
-        header: {color: 'white', shadow: 'white', border: 'white'},
+        danger: {color: 'danger10', border: 'danger30'},
+        basic: {color: 'basic'},
+        header: {color: 'white'},
       };
 
       const selected = modeStyles[mode] || modeStyles.basic;
 
       return {
         color: useColors(selected.color),
-        shadow: useColors(selected.shadow),
         border: useColors(selected.border),
       };
-    }, [value1, value2, header]);
+    }, [value1, value2]);
 
     return (
       <View
         style={{
-          borderWidth: border ? 1.5 : 0,
-          borderRadius: 10,
-          margin: 6,
-          paddingVertical: 5,
-          paddingHorizontal: 10,
-          backgroundColor: color,
-          borderColor: border,
-          shadowColor: shadow,
+          flex: 1,
+          borderWidth: 1.5,
+          borderRadius: 15,
+          height: fixedHeight,
+          marginHorizontal: 5,
+          backgroundColor: useColors('white'),
+          borderColor: useColors('dark30'),
+          shadowColor: useColors('dark'),
           shadowOffset: {width: 1, height: 2},
           shadowOpacity: 0.5,
           shadowRadius: 1.5,
           elevation: 8,
-          justifyContent: 'center',
-          height: 45,
-          ...style,
+          overflow: 'hidden',
         }}>
-        {header ? (
-          <>
-            <Text size="large" font="mont-7">
-              {greetingMsg()}
-            </Text>
-            <Text size="small" font="mont-6" kqColor="dark80" italic>
-              {displayDate()}
-            </Text>
-          </>
+        {blank ? (
+          <View style={[{padding: 5}, blankStyle]}>{children}</View>
         ) : (
           <View style={{flexDirection: 'row'}}>
-            <View style={{justifyContent: 'center'}}>
-              <Text size="medium" font="mont-7" numberOfLines={1}>
-                {title}:{' '}
-              </Text>
-            </View>
-            {subTitle && (
-              <View style={{justifyContent: 'center'}}>
-                <Text
-                  size="small"
-                  font="mont-6"
-                  kqColor="dark80"
-                  numberOfLines={1}>
-                  ({subTitle})
-                </Text>
-              </View>
-            )}
             <View
               style={{
-                flex: 1,
-                alignItems: 'flex-end',
+                height: fixedHeight,
                 justifyContent: 'center',
+                backgroundColor: color,
+                borderTopLeftRadius: 14,
+                borderBottomLeftRadius: 14,
+                borderRightWidth: 1,
+                borderRightColor: border,
               }}>
-              {!blank ? (
-                <Text size="small" font="mont-6" kqColor="dark90" italic>
+              <View
+                style={[
+                  {
+                    height: 35,
+                    width: 35,
+                    margin: 5,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  },
+                  iconStyles,
+                ]}>
+                {icon}
+              </View>
+            </View>
+            <View
+              style={{
+                height: fixedHeight,
+                flex: 1,
+                justifyContent: infoCentered ? 'center' : 'flex-start',
+                alignItems: infoCentered ? 'center' : 'flex-start',
+              }}>
+              <View
+                style={{
+                  flex: 1,
+                  marginBottom: 5,
+                  justifyContent: infoCentered ? 'space-evenly' : 'flex-start',
+                  alignItems: infoCentered ? 'center' : 'flex-start',
+                }}>
+                <View
+                  style={{alignItems: infoCentered ? 'center' : 'flex-start'}}>
+                  <Text size="small" font="mont-7">
+                    {title}
+                  </Text>
+                  <Text size="tiny" font="mont-6">
+                    {subTitle}
+                  </Text>
+                </View>
+                <Text size="small" font="mont-7">
                   {value1} of {value2}
                 </Text>
-              ) : (
-                <Text size="small" font="mont-6" kqColor="dark90" italic>
-                  Coming Soon...
-                </Text>
-              )}
+              </View>
             </View>
           </View>
         )}
       </View>
     );
   });
+
+  const DisplayRow = ({children}) => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          marginHorizontal: 5,
+          marginVertical: 5,
+        }}>
+        {children}
+      </View>
+    );
+  };
 
   return (
     <Layout
@@ -159,34 +191,73 @@ const Home = () => {
       RightAction={null}
       sheetOpen={false}
       outerViewStyles={{paddingBottom: 0}}
-      innerViewStyles={{
-        paddingTop: 7,
-        paddingBottom: 10,
-        paddingLeft: 4,
-        paddingRight: 6,
-      }}>
-      <DisplayCell
-        header
-        style={{minHeight: 100, justifyContent: 'flex-start'}}
-      />
-      <Text centered italic>
-        Allowances:
-      </Text>
-      <DisplayCell
-        title="Shopping"
-        subTitle="List & Cart"
-        value1={core?.shoppingAllItemsLength}
-        value2={core?.maxShoppingItems}
-      />
-      <DisplayCell
-        title="Cupboard"
-        value1={core?.cupboardLength}
-        value2={core?.maxCupboardItems}
-      />
-      {/* <DisplayCell title="My Recipes" blank />
-      <DisplayCell title="Favorite Items" blank />
-      <DisplayCell title="Barcode Scans" blank />
-      <DisplayCell title="Recipe Searches" blank /> */}
+      innerViewStyles={{}}>
+      <View
+        style={{
+          alignItems: 'center',
+          marginTop: 10,
+          marginBottom: 5,
+        }}>
+        <View>
+          <Image
+            source={require('../../images/AppLogo_1000.png')}
+            style={{width: imageWidth, height: imageHeight}}
+          />
+        </View>
+      </View>
+      <DisplayRow>
+        <DisplayCell
+          infoCentered
+          title="Shopping"
+          subTitle="(Cart / List)"
+          value1={core?.shoppingAllItemsLength}
+          value2={core?.maxShoppingItems}
+          icon={<Icons.Shopping size={25} />}
+        />
+        <DisplayCell
+          infoCentered
+          title="Cupboards"
+          subTitle="(Items)"
+          value1={core?.cupboardLength}
+          value2={core?.maxCupboardItems}
+          icon={<Icons.Cupboards size={25} />}
+        />
+      </DisplayRow>
+      <DisplayRow>
+        <DisplayCell
+          infoCentered
+          title="Favorites"
+          subTitle="(Items)"
+          value1={core?.favoritesLength}
+          value2={core?.maxFavoriteItems}
+          // iconStyles={{marginTop: -1}}
+          icon={<Icons.Star size={25} />}
+        />
+        <DisplayCell
+          infoCentered
+          title="Recipe Box"
+          subTitle="(Recipes)"
+          value1={core?.recipeBoxLength}
+          value2={core?.maxRecipeBoxItems}
+          // iconStyles={{marginTop: -4}}
+          icon={<Icons.Chest size={25} />}
+        />
+      </DisplayRow>
+      <DisplayRow>
+        <DisplayCell
+          height={200}
+          icon={<Icons.Chest size={20} />}
+          blank
+          blankStyle={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text size="xSmall" font="mont-7">
+            This is a custom cell!
+          </Text>
+        </DisplayCell>
+      </DisplayRow>
     </Layout>
   );
 };
