@@ -68,8 +68,3 @@ codeFiles.forEach(file => {
   bundle += `\n\n--- FILE: ${relativePath} ---\n\n${code}`;
 });
 fs.writeFileSync(OUTPUT_CODE_FILE, bundle, 'utf8');
-
-console.log(`✅ Structure exported to ${OUTPUT_STRUCTURE_FILE}`);
-console.log(
-  `✅ ${codeFiles.length} code files exported to ${OUTPUT_CODE_FILE}`,
-);

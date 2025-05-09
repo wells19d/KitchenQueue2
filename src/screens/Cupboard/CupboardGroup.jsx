@@ -7,11 +7,12 @@ import {ListStyles} from '../../styles/Styles';
 import {View} from 'react-native';
 import SwipeableItem from '../../components/SwipeableItem';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
+import {useCoreInfo} from '../../utilities/coreInfo';
 
 const CupboardGroup = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-
+  const core = useCoreInfo();
   const cupboard = useCupboard();
   const cupboardItems = cupboard?.items ?? [];
 
@@ -96,7 +97,6 @@ const CupboardGroup = () => {
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      innerViewStyles={{justifyContent: 'center', alignItems: 'center'}}
       outerViewStyles={{paddingBottom: 0}}>
       {groupedList.length === 0 ? (
         <View
@@ -104,11 +104,12 @@ const CupboardGroup = () => {
             ListStyles.viewContainer,
             {justifyContent: 'center', alignItems: 'center'},
           ]}>
-          <Text>Cupboard is Empty</Text>
+          <Text>Cupboards are Empty</Text>
         </View>
       ) : (
         <View style={ListStyles.viewContainer}>
           <SwipeableItem
+            core={core}
             list={groupedList}
             setShowItemInfo={setShowItemInfo}
             setSelectedItem={setSelectedItem}

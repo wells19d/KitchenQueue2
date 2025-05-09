@@ -72,15 +72,11 @@ const CupboardSingle = () => {
       headerTitle={title}
       headerColor={headerColor}
       textColor={textColor}
-      LeftButton="Split"
+      LeftButton={cupboardList.length === 0 ? null : 'Split'}
       RightButton=""
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
-      innerViewStyles={{
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
       outerViewStyles={{paddingBottom: 0}}>
       {cupboardList.length === 0 ? (
         <View
@@ -88,11 +84,12 @@ const CupboardSingle = () => {
             ListStyles.viewContainer,
             {justifyContent: 'center', alignItems: 'center'},
           ]}>
-          <Text>Cupboard List is Empty</Text>
+          <Text>Cupboards are Empty</Text>
         </View>
       ) : (
         <View style={ListStyles.viewContainer}>
           <SwipeableItem
+            core={core}
             list={cupboardList}
             setShowItemInfo={setShowItemInfo}
             setSelectedItem={setSelectedItem}

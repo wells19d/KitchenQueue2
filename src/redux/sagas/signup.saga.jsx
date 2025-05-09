@@ -49,6 +49,14 @@ function* createNewUser(action) {
         completedOn: null, // this is the date the last step was completed
         forceShowFTU: false, // this lets the user force to show the ftu again
       },
+      userSettings: {
+        flashCellOrder: [
+          {index: 0, key: 'brandName', label: 'Brand Name'},
+          {index: 1, key: 'description', label: 'Description'},
+          {index: 2, key: 'itemName', label: 'Item Name'},
+        ],
+        hapticStrength: 'light',
+      },
     };
 
     // Create the profile document in Firestore
@@ -66,14 +74,14 @@ function* createNewAccount(action) {
     const {userID, profileID} = action.payload;
     const accountID = uuid.v4();
     const cupboardID = uuid.v4();
-    const cupboardLimit = 100;
     const shoppingCartID = uuid.v4();
-    const shoppingCartLimit = 25;
     const recipeBoxID = uuid.v4();
-    const recipeBoxLimit = 5;
     const favoriteItemsID = uuid.v4();
-    const favoriteItemsLimit = 10;
     const joinCode = uuid.v4().replace(/-/g, '');
+    const cupboardLimit = 100;
+    const shoppingCartLimit = 25;
+    const favoriteItemsLimit = 10;
+    const recipeBoxLimit = 5;
 
     const newAccount = {
       allowedUsers: [userID],

@@ -3,7 +3,7 @@ export const LegalArray = {
   PP: [
     {
       dates: {effective: 'July 1, 2025', written: 'March 23, 2025'},
-      version: {previous: '1.0.1', current: '1.0.2'},
+      version: {previous: '1.0.0', current: '1.0.0'},
       sections: [
         {
           index: 1,
@@ -139,7 +139,7 @@ export const LegalArray = {
   TOS: [
     {
       dates: {effective: 'July 1, 2025', written: 'March 23, 2025'},
-      version: {previous: '1.0.1', current: '1.0.2'},
+      version: {previous: '1.0.0', current: '1.0.0'},
       sections: [
         {
           index: 1,

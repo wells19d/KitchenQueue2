@@ -7,21 +7,60 @@ export const useColors = color => {
   const colors = {
     black: '#000000',
     white: '#ffffff',
+    //---
+    primary10: '#8dd1bd',
+    primary30: '#4ea68e',
     primary: '#319177',
-    success: '#63B76C',
+    primary70: '#198064',
+    primary90: '#0a654c',
+    //---
+    success10: '#bae6c0',
+    success30: '#91d299',
+    success: '#63b76C',
+    success70: '#3b9846',
+    success90: '#1e7b29',
+    //---
+    info10: '#91daee',
+    info30: '#02cfff',
     info: '#009DC4',
-    warning: '#FCC945',
-    danger: '#DA2C43',
-    dark: '#373d43',
-    dark90: '#373d43E6',
-    dark80: '#373d43CC',
-    dark70: '#373d43B3',
-    dark60: '#373d4399',
-    dark50: '#373d4380',
-    dark40: '#373d4366',
-    dark30: '#373d434D',
-    dark20: '#373d4333',
+    info70: '#007590',
+    info90: '#005b71',
+    //---
+    warning10: '#ffd29a',
+    warning30: '#fdca78',
+    warning: '#dda44b',
+    warning70: '#c48726',
+    warning90: '#9b6510',
+    //---
+    danger10: '#f596a5',
+    danger30: '#ec5267',
+    danger: '#da2c43',
+    danger70: '#b51128',
+    danger90: '#900014',
+    //---
+    orange10: '#ffc58d',
+    orange30: '#f89656',
+    orange: '#e5762e',
+    orange70: '#bf5612',
+    orange90: '#8c3b00',
+    //---
+    lilac10: '#dbd1ea',
+    lilac30: '#beb2d5',
+    lilac: '#9483b6',
+    lilac70: '#6d5798',
+    lilac90: '#4e3c75',
+    //---
     dark10: '#373d431A',
+    dark20: '#373d4333',
+    dark30: '#373d434D',
+    dark40: '#373d4366',
+    dark50: '#373d4380',
+    dark60: '#373d4399',
+    dark70: '#373d43B3',
+    dark80: '#373d43CC',
+    dark90: '#373d43E6',
+    dark: '#373d43',
+    //---
     basic: '#C4C4C4',
   };
 
@@ -229,6 +268,8 @@ export const useFonts = (font = DEFAULT_FONT, italic = false) => {
 
 export const useFontSizes = (size = 'medium', font = 'OpenSans') => {
   const sizes = {
+    micro: 8,
+    xTiny: 10,
     tiny: 12,
     xSmall: 14,
     small: 16,

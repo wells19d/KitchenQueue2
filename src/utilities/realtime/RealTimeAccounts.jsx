@@ -14,7 +14,6 @@ const useRealTimeAccounts = enabled => {
       return;
     }
 
-    // console.log(`🔄 Fetching Account data from Firestore`);
     const accountRef = doc(db, 'accounts', profile.account);
 
     const unsubscribe = onSnapshot(

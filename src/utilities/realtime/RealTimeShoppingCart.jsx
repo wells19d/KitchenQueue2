@@ -14,7 +14,6 @@ const useRealTimeShoppingCart = enabled => {
     if (!enabled || !account?.shoppingCartID) return;
 
     const cartRef = doc(db, 'shoppingCarts', account.shoppingCartID);
-    // console.log('🔁 RealTimeShoppingCart listener mounted');
 
     const unsubscribe = onSnapshot(
       cartRef,
@@ -33,21 +32,18 @@ const useRealTimeShoppingCart = enabled => {
           JSON.stringify(prevCart) !== JSON.stringify(nextCart);
 
         if (hasChanged) {
-          // console.log('🟢 RealTimeShoppingCart updated');
           prevCartRef.current = nextCart;
           dispatch({type: 'SET_SHOP_CART', payload: nextCart});
         } else {
-          // console.log('⚪ No cart change detected');
+          // na
         }
       },
       error => {
-        // console.error('❌ RealTimeShoppingCart error:', error);
         dispatch({type: 'SHOP_CART_FETCH_FAILED', payload: error.message});
       },
     );
 
     return () => {
-      // console.log('🛑 RealTimeShoppingCart listener removed');
       unsubscribe();
     };
   }, [dispatch, account?.shoppingCartID, db, enabled]);

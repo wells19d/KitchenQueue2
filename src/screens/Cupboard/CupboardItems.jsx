@@ -71,20 +71,32 @@ const CupboardItems = () => {
   }, [packageSize, itemToUpdate?.remainingAmount]);
 
   const handleRemainingAmountChange = value => {
-    let cleaned = limitToThreeDecimals(value);
-    const numericValue = parseFloat(cleaned);
+    const safeValue = value.replace(/[^0-9.]/g, '');
+
+    const parts = safeValue.split('.');
+    if (parts.length > 2) return;
+
+    const numericValue = parseFloat(safeValue);
+
     if (numericValue > parseFloat(packageSize)) {
       setRemainValidation(true);
     } else {
       setRemainValidation(false);
     }
-    setRemainingAmount(cleaned);
+
+    setRemainingAmount(safeValue);
   };
 
   const handlePackageChange = value => {
-    const cleaned = limitToThreeDecimals(value);
-    setPackageSize(cleaned);
-    setRemainingAmount(cleaned); // default remaining = full package
+    // Allow typing decimals freely
+    const safeValue = value.replace(/[^0-9.]/g, '');
+
+    // Prevent more than one "."
+    const parts = safeValue.split('.');
+    if (parts.length > 2) return;
+
+    setPackageSize(safeValue);
+    setRemainingAmount(safeValue); // default remaining = full package
   };
 
   const resetForm = () => {
