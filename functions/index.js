@@ -2,33 +2,20 @@ const {initializeApp} = require('firebase-admin/app');
 const {onDocumentCreated} = require('firebase-functions/v2/firestore');
 const {logger} = require('firebase-functions');
 const nodemailer = require('nodemailer');
-const dns = require('dns'); // 👈 ADD THIS LINE
+const dns = require('dns');
+const {defineSecret} = require('firebase-functions/params');
 
 initializeApp();
 
-const EMAIL_USER = 'noreply@kitchen-queue.com';
-const EMAIL_PASS = 'pLp-cHl0GD)x';
-
-const transporter = nodemailer.createTransport(
-  {
-    host: '50.87.253.20',
-    port: 465,
-    secure: true,
-    auth: {
-      user: EMAIL_USER,
-      pass: EMAIL_PASS,
-    },
-    debug: true,
-  },
-  {
-    from: `Kitchen Queue <${EMAIL_USER}>`,
-  },
-);
+const EMAIL_LOGIN = 'admin@kitchen-queue.com';
+const EMAIL_USER = 'support@kitchen-queue.com';
+const EMAIL_PASS = defineSecret('SMTP_EMAIL_PASSWORD');
 
 exports.sendInviteEmail = onDocumentCreated(
   {
     document: 'accountInvites/{inviteCode}',
     region: 'us-central1',
+    secrets: [EMAIL_PASS],
   },
   async event => {
     const data = event.data?.data();
@@ -36,6 +23,22 @@ exports.sendInviteEmail = onDocumentCreated(
       logger.warn('📭 No data found in the document snapshot.');
       return;
     }
+
+    const transporter = nodemailer.createTransport(
+      {
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+          user: EMAIL_LOGIN,
+          pass: EMAIL_PASS.value(), // ✅ safe here — runtime only
+        },
+        debug: true,
+      },
+      {
+        from: `Kitchen Queue <${EMAIL_USER}>`,
+      },
+    );
 
     const recipientEmail = data.email;
     const inviterName = `${data.fromFirst} ${data.fromLast}`;
@@ -61,7 +64,6 @@ The Kitchen Queue Team
       bounce: 'errors@kitchen-queue.com',
     };
 
-    // 👇 Add DNS lookup test BEFORE sending mail
     dns.lookup('mail.kitchen-queue.com', (err, address) => {
       if (err) {
         logger.error('❌ DNS Lookup failed:', err);
