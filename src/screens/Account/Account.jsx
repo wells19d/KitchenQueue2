@@ -53,7 +53,6 @@ const Account = () => {
 
   const closeModal = useCallback(() => {
     setShowModal(false);
-    setShowModal(false);
     setCodeGenerated(false);
     setCanGenerate(true);
     setDisplayCode('');
@@ -97,9 +96,9 @@ const Account = () => {
   useEffect(() => {
     if (existingInvite?.inviteCode !== displayCode) {
       setCodeGenerated(true);
-      setDisplayCode(existingInvite.inviteCode);
+      setDisplayCode(existingInvite?.inviteCode);
     }
-  }, [existingInvite]);
+  }, [existingInvite, displayCode]);
 
   const handleInvite = () => {
     if (!canGenerate || !isValidEmail(inviteEmail)) return;
@@ -124,7 +123,7 @@ const Account = () => {
         type: 'QUEUE_INVITE_REQUEST',
         payload: {
           invite: inviteObject,
-          accountID: account.id,
+          accountID: account?.id,
           resolve,
           reject,
         },
@@ -274,26 +273,27 @@ const Account = () => {
   );
 };
 
-const RenderModal = ({
-  showModal,
-  showExceeding,
-  invitationMsg,
-  displayCode,
-  loadingStatus,
-  codeGenerated,
-  closeModal,
-  handleInvite,
-  inviteEmail,
-  setInviteEmail,
-  emailError,
-  emailErrorMsg,
-  canGenerate,
-  showCodeModal,
-  existingInvite,
-  account,
-  setEmailError,
-  setEmailErrorMsg,
-}) => {
+const RenderModal = React.memo(props => {
+  const {
+    showModal,
+    showExceeding,
+    invitationMsg,
+    displayCode,
+    loadingStatus,
+    codeGenerated,
+    closeModal,
+    handleInvite,
+    inviteEmail,
+    setInviteEmail,
+    emailError,
+    emailErrorMsg,
+    canGenerate,
+    showCodeModal,
+    existingInvite,
+    account,
+    setEmailError,
+    setEmailErrorMsg,
+  } = props;
   const [confirmCopy, setConfirmCopy] = useState(false);
   const fadeAnim = useState(new Animated.Value(0))[0];
 
@@ -391,15 +391,6 @@ const RenderModal = ({
           </Text>
         </View>
       )}
-      {/* 
-      This is commented out for future feature of sending an automated email to the invited user
-      {!showExceeding && !invitationMsg && (
-        <View>
-          <Text size="medium" font="open-6" centered>
-            This invitation will be sent to {existingInvite?.email}
-          </Text>
-        </View>
-      )} */}
       {!showExceeding && !invitationMsg && (
         <View style={{marginHorizontal: 20, marginVertical: 10}}>
           <Text size="small" font="open-6" centered>
@@ -455,6 +446,6 @@ const RenderModal = ({
       {isCodeModal && renderCodeContent()}
     </Modal>
   );
-};
+});
 
 export default Account;
