@@ -45,15 +45,34 @@ export const useCoreInfo = () => {
     accountLastUpdatedBy: account?.lastUpdatedBy || null,
     accountOwner: account?.owner || null,
     subType: account?.subType || null,
+    maxShoppingItems: account?.shoppingCartLimit || null,
+    maxCupboardItems: account?.cupboardLimit || null,
+    maxRecipeBoxItems: account?.recipeBoxLimit || null,
+    maxFavoriteItems: account?.favoriteItemsLimit || null,
+    accountStatus: account?.isActive || null,
 
     // Shopping Cart Metadata
+    shoppingCartLength:
+      shopping?.items?.filter(item => item.status === 'shopping-cart').length ||
+      0,
+    shoppingListLength:
+      shopping?.items?.filter(item => item.status === 'shopping-list').length ||
+      0,
+    shoppingAllItemsLength: shopping?.items?.length || 0,
     shoppingCreatedOn: shopping?.createdOn || null,
     shoppingLastUpdated: shopping?.lastUpdated || null,
     shoppingLastUpdatedBy: shopping?.lastUpdatedBy || null,
 
     // Cupboard Metadata
+    cupboardLength: cupboard?.items?.length || 0,
     cupboardCreatedOn: cupboard?.createdOn || null,
     cupboardLastUpdated: cupboard?.lastUpdated || null,
     cupboardLastUpdatedBy: cupboard?.lastUpdatedBy || null,
+
+    // Favorites Metadata - feature not yet implemented
+    favoritesLength: 0,
+
+    // Recipes Metadata - feature not yet implemented
+    recipeBoxLength: 0,
   };
 };

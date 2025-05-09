@@ -145,10 +145,6 @@ const ShoppingCart = () => {
       LeftAction={null}
       RightAction={AddToCupboard}
       sheetOpen={false}
-      innerViewStyles={{
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
       outerViewStyles={{paddingBottom: 0}}>
       {shoppingCart.length === 0 ? (
         <View

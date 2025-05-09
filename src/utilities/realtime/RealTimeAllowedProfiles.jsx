@@ -20,8 +20,6 @@ const useRealTimeAllowedProfiles = enabled => {
       return;
     }
 
-    // console.log(`🔄 Fetching Allowed Profiles data from Firestore`);
-
     const profilesQuery = query(
       collection(db, 'profiles'),
       where('id', 'in', account.allowedUsers),

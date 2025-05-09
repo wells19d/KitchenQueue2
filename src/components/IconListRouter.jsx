@@ -37,6 +37,9 @@ export const Icons = {
   XCircle: props => (
     <OctIcons name="x-circle-fill" size={20} color="#000" {...props} />
   ),
+  Chest: props => (
+    <MCIcons name="treasure-chest" size={20} color="#000" {...props} />
+  ),
   ChevronDown: props => (
     <FEIcons name="chevron-down" size={20} color="#000" {...props} />
   ),
@@ -104,6 +107,7 @@ export const Icons = {
   Split: props => (
     <MCIcons name="set-split" size={20} color="#000" {...props} />
   ),
+  Star: props => <MCIcons name="star" size={20} color="#000" {...props} />,
   Wave: props => <MCIcons name="wave" size={20} color="#000" {...props} />,
   Waves: props => <MCIcons name="waves" size={20} color="#000" {...props} />,
 };
