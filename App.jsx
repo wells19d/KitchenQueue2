@@ -19,25 +19,29 @@ import toastConfig from './src/KQ-UI/KQToast';
 import Main from './Main';
 import {initializeApp, getApps} from '@react-native-firebase/app';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import auth from '@react-native-firebase/auth';
 
 const App = () => {
   const [appReady, setAppReady] = useState(false);
-  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
     if (!getApps().length) {
       initializeApp();
     }
 
-    if (getApps().length) {
-      setAppReady(true);
-    }
+    // Wait until app is initialized before marking ready
+    const waitForAuth = setInterval(() => {
+      try {
+        if (auth()?.app) {
+          clearInterval(waitForAuth);
+          setAppReady(true);
+        }
+      } catch (e) {
+        // Fail silently if auth isn't ready yet
+      }
+    }, 100);
 
-    const unsubscribe = auth().onAuthStateChanged(() => {
-      setAuthReady(true);
-    });
-
-    return unsubscribe;
+    return () => clearInterval(waitForAuth);
   }, []);
 
   const [isSplashVisible, setSplashVisible] = useState(true);
@@ -74,9 +78,7 @@ const App = () => {
           <SafeAreaProvider>
             <View style={{flex: 1, backgroundColor: '#fff'}}>
               <StatusBar barStyle="light-content" />
-              {appReady && authReady && (
-                <Main appReady={appReady} isSplashVisible={isSplashVisible} />
-              )}
+              <Main appReady={appReady} isSplashVisible={isSplashVisible} />
               <Toast config={toastConfig} />
             </View>
           </SafeAreaProvider>
