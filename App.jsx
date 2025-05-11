@@ -22,16 +22,22 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 const App = () => {
   const [appReady, setAppReady] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
     if (!getApps().length) {
       initializeApp();
     }
 
-    // Wait until app is ready
     if (getApps().length) {
       setAppReady(true);
     }
+
+    const unsubscribe = auth().onAuthStateChanged(() => {
+      setAuthReady(true);
+    });
+
+    return unsubscribe;
   }, []);
 
   const [isSplashVisible, setSplashVisible] = useState(true);
@@ -68,7 +74,9 @@ const App = () => {
           <SafeAreaProvider>
             <View style={{flex: 1, backgroundColor: '#fff'}}>
               <StatusBar barStyle="light-content" />
-              <Main appReady={appReady} isSplashVisible={isSplashVisible} />
+              {appReady && authReady && (
+                <Main appReady={appReady} isSplashVisible={isSplashVisible} />
+              )}
               <Toast config={toastConfig} />
             </View>
           </SafeAreaProvider>
