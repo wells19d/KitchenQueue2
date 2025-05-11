@@ -5,7 +5,7 @@
   "__comment4": "Run yarn bump scripts. Ref package.json for details.",
   "appleAppVersion": "0.9.0",
   "androidAppVersion": "0.9.0",
-  "appleBuildVersion": 2,
+  "appleBuildVersion": 3,
   "googleBuildVersion": 1,
   "tosVersion": "1.0.0",
   "ppVersion": "1.0.0"
