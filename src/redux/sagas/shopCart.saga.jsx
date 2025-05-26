@@ -58,7 +58,12 @@ function* addItemToShopCart(action) {
 
       const updatedItems = [
         ...(shopCartData.items || []),
-        {...newItem, itemId: uuid.v4(), itemDate: new Date().toISOString()},
+        {
+          ...newItem,
+          itemId: uuid.v4(),
+          createdBy: profileID,
+          itemDate: new Date().toISOString(),
+        },
       ];
 
       yield call(() =>
@@ -286,6 +291,7 @@ function* batchToShopping(action) {
             itemId: uuid.v4(),
             itemDate: new Date().toISOString(),
             quantity: 1,
+            createdBy: profileID,
             status:
               status === 'shopping-list' ? 'shopping-list' : 'shopping-cart',
           };
