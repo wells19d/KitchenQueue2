@@ -1,5 +1,5 @@
-//* metro.config.js
 const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+const path = require('path');
 
 const config = {
   server: {
@@ -12,6 +12,11 @@ const config = {
         }
         return middleware(req, res, next);
       };
+    },
+  },
+  resolver: {
+    extraNodeModules: {
+      react: path.resolve(__dirname, 'node_modules/react'),
     },
   },
 };

@@ -22,6 +22,7 @@ import {initializeApp, getApps} from '@react-native-firebase/app';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 const App = () => {
+  console.log('✅ React import:', React);
   const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {
