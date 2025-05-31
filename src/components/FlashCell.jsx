@@ -20,8 +20,15 @@ const FlashCell = props => {
     noQuantity,
   } = props;
 
+  const defaultFlashCellOrder = [
+    {index: 0, key: 'brandName', label: 'Brand Name'},
+    {index: 1, key: 'description', label: 'Description'},
+    {index: 2, key: 'itemName', label: 'Item Name'},
+  ];
+
   const renderDisplayText = item => {
-    const flashCellOrder = core?.userSettings?.flashCellOrder || [];
+    const flashCellOrder =
+      core?.userSettings?.flashCellOrder || defaultFlashCellOrder;
     const displayText = flashCellOrder
       .map(field => item[field.key])
       .filter(Boolean)
