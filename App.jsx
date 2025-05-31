@@ -17,31 +17,24 @@ import SplashScreen from './src/components/SplashScreen';
 import Toast from 'react-native-toast-message';
 import toastConfig from './src/KQ-UI/KQToast';
 import Main from './Main';
+import {getAuth, onAuthStateChanged} from '@react-native-firebase/auth';
 import {initializeApp, getApps} from '@react-native-firebase/app';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import auth from '@react-native-firebase/auth';
 
 const App = () => {
   const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {
+    console.log('app length', getApps().length);
     if (!getApps().length) {
       initializeApp();
     }
 
-    // Wait until app is initialized before marking ready
-    const waitForAuth = setInterval(() => {
-      try {
-        if (auth()?.app) {
-          clearInterval(waitForAuth);
-          setAppReady(true);
-        }
-      } catch (e) {
-        // Fail silently if auth isn't ready yet
-      }
-    }, 100);
+    const unsubscribe = onAuthStateChanged(getAuth(), () => {
+      setAppReady(true);
+    });
 
-    return () => clearInterval(waitForAuth);
+    return unsubscribe;
   }, []);
 
   const [isSplashVisible, setSplashVisible] = useState(true);

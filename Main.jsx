@@ -62,6 +62,8 @@ import AccountSetup from './src/screens/Account/AccountSetup';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
+  console.log('appReady', appReady);
+  console.log('isSplashVisible', isSplashVisible);
   const dispatch = useDispatch();
   const device = useDeviceInfo();
   const profile = useProfile();
@@ -69,6 +71,7 @@ const Main = props => {
   const useHaptics = setHapticFeedback();
   const Stack = createNativeStackNavigator();
   const isAuthenticated = useAuth();
+  console.log('isAuthenticated', isAuthenticated);
 
   const [headerColor, setHeaderColor] = useState('black');
   const [screenLocation, setScreenLocation] = useState('');
@@ -82,7 +85,7 @@ const Main = props => {
   const [currentModal, setCurrentModal] = useState('');
   enableScreens(true);
 
-  const [renderDisplay, setRenderDisplay] = useState('logo');
+  const [renderDisplay, setRenderDisplay] = useState('auth');
   const [loading, setLoading] = useState(false);
 
   // Step 1: Handle base state – app readiness and auth
