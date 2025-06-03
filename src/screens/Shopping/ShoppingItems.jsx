@@ -217,7 +217,7 @@ const ShoppingItems = () => {
             label="Quantity"
             value={quantity}
             onChangeText={setNumericValue(setQuantity)}
-            caption="Example: 2 Cartons"
+            caption="Number of Packages"
             // capitalMode="sentences"
           />
         </View>
@@ -226,7 +226,7 @@ const ShoppingItems = () => {
             label="Package Size"
             value={packageSize}
             onChangeText={handlePackageChange}
-            caption="Example: 12 Eggs"
+            caption="Total in a package"
             capitalMode="sentences"
           />
         </View>

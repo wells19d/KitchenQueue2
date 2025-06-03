@@ -236,7 +236,7 @@ function* batchToCupboard(action) {
             notes: notes || '',
             itemId: uuid.v4(),
             itemDate: new Date().toISOString(),
-            quantity: 1,
+            // quantity: 1,  <--- items in cupboard don't have a quantities
             createdBy: profileID,
           };
 
@@ -256,6 +256,87 @@ function* batchToCupboard(action) {
         type: 'success',
         text1: 'Items Added',
         text2: `Items were added to the cupboard.`,
+      });
+
+      yield put({type: 'CUPBOARD_BATCH_ADD_SUCCESS'});
+    } else {
+      yield put({
+        type: 'CUPBOARD_BATCH_ADD_FAILED',
+        payload: 'Cupboard not found.',
+      });
+
+      Toast.show({
+        type: 'danger',
+        text1: 'Batch Add Failed',
+        text2: 'Cupboard not found. Please try again later.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'CUPBOARD_BATCH_ADD_FAILED', payload: error.message});
+
+    Toast.show({
+      type: 'danger',
+      text1: 'Batch Add Failed',
+      text2:
+        'Items could not be added to the cupboard. Please try again later.',
+    });
+  }
+}
+
+function* batchAddToCupboard(action) {
+  const {cupboardID, newItem, quantity, profileID} = action.payload;
+
+  try {
+    yield put({type: 'CUPBOARD_BATCH_ADD_START'});
+
+    const cupboardRef = doc(db, 'cupboards', cupboardID);
+    const cupboardDoc = yield call(getDoc, cupboardRef);
+
+    if (cupboardDoc.exists) {
+      const cupboardData = cupboardDoc.data();
+      const batch = writeBatch(db);
+      let updatedItems = [...(cupboardData.items || [])];
+
+      const {
+        itemName,
+        brandName,
+        description,
+        packageSize,
+        measurement,
+        category,
+        notes,
+      } = newItem;
+
+      for (let i = 0; i < quantity; i++) {
+        const newItem = {
+          itemName: itemName || '',
+          brandName: brandName || '',
+          description: description || '',
+          packageSize: Number(packageSize) || 1,
+          remainingAmount: Number(packageSize) || 1,
+          measurement: measurement || '',
+          category: category || '',
+          notes: notes || '',
+          itemId: uuid.v4(),
+          itemDate: new Date().toISOString(),
+          createdBy: profileID,
+        };
+
+        updatedItems.push(newItem);
+      }
+
+      batch.update(cupboardRef, {
+        items: updatedItems,
+        lastUpdated: new Date().toISOString(),
+        lastUpdatedBy: profileID,
+      });
+
+      yield call(() => batch.commit());
+
+      Toast.show({
+        type: 'success',
+        text1: 'Items Added',
+        text2: `${quantity} ${itemName}'s were added to the cupboard.`,
       });
 
       yield put({type: 'CUPBOARD_BATCH_ADD_SUCCESS'});
@@ -327,5 +408,6 @@ export default function* cupboardSaga() {
   yield takeLatest('UPDATE_ITEM_IN_CUPBOARD', updateItemInCupboard);
   yield takeLatest('DELETE_ITEM_FROM_CUPBOARD', deleteItemFromCupboard);
   yield takeLatest('BATCH_TO_CUPBOARD', batchToCupboard);
+  yield takeLatest('BATCH_ADD_TO_CUPBOARD', batchAddToCupboard);
   yield takeLatest('RESET_CUPBOARD', resetCupboard);
 }

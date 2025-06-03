@@ -36,6 +36,9 @@ const CupboardItems = () => {
   const [packageSize, setPackageSize] = useState(
     String(itemToUpdate?.packageSize ?? '1'),
   );
+  const [quantity, setQuantity] = useState(
+    String(itemToUpdate?.quantity ?? '1'),
+  );
   const [remainingAmount, setRemainingAmount] = useState(
     String(itemToUpdate?.remainingAmount ?? '1'),
   );
@@ -108,41 +111,51 @@ const CupboardItems = () => {
     setMeasurement(null);
     setCategory(null);
     setNotes('');
+    setQuantity('1');
   };
 
   const SaveItem = () => {
-    if (itemName === '' || itemName === null) {
+    const parsedQuantity = parseInt(quantity, 10);
+
+    if (
+      itemName === '' ||
+      itemName === null ||
+      (!itemToUpdate && (!parsedQuantity || parsedQuantity < 1))
+    ) {
       setValidation(true);
+      return;
     } else {
       setValidation(false);
+    }
 
-      const newItem = {
-        itemName: itemName || '',
-        brandName: brandName || '',
-        description: description || '',
-        packageSize: Number(packageSize) > 0 ? Number(packageSize) : 1,
-        remainingAmount:
-          parseFloat(remainingAmount) > 0 ? parseFloat(remainingAmount) : 1,
-        measurement: measurement?.key || '',
-        category: category?.key || '',
-        notes: notes || '',
-      };
+    const newItem = {
+      itemName: itemName || '',
+      brandName: brandName || '',
+      description: description || '',
+      packageSize: Number(packageSize) > 0 ? Number(packageSize) : 1,
+      remainingAmount:
+        parseFloat(remainingAmount) > 0 ? parseFloat(remainingAmount) : 1,
+      measurement: measurement?.key || '',
+      category: category?.key || '',
+      notes: notes || '',
+    };
 
-      const updatedItem = {
-        ...itemToUpdate,
-        ...newItem,
-      };
+    const updatedItem = {
+      ...itemToUpdate,
+      ...newItem,
+    };
 
-      if (itemToUpdate) {
-        dispatch({
-          type: 'UPDATE_ITEM_IN_CUPBOARD',
-          payload: {
-            cupboardID: core.cupboardID,
-            updatedItem,
-            profileID: core.profileID,
-          },
-        });
-      } else {
+    if (itemToUpdate) {
+      dispatch({
+        type: 'UPDATE_ITEM_IN_CUPBOARD',
+        payload: {
+          cupboardID: core.cupboardID,
+          updatedItem,
+          profileID: core.profileID,
+        },
+      });
+    } else {
+      if (parsedQuantity === 1) {
         dispatch({
           type: 'ADD_ITEM_TO_CUPBOARD',
           payload: {
@@ -151,10 +164,20 @@ const CupboardItems = () => {
             profileID: core.profileID,
           },
         });
+      } else {
+        dispatch({
+          type: 'BATCH_ADD_TO_CUPBOARD',
+          payload: {
+            cupboardID: core.cupboardID,
+            newItem,
+            quantity: parsedQuantity,
+            profileID: core.profileID,
+          },
+        });
       }
-
-      resetForm();
     }
+
+    resetForm();
   };
 
   const handleClose = () => {
@@ -166,7 +189,7 @@ const CupboardItems = () => {
 
   const displayRemaining = (packageSize, remainingAmount) => {
     let percent = (remainingAmount / packageSize) * 100;
-    return `${percent.toFixed(0)}% left in package`;
+    return `${percent.toFixed(0)}% left in pkg`;
   };
 
   return (
@@ -207,18 +230,27 @@ const CupboardItems = () => {
         capitalMode="sentences"
       />
       <View style={{flexDirection: 'row'}}>
-        <View style={{flex: 1}}>
+        <View style={{flex: 1.25}}>
+          <Input
+            label="Qty"
+            value={quantity}
+            onChangeText={setNumericValue(setQuantity)}
+            caption="# of Pkgs"
+            // capitalMode="sentences"
+          />
+        </View>
+        <View style={{flex: 1.75}}>
           <Input
             label="Package Size"
             value={packageSize}
             onChangeText={handlePackageChange}
-            caption="Example: 12 Eggs"
+            caption="Total in a Pkg"
             capitalMode="sentences"
           />
         </View>
-        <View style={{flex: 1}}>
+        <View style={{flex: 1.75}}>
           <Input
-            label="Remaining Amount"
+            label="Remaining Amt."
             value={remainingAmount}
             onChangeText={handleRemainingAmountChange}
             caption={displayRemaining(packageSize, remainingAmount)}
