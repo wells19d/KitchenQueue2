@@ -30,27 +30,21 @@ const CupboardGroup = () => {
         remainingAmount,
       } = item;
 
-      if (map.has(itemName)) {
-        const group = map.get(itemName);
+      const key = `${itemName}__${category || ''}__${measurement || ''}`;
+
+      if (map.has(key)) {
+        const group = map.get(key);
         group.count++;
         group.items.push(item);
 
         group.brandName = group.brandName === brandName ? brandName : undefined;
-        group.category = group.category === category ? category : undefined;
         group.description =
           group.description === description ? description : undefined;
-        group.measurement =
-          group.measurement === measurement ? measurement : undefined;
 
-        if (group.measurement) {
-          group.packageSize += Number(packageSize || 0);
-          group.remainingAmount += Number(remainingAmount || 0);
-        } else {
-          group.packageSize = undefined;
-          group.remainingAmount = undefined;
-        }
+        group.packageSize += Number(packageSize || 0);
+        group.remainingAmount += Number(remainingAmount || 0);
       } else {
-        map.set(itemName, {
+        map.set(key, {
           itemName,
           itemId: item.itemId,
           count: 1,

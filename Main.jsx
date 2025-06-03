@@ -62,8 +62,6 @@ import AccountSetup from './src/screens/Account/AccountSetup';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
-  console.log('appReady', appReady);
-  console.log('isSplashVisible', isSplashVisible);
   const dispatch = useDispatch();
   const device = useDeviceInfo();
   const profile = useProfile();
@@ -71,7 +69,6 @@ const Main = props => {
   const useHaptics = setHapticFeedback();
   const Stack = createNativeStackNavigator();
   const isAuthenticated = useAuth();
-  console.log('isAuthenticated', isAuthenticated);
 
   const [headerColor, setHeaderColor] = useState('black');
   const [screenLocation, setScreenLocation] = useState('');
