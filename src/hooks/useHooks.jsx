@@ -92,3 +92,7 @@ export const useFoundAccount = () => {
     error: error || false,
   };
 };
+
+export const useFavorites = () => {
+  return useSelector(state => state.favorites?.favorites);
+};

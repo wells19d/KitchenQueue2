@@ -19,10 +19,11 @@ function* handleLogin(action) {
     // Wait until account is set in Redux
     const accountData = yield call(waitForAccount);
 
-    // ✅ Step 3: Fetch shoppingCart and cupboard
-    const {shoppingCartID, cupboardID} = accountData;
+    // ✅ Step 3: Fetch shoppingCart / cupboard / favorites
+    const {shoppingCartID, cupboardID, favoriteItemsID} = accountData;
     yield put({type: 'FETCH_SHOP_CART', payload: {shoppingCartID}});
     yield put({type: 'FETCH_CUPBOARD', payload: {cupboardID}});
+    yield put({type: 'FETCH_FAVORITES', payload: {favoriteItemsID}});
   } catch (error) {
     yield put({type: 'LOGIN_SEQUENCE_FAILED', payload: error.message});
   }

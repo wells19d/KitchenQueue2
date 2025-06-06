@@ -66,6 +66,30 @@ export const menuArray = [
       },
     ],
   },
+  {
+    section: 'Favorites',
+    defaultOpen: true,
+    items: [
+      {
+        title: 'Add to',
+        icon: <Icons.AddList />,
+        action: {
+          screen: 'FavoriteItems',
+          params: {
+            title: 'Add Item(s)',
+            itemId: null,
+            navigateBackTo: 'FavoritesList',
+          },
+        },
+      },
+
+      {
+        title: 'View List',
+        icon: <Icons.Favorite />,
+        action: 'FavoritesList',
+      },
+    ],
+  },
   // future feature
   // {
   //   section: 'Recipe',

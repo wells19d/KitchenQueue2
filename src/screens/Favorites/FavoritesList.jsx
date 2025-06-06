@@ -1,8 +1,8 @@
-//* ShoppingList.jsx
+//* FavoritesList.jsx
 import React, {useCallback, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
-import {useShoppingCart} from '../../hooks/useHooks';
+import {useFavorites} from '../../hooks/useHooks';
 import {View} from 'react-native';
 import {ListStyles} from '../../styles/Styles';
 import SwipeableItem from '../../components/SwipeableItem';
@@ -10,50 +10,24 @@ import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
 
-const ShoppingList = () => {
+const FavoritesList = () => {
   const route = useRoute();
   const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-  const shopping = useShoppingCart();
+  const favorites = useFavorites();
   const navigation = useNavigation();
   const core = useCoreInfo();
   const dispatch = useDispatch();
 
-  const shoppingList =
-    shopping?.items?.filter(item => item.status === 'shopping-list') ?? [];
+  const favoritesList = favorites?.items ?? [];
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const handleAddToCart = itemId => {
-    const latestItem = shopping?.items?.find(i => i.itemId === itemId);
-    const fallbackItem = selectedItem?.itemId === itemId ? selectedItem : null;
-    const item = latestItem || fallbackItem;
-
-    if (item && core.profileID) {
-      const updatedItem = {
-        ...item,
-        status: 'shopping-cart',
-        lastUpdated: new Date().toISOString(),
-        lastUpdatedBy: core.profileID,
-      };
-
-      dispatch({
-        type: 'UPDATE_ITEM_IN_SHOP_CART',
-        payload: {
-          shoppingCartID: core.shoppingCartID,
-          updatedItem,
-          profileID: core.profileID,
-          updateType: 'toCart',
-        },
-      });
-    }
-  };
-
   const handleUpdateItem = itemId => {
-    navigation.navigate('ShoppingItems', {
+    navigation.navigate('FavoriteItems', {
       title: 'Update Item',
       itemId,
-      navigateBackTo: 'ShoppingList',
+      navigateBackTo: 'FavoritesList',
       statusTo: 'shopping-list',
     });
   };
@@ -61,12 +35,12 @@ const ShoppingList = () => {
   const handleDeleteItem = useCallback(
     itemId => {
       if (core.profileID) {
-        const item = shoppingList.find(item => item.itemId === itemId);
+        const item = favoritesList.find(item => item.itemId === itemId);
         if (item) {
           dispatch({
-            type: 'DELETE_ITEM_FROM_SHOP_CART',
+            type: 'DELETE_ITEM_FROM_FAVORITES',
             payload: {
-              shoppingCartID: core.shoppingCartID,
+              favoriteItemsID: core.favoriteItemsID,
               itemId: item.itemId,
               itemName: item.itemName,
               profileID: core.profileID,
@@ -75,32 +49,8 @@ const ShoppingList = () => {
         }
       }
     },
-    [dispatch, core.profileID, shoppingList],
+    [dispatch, core.profileID, favoritesList],
   );
-
-  const handleAddToFavorites = itemId => {
-    const latestItem = shopping?.items?.find(i => i.itemId === itemId);
-    console.log('latestItem', latestItem);
-
-    const newItem = {
-      itemName: latestItem?.itemName || '',
-      brandName: latestItem?.brandName || '',
-      description: latestItem?.description || '',
-      packageSize: Number(latestItem?.packageSize),
-      measurement: latestItem?.measurement || '',
-      category: latestItem?.category || '',
-      notes: latestItem?.notes || '',
-    };
-
-    dispatch({
-      type: 'ADD_ITEM_TO_FAVORITES',
-      payload: {
-        favoriteItemsID: core.favoriteItemsID,
-        newItem: newItem,
-        profileID: core.profileID,
-      },
-    });
-  };
 
   const SelectedItem = () => (
     <BottomSheet
@@ -111,9 +61,8 @@ const ShoppingList = () => {
         selectedItem={selectedItem}
         setShowItemInfo={setShowItemInfo}
         navigate={{
-          to: 'ShoppingItems',
-          backTo: 'ShoppingList',
-          statusTo: 'shopping-list',
+          to: 'FavoriteItems',
+          backTo: 'FavoritesList',
         }}
       />
     </BottomSheet>
@@ -126,37 +75,32 @@ const ShoppingList = () => {
       headerColor={headerColor}
       textColor={textColor}
       LeftButton=""
-      RightButton="To-Cart"
+      RightButton=""
       LeftAction={null}
       RightAction={null}
       sheetOpen={false}
       outerViewStyles={{paddingBottom: 0}}>
-      {shoppingList.length === 0 ? (
+      {favoritesList.length === 0 ? (
         <View
           style={[
             ListStyles.viewContainer,
             {justifyContent: 'center', alignItems: 'center'},
           ]}>
-          <Text>Shopping List is Empty</Text>
+          <Text>Favorites List is Empty</Text>
         </View>
       ) : (
         <View style={ListStyles.viewContainer}>
           <SwipeableItem
-            list={shoppingList}
+            list={favoritesList}
             core={core}
             showItemInfo={showItemInfo}
             setShowItemInfo={setShowItemInfo}
             setSelectedItem={setSelectedItem}
+            favoritesView
             rightButtons={[
               {
-                action: itemId => handleAddToCart(itemId),
-                text1: 'Add',
-                text2: 'to Cart',
-                style: ListStyles.addButton,
-              },
-              {
                 action: itemId => handleUpdateItem(itemId),
-                navigateBackTo: 'ShoppingList',
+                navigateBackTo: 'FavoritesList',
                 text1: 'Update',
                 text2: 'Item',
                 style: ListStyles.updateButton,
@@ -167,13 +111,7 @@ const ShoppingList = () => {
                 style: ListStyles.deleteButton,
               },
             ]}
-            leftButtons={[
-              {
-                action: itemId => handleAddToFavorites(itemId),
-                starIcon: true,
-                style: ListStyles.favButton,
-              },
-            ]}
+            leftButtons={[]}
           />
           <SelectedItem />
         </View>
@@ -182,4 +120,4 @@ const ShoppingList = () => {
   );
 };
 
-export default ShoppingList;
+export default FavoritesList;

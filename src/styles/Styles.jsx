@@ -74,7 +74,7 @@ export const MenuButtonStyles = StyleSheet.create({
 });
 
 export const ListStyles = StyleSheet.create({
-  actionButton: {
+  rightActionButton: {
     alignItems: 'center',
     borderRadius: 5,
     justifyContent: 'center',
@@ -82,18 +82,40 @@ export const ListStyles = StyleSheet.create({
     width: 90,
     // height: 60,
   },
-  actionsContainer: {
+  leftActionButton: {
+    alignItems: 'center',
+    borderRadius: 5,
+    justifyContent: 'center',
+    marginHorizontal: 3,
+    paddingHorizontal: 15,
+    // width: 90,
+    // height: 60,
+  },
+  rightActionsContainer: {
     alignItems: 'top',
     flexDirection: 'row',
     justifyContent: 'flex-end',
     paddingRight: 10,
-    paddingLeft: 5,
+    paddingLeft: 0,
+    paddingVertical: 5,
+    // borderBottomWidth: 1,
+    borderColor: '#c4c4c4',
+  },
+  leftActionsContainer: {
+    alignItems: 'top',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingRight: 0,
+    paddingLeft: 10,
     paddingVertical: 5,
     // borderBottomWidth: 1,
     borderColor: '#c4c4c4',
   },
   addButton: {
     backgroundColor: '#44B3B3',
+  },
+  favButton: {
+    backgroundColor: '#FFAE42',
   },
   bottomInnerContainer: {
     borderColor: '#c4c4c4',

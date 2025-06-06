@@ -43,6 +43,7 @@ import {
   RTCupboards,
   RTUsers,
   RTAllowedProfiles,
+  RTFavorites,
 } from './src/utilities/realtime';
 import TermsService from './src/screens/Legal/TermsService';
 import PrivacyPolicy from './src/screens/Legal/PrivacyPolicy';
@@ -59,6 +60,8 @@ import Vibrations from './src/screens/Account/Vibrations';
 import ItemDisplay from './src/screens/Account/ItemDisplay';
 import Resets from './src/screens/Account/Resets';
 import AccountSetup from './src/screens/Account/AccountSetup';
+import FavoriteItems from './src/screens/Favorites/FavoriteItems';
+import FavoritesList from './src/screens/Favorites/FavoritesList';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -118,6 +121,7 @@ const Main = props => {
   RTShopping(RTEnabled);
   RTCupboards(RTEnabled);
   RTAllowedProfiles(RTEnabled);
+  RTFavorites(RTEnabled);
 
   useEffect(() => {
     try {
@@ -297,7 +301,7 @@ const Main = props => {
             component={ShoppingItems}
             options={{freezeOnBlur: true}}
             initialParams={{
-              title: 'Items',
+              title: 'Shopping Item',
               bgColor: bgColor,
               textColor: textColor,
             }}
@@ -355,7 +359,7 @@ const Main = props => {
             component={CupboardItems}
             options={{freezeOnBlur: true}}
             initialParams={{
-              title: 'Items',
+              title: 'Cupboard Item',
               bgColor: bgColor,
               textColor: textColor,
             }}
@@ -365,6 +369,42 @@ const Main = props => {
                 setHeaderColor('#319177');
                 setTextColor('#ffffff');
                 setScreenLocation('CupboardItems');
+              },
+            }}
+          />
+          <Stack.Screen
+            name="FavoritesList"
+            component={FavoritesList}
+            options={{freezeOnBlur: true}}
+            initialParams={{
+              title: 'Favorites',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('FavoritesList');
+              },
+            }}
+          />
+          <Stack.Screen
+            name="FavoriteItems"
+            component={FavoriteItems}
+            options={{freezeOnBlur: true}}
+            initialParams={{
+              title: 'Favorite Item',
+              bgColor: bgColor,
+              textColor: textColor,
+            }}
+            listeners={{
+              focus: () => {
+                setBgColor('#ffffff');
+                setHeaderColor('#319177');
+                setTextColor('#ffffff');
+                setScreenLocation('FavoriteItems');
               },
             }}
           />
