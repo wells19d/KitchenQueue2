@@ -1,17 +1,15 @@
-//* ShoppingItems.jsx
-
+//* FavoriteItems.jsx
 import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {Dropdown, Input, Layout} from '../../KQ-UI';
-import {useShoppingCart} from '../../hooks/useHooks';
+import {useFavorites} from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
 import {displayCategories} from '../../utilities/categories';
-import {displayCustom, setNumericValue} from '../../utilities/helpers';
-import {View} from 'react-native';
+import {displayCustom} from '../../utilities/helpers';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
 
-const ShoppingItems = () => {
+const FavoriteItems = () => {
   const route = useRoute();
   const {
     title,
@@ -26,10 +24,43 @@ const ShoppingItems = () => {
   const dispatch = useDispatch();
   const core = useCoreInfo();
   const navigation = useNavigation();
-  const shopping = useShoppingCart();
+  const favorite = useFavorites();
+
+  const favorites = {
+    items: [
+      {
+        brandName: 'Fairlife',
+        category: 'dairy',
+        createdBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
+        description: '2% Ultra Filtered',
+        itemDate: '2025-05-26T15:54:27.998Z',
+        itemId: '69c9b5f9-68f1-47c9-b4a9-62bb88cdb4e2',
+        itemName: 'Milk',
+        lastUpdated: '2025-06-01T15:10:46.984Z',
+        lastUpdatedBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
+        measurement: 'fluidounce',
+        notes: 'Something here',
+        packageSize: 52,
+      },
+      {
+        brandName: 'Simply',
+        category: 'beverages',
+        createdBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
+        description: 'w/ Mango',
+        itemDate: '2025-05-26T15:54:27.998Z',
+        itemId: '69c9b5f9-68f1-47c9-b4a9-62bb88cdb4e3',
+        itemName: 'Orange Juice',
+        lastUpdated: '2025-06-01T15:10:46.984Z',
+        lastUpdatedBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
+        measurement: 'fluidounce',
+        notes: 'No Pulp',
+        packageSize: 52,
+      },
+    ],
+  };
 
   const itemToUpdate =
-    shopping?.items?.find(item => item.itemId === itemId) ?? null;
+    favorites?.items?.find(item => item.itemId === itemId) ?? null;
 
   const [itemName, setItemName] = useState(itemToUpdate?.itemName ?? null);
   const [brandName, setBrandName] = useState(itemToUpdate?.brandName ?? '');
@@ -38,9 +69,6 @@ const ShoppingItems = () => {
   );
   const [packageSize, setPackageSize] = useState(
     String(itemToUpdate?.packageSize ?? '1'),
-  );
-  const [quantity, setQuantity] = useState(
-    String(itemToUpdate?.quantity ?? '1'),
   );
   const [measurement, setMeasurement] = useState(
     displayCustom(itemToUpdate?.measurement, displayMeasurements) ?? null,
@@ -53,13 +81,6 @@ const ShoppingItems = () => {
   const [validation, setValidation] = useState(false);
 
   const [canSave, setCanSave] = useState(false);
-
-  const updateType =
-    statusTo === 'shopping-list'
-      ? 'updateList'
-      : statusTo === 'shopping-cart'
-      ? 'updateCart'
-      : 'updateList';
 
   useEffect(() => {
     if (itemName === null) {
@@ -90,7 +111,6 @@ const ShoppingItems = () => {
     setBrandName('');
     setDescription('');
     setPackageSize('1');
-    setQuantity('1');
     setMeasurement(null);
     setCategory(null);
     setNotes('');
@@ -101,7 +121,7 @@ const ShoppingItems = () => {
   useEffect(() => {
     if (!pendingUpdate) return;
 
-    const liveItem = shopping?.items.find(
+    const liveItem = favorites?.items.find(
       i => i.itemId === pendingUpdate.itemId,
     );
     if (!liveItem) return;
@@ -111,7 +131,7 @@ const ShoppingItems = () => {
       setPendingUpdate(null);
       navigation.navigate(navigateBackTo);
     }
-  }, [shopping?.items, pendingUpdate]);
+  }, [favorites?.items, pendingUpdate]);
 
   const SaveItem = () => {
     if (itemName === '' || itemName === null) {
@@ -124,11 +144,9 @@ const ShoppingItems = () => {
         brandName: brandName || '',
         description: description || '',
         packageSize: Number(packageSize) > 0 ? Number(packageSize) : 1,
-        quantity: Number(quantity) > 0 ? Number(quantity) : 1,
         measurement: measurement?.key || '',
         category: category?.key || '',
         notes: notes || '',
-        status: statusTo || 'shopping-list',
       };
 
       const updatedItem = {
@@ -138,9 +156,9 @@ const ShoppingItems = () => {
 
       if (itemToUpdate) {
         dispatch({
-          type: 'UPDATE_ITEM_IN_SHOP_CART',
+          type: 'UPDATE_ITEM_IN_FAVORITES',
           payload: {
-            shoppingCartID: core.shoppingCartID,
+            favoriteItemsID: core.favoriteItemsID,
             updatedItem,
             updateType,
             profileID: core.profileID,
@@ -149,9 +167,9 @@ const ShoppingItems = () => {
         setPendingUpdate(updatedItem);
       } else {
         dispatch({
-          type: 'ADD_ITEM_TO_SHOP_CART',
+          type: 'ADD_ITEM_TO_FAVORITES',
           payload: {
-            shoppingCartID: core.shoppingCartID,
+            favoriteItemsID: core.favoriteItemsID,
             newItem: newItem,
             profileID: core.profileID,
           },
@@ -163,9 +181,7 @@ const ShoppingItems = () => {
   };
 
   const handleClose = () => {
-    // dispatch({type: 'RESET_FOOD_DATA'}); // this is for edamam later
     resetForm();
-    // setStoredData(null); // this is for edamam later
     navigation.navigate(navigateBackTo);
   };
 
@@ -206,26 +222,13 @@ const ShoppingItems = () => {
         capitalize
         capitalMode="sentences"
       />
-      <View style={{flexDirection: 'row'}}>
-        <View style={{flex: 1}}>
-          <Input
-            label="Quantity"
-            value={quantity}
-            onChangeText={setNumericValue(setQuantity)}
-            caption="Number of Packages"
-            // capitalMode="sentences"
-          />
-        </View>
-        <View style={{flex: 1}}>
-          <Input
-            label="Package Size"
-            value={packageSize}
-            onChangeText={handlePackageChange}
-            caption="Total in a package"
-            capitalMode="sentences"
-          />
-        </View>
-      </View>
+      <Input
+        label="Package Size"
+        value={packageSize}
+        onChangeText={handlePackageChange}
+        caption="Total amount in a package"
+        capitalMode="sentences"
+      />
       <Dropdown
         label="Measurement"
         customLabel="Custom Measurement"
@@ -257,4 +260,4 @@ const ShoppingItems = () => {
   );
 };
 
-export default ShoppingItems;
+export default FavoriteItems;
