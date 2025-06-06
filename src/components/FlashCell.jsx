@@ -8,6 +8,7 @@ import {
 } from '../utilities/measurements';
 import pluralize from 'pluralize';
 import {Icons} from './IconListRouter';
+import {useColors} from '../KQ-UI/KQUtilities';
 
 const FlashCell = props => {
   const {
@@ -15,7 +16,7 @@ const FlashCell = props => {
     core,
     setShowItemInfo,
     setSelectedItem,
-    cupboardView,
+    favoritesView,
     groupedView,
     noQuantity,
   } = props;
@@ -69,24 +70,36 @@ const FlashCell = props => {
     return ` (${percent.toFixed(0)}% left)`;
   };
 
-  const QuantityDisplay = () => {
-    if (noQuantity) {
-      return null;
-    }
-    return (
-      <View style={styles.qtyWrapper}>
-        <View style={styles.qtyContainer}>
-          <View style={styles.qtyTop}>
-            <Text size="tiny">Qty</Text>
-          </View>
-          <View style={styles.qtyBottom}>
-            <Text size="medium" numberOfLines={1}>
-              {item.quantity || item.count}
-            </Text>
+  const LeftDataDisplay = () => {
+    if (noQuantity && !favoritesView && !groupedView) return null;
+
+    if (favoritesView && !groupedView) {
+      return (
+        <View style={styles.favWrapper}>
+          <View style={styles.favContainer}>
+            <Icons.Favorite size={30} color={useColors('gold')} />
           </View>
         </View>
-      </View>
-    );
+      );
+    }
+
+    if (!favoritesView && (groupedView || !noQuantity)) {
+      return (
+        <View style={styles.dataWrapper}>
+          <View style={styles.qtyContainer}>
+            <View style={styles.qtyTop}>
+              <Text size="tiny">Qty</Text>
+            </View>
+            <View style={styles.qtyBottom}>
+              <Text size="medium" numberOfLines={1}>
+                {item.quantity || item.count}
+              </Text>
+            </View>
+          </View>
+        </View>
+      );
+    }
+    return null;
   };
 
   const InfoDisplay = () => {
@@ -109,7 +122,7 @@ const FlashCell = props => {
   };
 
   const SlideDisplay = () => {
-    if (cupboardView && groupedView) {
+    if (groupedView) {
       return null;
     }
     return (
@@ -131,7 +144,7 @@ const FlashCell = props => {
         setShowItemInfo(true);
       }}>
       <View style={styles.cellContainer}>
-        <QuantityDisplay />
+        <LeftDataDisplay />
         <InfoDisplay />
         <SlideDisplay />
       </View>
@@ -150,9 +163,27 @@ const styles = {
     alignItems: 'center',
     backgroundColor: '#fff',
   },
-  qtyWrapper: {
+  dataWrapper: {
     height: 60,
     width: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  favWrapper: {
+    height: 45,
+    width: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  favContainer: {
+    // borderWidth: 2,
+    // borderColor: '#373d4380',
+    // borderRadius: 50,
+    // elevation: 4,
+    // shadowColor: '#373d4380',
+    // shadowOffset: {width: 0, height: 1},
+    // shadowOpacity: 0.2,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
   },

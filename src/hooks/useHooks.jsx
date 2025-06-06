@@ -94,5 +94,5 @@ export const useFoundAccount = () => {
 };
 
 export const useFavorites = () => {
-  // return useSelector(state => state.cupboard?.error);
+  return useSelector(state => state.favorites?.favorites);
 };

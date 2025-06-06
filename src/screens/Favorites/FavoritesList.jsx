@@ -18,90 +18,39 @@ const FavoritesList = () => {
   const core = useCoreInfo();
   const dispatch = useDispatch();
 
-  const favoritesList = favorites?.items ?? [
-    {
-      brandName: 'Fairlife',
-      category: 'dairy',
-      createdBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
-      description: '2% Ultra Filtered',
-      itemDate: '2025-05-26T15:54:27.998Z',
-      itemId: '69c9b5f9-68f1-47c9-b4a9-62bb88cdb4e2',
-      itemName: 'Milk',
-      lastUpdated: '2025-06-01T15:10:46.984Z',
-      lastUpdatedBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
-      measurement: 'fluidounce',
-      notes: 'Something here',
-      packageSize: 52,
-    },
-    {
-      brandName: 'Simply',
-      category: 'beverages',
-      createdBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
-      description: 'w/ Mango',
-      itemDate: '2025-05-26T15:54:27.998Z',
-      itemId: '69c9b5f9-68f1-47c9-b4a9-62bb88cdb4e3',
-      itemName: 'Orange Juice',
-      lastUpdated: '2025-06-01T15:10:46.984Z',
-      lastUpdatedBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
-      measurement: 'fluidounce',
-      notes: 'No Pulp',
-      packageSize: 52,
-    },
-  ];
+  const favoritesList = favorites?.items ?? [];
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const handleAddToCart = itemId => {
-    //     const latestItem = favorites?.items?.find(i => i.itemId === itemId);
-    //     const fallbackItem = selectedItem?.itemId === itemId ? selectedItem : null;
-    //     const item = latestItem || fallbackItem;
-    //     if (item && core.profileID) {
-    //       const updatedItem = {
-    //         ...item,
-    //         status: 'shopping-cart',
-    //         lastUpdated: new Date().toISOString(),
-    //         lastUpdatedBy: core.profileID,
-    //       };
-    //       dispatch({
-    //         type: 'UPDATE_ITEM_IN_SHOP_CART',
-    //         payload: {
-    //           shoppingCartID: core.shoppingCartID,
-    //           updatedItem,
-    //           profileID: core.profileID,
-    //           updateType: 'toCart',
-    //         },
-    //       });
-    //     }
-  };
-
   const handleUpdateItem = itemId => {
-    //     navigation.navigate('FavoriteItems', {
-    //       title: 'Update Item',
-    //       itemId,
-    //       navigateBackTo: 'FavoritesList',
-    //       statusTo: 'shopping-list',
-    //     });
+    navigation.navigate('FavoriteItems', {
+      title: 'Update Item',
+      itemId,
+      navigateBackTo: 'FavoritesList',
+      statusTo: 'shopping-list',
+    });
   };
 
-  const handleDeleteItem = useCallback();
-  //     itemId => {
-  //       if (core.profileID) {
-  //         const item = favoritesList.find(item => item.itemId === itemId);
-  //         if (item) {
-  //           dispatch({
-  //             type: 'DELETE_ITEM_FROM_SHOP_CART',
-  //             payload: {
-  //               shoppingCartID: core.shoppingCartID,
-  //               itemId: item.itemId,
-  //               itemName: item.itemName,
-  //               profileID: core.profileID,
-  //             },
-  //           });
-  //         }
-  //       }
-  //     },
-  //     [dispatch, core.profileID, favoritesList],
+  const handleDeleteItem = useCallback(
+    itemId => {
+      if (core.profileID) {
+        const item = favoritesList.find(item => item.itemId === itemId);
+        if (item) {
+          dispatch({
+            type: 'DELETE_ITEM_FROM_FAVORITES',
+            payload: {
+              favoriteItemsID: core.favoriteItemsID,
+              itemId: item.itemId,
+              itemName: item.itemName,
+              profileID: core.profileID,
+            },
+          });
+        }
+      }
+    },
+    [dispatch, core.profileID, favoritesList],
+  );
 
   const SelectedItem = () => (
     <BottomSheet
@@ -114,7 +63,6 @@ const FavoritesList = () => {
         navigate={{
           to: 'FavoriteItems',
           backTo: 'FavoritesList',
-          //   statusTo: 'shopping-list',
         }}
       />
     </BottomSheet>
@@ -148,15 +96,8 @@ const FavoritesList = () => {
             showItemInfo={showItemInfo}
             setShowItemInfo={setShowItemInfo}
             setSelectedItem={setSelectedItem}
-            // cupboardView
-            noQuantity
+            favoritesView
             rightButtons={[
-              {
-                action: itemId => handleAddToCart(itemId),
-                text1: 'Add',
-                text2: 'to List',
-                style: ListStyles.addButton,
-              },
               {
                 action: itemId => handleUpdateItem(itemId),
                 navigateBackTo: 'FavoritesList',

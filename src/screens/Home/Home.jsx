@@ -20,8 +20,6 @@ const Home = () => {
   const imageWidth = 1000 / imageCutRatio;
   const imageHeight = 500 / imageCutRatio;
 
-  console.log('core', core);
-
   // const greetingMsg = () => {
   //   if (core?.firstName) {
   //     return `Hello, ${core?.firstName}!`;

@@ -24,40 +24,7 @@ const FavoriteItems = () => {
   const dispatch = useDispatch();
   const core = useCoreInfo();
   const navigation = useNavigation();
-  const favorite = useFavorites();
-
-  const favorites = {
-    items: [
-      {
-        brandName: 'Fairlife',
-        category: 'dairy',
-        createdBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
-        description: '2% Ultra Filtered',
-        itemDate: '2025-05-26T15:54:27.998Z',
-        itemId: '69c9b5f9-68f1-47c9-b4a9-62bb88cdb4e2',
-        itemName: 'Milk',
-        lastUpdated: '2025-06-01T15:10:46.984Z',
-        lastUpdatedBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
-        measurement: 'fluidounce',
-        notes: 'Something here',
-        packageSize: 52,
-      },
-      {
-        brandName: 'Simply',
-        category: 'beverages',
-        createdBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
-        description: 'w/ Mango',
-        itemDate: '2025-05-26T15:54:27.998Z',
-        itemId: '69c9b5f9-68f1-47c9-b4a9-62bb88cdb4e3',
-        itemName: 'Orange Juice',
-        lastUpdated: '2025-06-01T15:10:46.984Z',
-        lastUpdatedBy: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
-        measurement: 'fluidounce',
-        notes: 'No Pulp',
-        packageSize: 52,
-      },
-    ],
-  };
+  const favorites = useFavorites();
 
   const itemToUpdate =
     favorites?.items?.find(item => item.itemId === itemId) ?? null;
@@ -160,7 +127,6 @@ const FavoriteItems = () => {
           payload: {
             favoriteItemsID: core.favoriteItemsID,
             updatedItem,
-            updateType,
             profileID: core.profileID,
           },
         });

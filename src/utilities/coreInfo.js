@@ -5,6 +5,7 @@ import {
   useCupboard,
   useProfile,
   useShoppingCart,
+  useFavorites,
 } from '../hooks/useHooks';
 
 export const useCoreInfo = () => {
@@ -13,6 +14,7 @@ export const useCoreInfo = () => {
   const account = useAccount();
   const shopping = useShoppingCart();
   const cupboard = useCupboard();
+  const favorites = useFavorites(); // Assuming useFavorites is defined in hooks
 
   return {
     // User
@@ -70,7 +72,10 @@ export const useCoreInfo = () => {
     cupboardLastUpdatedBy: cupboard?.lastUpdatedBy || null,
 
     // Favorites Metadata - feature not yet implemented
-    favoritesLength: 0,
+    favoritesLength: favorites?.items?.length || 0,
+    favoriteItemsCreatedOn: favorites?.createdOn || null,
+    favoriteItemsLastUpdated: favorites?.lastUpdated || null,
+    favoriteItemsLastUpdatedBy: favorites?.lastUpdatedBy || null,
 
     // Recipes Metadata - feature not yet implemented
     recipeBoxLength: 0,
