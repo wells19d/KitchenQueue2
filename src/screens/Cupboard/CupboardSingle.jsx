@@ -52,6 +52,30 @@ const CupboardSingle = () => {
     [dispatch, core, cupboardList],
   );
 
+  const handleAddToFavorites = itemId => {
+    const latestItem = cupboard?.items?.find(i => i.itemId === itemId);
+    console.log('latestItem', latestItem);
+
+    const newItem = {
+      itemName: latestItem?.itemName || '',
+      brandName: latestItem?.brandName || '',
+      description: latestItem?.description || '',
+      packageSize: Number(latestItem?.packageSize),
+      measurement: latestItem?.measurement || '',
+      category: latestItem?.category || '',
+      notes: latestItem?.notes || '',
+    };
+
+    dispatch({
+      type: 'ADD_ITEM_TO_FAVORITES',
+      payload: {
+        favoriteItemsID: core.favoriteItemsID,
+        newItem: newItem,
+        profileID: core.profileID,
+      },
+    });
+  };
+
   const SelectedItem = () => (
     <BottomSheet
       visible={showItemInfo}
@@ -93,7 +117,6 @@ const CupboardSingle = () => {
             list={cupboardList}
             setShowItemInfo={setShowItemInfo}
             setSelectedItem={setSelectedItem}
-            cupboardView
             noQuantity
             rightButtons={[
               {
@@ -109,7 +132,13 @@ const CupboardSingle = () => {
                 style: ListStyles.deleteButton,
               },
             ]}
-            leftButtons={[]}
+            leftButtons={[
+              {
+                action: itemId => handleAddToFavorites(itemId),
+                starIcon: true,
+                style: ListStyles.favButton,
+              },
+            ]}
           />
           <SelectedItem />
         </View>

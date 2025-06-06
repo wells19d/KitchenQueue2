@@ -82,6 +82,30 @@ const ShoppingCart = () => {
     [dispatch, core, shoppingCart],
   );
 
+  const handleAddToFavorites = itemId => {
+    const latestItem = shopping?.items?.find(i => i.itemId === itemId);
+    console.log('latestItem', latestItem);
+
+    const newItem = {
+      itemName: latestItem?.itemName || '',
+      brandName: latestItem?.brandName || '',
+      description: latestItem?.description || '',
+      packageSize: Number(latestItem?.packageSize),
+      measurement: latestItem?.measurement || '',
+      category: latestItem?.category || '',
+      notes: latestItem?.notes || '',
+    };
+
+    dispatch({
+      type: 'ADD_ITEM_TO_FAVORITES',
+      payload: {
+        favoriteItemsID: core.favoriteItemsID,
+        newItem: newItem,
+        profileID: core.profileID,
+      },
+    });
+  };
+
   const AddToCupboard = () => {
     if (shoppingCart?.length > 0) {
       Alert.alert(
@@ -182,7 +206,13 @@ const ShoppingCart = () => {
                 style: ListStyles.deleteButton,
               },
             ]}
-            leftButtons={[]}
+            leftButtons={[
+              {
+                action: itemId => handleAddToFavorites(itemId),
+                starIcon: true,
+                style: ListStyles.favButton,
+              },
+            ]}
           />
           <SelectedItem />
         </View>

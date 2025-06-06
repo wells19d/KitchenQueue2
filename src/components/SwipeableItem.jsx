@@ -7,6 +7,8 @@ import {setHapticFeedback} from '../hooks/setHapticFeedback';
 import {ListStyles} from '../styles/Styles';
 import {Animated, TouchableOpacity, View} from 'react-native';
 import {Text} from '../KQ-UI';
+import {Icons} from './IconListRouter';
+import {useColors} from '../KQ-UI/KQUtilities';
 
 const SwipeableItem = props => {
   const {
@@ -17,7 +19,7 @@ const SwipeableItem = props => {
     setShowItemInfo,
     leftButtons = [],
     rightButtons = [],
-    cupboardView = false,
+    favoritesView = false,
     groupedView = false,
     noQuantity = false,
   } = props;
@@ -70,11 +72,11 @@ const SwipeableItem = props => {
     if (rightButtons.length === 0) return null;
 
     return (
-      <View style={ListStyles.actionsContainer}>
+      <View style={ListStyles.rightActionsContainer}>
         {rightButtons.map((button, index) => (
           <Animated.View
             key={index}
-            style={[ListStyles.actionButton, button.style]}>
+            style={[ListStyles.rightActionButton, button.style]}>
             <TouchableOpacity
               onPress={() => {
                 button.action(itemId);
@@ -82,13 +84,18 @@ const SwipeableItem = props => {
                 useHaptics(core?.userSettings?.hapticStrength || 'light');
               }}>
               <View style={ListStyles.buttonContainer}>
-                <Text size="xSmall" font="open-7" kqColor="white">
-                  {button.text1}
-                </Text>
+                {button.text1 && (
+                  <Text size="xSmall" font="open-7" kqColor="white">
+                    {button.text1}
+                  </Text>
+                )}
                 {button.text2 && (
                   <Text size="xSmall" font="open-7" kqColor="white">
                     {button.text2}
                   </Text>
+                )}
+                {button.starIcon === true && (
+                  <Icons.Favorite size={30} color={useColors('white')} />
                 )}
               </View>
             </TouchableOpacity>
@@ -102,11 +109,11 @@ const SwipeableItem = props => {
     if (leftButtons.length === 0) return null;
 
     return (
-      <View style={ListStyles.actionsContainer}>
+      <View style={ListStyles.leftActionsContainer}>
         {leftButtons.map((button, index) => (
           <Animated.View
             key={index}
-            style={[ListStyles.actionButton, button.style]}>
+            style={[ListStyles.leftActionButton, button.style]}>
             <TouchableOpacity
               onPress={() => {
                 button.action(itemId);
@@ -114,13 +121,18 @@ const SwipeableItem = props => {
                 useHaptics(core?.userSettings?.hapticStrength || 'light');
               }}>
               <View style={ListStyles.buttonContainer}>
-                <Text size="xSmall" font="open-7" kqColor="white">
-                  {button.text1}
-                </Text>
+                {button.text1 && (
+                  <Text size="xSmall" font="open-7" kqColor="white">
+                    {button.text1}
+                  </Text>
+                )}
                 {button.text2 && (
                   <Text size="xSmall" font="open-7" kqColor="white">
                     {button.text2}
                   </Text>
+                )}
+                {button.starIcon === true && (
+                  <Icons.Favorite size={30} color={useColors('white')} />
                 )}
               </View>
             </TouchableOpacity>
@@ -137,8 +149,8 @@ const SwipeableItem = props => {
         onSwipeableOpen={() => handleSwipeableOpen(item.itemId)}
         renderRightActions={() => renderRightActions(item.itemId)}
         renderLeftActions={() => renderLeftActions(item.itemId)}
-        rightThreshold={200}
-        leftThreshold={200}
+        rightThreshold={100}
+        leftThreshold={75}
         friction={1}
         overshootFriction={8}>
         <FlashCell
@@ -148,7 +160,7 @@ const SwipeableItem = props => {
           setShowItemInfo={setShowItemInfo}
           showItemInfo={showItemInfo}
           closeAllSwipeables={closeAllSwipeables}
-          cupboardView={cupboardView}
+          favoritesView={favoritesView}
           groupedView={groupedView}
           noQuantity={noQuantity}
         />

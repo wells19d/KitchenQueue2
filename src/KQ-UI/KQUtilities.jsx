@@ -62,6 +62,7 @@ export const useColors = color => {
     dark: '#373d43',
     //---
     basic: '#C4C4C4',
+    gold: '#FFAE42',
   };
 
   const normalizedColor = color.trim().toLowerCase();

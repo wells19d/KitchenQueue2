@@ -75,7 +75,6 @@ const CupboardGroup = () => {
         groupedView
         selectedItem={selectedItem}
         setShowItemInfo={setShowItemInfo}
-        // navigate={{to: 'UpdateShopItems', backTo: 'ShoppingList'}}
       />
     </BottomSheet>
   );
@@ -109,8 +108,7 @@ const CupboardGroup = () => {
             setSelectedItem={setSelectedItem}
             leftButtons={[]}
             rightButton={[]}
-            cupboardView
-            groupedView
+            // groupedView
           />
           <SelectedItem />
         </View>

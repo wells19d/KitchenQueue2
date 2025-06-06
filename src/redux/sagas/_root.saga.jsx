@@ -10,6 +10,7 @@ import edamamSaga from './edamam.saga';
 import loginSaga from './login.saga';
 import signupSaga from './signup.saga';
 import joinSaga from './join.saga';
+import favoriteSaga from './favorites.saga';
 
 export default function* rootSaga() {
   yield all([
@@ -24,5 +25,6 @@ export default function* rootSaga() {
     fork(loginSaga),
     fork(signupSaga),
     fork(joinSaga),
+    fork(favoriteSaga),
   ]);
 }
