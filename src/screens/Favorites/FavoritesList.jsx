@@ -64,6 +64,7 @@ const FavoritesList = () => {
           to: 'FavoriteItems',
           backTo: 'FavoritesList',
         }}
+        addToList
       />
     </BottomSheet>
   );

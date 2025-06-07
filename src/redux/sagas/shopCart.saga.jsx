@@ -10,6 +10,8 @@ import {
   writeBatch,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
+import {select} from 'redux-saga/effects';
+import {checkLimit} from '../../utilities/checkLimit';
 
 const db = getFirestore(getApp());
 
@@ -50,6 +52,20 @@ function* fetchShopCart(action) {
 function* addItemToShopCart(action) {
   const {shoppingCartID, newItem, profileID} = action.payload;
   try {
+    const account = yield select(state => state.account.account);
+    const shopping = yield select(state => state.shopping.shopping);
+
+    const maxShoppingItems = account?.shoppingCartLimit || 0;
+    const shoppingLength = shopping?.items?.length || 0;
+
+    const isAllowed = checkLimit({
+      current: shoppingLength,
+      max: maxShoppingItems,
+      label: 'Shopping',
+    });
+
+    if (!isAllowed) return;
+
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
     const shopCartDoc = yield call(getDoc, shopCartRef);
 
@@ -258,6 +274,25 @@ function* batchToShopping(action) {
   const {shoppingCartID, items, status, profileID} = action.payload;
 
   try {
+    const account = yield select(state => state.account.account);
+    const shopping = yield select(state => state.shopping.shopping);
+
+    const maxShoppingItems = account?.shoppingCartLimit || null;
+    const shoppingLength = shopping?.items?.length || 0;
+
+    const incomingItemCount = items.reduce((total, item) => {
+      return total + (item.quantity > 0 ? item.quantity : 1);
+    }, 0);
+
+    const isAllowed = checkLimit({
+      current: shoppingLength,
+      incoming: incomingItemCount,
+      max: maxShoppingItems,
+      label: 'Shopping',
+    });
+
+    if (!isAllowed) return;
+
     yield put({type: 'SHOP_CART_BATCH_ADD_START'});
 
     const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);

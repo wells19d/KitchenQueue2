@@ -358,6 +358,29 @@ export const SelectItemStyles = StyleSheet.create({
   },
   textStyles: {textAlign: 'right'},
   textNoteStyles: {letterSpacing: 0.2, textAlign: 'justify'},
+  addToContainer: {flexDirection: 'row', marginVertical: 15},
+  quantityWrapper: {
+    flex: 2,
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    margin: 5,
+  },
+  quantityContainer: {flex: 2},
+  quantityText: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bannerFieldWrapper: backgroundColor => ({
+    marginHorizontal: 5,
+    marginBottom: 5,
+    borderRadius: 10,
+    backgroundColor: backgroundColor || '#319177',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }),
 });
 
 export const LegalStyles = StyleSheet.create({

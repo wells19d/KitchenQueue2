@@ -89,6 +89,7 @@ export const Icons = {
   Merge: props => (
     <MCIcons name="set-merge" size={20} color="#000" {...props} />
   ),
+  Minus: props => <MCIcons name="minus" size={20} color="#000" {...props} />,
   Plus: props => <MCIcons name="plus" size={20} color="#000" {...props} />,
   Profile: props => (
     <ADIcons name="profile" size={20} color="#000" {...props} />

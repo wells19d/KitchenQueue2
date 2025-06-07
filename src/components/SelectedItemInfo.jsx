@@ -1,11 +1,14 @@
 //* SelectedItemInfo.jsx
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useState} from 'react';
 import {View} from 'react-native';
-import {ListStyles, SelectItemStyles} from '../styles/Styles';
+import {SelectItemStyles} from '../styles/Styles';
 import {categoryColors, formatCategories} from '../utilities/categories';
 import {formatMeasurement} from '../utilities/measurements';
 import {Button, Text, ScrollView} from '../KQ-UI';
+import {Icons} from './IconListRouter';
+import {useDispatch} from 'react-redux';
+import {useCoreInfo} from '../utilities/coreInfo';
 
 const SelectedItemInfo = props => {
   const {
@@ -14,9 +17,40 @@ const SelectedItemInfo = props => {
     navigate,
     groupedView = false,
     cupboardView = false,
+    addToList = false,
   } = props;
 
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const core = useCoreInfo();
+
+  const [quantity, setQuantity] = useState(1);
+
+  const handleAddFavToShopList = item => {
+    const newItem = {
+      itemName: item?.itemName || '',
+      brandName: item?.brandName || '',
+      description: item?.description || '',
+      packageSize:
+        Number(item?.packageSize) > 0 ? Number(item?.packageSize) : 1,
+      quantity: Number(quantity) > 0 ? Number(quantity) : 1,
+      measurement: item?.measurement || '',
+      category: item?.category || '',
+      notes: item?.notes || '',
+      status: 'shopping-list',
+    };
+
+    dispatch({
+      type: 'ADD_ITEM_TO_SHOP_CART',
+      payload: {
+        shoppingCartID: core.shoppingCartID,
+        newItem: newItem,
+        profileID: core.profileID,
+      },
+    });
+    navigation.navigate(navigate?.backTo);
+    setShowItemInfo(false);
+  };
 
   const handleUpdateItem = itemId => {
     navigation.navigate(navigate?.to, {
@@ -75,15 +109,7 @@ const SelectedItemInfo = props => {
 
   const BannerField = ({children, backgroundColor}) => {
     return (
-      <View
-        style={{
-          marginHorizontal: 5,
-          marginBottom: 5,
-          borderRadius: 10,
-          backgroundColor: backgroundColor || '#319177',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
+      <View style={SelectItemStyles.bannerFieldWrapper(backgroundColor)}>
         <Text
           font="banana"
           centered
@@ -153,6 +179,45 @@ const SelectedItemInfo = props => {
             />
             {selectedItem?.notes && (
               <ItemRow title="Notes" info={selectedItem?.notes} />
+            )}
+            {addToList && (
+              <View style={SelectItemStyles.addToContainer}>
+                <View style={SelectItemStyles.quantityWrapper}>
+                  <View style={SelectItemStyles.quantityContainer}>
+                    <Button
+                      type="ghost"
+                      style={{flex: 1}}
+                      onPress={() => {
+                        setQuantity(prev => Math.max(1, prev - 1));
+                      }}>
+                      <Icons.Minus size={20} />
+                    </Button>
+                  </View>
+
+                  <View style={SelectItemStyles.quantityText}>
+                    <Text size="small">{quantity}</Text>
+                  </View>
+                  <View style={SelectItemStyles.quantityContainer}>
+                    <Button
+                      type="ghost"
+                      style={{flex: 1}}
+                      onPress={() => {
+                        setQuantity(prev => prev + 1);
+                      }}>
+                      <Icons.Plus size={20} />
+                    </Button>
+                  </View>
+                </View>
+
+                <View style={{flex: 3, marginLeft: 10}}>
+                  <Button
+                    size="medium"
+                    style={{flex: 1}}
+                    onPress={() => handleAddFavToShopList(selectedItem)}>
+                    Add to Shopping List
+                  </Button>
+                </View>
+              </View>
             )}
           </ScrollView>
         </View>

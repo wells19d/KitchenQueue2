@@ -54,7 +54,6 @@ const CupboardSingle = () => {
 
   const handleAddToFavorites = itemId => {
     const latestItem = cupboard?.items?.find(i => i.itemId === itemId);
-    console.log('latestItem', latestItem);
 
     const newItem = {
       itemName: latestItem?.itemName || '',

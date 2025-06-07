@@ -78,6 +78,32 @@ const Resets = () => {
     );
   };
 
+  const resetFavorites = () => {
+    Alert.alert(
+      'Reset Favorites List',
+      'Are you sure you want to reset your favorites list? This is a destructive action and cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          style: 'destructive',
+          onPress: () => {
+            dispatch({
+              type: 'RESET_FAVORITES',
+              payload: {
+                favoriteItemsID: core?.favoriteItemsID,
+                profileID: core?.profileID,
+              },
+            });
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <Layout
       bgColor={bgColor}
@@ -88,9 +114,7 @@ const Resets = () => {
       RightButton=""
       LeftAction={null}
       RightAction={null}
-      sheetOpen={false}
-      // outerViewStyles={{paddingBottom: 0}}
-    >
+      sheetOpen={false}>
       <View style={[ScreenStyles.viewContainer, {flex: 1}]}>
         <View style={ScreenStyles.viewInnerTopContainer}>
           <Text size="small" font="open-7" centered>
@@ -100,15 +124,22 @@ const Resets = () => {
         <ScrollView contentContainerStyle={ScreenStyles.scrollContainer}>
           <TellMeButton
             profile={core?.userSettings?.hapticStrength}
-            action={resetCupboard}
-            tt1="Reset My Cupboard"
-            tt2="Clears all items from my cupboard."
+            action={resetFavorites}
+            tt1="Reset My Favorites"
+            tt2="Clears all items from my favorites."
           />
+
           <TellMeButton
             profile={core?.userSettings?.hapticStrength}
             action={resetShoppingList}
             tt1="Reset My Shopping List"
             tt2="Clears all items from my shopping list."
+          />
+          <TellMeButton
+            profile={core?.userSettings?.hapticStrength}
+            action={resetCupboard}
+            tt1="Reset My Cupboard"
+            tt2="Clears all items from my cupboard."
           />
         </ScrollView>
       </View>

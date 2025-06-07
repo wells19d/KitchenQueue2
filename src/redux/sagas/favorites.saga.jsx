@@ -9,6 +9,8 @@ import {
   doc,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
+import {select} from 'redux-saga/effects';
+import {checkLimit} from '../../utilities/checkLimit';
 
 const db = getFirestore(getApp());
 
@@ -49,6 +51,20 @@ function* fetchFavorites(action) {
 function* addItemToFavorites(action) {
   const {favoriteItemsID, newItem, profileID} = action.payload;
   try {
+    const account = yield select(state => state.account.account);
+    const favorites = yield select(state => state.favorites.favorites);
+
+    const maxFavoriteItems = account?.favoriteItemsLimit || 0;
+    const favoritesLength = favorites?.items?.length || 0;
+
+    const isAllowed = checkLimit({
+      current: favoritesLength,
+      max: maxFavoriteItems,
+      label: 'Favorites',
+    });
+
+    if (!isAllowed) return;
+
     const favoritesRef = doc(db, 'favoriteItems', favoriteItemsID);
     const favoritesDoc = yield call(getDoc, favoritesRef);
 
@@ -226,33 +242,6 @@ function* deleteItemFromFavorites(action) {
   }
 }
 
-function* deleteListFromFavorites(action) {
-  const {favoriteItemsID, items, profileID} = action.payload;
-
-  try {
-    const favoritesRef = doc(db, 'favoriteItems', favoriteItemsID);
-    const favoritesDoc = yield call(getDoc, favoritesRef);
-
-    if (favoritesDoc.exists) {
-      const favoritesData = favoritesDoc.data();
-
-      const updatedItems = favoritesData?.items?.filter(
-        item => !items.some(cartItem => Item.itemId === item.itemId),
-      );
-
-      yield call(() =>
-        updateDoc(favoritesRef, {
-          items: updatedItems,
-          lastUpdated: new Date().toISOString(),
-          lastUpdatedBy: profileID,
-        }),
-      );
-    }
-  } catch (error) {
-    yield put({type: 'FAVORITES_DELETE_LIST_FAILED', payload: error.message});
-  }
-}
-
 function* resetFavorites(action) {
   const {favoriteItemsID, profileID} = action.payload;
   try {
@@ -298,6 +287,5 @@ export default function* favoriteSaga() {
   yield takeLatest('ADD_ITEM_TO_FAVORITES', addItemToFavorites);
   yield takeLatest('UPDATE_ITEM_IN_FAVORITES', updateItemInFavorites);
   yield takeLatest('DELETE_ITEM_FROM_FAVORITES', deleteItemFromFavorites);
-  yield takeLatest('DELETE_LIST_FROM_FAVORITES', deleteListFromFavorites);
   yield takeLatest('RESET_FAVORITES', resetFavorites);
 }

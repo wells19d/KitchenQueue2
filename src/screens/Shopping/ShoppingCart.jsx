@@ -128,15 +128,6 @@ const ShoppingCart = () => {
                 },
               });
 
-              dispatch({
-                type: 'DELETE_LIST_FROM_SHOP_CART',
-                payload: {
-                  shoppingCartID: account.shoppingCartID,
-                  items: shoppingCart,
-                  profileID: core.profileID,
-                },
-              });
-
               navigation.navigate('CupboardList-Single');
             },
           },

@@ -1,17 +1,29 @@
-//*KQToast.jsx
-import {BaseToast} from 'react-native-toast-message';
+//* KQToast.jsx
+import Toast, {BaseToast} from 'react-native-toast-message';
+
+const DEFAULT_VISIBILITY_TIME = 1500;
+
+// ✅ Patch Toast.show to use default visibilityTime if not provided
+const originalShow = Toast.show;
+Toast.show = (options = {}) => {
+  if (!options.visibilityTime) {
+    options.visibilityTime = DEFAULT_VISIBILITY_TIME;
+  }
+  originalShow(options);
+};
 
 const toastStyles = {
   baseStyle: {
     top: 60,
     minHeight: 75,
     paddingVertical: 10,
+    height: 'auto',
   },
   primary: {borderLeftColor: '#319177'},
-  success: {borderLeftColor: '#63B76C'},
+  success: {borderLeftColor: '#63b76C'},
   info: {borderLeftColor: '#009DC4'},
-  warning: {borderLeftColor: '#FCC945'},
-  danger: {borderLeftColor: '#DA2C43'},
+  warning: {borderLeftColor: '#dda44b'},
+  danger: {borderLeftColor: '#da2c43'},
   dark: {borderLeftColor: '#373d43'},
   basic: {borderLeftColor: '#C4C4C4'},
   textStyle1: {
@@ -36,7 +48,7 @@ const toastConfig = {
       text1Style={toastStyles.textStyle1}
       text2Style={toastStyles.textStyle2}
       text1NumberOfLines={2}
-      text2NumberOfLines={3}
+      text2NumberOfLines={10}
       topOffset={100}
     />
   ),
@@ -47,7 +59,7 @@ const toastConfig = {
       text1Style={toastStyles.textStyle1}
       text2Style={toastStyles.textStyle2}
       text1NumberOfLines={2}
-      text2NumberOfLines={3}
+      text2NumberOfLines={10}
       topOffset={100}
     />
   ),
@@ -58,7 +70,7 @@ const toastConfig = {
       text1Style={toastStyles.textStyle1}
       text2Style={toastStyles.textStyle2}
       text1NumberOfLines={2}
-      text2NumberOfLines={3}
+      text2NumberOfLines={10}
       topOffset={100}
     />
   ),
@@ -69,7 +81,7 @@ const toastConfig = {
       text1Style={toastStyles.textStyle1}
       text2Style={toastStyles.textStyle2}
       text1NumberOfLines={2}
-      text2NumberOfLines={3}
+      text2NumberOfLines={10}
       topOffset={100}
     />
   ),
@@ -80,7 +92,7 @@ const toastConfig = {
       text1Style={toastStyles.textStyle1}
       text2Style={toastStyles.textStyle2}
       text1NumberOfLines={2}
-      text2NumberOfLines={3}
+      text2NumberOfLines={10}
       topOffset={100}
     />
   ),
@@ -91,7 +103,7 @@ const toastConfig = {
       text1Style={toastStyles.textStyle1}
       text2Style={toastStyles.textStyle2}
       text1NumberOfLines={2}
-      text2NumberOfLines={3}
+      text2NumberOfLines={10}
       topOffset={100}
     />
   ),
@@ -102,7 +114,7 @@ const toastConfig = {
       text1Style={toastStyles.textStyle1}
       text2Style={toastStyles.textStyle2}
       text1NumberOfLines={2}
-      text2NumberOfLines={3}
+      text2NumberOfLines={10}
       topOffset={100}
     />
   ),

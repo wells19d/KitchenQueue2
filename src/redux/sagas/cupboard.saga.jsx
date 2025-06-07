@@ -10,6 +10,8 @@ import {
   writeBatch,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
+import {select} from 'redux-saga/effects';
+import {checkLimit} from '../../utilities/checkLimit';
 
 const db = getFirestore(getApp());
 
@@ -50,6 +52,20 @@ function* fetchCupboard(action) {
 function* addItemToCupboard(action) {
   const {cupboardID, newItem, profileID} = action.payload;
   try {
+    const account = yield select(state => state.account.account);
+    const cupboard = yield select(state => state.cupboard.cupboard);
+
+    const maxCupboardItems = account?.cupboardLength || 0;
+    const cupboardLength = cupboard?.items?.length || 0;
+
+    const isAllowed = checkLimit({
+      current: cupboardLength,
+      max: maxCupboardItems,
+      label: 'Cupboard',
+    });
+
+    if (!isAllowed) return;
+
     const cupboardRef = doc(db, 'cupboards', cupboardID);
     const cupboardDoc = yield call(getDoc, cupboardRef);
 
@@ -200,9 +216,29 @@ function* deleteItemFromCupboard(action) {
 }
 
 function* batchToCupboard(action) {
+  // This function is used to add multiple items to the cupboard at once from checkout
   const {cupboardID, items, profileID} = action.payload;
 
   try {
+    const account = yield select(state => state.account.account);
+    const cupboard = yield select(state => state.cupboard.cupboard);
+
+    const maxCupboardItems = account?.cupboardLimit || 0;
+    const cupboardLength = cupboard?.items?.length || 0;
+
+    const incomingItemCount = items.reduce((total, item) => {
+      return total + (item.quantity > 0 ? item.quantity : 1);
+    }, 0);
+
+    const isAllowed = checkLimit({
+      current: cupboardLength,
+      incoming: incomingItemCount,
+      max: maxCupboardItems,
+      label: 'Cupboard',
+    });
+
+    if (!isAllowed) return;
+
     yield put({type: 'CUPBOARD_BATCH_ADD_START'});
 
     const cupboardRef = doc(db, 'cupboards', cupboardID);
@@ -236,7 +272,6 @@ function* batchToCupboard(action) {
             notes: notes || '',
             itemId: uuid.v4(),
             itemDate: new Date().toISOString(),
-            // quantity: 1,  <--- items in cupboard don't have a quantities
             createdBy: profileID,
           };
 
@@ -259,6 +294,15 @@ function* batchToCupboard(action) {
       });
 
       yield put({type: 'CUPBOARD_BATCH_ADD_SUCCESS'});
+
+      yield put({
+        type: 'DELETE_LIST_FROM_SHOP_CART',
+        payload: {
+          shoppingCartID: account.shoppingCartID,
+          items,
+          profileID,
+        },
+      });
     } else {
       yield put({
         type: 'CUPBOARD_BATCH_ADD_FAILED',
@@ -284,9 +328,25 @@ function* batchToCupboard(action) {
 }
 
 function* batchAddToCupboard(action) {
+  // This is the same as batchToCupboard but for adding a single item multiple times using a quantity
   const {cupboardID, newItem, quantity, profileID} = action.payload;
 
   try {
+    const account = yield select(state => state.account.account);
+    const cupboard = yield select(state => state.cupboard.cupboard);
+
+    const maxCupboardItems = account?.cupboardLimit || 0;
+    const cupboardLength = cupboard?.items?.length || 0;
+
+    const isAllowed = checkLimit({
+      current: cupboardLength,
+      incoming: quantity,
+      max: maxCupboardItems,
+      label: 'Cupboard',
+    });
+
+    if (!isAllowed) return;
+
     yield put({type: 'CUPBOARD_BATCH_ADD_START'});
 
     const cupboardRef = doc(db, 'cupboards', cupboardID);
@@ -308,7 +368,7 @@ function* batchAddToCupboard(action) {
       } = newItem;
 
       for (let i = 0; i < quantity; i++) {
-        const newItem = {
+        const item = {
           itemName: itemName || '',
           brandName: brandName || '',
           description: description || '',
@@ -322,7 +382,7 @@ function* batchAddToCupboard(action) {
           createdBy: profileID,
         };
 
-        updatedItems.push(newItem);
+        updatedItems.push(item);
       }
 
       batch.update(cupboardRef, {
