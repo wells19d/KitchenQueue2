@@ -1,6 +1,10 @@
 //* FavoriteItems.jsx
-import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Dropdown, Input, Layout} from '../../KQ-UI';
 import {useFavorites} from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
@@ -11,15 +15,7 @@ import {useCoreInfo} from '../../utilities/coreInfo';
 
 const FavoriteItems = () => {
   const route = useRoute();
-  const {
-    title,
-    bgColor,
-    textColor,
-    headerColor,
-    itemId,
-    navigateBackTo,
-    statusTo,
-  } = route.params || {};
+  const {title, bgColor, textColor, headerColor, itemId} = route.params || {};
 
   const dispatch = useDispatch();
   const core = useCoreInfo();
@@ -83,23 +79,6 @@ const FavoriteItems = () => {
     setNotes('');
   };
 
-  const [pendingUpdate, setPendingUpdate] = useState(null);
-
-  useEffect(() => {
-    if (!pendingUpdate) return;
-
-    const liveItem = favorites?.items.find(
-      i => i.itemId === pendingUpdate.itemId,
-    );
-    if (!liveItem) return;
-
-    const isSynced = JSON.stringify(liveItem) === JSON.stringify(pendingUpdate);
-    if (isSynced) {
-      setPendingUpdate(null);
-      navigation.navigate(navigateBackTo);
-    }
-  }, [favorites?.items, pendingUpdate]);
-
   const SaveItem = () => {
     if (itemName === '' || itemName === null) {
       setValidation(true);
@@ -130,7 +109,6 @@ const FavoriteItems = () => {
             profileID: core.profileID,
           },
         });
-        setPendingUpdate(updatedItem);
       } else {
         dispatch({
           type: 'ADD_ITEM_TO_FAVORITES',
@@ -142,14 +120,16 @@ const FavoriteItems = () => {
         });
       }
 
-      resetForm();
+      handleClose();
     }
   };
 
   const handleClose = () => {
     resetForm();
-    navigation.navigate(navigateBackTo);
+    navigation.goBack();
   };
+
+  useFocusEffect(useCallback(() => () => resetForm(), []));
 
   return (
     <Layout

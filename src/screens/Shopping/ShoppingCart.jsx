@@ -19,8 +19,9 @@ const ShoppingCart = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const shoppingCart =
-    shopping?.items.filter(item => item?.status === 'shopping-cart') ?? [];
+  const shoppingCart = Array.isArray(shopping?.items)
+    ? shopping.items.filter(item => item.status === 'shopping-cart')
+    : [];
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -84,7 +85,6 @@ const ShoppingCart = () => {
 
   const handleAddToFavorites = itemId => {
     const latestItem = shopping?.items?.find(i => i.itemId === itemId);
-    console.log('latestItem', latestItem);
 
     const newItem = {
       itemName: latestItem?.itemName || '',

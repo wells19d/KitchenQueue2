@@ -32,7 +32,7 @@ const DevButtons = () => {
         textColor="white" //or useColors or allow custom like "white" or "#fff"
         disabled={false} //true or false, default is false and the prop is optional
         onPress={() => {
-          console.log('button pressed');
+          // console.log('button pressed');
         }}>
         Press Me
       </Button>
@@ -42,7 +42,7 @@ const DevButtons = () => {
             type="filled" //useButtonType
             color="Primary"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Primary
@@ -53,7 +53,7 @@ const DevButtons = () => {
             type="outline" //useButtonType
             color="Primary"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Primary
@@ -64,7 +64,7 @@ const DevButtons = () => {
             type="ghost" //useButtonType
             color="Primary"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Primary
@@ -77,7 +77,7 @@ const DevButtons = () => {
             type="filled" //useButtonType
             color="Success"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Success
@@ -88,7 +88,7 @@ const DevButtons = () => {
             type="outline" //useButtonType
             color="Success"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Success
@@ -99,7 +99,7 @@ const DevButtons = () => {
             type="ghost" //useButtonType
             color="Success"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Success
@@ -112,7 +112,7 @@ const DevButtons = () => {
             type="filled" //useButtonType
             color="Info"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Info
@@ -123,7 +123,7 @@ const DevButtons = () => {
             type="outline" //useButtonType
             color="Info"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Info
@@ -134,7 +134,7 @@ const DevButtons = () => {
             type="ghost" //useButtonType
             color="Info"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Info
@@ -147,7 +147,7 @@ const DevButtons = () => {
             type="filled" //useButtonType
             color="Warning"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Warning
@@ -158,7 +158,7 @@ const DevButtons = () => {
             type="outline" //useButtonType
             color="Warning"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Warning
@@ -169,7 +169,7 @@ const DevButtons = () => {
             type="ghost" //useButtonType
             color="Warning"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Warning
@@ -182,7 +182,7 @@ const DevButtons = () => {
             type="filled" //useButtonType
             color="Danger"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Danger
@@ -193,7 +193,7 @@ const DevButtons = () => {
             type="outline" //useButtonType
             color="Danger"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Danger
@@ -204,7 +204,7 @@ const DevButtons = () => {
             type="ghost" //useButtonType
             color="Danger"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Danger
@@ -217,7 +217,7 @@ const DevButtons = () => {
             type="filled" //useButtonType
             color="Dark"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Dark
@@ -228,7 +228,7 @@ const DevButtons = () => {
             type="outline" //useButtonType
             color="Dark"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Dark
@@ -239,7 +239,7 @@ const DevButtons = () => {
             type="ghost" //useButtonType
             color="Dark"
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Dark
@@ -252,7 +252,7 @@ const DevButtons = () => {
             type="filled" //useButtonType
             disabled
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Disabled
@@ -263,7 +263,7 @@ const DevButtons = () => {
             type="outline" //useButtonType
             disabled
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Disabled
@@ -274,7 +274,7 @@ const DevButtons = () => {
             type="ghost" //useButtonType
             disabled
             onPress={() => {
-              console.log('button pressed');
+              // console.log('button pressed');
             }} //function to run on button press
           >
             Disabled

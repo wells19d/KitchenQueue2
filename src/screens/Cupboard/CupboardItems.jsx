@@ -1,24 +1,23 @@
 //* CupboardItems.jsx
 
-import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Dropdown, Input, Layout} from '../../KQ-UI';
 import {useCupboard} from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
 import {displayCategories} from '../../utilities/categories';
-import {
-  displayCustom,
-  limitToThreeDecimals,
-  setNumericValue,
-} from '../../utilities/helpers';
+import {displayCustom, setNumericValue} from '../../utilities/helpers';
 import {View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
 
 const CupboardItems = () => {
   const route = useRoute();
-  const {title, bgColor, textColor, headerColor, itemId, navigateBackTo} =
-    route.params || {};
+  const {title, bgColor, textColor, headerColor, itemId} = route.params || {};
 
   const dispatch = useDispatch();
   const core = useCoreInfo();
@@ -177,20 +176,22 @@ const CupboardItems = () => {
       }
     }
 
-    resetForm();
+    handleClose();
   };
 
   const handleClose = () => {
     // dispatch({type: 'RESET_FOOD_DATA'}); // this is for edamam later
     resetForm();
     // setStoredData(null); // this is for edamam later
-    navigation.navigate(navigateBackTo);
+    navigation.goBack();
   };
 
   const displayRemaining = (packageSize, remainingAmount) => {
     let percent = (remainingAmount / packageSize) * 100;
     return `${percent.toFixed(0)}% left in pkg`;
   };
+
+  useFocusEffect(useCallback(() => () => resetForm(), []));
 
   return (
     <Layout

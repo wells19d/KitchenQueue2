@@ -101,7 +101,6 @@ const FavoritesList = () => {
             rightButtons={[
               {
                 action: itemId => handleUpdateItem(itemId),
-                navigateBackTo: 'FavoritesList',
                 text1: 'Update',
                 text2: 'Item',
                 style: ListStyles.updateButton,

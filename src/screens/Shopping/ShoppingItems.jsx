@@ -1,7 +1,11 @@
 //* ShoppingItems.jsx
 
-import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Dropdown, Input, Layout} from '../../KQ-UI';
 import {useShoppingCart} from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
@@ -13,15 +17,8 @@ import {useCoreInfo} from '../../utilities/coreInfo';
 
 const ShoppingItems = () => {
   const route = useRoute();
-  const {
-    title,
-    bgColor,
-    textColor,
-    headerColor,
-    itemId,
-    navigateBackTo,
-    statusTo,
-  } = route.params || {};
+  const {title, bgColor, textColor, headerColor, itemId, statusTo} =
+    route.params || {};
 
   const dispatch = useDispatch();
   const core = useCoreInfo();
@@ -53,13 +50,6 @@ const ShoppingItems = () => {
   const [validation, setValidation] = useState(false);
 
   const [canSave, setCanSave] = useState(false);
-
-  const updateType =
-    statusTo === 'shopping-list'
-      ? 'updateList'
-      : statusTo === 'shopping-cart'
-      ? 'updateCart'
-      : 'updateList';
 
   useEffect(() => {
     if (itemName === null) {
@@ -96,23 +86,6 @@ const ShoppingItems = () => {
     setNotes('');
   };
 
-  const [pendingUpdate, setPendingUpdate] = useState(null);
-
-  useEffect(() => {
-    if (!pendingUpdate) return;
-
-    const liveItem = shopping?.items.find(
-      i => i.itemId === pendingUpdate.itemId,
-    );
-    if (!liveItem) return;
-
-    const isSynced = JSON.stringify(liveItem) === JSON.stringify(pendingUpdate);
-    if (isSynced) {
-      setPendingUpdate(null);
-      navigation.navigate(navigateBackTo);
-    }
-  }, [shopping?.items, pendingUpdate]);
-
   const SaveItem = () => {
     if (itemName === '' || itemName === null) {
       setValidation(true);
@@ -128,7 +101,7 @@ const ShoppingItems = () => {
         measurement: measurement?.key || '',
         category: category?.key || '',
         notes: notes || '',
-        status: statusTo || 'shopping-list',
+        status: itemToUpdate?.status ?? statusTo ?? 'shopping-list',
       };
 
       const updatedItem = {
@@ -142,11 +115,13 @@ const ShoppingItems = () => {
           payload: {
             shoppingCartID: core.shoppingCartID,
             updatedItem,
-            updateType,
+            updateType:
+              itemToUpdate.status === 'shopping-cart'
+                ? 'updateCart'
+                : 'updateList',
             profileID: core.profileID,
           },
         });
-        setPendingUpdate(updatedItem);
       } else {
         dispatch({
           type: 'ADD_ITEM_TO_SHOP_CART',
@@ -158,7 +133,7 @@ const ShoppingItems = () => {
         });
       }
 
-      resetForm();
+      handleClose();
     }
   };
 
@@ -166,8 +141,10 @@ const ShoppingItems = () => {
     // dispatch({type: 'RESET_FOOD_DATA'}); // this is for edamam later
     resetForm();
     // setStoredData(null); // this is for edamam later
-    navigation.navigate(navigateBackTo);
+    navigation.goBack();
   };
+
+  useFocusEffect(useCallback(() => () => resetForm(), []));
 
   return (
     <Layout

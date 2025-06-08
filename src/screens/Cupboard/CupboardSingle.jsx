@@ -120,7 +120,6 @@ const CupboardSingle = () => {
             rightButtons={[
               {
                 action: itemId => handleUpdateItem(itemId),
-                navigateBackTo: 'CupboardList-Single',
                 text1: 'Update',
                 text2: 'Item',
                 style: ListStyles.updateButton,

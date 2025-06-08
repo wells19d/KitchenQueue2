@@ -18,8 +18,9 @@ const ShoppingList = () => {
   const core = useCoreInfo();
   const dispatch = useDispatch();
 
-  const shoppingList =
-    shopping?.items?.filter(item => item.status === 'shopping-list') ?? [];
+  const shoppingList = Array.isArray(shopping?.items)
+    ? shopping.items.filter(item => item.status === 'shopping-list')
+    : [];
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -80,7 +81,6 @@ const ShoppingList = () => {
 
   const handleAddToFavorites = itemId => {
     const latestItem = shopping?.items?.find(i => i.itemId === itemId);
-    console.log('latestItem', latestItem);
 
     const newItem = {
       itemName: latestItem?.itemName || '',
@@ -156,7 +156,6 @@ const ShoppingList = () => {
               },
               {
                 action: itemId => handleUpdateItem(itemId),
-                navigateBackTo: 'ShoppingList',
                 text1: 'Update',
                 text2: 'Item',
                 style: ListStyles.updateButton,

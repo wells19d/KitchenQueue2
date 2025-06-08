@@ -15,7 +15,7 @@ const useBarcodeScanner = () => {
 
     if (supportedCodeFormats.includes(codeFormat)) {
       if (lastScannedCode.current === codeValue) {
-        console.log('Duplicate scan detected, ignoring...');
+        // console.log('Duplicate scan detected, ignoring...');
         return;
       }
       lastScannedCode.current = codeValue;
