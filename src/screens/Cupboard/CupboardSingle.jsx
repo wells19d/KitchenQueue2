@@ -1,6 +1,6 @@
 //* CupboardSingle.jsx
-import React, {useCallback, useState} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useAccount, useCupboard} from '../../hooks/useHooks';
 import {useDispatch} from 'react-redux';
@@ -11,13 +11,18 @@ import {useCoreInfo} from '../../utilities/coreInfo';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const CupboardSingle = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const core = useCoreInfo();
   const account = useAccount();
   const cupboard = useCupboard();
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log('Cupboard Items mounted');
+    return () => {
+      console.log('Cupboard Items unmounted');
+    };
+  }, []);
 
   const cupboardList = cupboard?.items ?? [];
 
@@ -91,10 +96,7 @@ const CupboardSingle = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Cupboards"
       LeftButton={cupboardList.length === 0 ? null : 'Split'}
       RightButton=""
       LeftAction={null}

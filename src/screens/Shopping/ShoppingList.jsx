@@ -1,6 +1,6 @@
 //* ShoppingList.jsx
-import React, {useCallback, useState} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useShoppingCart} from '../../hooks/useHooks';
 import {View} from 'react-native';
@@ -11,12 +11,17 @@ import {useCoreInfo} from '../../utilities/coreInfo';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const ShoppingList = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const shopping = useShoppingCart();
   const navigation = useNavigation();
   const core = useCoreInfo();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log('Shopping List mounted');
+    return () => {
+      console.log('Shopping List unmounted');
+    };
+  }, []);
 
   const shoppingList = Array.isArray(shopping?.items)
     ? shopping.items.filter(item => item.status === 'shopping-list')
@@ -121,10 +126,7 @@ const ShoppingList = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Shopping List"
       LeftButton=""
       RightButton="To-Cart"
       LeftAction={null}

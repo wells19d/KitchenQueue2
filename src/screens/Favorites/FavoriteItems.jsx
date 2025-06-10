@@ -15,7 +15,7 @@ import {useCoreInfo} from '../../utilities/coreInfo';
 
 const FavoriteItems = () => {
   const route = useRoute();
-  const {title, bgColor, textColor, headerColor, itemId} = route.params || {};
+  const {itemId} = route.params || {};
 
   const dispatch = useDispatch();
   const core = useCoreInfo();
@@ -131,12 +131,16 @@ const FavoriteItems = () => {
 
   useFocusEffect(useCallback(() => () => resetForm(), []));
 
+  useEffect(() => {
+    console.log('Favorite Items mounted');
+    return () => {
+      console.log('Favorite Items unmounted');
+    };
+  }, []);
+
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Favorite Item"
       LeftButton="Close"
       RightButton={canSave ? 'Save' : null}
       LeftAction={handleClose}

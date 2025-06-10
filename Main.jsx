@@ -1,6 +1,6 @@
 //* Main.jsx
 import {NavigationContainer} from '@react-navigation/native';
-import React, {use, useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Alert,
   Dimensions,
@@ -62,6 +62,8 @@ import Resets from './src/screens/Account/Resets';
 import AccountSetup from './src/screens/Account/AccountSetup';
 import FavoriteItems from './src/screens/Favorites/FavoriteItems';
 import FavoritesList from './src/screens/Favorites/FavoritesList';
+import RecipeList from './src/screens/Recipe/RecipeList';
+import DevPerfOverlay from './src/screens/Dev/DevPerfOverlay';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -242,370 +244,104 @@ const Main = props => {
             name="Home"
             component={Home}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Home',
-              bgColor: bgColor,
-              headerColor: headerColor,
-              textColor: textColor,
-              screenLocation: screenLocation,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('Home');
-              },
-            }}
           />
           <Stack.Screen
             name="ShoppingList"
             component={ShoppingList}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Shopping List',
-              bgColor: bgColor,
-              headerColor: headerColor,
-              textColor: textColor,
-              screenLocation: screenLocation,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('ShoppingList');
-              },
-            }}
           />
           <Stack.Screen
             name="ShoppingCart"
             component={ShoppingCart}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Shopping Cart',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('ShoppingCart');
-              },
-            }}
           />
           <Stack.Screen
             name="ShoppingItems"
             component={ShoppingItems}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Shopping Item',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('ShoppingItems');
-              },
-            }}
           />
           <Stack.Screen
             name="CupboardList-Single"
             component={CupboardSingle}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Cupboards',
-              bgColor: bgColor,
-              headerColor: headerColor,
-              textColor: textColor,
-              screenLocation: screenLocation,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('CupboardList-Single');
-              },
-            }}
           />
           <Stack.Screen
             name="CupboardList-Group"
             component={CupboardGroup}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Cupboards',
-              bgColor: bgColor,
-              headerColor: headerColor,
-              textColor: textColor,
-              screenLocation: screenLocation,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('CupboardList-Group');
-              },
-            }}
           />
           <Stack.Screen
             name="CupboardItems"
             component={CupboardItems}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Cupboard Item',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('CupboardItems');
-              },
-            }}
           />
           <Stack.Screen
             name="FavoritesList"
             component={FavoritesList}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Favorites',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('FavoritesList');
-              },
-            }}
           />
           <Stack.Screen
             name="FavoriteItems"
             component={FavoriteItems}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Favorite Item',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('FavoriteItems');
-              },
-            }}
           />
-          {/* <Stack.Screen
+          <Stack.Screen
             name="RecipeList"
-            component={Recipes}
-            options={{ freezeOnBlur: true }} 
-            initialParams={{
-              title: 'Recipes',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('RecipeList');
-              },
-            }}
-          /> */}
+            component={RecipeList}
+            options={{freezeOnBlur: true}}
+          />
           <Stack.Screen
             name="Account"
             component={Account}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Account',
-              bgColor: bgColor,
-              headerColor: headerColor,
-              textColor: textColor,
-              screenLocation: screenLocation,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('Account');
-              },
-            }}
           />
           <Stack.Screen
             name="AccountProfile"
             component={Profile}
-            initialParams={{
-              title: 'Profile',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('AccountProfile');
-              },
-            }}
+            options={{freezeOnBlur: true}}
           />
           <Stack.Screen
             name="AccountSettings"
             component={Settings}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Settings',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('AccountSettings');
-              },
-            }}
           />
           <Stack.Screen
             name="AccountHelp"
             component={Help}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Help',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('AccountHelp');
-              },
-            }}
           />
           <Stack.Screen
             name="Vibrations"
             component={Vibrations}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Vibration Settings',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('Vibrations');
-              },
-            }}
           />
           <Stack.Screen
             name="ItemDisplay"
             component={ItemDisplay}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Item Display',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('ItemDisplay');
-              },
-            }}
           />
           {/* <Stack.Screen
             name="AdvancedFields"
             component={AdvancedFields}
             options={{ freezeOnBlur: true }} 
-            initialParams={{
-              title: 'Advanced Fields',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('AdvancedFields');
-              },
-            }}
+            
           /> */}
           {/* <Stack.Screen
             name="DefaultView"
             component={DefaultGroupView}
             options={{ freezeOnBlur: true }} 
-            initialParams={{
-              title: 'Group View',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('DefaultView');
-              },
-            }}
+          
           /> */}
           <Stack.Screen
             name="Resets"
             component={Resets}
             options={{freezeOnBlur: true}}
-            initialParams={{
-              title: 'Resets',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('Resets');
-              },
-            }}
           />
           {/* <Stack.Screen
             name="Passwords"
             component={Passwords}
             options={{ freezeOnBlur: true }} 
-            initialParams={{
-              title: 'Passwords',
-              bgColor: bgColor,
-              textColor: textColor,
-            }}
-            listeners={{
-              focus: () => {
-                setBgColor('#ffffff');
-                setHeaderColor('#319177');
-                setTextColor('#ffffff');
-                setScreenLocation('Passwords');
-              },
-            }}
+        
           /> */}
           {__DEV__ && (
             <>
@@ -613,121 +349,31 @@ const Main = props => {
                 name="DevPlayground"
                 component={DevPlayground}
                 options={{freezeOnBlur: true}}
-                initialParams={{
-                  title: 'Dev Playground',
-                  bgColor: bgColor,
-                  headerColor: headerColor,
-                  textColor: textColor,
-                  screenLocation: screenLocation,
-                }}
-                listeners={{
-                  focus: () => {
-                    setBgColor('#ffffff');
-                    setHeaderColor('#319177');
-                    setTextColor('#ffffff');
-                    setScreenLocation('DevPlayground');
-                  },
-                }}
               />
               <Stack.Screen
                 name="DevText"
                 component={DevText}
                 options={{freezeOnBlur: true}}
-                initialParams={{
-                  title: 'Dev Text',
-                  bgColor: bgColor,
-                  headerColor: headerColor,
-                  textColor: textColor,
-                  screenLocation: screenLocation,
-                }}
-                listeners={{
-                  focus: () => {
-                    setBgColor('#ffffff');
-                    setHeaderColor('#319177');
-                    setTextColor('#ffffff');
-                    setScreenLocation('DevText');
-                  },
-                }}
               />
               <Stack.Screen
                 name="DevInputs"
                 component={DevInputs}
                 options={{freezeOnBlur: true}}
-                initialParams={{
-                  title: 'Dev Inputs',
-                  bgColor: bgColor,
-                  headerColor: headerColor,
-                  textColor: textColor,
-                  screenLocation: screenLocation,
-                }}
-                listeners={{
-                  focus: () => {
-                    setBgColor('#ffffff');
-                    setHeaderColor('#319177');
-                    setTextColor('#ffffff');
-                    setScreenLocation('DevInputs');
-                  },
-                }}
               />
               <Stack.Screen
                 name="DevButtons"
                 component={DevButtons}
                 options={{freezeOnBlur: true}}
-                initialParams={{
-                  title: 'Dev Buttons',
-                  bgColor: bgColor,
-                  headerColor: headerColor,
-                  textColor: textColor,
-                  screenLocation: screenLocation,
-                }}
-                listeners={{
-                  focus: () => {
-                    setBgColor('#ffffff');
-                    setHeaderColor('#319177');
-                    setTextColor('#ffffff');
-                    setScreenLocation('DevButtons');
-                  },
-                }}
               />
               <Stack.Screen
                 name="DevModals"
                 component={DevModals}
                 options={{freezeOnBlur: true}}
-                initialParams={{
-                  title: 'Dev Modals',
-                  bgColor: bgColor,
-                  headerColor: headerColor,
-                  textColor: textColor,
-                  screenLocation: screenLocation,
-                }}
-                listeners={{
-                  focus: () => {
-                    setBgColor('#ffffff');
-                    setHeaderColor('#319177');
-                    setTextColor('#ffffff');
-                    setScreenLocation('DevModals');
-                  },
-                }}
               />
               <Stack.Screen
                 name="DevDropdowns"
                 component={DevDropdowns}
                 options={{freezeOnBlur: true}}
-                initialParams={{
-                  title: 'Dev Dropdowns',
-                  bgColor: 'white',
-                  headerColor: headerColor,
-                  textColor: textColor,
-                  screenLocation: screenLocation,
-                }}
-                listeners={{
-                  focus: () => {
-                    setBgColor('#ffffff');
-                    setHeaderColor('#319177');
-                    setTextColor('#ffffff');
-                    setScreenLocation('DevDropdowns');
-                  },
-                }}
               />
             </>
           )}
@@ -784,8 +430,9 @@ const Main = props => {
     return (
       <NavigationContainer>
         <SafeAreaView
-          style={{flex: 1, backgroundColor: headerColor}}
+          style={{flex: 1, backgroundColor: '#319177'}}
           edges={['top']}>
+          {__DEV__ && <DevPerfOverlay />}
           <View style={{flex: 1}}>
             <Navigation />
             <BottomMenu toggleMenu={toggleMenu} />

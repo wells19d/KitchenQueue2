@@ -1,19 +1,25 @@
 //* Home.jsx
-import React, {useMemo} from 'react';
-import {useRoute} from '@react-navigation/native';
+import React, {useEffect, useMemo} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {Layout, Text} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import moment from 'moment';
-import {Image, View} from 'react-native';
+import {Image, TouchableOpacity, View} from 'react-native';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {useDeviceInfo} from '../../hooks/useHooks';
 import {Icons} from '../../components/IconListRouter';
 
 const Home = () => {
-  const route = useRoute();
   const core = useCoreInfo();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const device = useDeviceInfo();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    console.log('Home mounted');
+    return () => {
+      console.log('Home unmounted');
+    };
+  }, []);
 
   let screenWidth = device?.dimensions?.width;
   const imageCutRatio = 1000 / (screenWidth / 1.5);
@@ -46,6 +52,7 @@ const Home = () => {
       iconStyles = {},
       height,
       infoCentered,
+      onPress = () => {},
       children,
     } = props;
     const fixedHeight = height || 90;
@@ -86,7 +93,7 @@ const Home = () => {
     }, [value1, value2]);
 
     return (
-      <View
+      <TouchableOpacity
         style={{
           flex: 1,
           borderWidth: 1.5,
@@ -101,7 +108,8 @@ const Home = () => {
           shadowRadius: 1.5,
           elevation: 8,
           overflow: 'hidden',
-        }}>
+        }}
+        onPress={onPress}>
         {blank ? (
           <View style={[{padding: 5}, blankStyle]}>{children}</View>
         ) : (
@@ -160,7 +168,7 @@ const Home = () => {
             </View>
           </View>
         )}
-      </View>
+      </TouchableOpacity>
     );
   });
 
@@ -179,10 +187,7 @@ const Home = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Home"
       LeftButton=""
       RightButton=""
       LeftAction={null}
@@ -211,6 +216,7 @@ const Home = () => {
           value1={core?.shoppingAllItemsLength}
           value2={core?.maxShoppingItems}
           icon={<Icons.Shopping size={25} />}
+          onPress={() => navigation.navigate('ShoppingList')}
         />
         <DisplayCell
           infoCentered
@@ -219,6 +225,7 @@ const Home = () => {
           value1={core?.cupboardLength}
           value2={core?.maxCupboardItems}
           icon={<Icons.Cupboards size={25} />}
+          onPress={() => navigation.navigate('CupboardList-Single')}
         />
       </DisplayRow>
       <DisplayRow>
@@ -230,6 +237,7 @@ const Home = () => {
           value2={core?.maxFavoriteItems}
           // iconStyles={{marginTop: -1}}
           icon={<Icons.Star size={25} />}
+          onPress={() => navigation.navigate('FavoritesList')}
         />
         <DisplayCell
           infoCentered
@@ -239,6 +247,7 @@ const Home = () => {
           value2={core?.maxRecipeBoxItems}
           // iconStyles={{marginTop: -4}}
           icon={<Icons.Chest size={25} />}
+          onPress={() => navigation.navigate('RecipeList')}
         />
       </DisplayRow>
       {/* <DisplayRow>

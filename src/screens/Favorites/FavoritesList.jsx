@@ -1,6 +1,6 @@
 //* FavoritesList.jsx
-import React, {useCallback, useState} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useFavorites} from '../../hooks/useHooks';
 import {View} from 'react-native';
@@ -11,12 +11,17 @@ import {useCoreInfo} from '../../utilities/coreInfo';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const FavoritesList = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const favorites = useFavorites();
   const navigation = useNavigation();
   const core = useCoreInfo();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log('Favorites Items mounted');
+    return () => {
+      console.log('Favorites Items unmounted');
+    };
+  }, []);
 
   const favoritesList = favorites?.items ?? [];
 
@@ -71,10 +76,7 @@ const FavoritesList = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Favorites"
       LeftButton=""
       RightButton=""
       LeftAction={null}

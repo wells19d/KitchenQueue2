@@ -1,6 +1,6 @@
 //* Settings.jsx
-import React from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useEffect} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {Layout, ScrollView, Text} from '../../KQ-UI';
 import {ScreenStyles} from '../../styles/Styles';
 import {useProfile} from '../../hooks/useHooks';
@@ -8,17 +8,19 @@ import {View} from 'react-native';
 import TellMeButton from '../../components/TellMeButton';
 
 const Settings = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const profile = useProfile();
   const navigation = useNavigation();
 
+  useEffect(() => {
+    console.log('Settings mounted');
+    return () => {
+      console.log('Settings unmounted');
+    };
+  }, []);
+
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Settings"
       LeftButton="Back"
       RightButton=""
       LeftAction={null}

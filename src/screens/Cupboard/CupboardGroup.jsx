@@ -1,6 +1,5 @@
 //* CupboardGroup.jsx
 import React, {useState, useMemo} from 'react';
-import {useRoute} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useCupboard} from '../../hooks/useHooks';
 import {ListStyles} from '../../styles/Styles';
@@ -10,8 +9,6 @@ import SelectedItemInfo from '../../components/SelectedItemInfo';
 import {useCoreInfo} from '../../utilities/coreInfo';
 
 const CupboardGroup = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const core = useCoreInfo();
   const cupboard = useCupboard();
   const cupboardItems = cupboard?.items ?? [];
@@ -81,10 +78,7 @@ const CupboardGroup = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Cupboards"
       LeftButton="Merge"
       RightButton=""
       LeftAction={null}

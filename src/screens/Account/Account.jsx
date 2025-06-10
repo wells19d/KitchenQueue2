@@ -1,6 +1,5 @@
 //* Account.jsx
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {useRoute} from '@react-navigation/native';
 import {Button, Input, Layout, Modal, Text} from '../../KQ-UI';
 import {ActivityIndicator, View} from 'react-native';
 import {Icons} from '../../components/IconListRouter';
@@ -20,8 +19,6 @@ import {Animated} from 'react-native';
 import {AppInfo} from '../../../AppInfo';
 
 const Account = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const profile = useProfile();
   const device = useDeviceInfo();
   const dispatch = useDispatch();
@@ -167,12 +164,14 @@ const Account = () => {
     }
   }, [device?.system?.deviceSize]);
 
+  useEffect(() => {
+    console.log('Account mounted');
+    return () => console.log('Account unmounted');
+  }, []);
+
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Account"
       LeftButton=""
       RightButton="Logout"
       LeftAction={null}

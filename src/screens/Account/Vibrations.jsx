@@ -2,7 +2,6 @@
 
 import React, {useEffect, useState} from 'react';
 import {Layout, ScrollView, Text} from '../../KQ-UI';
-import {useRoute} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 import {useProfile} from '../../hooks/useHooks';
@@ -80,8 +79,6 @@ const hapticOptions = [
 ];
 
 const Vibrations = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const dispatch = useDispatch();
   const useHaptics = setHapticFeedback();
   const profile = useProfile();
@@ -89,6 +86,13 @@ const Vibrations = () => {
     profile?.userSettings?.hapticStrength || 'light',
   );
   const [canSave, setCanSave] = useState(false);
+
+  useEffect(() => {
+    console.log('Vibrations mounted');
+    return () => {
+      console.log('Vibrations unmounted');
+    };
+  }, []);
 
   useEffect(() => {
     if (profile?.userSettings?.hapticStrength !== hapticStrength) {
@@ -166,10 +170,7 @@ const Vibrations = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Vibrations"
       LeftButton="Back"
       RightButton={canSave ? 'Save' : ''}
       LeftAction={null}

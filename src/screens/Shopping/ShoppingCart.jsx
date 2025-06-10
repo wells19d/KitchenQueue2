@@ -1,6 +1,6 @@
 //* ShoppingCart.jsx
-import React, {useCallback, useState} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useAccount, useShoppingCart} from '../../hooks/useHooks';
 import {Alert, View} from 'react-native';
@@ -11,13 +11,18 @@ import {useCoreInfo} from '../../utilities/coreInfo';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const ShoppingCart = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const core = useCoreInfo();
   const account = useAccount();
   const shopping = useShoppingCart();
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log('Shopping Cart mounted');
+    return () => {
+      console.log('Shopping Cart unmounted');
+    };
+  }, []);
 
   const shoppingCart = Array.isArray(shopping?.items)
     ? shopping.items.filter(item => item.status === 'shopping-cart')
@@ -151,10 +156,7 @@ const ShoppingCart = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Shopping Cart"
       LeftButton="To-List"
       RightButton="Checkout"
       LeftAction={null}

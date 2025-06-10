@@ -1,14 +1,10 @@
 //* DevInputs.jsx
 import React, {useState} from 'react';
-import {useRoute} from '@react-navigation/native';
 import {Layout, Input} from '../../KQ-UI';
 import {TouchableWithoutFeedback} from 'react-native';
 import {Icons} from '../../components/IconListRouter';
 
 const DevInputs = ({}) => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-
   const [value, setValue] = useState('');
   const [value1, setValue1] = useState('');
   const [value2, setValue2] = useState('');
@@ -27,10 +23,7 @@ const DevInputs = ({}) => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Dev Inputs"
       LeftButton=""
       RightButton=""
       LeftAction={null}

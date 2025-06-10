@@ -1,7 +1,6 @@
 // * ItemDisplay.jsx
 import React, {useState, useEffect, useMemo} from 'react';
 import {View, TouchableOpacity} from 'react-native';
-import {useRoute} from '@react-navigation/native';
 import {Button, Layout, ScrollView, Text} from '../../KQ-UI';
 import {useDispatch} from 'react-redux';
 import {useProfile, useShoppingCart} from '../../hooks/useHooks';
@@ -22,7 +21,6 @@ const areArraysEqual = (a, b) =>
   a.length === b.length && a.every((item, i) => item.key === b[i].key);
 
 const ItemDisplay = () => {
-  const {title, headerColor, bgColor, textColor} = useRoute().params;
   const dispatch = useDispatch();
   const profile = useProfile();
   const shopping = useShoppingCart();
@@ -102,12 +100,16 @@ const ItemDisplay = () => {
     setFlashCellOrder(updated);
   };
 
+  useEffect(() => {
+    console.log('Item Display mounted');
+    return () => {
+      console.log('Item Display unmounted');
+    };
+  }, []);
+
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Item Display"
       LeftButton="Back"
       RightButton={canSave ? 'Save' : ''}
       LeftAction={null}

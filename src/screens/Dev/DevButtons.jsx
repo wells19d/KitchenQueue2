@@ -1,19 +1,12 @@
 //* DevButtons.jsx
 import React from 'react';
 import {Button, Layout} from '../../KQ-UI';
-import {useRoute} from '@react-navigation/native';
 import {View} from 'react-native';
 
 const DevButtons = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Dev Buttons"
       LeftButton=""
       RightButton=""
       LeftAction={null}

@@ -1,6 +1,6 @@
 //* Help.jsx
-import React, {useState} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {Layout, Modal, ScrollView, Text} from '../../KQ-UI';
 import {ScreenStyles} from '../../styles/Styles';
 import {useProfile} from '../../hooks/useHooks';
@@ -12,10 +12,15 @@ import PrivacyPolicy from '../Legal/PrivacyPolicy';
 import About from '../Legal/About';
 
 const Help = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const profile = useProfile();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    console.log('Help mounted');
+    return () => {
+      console.log('Help unmounted');
+    };
+  }, []);
 
   const [showPPModal, setShowPPModal] = useState(false);
   const [showTOSModal, setShowTOSModal] = useState(false);
@@ -23,10 +28,7 @@ const Help = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Help"
       LeftButton="Back"
       RightButton=""
       LeftAction={null}

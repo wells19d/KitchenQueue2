@@ -1,7 +1,6 @@
 //* Resets.jsx
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Alert} from 'react-native';
-import {useRoute} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {ScreenStyles} from '../../styles/Styles';
 import {Layout, ScrollView, Text} from '../../KQ-UI';
@@ -9,8 +8,6 @@ import TellMeButton from '../../components/TellMeButton';
 import {useCoreInfo} from '../../utilities/coreInfo';
 
 const Resets = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const core = useCoreInfo();
   const dispatch = useDispatch();
 
@@ -104,12 +101,16 @@ const Resets = () => {
     );
   };
 
+  useEffect(() => {
+    console.log('Resets mounted');
+    return () => {
+      console.log('Resets unmounted');
+    };
+  }, []);
+
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Resets"
       LeftButton="Back"
       RightButton=""
       LeftAction={null}

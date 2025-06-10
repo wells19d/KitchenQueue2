@@ -1,11 +1,12 @@
 //* DevPlayground.jsx
 import React from 'react';
-import {useIsFocused, useRoute} from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 import {Layout, ScrollView, Text} from '../../KQ-UI';
 import {
   useAccount,
   useCupboard,
   useDeviceInfo,
+  useFavorites,
   useProfile,
   useShoppingCart,
 } from '../../hooks/useHooks';
@@ -13,12 +14,12 @@ import {View} from 'react-native';
 
 const DevPlayground = () => {
   const isFocused = useIsFocused();
-  const route = useRoute();
   const profile = useProfile();
   const account = useAccount();
   const shopping = useShoppingCart();
   const cupboard = useCupboard();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
+  const favorites = useFavorites();
+
   const device = useDeviceInfo();
 
   const renderValue = value => {
@@ -81,10 +82,7 @@ const DevPlayground = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Dev Playground"
       LeftButton=""
       RightButton=""
       LeftAction={null}
@@ -156,6 +154,32 @@ const DevPlayground = () => {
               </View>
             ))}
         </View>
+        <View style={{borderWidth: 1, padding: 5}}>
+          <Text>Favorites</Text>
+          {Object.entries(favorites)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([key, value]) => (
+              <View key={key} style={{marginBottom: 8}}>
+                <Text font="open-7" size="xSmall">
+                  {key}:
+                </Text>
+                {renderValue(value)}
+              </View>
+            ))}
+        </View>
+        {/* <View style={{borderWidth: 1, padding: 5}}>
+          <Text>Cupboard</Text>
+          {Object.entries(cupboard)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([key, value]) => (
+              <View key={key} style={{marginBottom: 8}}>
+                <Text font="open-7" size="xSmall">
+                  {key}:
+                </Text>
+                {renderValue(value)}
+              </View>
+            ))}
+        </View> */}
       </ScrollView>
     </Layout>
   );

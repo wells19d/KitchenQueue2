@@ -17,8 +17,14 @@ import {useCoreInfo} from '../../utilities/coreInfo';
 
 const ShoppingItems = () => {
   const route = useRoute();
-  const {title, bgColor, textColor, headerColor, itemId, statusTo} =
-    route.params || {};
+  const {itemId, statusTo} = route.params || {};
+
+  useEffect(() => {
+    console.log('Shopping Items mounted');
+    return () => {
+      console.log('Shopping Items unmounted');
+    };
+  }, []);
 
   const dispatch = useDispatch();
   const core = useCoreInfo();
@@ -148,10 +154,7 @@ const ShoppingItems = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Shopping Item"
       LeftButton="Close"
       RightButton={canSave ? 'Save' : null}
       LeftAction={handleClose}

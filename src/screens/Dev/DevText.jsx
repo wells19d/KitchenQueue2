@@ -1,13 +1,9 @@
 //* DevText.jsx
 import React from 'react';
-import {useRoute} from '@react-navigation/native';
 import {Platform, View} from 'react-native';
 import {Layout, Text} from '../../KQ-UI';
 
 const DevText = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-
   const Row = ({children}) => (
     <View style={{flexDirection: 'row', width: '90%'}}>{children}</View>
   );
@@ -44,10 +40,7 @@ const DevText = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Dev Text"
       LeftButton=""
       RightButton=""
       LeftAction={null}

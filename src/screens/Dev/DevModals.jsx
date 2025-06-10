@@ -1,13 +1,9 @@
 //* DevModals.jsx
 import React, {useState} from 'react';
-import {useRoute} from '@react-navigation/native';
 import {View} from 'react-native';
 import {Button, Layout, Modal, Text} from '../../KQ-UI';
 
 const DevModals = () => {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
-
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const [showModal3, setShowModal3] = useState(false);
@@ -15,10 +11,7 @@ const DevModals = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Dev Modals"
       LeftButton=""
       RightButton=""
       LeftAction={null}

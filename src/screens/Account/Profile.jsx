@@ -4,7 +4,6 @@ import {TouchableOpacity, View} from 'react-native';
 import {ProfileStyles} from '../../styles/Styles';
 import {useDispatch} from 'react-redux';
 import {useDeviceInfo, useProfile} from '../../hooks/useHooks';
-import {useRoute} from '@react-navigation/native';
 import {
   avatarConfig,
   bgColorOptions,
@@ -24,8 +23,6 @@ import Avatar from '../../components/Avatar';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 
 function Profile() {
-  const route = useRoute();
-  const {title, headerColor, bgColor, textColor, screenLocation} = route.params;
   const dispatch = useDispatch();
   const profile = useProfile();
   const [firstName, setFirstName] = useState(profile?.firstName || '');
@@ -34,6 +31,13 @@ function Profile() {
   const [canSave, setCanSave] = useState(false);
   const device = useDeviceInfo();
   const useHaptics = setHapticFeedback();
+
+  useEffect(() => {
+    console.log('Profile mounted');
+    return () => {
+      console.log('Profile unmounted');
+    };
+  }, []);
 
   const [avatarSize, setAvatarSize] = useState({
     width: 200,
@@ -313,10 +317,7 @@ function Profile() {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Profile"
       LeftButton="Back"
       RightButton={canSave ? 'Save' : ''}
       RightAction={handleProfileUpdate}

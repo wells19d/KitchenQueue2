@@ -17,7 +17,7 @@ import {useCoreInfo} from '../../utilities/coreInfo';
 
 const CupboardItems = () => {
   const route = useRoute();
-  const {title, bgColor, textColor, headerColor, itemId} = route.params || {};
+  const {itemId} = route.params || {};
 
   const dispatch = useDispatch();
   const core = useCoreInfo();
@@ -195,10 +195,7 @@ const CupboardItems = () => {
 
   return (
     <Layout
-      bgColor={bgColor}
-      headerTitle={title}
-      headerColor={headerColor}
-      textColor={textColor}
+      headerTitle="Cupboard Item"
       LeftButton="Close"
       RightButton={canSave ? 'Save' : null}
       LeftAction={handleClose}
