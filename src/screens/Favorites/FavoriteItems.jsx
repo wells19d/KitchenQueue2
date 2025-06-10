@@ -131,13 +131,6 @@ const FavoriteItems = () => {
 
   useFocusEffect(useCallback(() => () => resetForm(), []));
 
-  useEffect(() => {
-    console.log('Favorite Items mounted');
-    return () => {
-      console.log('Favorite Items unmounted');
-    };
-  }, []);
-
   return (
     <Layout
       headerTitle="Favorite Item"

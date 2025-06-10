@@ -1,5 +1,5 @@
 //* CupboardSingle.jsx
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useAccount, useCupboard} from '../../hooks/useHooks';
@@ -16,13 +16,6 @@ const CupboardSingle = () => {
   const cupboard = useCupboard();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log('Cupboard Items mounted');
-    return () => {
-      console.log('Cupboard Items unmounted');
-    };
-  }, []);
 
   const cupboardList = cupboard?.items ?? [];
 

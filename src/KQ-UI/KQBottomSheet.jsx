@@ -15,7 +15,7 @@ const KQBottomSheet = ({
   visible,
   onClose,
   children,
-  snapPoints = [0.01, 0.9], // Default snap points
+  snapPoints = [0.01, 0.9],
 }) => {
   const translateY = useRef(new Animated.Value(height)).current;
   const opacity = useRef(new Animated.Value(0)).current;
@@ -24,7 +24,7 @@ const KQBottomSheet = ({
 
   useEffect(() => {
     if (visible) {
-      setIsFullyVisible(true); // Ensure component is mounted
+      setIsFullyVisible(true);
       Animated.parallel([
         Animated.spring(translateY, {
           toValue: height * (1 - snapPoints[1]),
@@ -34,14 +34,14 @@ const KQBottomSheet = ({
         }),
         Animated.timing(opacity, {
           toValue: 1,
-          duration: 250, // Smooth fade-in
+          duration: 250,
           useNativeDriver: true,
         }),
       ]).start();
     } else {
       Animated.parallel([
         Animated.spring(translateY, {
-          toValue: height, // Move off-screen
+          toValue: height,
           speed: 5,
           bounciness: 0,
           useNativeDriver: true,
@@ -53,13 +53,13 @@ const KQBottomSheet = ({
         }),
       ]).start(() => {
         setTimeout(() => {
-          setIsFullyVisible(false); // Only unmount AFTER animation completes
+          setIsFullyVisible(false);
         }, 500);
       });
     }
   }, [visible]);
 
-  if (!isFullyVisible) return null; // Prevent rendering when fully hidden
+  if (!isFullyVisible) return null;
 
   const handleGesture = event => {
     const {translationY} = event.nativeEvent;
@@ -94,11 +94,10 @@ const KQBottomSheet = ({
     <TouchableWithoutFeedback
       onPress={e => {
         if (e.target === e.currentTarget) {
-          onClose(); // Only close if tapping outside the modal
+          onClose();
         }
       }}
-      accessible={false} // Prevents interference with child components
-    >
+      accessible={false}>
       <Animated.View style={[styles.overlay, {opacity}]}>
         <Animated.View
           style={[

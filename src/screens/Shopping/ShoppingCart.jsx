@@ -1,5 +1,5 @@
 //* ShoppingCart.jsx
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useAccount, useShoppingCart} from '../../hooks/useHooks';
@@ -16,13 +16,6 @@ const ShoppingCart = () => {
   const shopping = useShoppingCart();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log('Shopping Cart mounted');
-    return () => {
-      console.log('Shopping Cart unmounted');
-    };
-  }, []);
 
   const shoppingCart = Array.isArray(shopping?.items)
     ? shopping.items.filter(item => item.status === 'shopping-cart')

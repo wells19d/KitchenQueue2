@@ -1,5 +1,5 @@
 //* Resets.jsx
-import React, {useEffect} from 'react';
+import React from 'react';
 import {View, Alert} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {ScreenStyles} from '../../styles/Styles';
@@ -100,13 +100,6 @@ const Resets = () => {
       ],
     );
   };
-
-  useEffect(() => {
-    console.log('Resets mounted');
-    return () => {
-      console.log('Resets unmounted');
-    };
-  }, []);
 
   return (
     <Layout

@@ -88,13 +88,6 @@ const Vibrations = () => {
   const [canSave, setCanSave] = useState(false);
 
   useEffect(() => {
-    console.log('Vibrations mounted');
-    return () => {
-      console.log('Vibrations unmounted');
-    };
-  }, []);
-
-  useEffect(() => {
     if (profile?.userSettings?.hapticStrength !== hapticStrength) {
       setCanSave(true);
     } else {

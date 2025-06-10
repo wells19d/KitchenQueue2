@@ -1,9 +1,8 @@
 //* Home.jsx
-import React, {useEffect, useMemo} from 'react';
+import React, {useMemo} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Layout, Text} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
-import moment from 'moment';
 import {Image, TouchableOpacity, View} from 'react-native';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {useDeviceInfo} from '../../hooks/useHooks';
@@ -13,13 +12,6 @@ const Home = () => {
   const core = useCoreInfo();
   const device = useDeviceInfo();
   const navigation = useNavigation();
-
-  useEffect(() => {
-    console.log('Home mounted');
-    return () => {
-      console.log('Home unmounted');
-    };
-  }, []);
 
   let screenWidth = device?.dimensions?.width;
   const imageCutRatio = 1000 / (screenWidth / 1.5);

@@ -100,13 +100,6 @@ const ItemDisplay = () => {
     setFlashCellOrder(updated);
   };
 
-  useEffect(() => {
-    console.log('Item Display mounted');
-    return () => {
-      console.log('Item Display unmounted');
-    };
-  }, []);
-
   return (
     <Layout
       headerTitle="Item Display"

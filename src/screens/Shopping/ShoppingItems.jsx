@@ -19,13 +19,6 @@ const ShoppingItems = () => {
   const route = useRoute();
   const {itemId, statusTo} = route.params || {};
 
-  useEffect(() => {
-    console.log('Shopping Items mounted');
-    return () => {
-      console.log('Shopping Items unmounted');
-    };
-  }, []);
-
   const dispatch = useDispatch();
   const core = useCoreInfo();
   const navigation = useNavigation();

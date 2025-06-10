@@ -164,11 +164,6 @@ const Account = () => {
     }
   }, [device?.system?.deviceSize]);
 
-  useEffect(() => {
-    console.log('Account mounted');
-    return () => console.log('Account unmounted');
-  }, []);
-
   return (
     <Layout
       headerTitle="Account"

@@ -1,5 +1,5 @@
 //* Help.jsx
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Layout, Modal, ScrollView, Text} from '../../KQ-UI';
 import {ScreenStyles} from '../../styles/Styles';
@@ -14,13 +14,6 @@ import About from '../Legal/About';
 const Help = () => {
   const profile = useProfile();
   const navigation = useNavigation();
-
-  useEffect(() => {
-    console.log('Help mounted');
-    return () => {
-      console.log('Help unmounted');
-    };
-  }, []);
 
   const [showPPModal, setShowPPModal] = useState(false);
   const [showTOSModal, setShowTOSModal] = useState(false);

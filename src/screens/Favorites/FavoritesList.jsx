@@ -1,5 +1,5 @@
 //* FavoritesList.jsx
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useFavorites} from '../../hooks/useHooks';
@@ -15,13 +15,6 @@ const FavoritesList = () => {
   const navigation = useNavigation();
   const core = useCoreInfo();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log('Favorites Items mounted');
-    return () => {
-      console.log('Favorites Items unmounted');
-    };
-  }, []);
 
   const favoritesList = favorites?.items ?? [];
 

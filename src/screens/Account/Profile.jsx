@@ -32,13 +32,6 @@ function Profile() {
   const device = useDeviceInfo();
   const useHaptics = setHapticFeedback();
 
-  useEffect(() => {
-    console.log('Profile mounted');
-    return () => {
-      console.log('Profile unmounted');
-    };
-  }, []);
-
   const [avatarSize, setAvatarSize] = useState({
     width: 200,
   });

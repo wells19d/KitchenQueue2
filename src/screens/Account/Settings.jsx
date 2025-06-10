@@ -1,5 +1,5 @@
 //* Settings.jsx
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Layout, ScrollView, Text} from '../../KQ-UI';
 import {ScreenStyles} from '../../styles/Styles';
@@ -10,13 +10,6 @@ import TellMeButton from '../../components/TellMeButton';
 const Settings = () => {
   const profile = useProfile();
   const navigation = useNavigation();
-
-  useEffect(() => {
-    console.log('Settings mounted');
-    return () => {
-      console.log('Settings unmounted');
-    };
-  }, []);
 
   return (
     <Layout
