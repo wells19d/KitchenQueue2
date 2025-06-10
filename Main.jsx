@@ -63,7 +63,6 @@ import AccountSetup from './src/screens/Account/AccountSetup';
 import FavoriteItems from './src/screens/Favorites/FavoriteItems';
 import FavoritesList from './src/screens/Favorites/FavoritesList';
 import RecipeList from './src/screens/Recipe/RecipeList';
-import DevPerfOverlay from './src/screens/Dev/DevPerfOverlay';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -432,7 +431,6 @@ const Main = props => {
         <SafeAreaView
           style={{flex: 1, backgroundColor: '#319177'}}
           edges={['top']}>
-          {__DEV__ && <DevPerfOverlay />}
           <View style={{flex: 1}}>
             <Navigation />
             <BottomMenu toggleMenu={toggleMenu} />
