@@ -1,13 +1,21 @@
 //* RecipeList.jsx
-import React from 'react';
-import {Layout, Text} from '../../KQ-UI';
+import React, {useEffect, useState} from 'react';
+import {Button, Layout, Text} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
-import {useDeviceInfo} from '../../hooks/useHooks';
+import {
+  useDeviceInfo,
+  useFoodData,
+  useFoodDataError,
+  useFoodDataLoading,
+} from '../../hooks/useHooks';
 import {View} from 'react-native';
+import {useDispatch} from 'react-redux';
 
 const RecipeList = () => {
   const core = useCoreInfo();
   const device = useDeviceInfo();
+  const dispatch = useDispatch();
+
   return (
     <Layout
       headerTitle="Recipes"

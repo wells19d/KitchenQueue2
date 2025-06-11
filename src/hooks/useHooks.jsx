@@ -58,15 +58,19 @@ export const useExistingInvite = () => {
 };
 
 export const useFoodData = () => {
-  return useSelector(state => state.edamam?.foodData);
+  return useSelector(state => state.edamamFood?.foodData?.hints[0]);
+};
+
+export const useFoodAllData = () => {
+  return useSelector(state => state.edamamFood?.foodData);
 };
 
 export const useFoodDataError = () => {
-  return useSelector(state => state.edamam?.error);
+  return useSelector(state => state.edamamFood?.error);
 };
 
 export const useFoodDataLoading = () => {
-  return useSelector(state => state.edamam?.loading);
+  return useSelector(state => state.edamamFood?.loading);
 };
 
 export const useFoundInvite = () => {

@@ -310,7 +310,7 @@ const AccountSetup = () => {
                 <ListItem>Invite / Add 3 more users</ListItem>
                 <ListItem>100 Cupboard Items</ListItem>
                 <ListItem>25 Shopping Items</ListItem>
-                <ListItem>10 Favorite Items{'\u002A'}</ListItem>
+                <ListItem>25 Favorite Items{'\u002A'}</ListItem>
                 <ListItem>5 Recipes Items{'\u002A'}</ListItem>
               </View>
               <View style={styles.buttonWrapper}>

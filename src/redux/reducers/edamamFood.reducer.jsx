@@ -1,4 +1,4 @@
-//* edamam.reducer.jsx
+//* edamamFood.reducer.jsx
 const initialState = {
   foodData: null,
   error: null,

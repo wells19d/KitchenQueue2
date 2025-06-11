@@ -1,12 +1,16 @@
-//* edaman.saga.jsx
+//* edamanFood.saga.jsx
 import {takeLatest, call, put} from 'redux-saga/effects';
-import Config from 'react-native-config';
+import {fetchEdamamKeys} from '../../../firebase.config';
 
 function* fetchFoodData(action) {
   const {barcode} = action.payload;
-  const appId = Config.EDAMAM_APP_ID;
-  const appKey = Config.EDAMAM_APP_KEY;
+
+  const {food} = yield call(fetchEdamamKeys);
+  const appId = food.appId;
+  const appKey = food.appKey;
+
   const url = `https://api.edamam.com/api/food-database/v2/parser?app_id=${appId}&app_key=${appKey}&upc=${barcode}`;
+
   try {
     const response = yield call(fetch, url);
 
