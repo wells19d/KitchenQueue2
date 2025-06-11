@@ -1,5 +1,5 @@
 //*useHooks.jsx
-import {useSelector} from 'react-redux';
+import {useSelector, shallowEqual} from 'react-redux';
 
 export const useDeviceInfo = () => {
   return useSelector(state => state.deviceInfo?.deviceInfo);
@@ -71,6 +71,27 @@ export const useFoodDataError = () => {
 
 export const useFoodDataLoading = () => {
   return useSelector(state => state.edamamFood?.loading);
+};
+
+// Edamam Recipe Search Hooks
+
+export const useRecipeData = () => {
+  return useSelector(
+    state => state.edamamRecipe?.recipeData?.hits || [],
+    shallowEqual,
+  );
+};
+
+export const useRecipeRawData = () => {
+  return useSelector(state => state.edamamRecipe?.recipeData);
+};
+
+export const useRecipeDataError = () => {
+  return useSelector(state => state.edamamRecipe?.error);
+};
+
+export const useRecipeDataLoading = () => {
+  return useSelector(state => state.edamamRecipe?.loading);
 };
 
 export const useFoundInvite = () => {

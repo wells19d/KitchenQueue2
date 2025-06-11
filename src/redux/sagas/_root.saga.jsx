@@ -7,6 +7,7 @@ import cupboardSaga from './cupboard.saga';
 import deviceSaga from './device.saga';
 import {invitesSaga} from './invites.saga';
 import edamamFoodSaga from './edamamFood.saga';
+import edamamRecipeSaga from './edamamRecipe.saga';
 import loginSaga from './login.saga';
 import signupSaga from './signup.saga';
 import joinSaga from './join.saga';
@@ -22,6 +23,7 @@ export default function* rootSaga() {
     fork(deviceSaga),
     fork(invitesSaga),
     fork(edamamFoodSaga),
+    fork(edamamRecipeSaga),
     fork(loginSaga),
     fork(signupSaga),
     fork(joinSaga),

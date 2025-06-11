@@ -10,6 +10,7 @@ import deviceReducer from './device.reducer';
 import invitesReducer from './invites.reducer';
 import joinInviteReducer from './join.reducer';
 import edamamFoodReducer from './edamamFood.reducer';
+import edamamRecipeReducer from './edamamRecipe.reducer';
 import favoriteReducer from './favorites.reducer';
 
 const rootReducer = combineReducers({
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   invites: invitesReducer,
   joinInvite: joinInviteReducer,
   edamamFood: edamamFoodReducer,
+  edamamRecipe: edamamRecipeReducer,
   favorites: favoriteReducer,
 });
 
