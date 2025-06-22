@@ -5,9 +5,9 @@ import accountSaga from './account.saga';
 import shoppingSaga from './shopCart.saga';
 import cupboardSaga from './cupboard.saga';
 import deviceSaga from './device.saga';
-import {invitesSaga} from './invites.saga';
+import invitesSaga from './invites.saga';
 import edamamFoodSaga from './edamamFood.saga';
-import edamamRecipeSaga from './edamamRecipe.saga';
+import recipeSaga from './recipe.saga';
 import loginSaga from './login.saga';
 import signupSaga from './signup.saga';
 import joinSaga from './join.saga';
@@ -23,7 +23,7 @@ export default function* rootSaga() {
     fork(deviceSaga),
     fork(invitesSaga),
     fork(edamamFoodSaga),
-    fork(edamamRecipeSaga),
+    fork(recipeSaga),
     fork(loginSaga),
     fork(signupSaga),
     fork(joinSaga),

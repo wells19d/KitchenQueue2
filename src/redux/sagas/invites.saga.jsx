@@ -120,7 +120,7 @@ function* deleteInvite(action) {
   }
 }
 
-export function* invitesSaga() {
+export default function* invitesSaga() {
   yield takeLatest('QUEUE_INVITE_REQUEST', queueInviteSaga);
   yield takeLatest('DELETE_INVITE_REQUEST', deleteInvite);
 }

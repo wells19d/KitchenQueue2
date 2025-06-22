@@ -6,28 +6,34 @@ import {
   getValue,
   setDefaults,
 } from '@react-native-firebase/remote-config';
+import {write} from 'firebase-functions/logger';
 
-export const fetchEdamamKeys = async () => {
+export const fetchRemoteKeys = async () => {
   const app = getApp();
   const config = getRemoteConfig(app);
 
   await setDefaults(config, {
     EDAMAM_FOOD_ID: '',
     EDAMAM_FOOD_KEY: '',
-    EDAMAM_RECIPE_ID: '',
-    EDAMAM_RECIPE_KEY: '',
+    ALGOLIA_APP_ID: '',
+    ALGOLIA_APP_SEARCH_KEY: '',
   });
 
-  await fetchAndActivate(config);
+  await config.fetch(0);
+  await config.activate();
 
   return {
     food: {
       appId: getValue(config, 'EDAMAM_FOOD_ID').asString(),
       appKey: getValue(config, 'EDAMAM_FOOD_KEY').asString(),
     },
-    recipe: {
-      appId: getValue(config, 'EDAMAM_RECIPE_ID').asString(),
-      appKey: getValue(config, 'EDAMAM_RECIPE_KEY').asString(),
+    algolia: {
+      appID: getValue(config, 'ALGOLIA_APP_ID').asString(),
+      searchKey: getValue(config, 'ALGOLIA_APP_SEARCH_KEY').asString(),
+      writeKey: getValue(config, 'ALGOLIA_APP_WRITE_KEY').asString(),
+      monitorKey: getValue(config, 'ALGOLIA_API_MONITORING_KEY').asString(),
+      usagekey: getValue(config, 'ALGOLIA_API_USAGE_KEY').asString(),
+      adminKey: getValue(config, 'ALGOLIA_APP_ADMIN_KEY').asString(),
     },
   };
 };

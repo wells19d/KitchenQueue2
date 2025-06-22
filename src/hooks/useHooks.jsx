@@ -73,25 +73,23 @@ export const useFoodDataLoading = () => {
   return useSelector(state => state.edamamFood?.loading);
 };
 
-// Edamam Recipe Search Hooks
-
-export const useRecipeData = () => {
+export const useRecipesData = () => {
   return useSelector(
-    state => state.edamamRecipe?.recipeData?.hits || [],
+    state => state.recipe?.communityRecipes || [],
     shallowEqual,
   );
 };
 
 export const useRecipeRawData = () => {
-  return useSelector(state => state.edamamRecipe?.recipeData);
+  return useSelector(state => state.recipe);
 };
 
 export const useRecipeDataError = () => {
-  return useSelector(state => state.edamamRecipe?.error);
+  return useSelector(state => state.recipe?.error);
 };
 
 export const useRecipeDataLoading = () => {
-  return useSelector(state => state.edamamRecipe?.loading);
+  return useSelector(state => state.recipe?.loading);
 };
 
 export const useFoundInvite = () => {

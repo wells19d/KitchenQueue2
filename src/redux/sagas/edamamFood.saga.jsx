@@ -1,11 +1,11 @@
 //* edamanFood.saga.jsx
 import {takeLatest, call, put} from 'redux-saga/effects';
-import {fetchEdamamKeys} from '../../../firebase.config';
+import {fetchRemoteKeys} from '../../../firebase.config';
 
 function* fetchFoodData(action) {
   const {barcode} = action.payload;
 
-  const {food} = yield call(fetchEdamamKeys);
+  const {food} = yield call(fetchRemoteKeys);
   const appId = food.appId;
   const appKey = food.appKey;
 
