@@ -29,7 +29,10 @@ const RecipeSearch = () => {
       Array.isArray(recipesFound) &&
       recipesFound.length > 0
     ) {
-      setStoredData(recipesFound);
+      const sorted = [...recipesFound].sort(
+        (a, b) => (b.ratingScore ?? 0) - (a.ratingScore ?? 0),
+      );
+      setStoredData(sorted);
     }
   }, [recipesFound]);
 
