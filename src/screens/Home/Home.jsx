@@ -239,7 +239,7 @@ const Home = () => {
           value2={core?.maxRecipeBoxItems}
           // iconStyles={{marginTop: -4}}
           icon={<Icons.Chest size={25} />}
-          onPress={() => navigation.navigate('RecipeList')}
+          onPress={() => navigation.navigate('RecipeSearch')}
         />
       </DisplayRow>
       {/* <DisplayRow>

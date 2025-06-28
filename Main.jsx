@@ -62,7 +62,7 @@ import Resets from './src/screens/Account/Resets';
 import AccountSetup from './src/screens/Account/AccountSetup';
 import FavoriteItems from './src/screens/Favorites/FavoriteItems';
 import FavoritesList from './src/screens/Favorites/FavoritesList';
-import RecipeList from './src/screens/Recipe/RecipeList';
+import RecipeSearch from './src/screens/Recipe/RecipeSearch';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -285,8 +285,8 @@ const Main = props => {
             options={{freezeOnBlur: true}}
           />
           <Stack.Screen
-            name="RecipeList"
-            component={RecipeList}
+            name="RecipeSearch"
+            component={RecipeSearch}
             options={{freezeOnBlur: true}}
           />
           <Stack.Screen

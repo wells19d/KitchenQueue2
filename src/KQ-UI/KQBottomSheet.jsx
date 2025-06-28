@@ -16,6 +16,7 @@ const KQBottomSheet = ({
   onClose,
   children,
   snapPoints = [0.01, 0.9],
+  innerStyles = {},
 }) => {
   const translateY = useRef(new Animated.Value(height)).current;
   const opacity = useRef(new Animated.Value(0)).current;
@@ -112,7 +113,7 @@ const KQBottomSheet = ({
               <View style={styles.handle} />
             </View>
           </PanGestureHandler>
-          <View style={styles.viewableArea}>{children}</View>
+          <View style={[styles.viewableArea, innerStyles]}>{children}</View>
         </Animated.View>
       </Animated.View>
     </TouchableWithoutFeedback>

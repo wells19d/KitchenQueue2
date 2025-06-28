@@ -1,5 +1,5 @@
 //* KQModal.jsx
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Keyboard,
@@ -26,12 +26,13 @@ const KQModal = ({
   headerSize = 'small',
   headerTextColor = 'white',
   headerColor = 'primary',
-  headerBorderColor = 'primary',
+  buttonColor = 'primary',
   hideHeader = false,
   hideTitle = false,
   hideClose = false,
   fullScreen = false,
   hapticFeedback = 'light',
+  barStyle = 'default',
   onClose,
 }) => {
   const useHaptics = setHapticFeedback();
@@ -56,32 +57,42 @@ const KQModal = ({
     }
   };
 
+  const setBarStyle = useMemo(() => {
+    if (barStyle === 'light') {
+      return 'light-content';
+    }
+    if (barStyle === 'dark') {
+      return 'dark-content';
+    }
+    if (barStyle === 'default') {
+      if (fullScreen) {
+        return 'dark-content';
+      } else {
+        return 'light-content';
+      }
+    }
+  }, [barStyle, fullScreen]);
+
   const Header = () => {
     if (hideHeader) {
       return null;
     }
     return (
-      <View
-        style={[
-          styles.headerWrapper(fullScreen),
-          {
-            borderColor: useColors(headerBorderColor),
-            backgroundColor: useColors(headerColor),
-          },
-        ]}>
-        <View style={styles.headerContainer}>
+      <View style={[styles.headerWrapper(fullScreen, headerColor)]}>
+        <View style={styles.headerContainer(hideClose)}>
           {!hideTitle && (
             <Text
               kqColor={useColors(headerTextColor)}
               font={headerFont}
-              size={headerSize}>
+              size={headerSize}
+              numberOfLines={1}>
               {title}
             </Text>
           )}
         </View>
         {!hideClose && (
           <TouchableOpacity
-            style={styles.closeButton}
+            style={styles.closeButton(buttonColor)}
             onPress={() => handleClose()}>
             <Icons.Close size={25} color={'white'} />
           </TouchableOpacity>
@@ -142,7 +153,7 @@ const KQModal = ({
       statusBarTranslucent
       onRequestClose={handleClose}>
       <StatusBar
-        barStyle={fullScreen ? 'dark-content' : 'light-content'}
+        barStyle={setBarStyle}
         backgroundColor={'rgba(0,0,0,0.5)'}
         translucent
       />
@@ -206,44 +217,43 @@ const styles = {
   subContainer: (fullScreen, midHeight, insets) => ({
     flex: 1,
     height: midHeight,
-    borderWidth: 1,
     borderColor: '#319177',
     backgroundColor: '#fff',
     paddingTop: fullScreen ? insets.top : 0,
     paddingBottom: fullScreen ? insets.bottom : 0,
-    borderRadius: fullScreen ? 0 : 10,
+    borderRadius: fullScreen ? 0 : 15,
     shadowColor: fullScreen ? '' : 'black',
     shadowOffset: fullScreen ? {} : {width: 3, height: 4},
     shadowOpacity: fullScreen ? 0 : 0.5,
     elevation: fullScreen ? 0 : 7,
   }),
 
-  headerWrapper: fullScreen => ({
+  headerWrapper: (fullScreen, headerColor) => ({
     flexDirection: 'row',
-    borderWidth: fullScreen ? 0 : 1,
-    borderTopRightRadius: fullScreen ? 0 : 8,
-    borderTopLeftRadius: fullScreen ? 0 : 8,
-    // borderColor: '#319177',
-    // backgroundColor: '#319177',
+    backgroundColor: useColors(headerColor),
+    borderTopRightRadius: fullScreen ? 0 : 15,
+    borderTopLeftRadius: fullScreen ? 0 : 15,
   }),
-  headerContainer: {
+  headerContainer: hideClose => ({
     flex: 1,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  closeButton: {
+    marginHorizontal: hideClose ? 10 : 40,
+  }),
+  closeButton: buttonColor => ({
     position: 'absolute',
     zIndex: 999,
-    right: 0,
+    top: 1,
+    right: 2,
     borderWidth: 1.5,
-    backgroundColor: '#319177',
+    backgroundColor: useColors(buttonColor || 'primary'),
     justifyContent: 'center',
     alignItems: 'center',
     margin: 5,
-    width: 30,
-    height: 30,
+    width: 28,
+    height: 28,
     borderRadius: 8,
     borderColor: 'white',
-  },
+  }),
 };

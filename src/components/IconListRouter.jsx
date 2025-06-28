@@ -31,6 +31,7 @@ export const Icons = {
   CheckFilledCircle: props => (
     <OctIcons name="check-circle-fill" size={20} color="#000" {...props} />
   ),
+  Dot: props => <MCIcons name="circle" size={20} color="#000" {...props} />,
   EmptyCircle: props => (
     <OctIcons name="circle" size={20} color="#000" {...props} />
   ),

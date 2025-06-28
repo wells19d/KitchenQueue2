@@ -44,6 +44,15 @@ export const capFirst = str => {
   return lowerCaseStr.charAt(0).toUpperCase() + lowerCaseStr.slice(1);
 };
 
+export const capEachWord = str => {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
 export const limitToThreeDecimals = value => {
   if (!value) return '';
   const num = parseFloat(value);

@@ -18,7 +18,17 @@ function* fetchCommunityRecipes(action) {
   const {keywords} = action.payload;
 
   try {
-    // --- Step 1: Algolia Search ---
+    if (
+      !keywords ||
+      typeof keywords !== 'string' ||
+      keywords.trim().length < 2
+    ) {
+      // Optional: skip short queries
+      yield put({type: 'SET_COMMUNITY_RECIPES', payload: []});
+      return;
+    }
+
+    // Step 1: Get Algolia credentials
     const keys = yield call(fetchRemoteKeys);
     const appID = keys?.algolia?.appID;
     const searchKey = keys?.algolia?.searchKey;
@@ -30,9 +40,10 @@ function* fetchCommunityRecipes(action) {
     const client = algoliasearch(appID, searchKey);
     const index = client.initIndex('community_recipes');
 
+    // Step 2: Perform Algolia search
     const {hits} = yield call([index, index.search], keywords, {
       hitsPerPage: 20,
-      attributesToRetrieve: ['id'],
+      attributesToRetrieve: ['id'], // just enough to look up full docs
     });
 
     const recipeIds = hits.map(hit => hit.id);
@@ -42,6 +53,7 @@ function* fetchCommunityRecipes(action) {
       return;
     }
 
+    // Step 3: Pull full records from Firestore
     const fetchedRecipes = [];
 
     for (const id of recipeIds) {

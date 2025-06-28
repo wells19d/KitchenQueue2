@@ -106,9 +106,9 @@ export const menuArray = [
       //   action: 'console',
       // },
       {
-        title: 'View List',
-        icon: <Icons.Recipe />,
-        action: 'RecipeList',
+        title: 'Search',
+        icon: <Icons.Search />,
+        action: 'RecipeSearch',
       },
     ],
   },

@@ -1,5 +1,6 @@
 //* Styles.jsx
 import {StyleSheet} from 'react-native';
+import {useColors} from '../KQ-UI/KQUtilities';
 
 export const AppStyles = StyleSheet.create({
   navMenu: {
@@ -799,4 +800,107 @@ export const CMStyles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionIcon: {marginRight: 20},
+});
+
+export const RecipeSearchStyles = StyleSheet.create({
+  loadingWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingContainer: {
+    paddingTop: 6,
+    paddingBottom: 3,
+    paddingLeft: 6,
+    paddingRight: 3,
+  },
+  loadingText: {
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+  },
+  listWrapper: {marginTop: 2},
+  listTitle: {paddingHorizontal: 3, paddingBottom: 2},
+  listSubTitleContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingHorizontal: 3,
+  },
+  listReadyIn: {flex: 1, justifyContent: 'center'},
+  listScoreContainer: {flex: 1, flexDirection: 'row'},
+  listScoreLeft: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  listScoreRight: {justifyContent: 'center'},
+  wrapperStyles: {
+    borderBottomWidth: 1.5,
+    borderWidth: 1.5,
+    borderRadius: 20,
+    padding: 1,
+    paddingLeft: 15,
+    paddingRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 2,
+    marginHorizontal: 0,
+  },
+  iconStyles: {padding: 5, paddingRight: 0},
+  innerLayoutWrapper: {flex: 1, justifyContent: 'center'},
+  inputWrapper: {
+    margin: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+  },
+  clearButton: {
+    paddingLeft: 8,
+    paddingRight: 5,
+  },
+  clearButtonWrapper: {
+    marginLeft: -5,
+  },
+});
+
+export const SelectedRecipeStyles = StyleSheet.create({
+  imageSelectedStyles: {
+    width: '100%',
+    height: 200,
+  },
+  selectedCloseButton: {
+    position: 'absolute',
+    top: 50,
+    left: 10,
+    height: 30,
+    width: 30,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  selectedViewWrapper: {
+    flex: 1,
+    paddingTop: 1,
+    marginBottom: 0,
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+  },
+  sectionWrapper: {
+    flexDirection: 'row',
+    marginTop: 15,
+    marginBottom: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sectionEnd: {
+    flex: 1,
+    borderBottomWidth: 1.5,
+    borderColor: useColors('dark30'),
+  },
+  sectionTitle: {
+    marginHorizontal: 10,
+    position: 'relative',
+    top: -1.5,
+  },
 });
