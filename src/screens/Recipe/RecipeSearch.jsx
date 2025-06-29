@@ -1,5 +1,5 @@
 //* RecipeSearch.jsx
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Image, Input, Layout, Text} from '../../KQ-UI';
 import {useRecipeDataLoading, useRecipesData} from '../../hooks/useHooks';
 import {TouchableOpacity, View, ActivityIndicator} from 'react-native';
@@ -24,6 +24,10 @@ const RecipeSearch = () => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
   useEffect(() => {
+    if (recipesFound?.length === 0) {
+      setSearchCreated(false); //
+    }
+
     if (
       recipesFound &&
       Array.isArray(recipesFound) &&
@@ -36,13 +40,43 @@ const RecipeSearch = () => {
     }
   }, [recipesFound]);
 
-  const handleSearch = () => {
+  const lastSearch = useRef('');
+  const handleSearch = useCallback(() => {
+    const term = searchName.trim();
+    if (
+      !term ||
+      term.length < 2 ||
+      term.toLowerCase() === lastSearch.current.toLowerCase()
+    )
+      return;
+
+    lastSearch.current = term.toLowerCase();
     dispatch({
       type: 'FETCH_COMMUNITY_RECIPES',
-      payload: {keywords: searchName},
+      payload: {keywords: term},
     });
     setSearchCreated(true);
-  };
+  }, [searchName, dispatch]);
+
+  useEffect(() => {
+    if (storedData.length) {
+      FastImage.preload(
+        storedData.map(r => ({
+          uri: `https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2F${encodeURIComponent(
+            r.image,
+          )}?alt=media`,
+        })),
+      );
+    }
+  }, [storedData]);
+
+  useEffect(() => {
+    return () => {
+      setStoredData([]);
+      lastSearch.current = '';
+      setSearchCreated(false);
+    };
+  }, []);
 
   const handleClear = () => {
     FastImage.clearMemoryCache();
@@ -50,6 +84,7 @@ const RecipeSearch = () => {
     setSearchName('');
     setSearchCreated(false);
     setStoredData([]);
+    lastSearch.current = '';
     dispatch({type: 'RESET_COMMUNITY_RECIPES'});
   };
 
@@ -63,7 +98,6 @@ const RecipeSearch = () => {
     setSelectedRecipe(null);
   };
 
-  // Determine if we should use one column based on ingredient length
   const [useOneColumn, setUseOneColumn] = useState(false);
 
   useEffect(() => {
@@ -80,7 +114,7 @@ const RecipeSearch = () => {
       <TouchableOpacity
         onPress={() => handleSelectedRecipe(item)}
         style={styles.itemWrapper(isLeft)}>
-        <Image image={item?.image} style={styles.imageListStyles} />
+        <Image image={item.imageUri} style={styles.imageListStyles} />
 
         <View style={RecipeSearchStyles.listWrapper}>
           <View style={RecipeSearchStyles.listTitle}>
@@ -204,7 +238,7 @@ const RecipeSearch = () => {
               <FlashList
                 data={storedData}
                 renderItem={renderItem}
-                keyExtractor={item =>
+                keyExtractor={(item, index) =>
                   item?.id ? item.id.toString() : `id-${index}`
                 }
                 estimatedItemSize={300}

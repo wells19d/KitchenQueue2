@@ -43,7 +43,7 @@ const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
       onClose={onClose}>
       <View style={{borderBottomWidth: 1, borderColor: useColors('dark10')}}>
         <Image
-          image={selectedRecipe?.image}
+          image={selectedRecipe?.imageUri}
           style={SelectedRecipeStyles.imageSelectedStyles}
         />
       </View>
@@ -154,12 +154,10 @@ const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
               </View>
             ))}
           </View>
-
           <SectionHead
             title="Instructions"
             value={selectedRecipe?.instructions?.length > 0}
           />
-
           <View style={{margin: 5, marginBottom: 10}}>
             {Array.isArray(selectedRecipe?.instructions) &&
               selectedRecipe.instructions.length > 0 &&
