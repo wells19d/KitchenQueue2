@@ -864,6 +864,46 @@ export const RecipeSearchStyles = StyleSheet.create({
 });
 
 export const SelectedRecipeStyles = StyleSheet.create({
+  aboutRecipe: {marginTop: 10, marginBottom: 2, marginHorizontal: 15},
+  aboutRecipeButton: {
+    alignItems: 'flex-end',
+    marginBottom: 10,
+    marginHorizontal: 20,
+  },
+  ingWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  ingDot: {
+    position: 'relative',
+    top: 8,
+    paddingHorizontal: 3,
+  },
+  ingColOne: {
+    width: '98%',
+    marginVertical: 4,
+    marginHorizontal: 4,
+    justifyContent: 'center',
+    paddingLeft: 10,
+    paddingRight: 5,
+  },
+  ingColTwo: {
+    width: '48%',
+    marginVertical: 2,
+    marginHorizontal: 4,
+    justifyContent: 'center',
+    paddingLeft: 10,
+    paddingRight: 5,
+  },
+  ingColTwoAlt: {
+    width: '48%',
+    marginVertical: 2,
+    marginHorizontal: 0,
+    justifyContent: 'center',
+    paddingLeft: 10,
+    paddingRight: 5,
+  },
+  noteWrapper: {marginBottom: 10, marginHorizontal: 15},
   imageSelectedStyles: {
     width: '100%',
     height: 200,
@@ -902,5 +942,38 @@ export const SelectedRecipeStyles = StyleSheet.create({
     marginHorizontal: 10,
     position: 'relative',
     top: -1.5,
+  },
+  stepWrapper: {
+    // borderWidth: 0.2,
+    flexDirection: 'row',
+    marginLeft: 5,
+    marginRight: 5,
+    marginVertical: 5,
+    marginTop: 5,
+  },
+  stepNumber: {
+    width: 60,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+  },
+  stepText: {
+    flex: 1,
+    marginLeft: 5,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    paddingRight: 5,
+  },
+  toolWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 0,
+    paddingHorizontal: 5,
+  },
+  toolText: {
+    width: '50%',
+    marginVertical: 2,
+    paddingLeft: 15,
+    paddingRight: 5,
+    justifyContent: 'center',
   },
 });

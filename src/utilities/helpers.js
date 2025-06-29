@@ -59,3 +59,8 @@ export const limitToThreeDecimals = value => {
   if (isNaN(num)) return '';
   return num.toFixed(3).replace(/\.?0+$/, ''); // trims trailing zeros
 };
+
+export const endWithPeriod = str => {
+  if (typeof str !== 'string') return '';
+  return str.trim().endsWith('.') ? str.trim() : str.trim() + '.';
+};

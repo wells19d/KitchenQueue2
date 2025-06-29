@@ -1,17 +1,19 @@
 //* SelectedRecips.jsx
 
-import React from 'react';
+import React, {useState} from 'react';
 import {View, ScrollView, TouchableOpacity} from 'react-native';
 import {Modal, Text, Image} from '../../KQ-UI';
 import {Icons} from '../../components/IconListRouter';
 import {useColors} from '../../KQ-UI/KQUtilities';
-import {capFirst, capEachWord} from '../../utilities/helpers';
+import {capFirst, capEachWord, endWithPeriod} from '../../utilities/helpers';
 import {toFraction} from '../../utilities/fractionUnit';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {SelectedRecipeStyles} from '../../styles/Styles';
 
 const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
   if (!selectedRecipe) return null;
+
+  const [showAboutRecipe, setShowAboutRecipe] = useState(false);
 
   const SectionHead = ({title, value, style}) => {
     if (value) {
@@ -59,82 +61,67 @@ const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
             ? `KQ Recipe provided by ${selectedRecipe?.authorName}`
             : `KQ Recipe provided by ${selectedRecipe?.source}`}
         </Text>
-        <ScrollView style={{paddingHorizontal: 10}}>
+        <ScrollView>
           {selectedRecipe?.aboutRecipe && (
-            <View style={{marginTop: 10, marginBottom: 5, marginHorizontal: 5}}>
-              <Text size="xSmall" font="open-7">
-                About this Recipe:
-              </Text>
-              <Text size="tiny" font="open-6">
-                {selectedRecipe?.aboutRecipe}
-              </Text>
-            </View>
+            <>
+              <View style={SelectedRecipeStyles.aboutRecipe}>
+                <Text size="xSmall" font="open-7">
+                  About this Recipe:
+                </Text>
+                <Text
+                  size="tiny"
+                  font="open-6"
+                  numberOfLines={showAboutRecipe ? 10 : 1}>
+                  {endWithPeriod(selectedRecipe?.aboutRecipe)}
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={SelectedRecipeStyles.aboutRecipeButton}
+                onPress={() => setShowAboutRecipe(!showAboutRecipe)}>
+                <Text size="tiny" font="open-5" kqColor="rgb(56, 71, 234)">
+                  {showAboutRecipe ? 'Show Less' : 'Show More'}
+                </Text>
+              </TouchableOpacity>
+            </>
           )}
           <SectionHead
             title="Tools"
             value={selectedRecipe?.tools?.length > 0}
             style={{marginTop: 5}}
           />
-          <View
-            style={{flexDirection: 'row', flexWrap: 'wrap', marginBottom: 0}}>
+          <View style={SelectedRecipeStyles.toolWrapper}>
             {selectedRecipe?.tools?.map((tool, index) => (
-              <View
-                key={index}
-                style={{
-                  width: '50%',
-                  paddingLeft: 10,
-                  marginVertical: 2,
-                }}>
+              <View key={index} style={SelectedRecipeStyles.toolText}>
                 <Text size="xSmall" font="open-7" numberOfLines={1}>
                   {capFirst(tool)}
                 </Text>
               </View>
             ))}
           </View>
-          {selectedRecipe?.notes && (
-            <View style={{marginTop: 10, marginHorizontal: 10}}>
-              <Text size="xSmall" font="open-7">
-                Note(s):
-              </Text>
-              <Text size="tiny" font="open-6">
-                {selectedRecipe?.notes}
-              </Text>
-            </View>
-          )}
           <SectionHead
             title="Ingredients"
             value={selectedRecipe?.ingredients?.length > 0}
           />
-
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-            }}>
+          <View style={SelectedRecipeStyles.ingWrapper}>
             {selectedRecipe?.ingredients?.map((ing, index) => (
               <View
                 key={index}
-                style={{
-                  // borderWidth: 1,
-                  width: useOneColumn ? '100%' : '50%',
-                  marginVertical: useOneColumn ? 3 : 2,
-                  justifyContent: 'center',
-                  paddingLeft: 15,
-                }}>
+                style={
+                  useOneColumn
+                    ? SelectedRecipeStyles.ingColOne
+                    : index % 2 === 0
+                    ? SelectedRecipeStyles.ingColTwo
+                    : SelectedRecipeStyles.ingColTwoAlt
+                }>
                 <View style={{flexDirection: 'row'}}>
-                  <View
-                    style={{
-                      position: 'relative',
-                      top: 8,
-                      paddingHorizontal: 3,
-                    }}>
+                  <View style={SelectedRecipeStyles.ingDot}>
                     <Icons.Dot size={4} />
                   </View>
                   <View style={{flex: 1}}>
                     <Text
                       size="xSmall"
                       font="open-7"
-                      numberOfLines={useOneColumn ? 2 : 1}>
+                      numberOfLines={useOneColumn ? 3 : 1}>
                       {(() => {
                         if (ing.amount != null) {
                           const pluralUnit = formatPluralUnit(
@@ -158,32 +145,39 @@ const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
             title="Instructions"
             value={selectedRecipe?.instructions?.length > 0}
           />
+          {selectedRecipe?.notes && (
+            <View style={SelectedRecipeStyles.noteWrapper}>
+              <Text size="xSmall" font="open-7">
+                Note:
+              </Text>
+              <Text size="tiny" font="open-6">
+                {endWithPeriod(selectedRecipe?.notes)}
+              </Text>
+            </View>
+          )}
           <View style={{margin: 5, marginBottom: 10}}>
             {Array.isArray(selectedRecipe?.instructions) &&
               selectedRecipe.instructions.length > 0 &&
               selectedRecipe.instructions.map((group, gIndex) => (
                 <View key={`group-${gIndex}`} style={{marginBottom: 25}}>
                   {group.name ? (
-                    <Text size="small" font="open-7">
-                      {group.name}
-                    </Text>
+                    <View style={{paddingLeft: 10, paddingBottom: 2}}>
+                      <Text size="small" font="open-7">
+                        {group.name}
+                      </Text>
+                    </View>
                   ) : null}
                   {group.steps.map((ins, sIndex) => (
                     <View
                       key={`${gIndex}-${sIndex}`}
-                      style={{
-                        flexDirection: 'row',
-                        marginLeft: 10,
-                        marginVertical: 2,
-                        marginTop: 5,
-                      }}>
-                      <View>
+                      style={SelectedRecipeStyles.stepWrapper}>
+                      <View style={SelectedRecipeStyles.stepNumber}>
                         <Text size="xSmall" font="open-7">
                           Step {ins.step + 1}:
                         </Text>
                       </View>
-                      <View style={{flex: 1, marginLeft: 5}}>
-                        <Text size="xSmall">{ins.action}.</Text>
+                      <View style={SelectedRecipeStyles.stepText}>
+                        <Text size="xSmall">{endWithPeriod(ins.action)}</Text>
                       </View>
                     </View>
                   ))}
