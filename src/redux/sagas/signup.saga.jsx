@@ -78,10 +78,15 @@ function* createNewAccount(action) {
     const recipeBoxID = uuid.v4();
     const favoriteItemsID = uuid.v4();
     const joinCode = uuid.v4().replace(/-/g, '');
-    const cupboardLimit = 100;
+    const cupboardLimit = 50;
     const shoppingCartLimit = 25;
     const favoriteItemsLimit = 10;
     const recipeBoxLimit = 5;
+    const recipeSearchLimit = 0;
+    const upcSearchLimit = 0;
+    const lastSearchDate = new Date().toISOString(); //2025-06-29T09:00:00.000Z
+    const dailyRecipeCounter = 0;
+    const dailyUPCCounter = 0;
 
     const newAccount = {
       allowedUsers: [userID],
@@ -98,9 +103,14 @@ function* createNewAccount(action) {
       owner: userID,
       recipeBoxID: recipeBoxID,
       recipeBoxLimit: recipeBoxLimit,
+      recipeSearchLimit: recipeSearchLimit,
       shoppingCartID: shoppingCartID,
       shoppingCartLimit: shoppingCartLimit,
       subType: 'Free',
+      upcSearchLimit: upcSearchLimit,
+      lastSearchDate: lastSearchDate,
+      dailyRecipeCounter: dailyRecipeCounter,
+      dailyUPCCounter: dailyUPCCounter,
     };
 
     yield call(setDoc, doc(db, 'accounts', accountID), newAccount);

@@ -15,7 +15,7 @@ import {fetchRemoteKeys} from '../../../firebase.config';
 const db = getFirestore(getApp());
 
 function* fetchCommunityRecipes(action) {
-  const {keywords} = action.payload;
+  const {keywords, allowance, profileID, accountID} = action.payload;
 
   try {
     const trimmed = keywords?.trim();
@@ -66,7 +66,16 @@ function* fetchCommunityRecipes(action) {
         console.warn(`[Saga] Firestore doc missing for ID: ${id}`);
       }
     }
-
+    yield put({
+      type: 'COUNT_UP_DAILY',
+      payload: {
+        updatedData: {
+          dailyRecipeCounter: allowance + 1,
+        },
+        profileID,
+        accountID,
+      },
+    });
     yield put({type: 'SET_COMMUNITY_RECIPES', payload: fetchedRecipes});
   } catch (error) {
     console.error('Algolia/Firestore search error:', error);

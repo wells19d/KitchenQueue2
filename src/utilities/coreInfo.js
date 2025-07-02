@@ -51,6 +51,8 @@ export const useCoreInfo = () => {
     maxCupboardItems: account?.cupboardLimit || null,
     maxRecipeBoxItems: account?.recipeBoxLimit || null,
     maxFavoriteItems: account?.favoriteItemsLimit || null,
+    maxRecipeSearchLimit: account?.recipeSearchLimit || null,
+    maxUPCSearchLimit: account?.upcSearchLimit || null,
     accountStatus: account?.isActive || null,
 
     // Shopping Cart Metadata
@@ -79,5 +81,7 @@ export const useCoreInfo = () => {
 
     // Recipes Metadata - feature not yet implemented
     recipeBoxLength: 0,
+    dailyRecipeCounter: account?.dailyRecipeCounter || 0,
+    dailyUPCCounter: account?.dailyUPCCounter || 0,
   };
 };

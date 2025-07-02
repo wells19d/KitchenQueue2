@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 //*helpers.js
 export function displayCustom(value, mapData = []) {
   if (!value || typeof value !== 'string') return null;
@@ -63,4 +65,13 @@ export const limitToThreeDecimals = value => {
 export const endWithPeriod = str => {
   if (typeof str !== 'string') return '';
   return str.trim().endsWith('.') ? str.trim() : str.trim() + '.';
+};
+
+export const compareByDate = (date1, date2) => {
+  if (!date1 || !date2) return false;
+
+  const d1 = moment.utc(date1).format('YYYY-MM-DD');
+  const d2 = moment.utc(date2).format('YYYY-MM-DD');
+
+  return d1 === d2;
 };

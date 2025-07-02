@@ -11,9 +11,15 @@ import {Icons} from '../../components/IconListRouter';
 import FastImage from 'react-native-fast-image';
 import SelectedRecipe from './SelectedRecipe';
 import {RecipeSearchStyles} from '../../styles/Styles';
+import {useCoreInfo} from '../../utilities/coreInfo';
 
 const RecipeSearch = () => {
   const dispatch = useDispatch();
+  const core = useCoreInfo();
+  console.log('Core Info:', core);
+  console.log('dailyRecipeCounter:', core?.dailyRecipeCounter || 0);
+  console.log('maxRecipeSearchLimit:', core?.maxRecipeSearchLimit || 0);
+
   const recipesFound = useRecipesData();
   const recipeLoading = useRecipeDataLoading();
 
@@ -22,6 +28,7 @@ const RecipeSearch = () => {
   const [searchCreated, setSearchCreated] = useState(true);
   const [showRecipeInfo, setShowRecipeInfo] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [maxLimitError, setMaxLimitError] = useState(false);
 
   useEffect(() => {
     if (recipesFound?.length === 0) {
@@ -51,10 +58,21 @@ const RecipeSearch = () => {
       return;
 
     lastSearch.current = term.toLowerCase();
-    dispatch({
-      type: 'FETCH_COMMUNITY_RECIPES',
-      payload: {keywords: term},
-    });
+
+    if (core?.dailyRecipeCounter < core?.maxRecipeSearchLimit) {
+      dispatch({
+        type: 'FETCH_COMMUNITY_RECIPES',
+        payload: {
+          keywords: term,
+          allowance: core?.dailyRecipeCounter,
+          profileID: core?.profileID,
+          accountID: core?.accountID,
+        },
+      });
+    } else {
+      setMaxLimitError(true);
+    }
+
     setSearchCreated(true);
   }, [searchName, dispatch]);
 
@@ -85,6 +103,7 @@ const RecipeSearch = () => {
     setSearchCreated(false);
     setStoredData([]);
     lastSearch.current = '';
+    setMaxLimitError(false);
     dispatch({type: 'RESET_COMMUNITY_RECIPES'});
   };
 

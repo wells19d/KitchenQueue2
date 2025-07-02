@@ -5,11 +5,12 @@ import {Layout, Text} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {Image, TouchableOpacity, View} from 'react-native';
 import {useColors} from '../../KQ-UI/KQUtilities';
-import {useDeviceInfo} from '../../hooks/useHooks';
+import {useAccount, useDeviceInfo} from '../../hooks/useHooks';
 import {Icons} from '../../components/IconListRouter';
 
 const Home = () => {
   const core = useCoreInfo();
+  const account = useAccount();
   const device = useDeviceInfo();
   const navigation = useNavigation();
 
@@ -239,24 +240,31 @@ const Home = () => {
           value2={core?.maxRecipeBoxItems}
           // iconStyles={{marginTop: -4}}
           icon={<Icons.Chest size={25} />}
+          // onPress={() => navigation.navigate('RecipeSearch')}
+        />
+      </DisplayRow>
+      <DisplayRow>
+        <DisplayCell
+          infoCentered
+          title="Item Scanner"
+          subTitle="(Daily Limit)"
+          value1={core?.dailyUPCCounter}
+          value2={core?.maxUPCSearchLimit}
+          // iconStyles={{marginTop: -1}}
+          icon={<Icons.Barcode size={20} />}
+          // onPress={() => navigation.navigate('FavoritesList')}
+        />
+        <DisplayCell
+          infoCentered
+          title="Find Recipes"
+          subTitle="(Daily Limit)"
+          value1={core?.dailyRecipeCounter}
+          value2={core?.maxRecipeSearchLimit}
+          // iconStyles={{marginTop: -4}}
+          icon={<Icons.Search size={25} />}
           onPress={() => navigation.navigate('RecipeSearch')}
         />
       </DisplayRow>
-      {/* <DisplayRow>
-        <DisplayCell
-          height={200}
-          icon={<Icons.Chest size={20} />}
-          blank
-          blankStyle={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text size="xSmall" font="mont-7">
-            This is a custom cell!
-          </Text>
-        </DisplayCell>
-      </DisplayRow> */}
     </Layout>
   );
 };

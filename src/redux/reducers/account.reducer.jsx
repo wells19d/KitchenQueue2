@@ -11,9 +11,21 @@ const accountReducer = (state = initialState, action) => {
     case 'SET_ACCOUNT':
     case 'ACCOUNT_CREATE_SUCCESS':
       return {...state, account: action.payload, error: null};
+    case 'DAILY_COUNTUP_SUCCESS':
+      return state;
+    case 'RESET_DAILY_COUNTERS_SUCCESS':
+      return {
+        ...state,
+        account: {
+          ...state.account, // 🟢 Preserve existing data
+          ...action.payload, // 🟢 Overwrite with updated fields
+        },
+        error: null,
+      };
 
     case 'ACCOUNT_CREATE_FAILURE':
     case 'ACCOUNT_FETCH_FAILED':
+    case 'RESET_DAILY_COUNTERS_FAILED':
       return {...state, error: action.payload};
 
     // ✅ Allowed profiles

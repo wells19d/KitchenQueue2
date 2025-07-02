@@ -8,6 +8,7 @@ import {
   Image,
   StatusBar,
   ActivityIndicator,
+  AppState,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -63,6 +64,8 @@ import AccountSetup from './src/screens/Account/AccountSetup';
 import FavoriteItems from './src/screens/Favorites/FavoriteItems';
 import FavoritesList from './src/screens/Favorites/FavoritesList';
 import RecipeSearch from './src/screens/Recipe/RecipeSearch';
+import {compareByDate} from './src/utilities/helpers';
+import moment from 'moment';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -158,6 +161,35 @@ const Main = props => {
       }
     }
   }, [isAuthenticated, profile, account]);
+
+  useEffect(() => {
+    if (renderDisplay !== 'main') return;
+
+    const today = new Date().toISOString();
+    const lastSearchDate = account.lastSearchDate;
+    const isSameDay = compareByDate(today, lastSearchDate);
+
+    if (!isSameDay && account?.id) {
+      dispatch({
+        type: 'RESET_DAILY_COUNTERS',
+        payload: {accountID: account.id},
+      });
+    }
+
+    const subscription = AppState.addEventListener('change', nextState => {
+      if (nextState === 'active') {
+        if (!isSameDay && account?.id) {
+          // Dispatch an action to reset search counters
+          dispatch({
+            type: 'RESET_DAILY_COUNTERS',
+            payload: {accountID: account.id},
+          });
+        }
+      }
+    });
+
+    return () => subscription.remove();
+  }, [renderDisplay, account?.lastSearchDate, account?.id]);
 
   useEffect(() => {
     dispatch({type: 'FETCH_DEVICE_INFO'});
