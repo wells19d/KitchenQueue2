@@ -26,7 +26,21 @@ export const checkLimit = ({current, incoming = 0, max, label}) => {
       type: 'info',
       text1: `This will Exceed ${label} Limits`,
       text2: `This action would exceed your limit of ${max} ${label.toLowerCase()}. Please upgrade your subscription or remove some items to continue.`,
-      visibilityTime: 5000,
+      visibilityTime: 8000,
+    });
+    return false;
+  }
+
+  return true;
+};
+
+export const dailyCheckLimit = ({current, max, label}) => {
+  if (current >= max) {
+    Toast.show({
+      type: 'info',
+      text1: `Daily ${label} Search Reached`,
+      text2: `You’ve reached your limit of ${max} daily ${label.toLowerCase()} searches. Please upgrade your subscription or wait until it resets tomorrow.`,
+      visibilityTime: 8000,
     });
     return false;
   }

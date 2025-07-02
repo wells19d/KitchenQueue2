@@ -12,7 +12,7 @@ import FastImage from 'react-native-fast-image';
 import SelectedRecipe from './SelectedRecipe';
 import {RecipeSearchStyles} from '../../styles/Styles';
 import {useCoreInfo} from '../../utilities/coreInfo';
-import Toast from 'react-native-toast-message';
+import {dailyCheckLimit} from '../../utilities/checkLimit';
 
 const RecipeSearch = () => {
   const dispatch = useDispatch();
@@ -76,10 +76,10 @@ const RecipeSearch = () => {
         },
       });
     } else {
-      Toast.show({
-        type: 'danger',
-        text1: 'Daily Search Limit Reached',
-        text2: 'You have reached the maximum search limit.',
+      dailyCheckLimit({
+        current: counterRef.current,
+        max: core?.maxRecipeSearchLimit,
+        label: 'Recipe',
       });
     }
 
