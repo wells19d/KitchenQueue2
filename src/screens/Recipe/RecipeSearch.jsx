@@ -12,15 +12,14 @@ import FastImage from 'react-native-fast-image';
 import SelectedRecipe from './SelectedRecipe';
 import {RecipeSearchStyles} from '../../styles/Styles';
 import {useCoreInfo} from '../../utilities/coreInfo';
+import Toast from 'react-native-toast-message';
 
 const RecipeSearch = () => {
   const dispatch = useDispatch();
   const core = useCoreInfo();
-  console.log('Core Info:', core);
-  console.log('dailyRecipeCounter:', core?.dailyRecipeCounter || 0);
-  console.log('maxRecipeSearchLimit:', core?.maxRecipeSearchLimit || 0);
 
   const recipesFound = useRecipesData();
+  console.log('recipesFound', recipesFound);
   const recipeLoading = useRecipeDataLoading();
 
   const [storedData, setStoredData] = useState([]);
@@ -28,7 +27,6 @@ const RecipeSearch = () => {
   const [searchCreated, setSearchCreated] = useState(true);
   const [showRecipeInfo, setShowRecipeInfo] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [maxLimitError, setMaxLimitError] = useState(false);
 
   useEffect(() => {
     if (recipesFound?.length === 0) {
@@ -48,6 +46,14 @@ const RecipeSearch = () => {
   }, [recipesFound]);
 
   const lastSearch = useRef('');
+  const counterRef = useRef(core?.dailyRecipeCounter || 0);
+
+  useEffect(() => {
+    if (core?.dailyRecipeCounter !== undefined) {
+      counterRef.current = core.dailyRecipeCounter;
+    }
+  }, [core?.dailyRecipeCounter]);
+
   const handleSearch = useCallback(() => {
     const term = searchName.trim();
     if (
@@ -59,7 +65,7 @@ const RecipeSearch = () => {
 
     lastSearch.current = term.toLowerCase();
 
-    if (core?.dailyRecipeCounter < core?.maxRecipeSearchLimit) {
+    if (counterRef.current < core?.maxRecipeSearchLimit) {
       dispatch({
         type: 'FETCH_COMMUNITY_RECIPES',
         payload: {
@@ -70,7 +76,11 @@ const RecipeSearch = () => {
         },
       });
     } else {
-      setMaxLimitError(true);
+      Toast.show({
+        type: 'danger',
+        text1: 'Daily Search Limit Reached',
+        text2: 'You have reached the maximum search limit.',
+      });
     }
 
     setSearchCreated(true);
@@ -103,7 +113,6 @@ const RecipeSearch = () => {
     setSearchCreated(false);
     setStoredData([]);
     lastSearch.current = '';
-    setMaxLimitError(false);
     dispatch({type: 'RESET_COMMUNITY_RECIPES'});
   };
 
