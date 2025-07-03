@@ -1,6 +1,6 @@
 //* Main.jsx
 import {NavigationContainer} from '@react-navigation/native';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   Alert,
   Dimensions,
@@ -66,6 +66,8 @@ import FavoritesList from './src/screens/Favorites/FavoritesList';
 import RecipeSearch from './src/screens/Recipe/RecipeSearch';
 import {compareByDate} from './src/utilities/helpers';
 import moment from 'moment';
+import {dateTimeStringDate} from './src/utilities/dateTime';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -162,30 +164,40 @@ const Main = props => {
     }
   }, [isAuthenticated, profile, account]);
 
+  const hasResetToday = useRef(false);
+
   useEffect(() => {
+    console.log('[RESET_COUNTERS] useEffect triggered');
+
     if (renderDisplay !== 'main') return;
-
-    const today = new Date().toISOString();
-    const lastSearchDate = account.lastSearchDate;
-    const isSameDay = compareByDate(today, lastSearchDate);
-
-    if (!isSameDay && account?.id) {
-      dispatch({
-        type: 'RESET_DAILY_COUNTERS',
-        payload: {accountID: account.id},
-      });
+    if (!account?.lastSearchDate) {
+      console.log('[RESET_COUNTERS] Skipped — no lastSearchDate');
+      return;
     }
 
-    const subscription = AppState.addEventListener('change', nextState => {
-      if (nextState === 'active') {
-        if (!isSameDay && account?.id) {
-          // Dispatch an action to reset search counters
-          dispatch({
-            type: 'RESET_DAILY_COUNTERS',
-            payload: {accountID: account.id},
-          });
-        }
+    const today = moment().format('MMDDYYYY');
+    const lastSearchDate = dateTimeStringDate(account.lastSearchDate);
+    const isSameDay = compareByDate(today, lastSearchDate);
+
+    const checkReset = async () => {
+      const lastReset = await AsyncStorage.getItem('lastResetDate');
+      if (lastReset === today) return;
+
+      if (!isSameDay && account?.id && !hasResetToday.current) {
+        console.log('[RESET_COUNTERS] Dispatching RESET_DAILY_COUNTERS');
+        await AsyncStorage.setItem('lastResetDate', today);
+        hasResetToday.current = true;
+        dispatch({
+          type: 'RESET_DAILY_COUNTERS',
+          payload: {accountID: account.id},
+        });
       }
+    };
+
+    checkReset();
+
+    const subscription = AppState.addEventListener('change', nextState => {
+      if (nextState === 'active') checkReset();
     });
 
     return () => subscription.remove();

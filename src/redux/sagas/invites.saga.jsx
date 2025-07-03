@@ -7,6 +7,7 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
@@ -68,7 +69,7 @@ function* queueInviteSaga(action) {
       const inviteRef = doc(db, 'accountInvites', reusedInvite.inviteCode);
       const updated = {
         ...reusedInvite,
-        toExpire: new Date().toISOString(),
+        toExpire: serverTimestamp(),
       };
       yield call(setDoc, inviteRef, updated);
       yield put({type: 'SET_EXISTING_INVITE', payload: updated});

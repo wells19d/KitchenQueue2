@@ -5,6 +5,7 @@ import {
   getDoc,
   updateDoc,
   doc,
+  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
@@ -82,7 +83,7 @@ function* updateAccount(action) {
     const accountRef = doc(db, 'accounts', accountID);
     const updatedAccount = {
       ...updatedData,
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: serverTimestamp(),
       lastUpdatedBy: profileID,
     };
 
@@ -102,7 +103,7 @@ function* resetDailyCounters(action) {
     const updatedData = {dailyRecipeCounter: 0, dailyUPCCounter: 0};
     const updatedAccount = {
       ...updatedData,
-      lastSearchDate: new Date().toISOString(),
+      lastSearchDate: serverTimestamp(),
     };
 
     yield call(updateDoc, accountRef, updatedAccount);
@@ -120,8 +121,8 @@ function* countUpDaily(action) {
     const accountRef = doc(db, 'accounts', accountID);
     const updatedAccount = {
       ...updatedData,
-      lastSearchDate: new Date().toISOString(),
-      lastUpdated: new Date().toISOString(),
+      lastSearchDate: serverTimestamp(),
+      lastUpdated: serverTimestamp(),
       lastUpdatedBy: profileID,
     };
 

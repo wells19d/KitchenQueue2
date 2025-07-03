@@ -70,8 +70,5 @@ export const endWithPeriod = str => {
 export const compareByDate = (date1, date2) => {
   if (!date1 || !date2) return false;
 
-  const d1 = moment.utc(date1).format('YYYY-MM-DD');
-  const d2 = moment.utc(date2).format('YYYY-MM-DD');
-
-  return d1 === d2;
+  return date1 === date2;
 };

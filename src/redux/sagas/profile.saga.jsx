@@ -6,6 +6,7 @@ import {
   getDoc,
   updateDoc,
   doc,
+  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
@@ -44,7 +45,7 @@ function* updateProfile(action) {
     const profileRef = doc(db, 'profiles', userId);
     const updatedProfile = {
       ...updatedData,
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: serverTimestamp(),
     };
 
     yield call(updateDoc, profileRef, updatedProfile);

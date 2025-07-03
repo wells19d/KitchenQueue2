@@ -17,6 +17,7 @@ import SAButton from './SAButton';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Animated} from 'react-native';
 import {AppInfo} from '../../../AppInfo';
+import {serverTimestamp} from '@react-native-firebase/firestore';
 
 const Account = () => {
   const profile = useProfile();
@@ -109,7 +110,7 @@ const Account = () => {
       fromLast: profile?.lastName,
       fromEmail: profile?.email,
       joinCode: account?.joinCode,
-      toExpire: new Date().toISOString(),
+      toExpire: serverTimestamp(),
       accountID: account?.id,
     };
 
