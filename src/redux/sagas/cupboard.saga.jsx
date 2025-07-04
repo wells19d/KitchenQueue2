@@ -8,7 +8,6 @@ import {
   updateDoc,
   doc,
   writeBatch,
-  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 import {select} from 'redux-saga/effects';
@@ -31,7 +30,7 @@ function* fetchCupboard(action) {
         yield call(() =>
           updateDoc(cupboardRef, {
             items: [],
-            lastUpdated: serverTimestamp(),
+            lastUpdated: new Date().toISOString(),
           }),
         );
       }
@@ -56,7 +55,7 @@ function* addItemToCupboard(action) {
     const account = yield select(state => state.account.account);
     const cupboard = yield select(state => state.cupboard.cupboard);
 
-    const maxCupboardItems = account?.cupboardLength || 0;
+    const maxCupboardItems = account?.cupboardLimit || 0;
     const cupboardLength = cupboard?.items?.length || 0;
 
     const isAllowed = checkLimit({
@@ -79,14 +78,14 @@ function* addItemToCupboard(action) {
           ...newItem,
           itemId: uuid.v4(),
           createdBy: profileID,
-          itemDate: serverTimestamp(),
+          itemDate: new Date().toISOString(),
         },
       ];
 
       yield call(() =>
         updateDoc(cupboardRef, {
           items: updatedItems,
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -134,7 +133,7 @@ function* updateItemInCupboard(action) {
       yield call(() =>
         updateDoc(cupboardRef, {
           items: updatedItems,
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -183,7 +182,7 @@ function* deleteItemFromCupboard(action) {
       yield call(() =>
         updateDoc(cupboardRef, {
           items: updatedItems,
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -272,7 +271,7 @@ function* batchToCupboard(action) {
             category: category || '',
             notes: notes || '',
             itemId: uuid.v4(),
-            itemDate: serverTimestamp(),
+            itemDate: new Date().toISOString(),
             createdBy: profileID,
           };
 
@@ -282,7 +281,7 @@ function* batchToCupboard(action) {
 
       batch.update(cupboardRef, {
         items: updatedItems,
-        lastUpdated: serverTimestamp(),
+        lastUpdated: new Date().toISOString(),
         lastUpdatedBy: profileID,
       });
 
@@ -379,7 +378,7 @@ function* batchAddToCupboard(action) {
           category: category || '',
           notes: notes || '',
           itemId: uuid.v4(),
-          itemDate: serverTimestamp(),
+          itemDate: new Date().toISOString(),
           createdBy: profileID,
         };
 
@@ -388,7 +387,7 @@ function* batchAddToCupboard(action) {
 
       batch.update(cupboardRef, {
         items: updatedItems,
-        lastUpdated: serverTimestamp(),
+        lastUpdated: new Date().toISOString(),
         lastUpdatedBy: profileID,
       });
 
@@ -435,7 +434,7 @@ function* resetCupboard(action) {
       yield call(() =>
         updateDoc(cupboardRef, {
           items: [],
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );

@@ -9,7 +9,6 @@ import SwipeableItem from '../../components/SwipeableItem';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
-import {serverTimestamp} from '@react-native-firebase/firestore';
 
 const ShoppingList = () => {
   const shopping = useShoppingCart();
@@ -33,7 +32,7 @@ const ShoppingList = () => {
       const updatedItem = {
         ...item,
         status: 'shopping-cart',
-        lastUpdated: serverTimestamp(),
+        lastUpdated: new Date().toISOString(),
         lastUpdatedBy: core.profileID,
       };
 

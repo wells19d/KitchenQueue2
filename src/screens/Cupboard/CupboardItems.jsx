@@ -134,8 +134,8 @@ const CupboardItems = () => {
       packageSize: Number(packageSize) > 0 ? Number(packageSize) : 1,
       remainingAmount:
         parseFloat(remainingAmount) > 0 ? parseFloat(remainingAmount) : 1,
-      measurement: measurement?.key || '',
-      category: category?.key || '',
+      measurement: measurement?.key?.trim() || 'each',
+      category: category?.key?.trim() || 'other',
       notes: notes || '',
     };
 
@@ -176,7 +176,7 @@ const CupboardItems = () => {
       }
     }
 
-    handleClose();
+    resetForm();
   };
 
   const handleClose = () => {

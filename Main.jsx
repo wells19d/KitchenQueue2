@@ -68,6 +68,7 @@ import {compareByDate} from './src/utilities/helpers';
 import moment from 'moment';
 import {dateTimeStringDate} from './src/utilities/dateTime';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NavigationMode from 'react-native-navigation-mode';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -78,13 +79,14 @@ const Main = props => {
   const useHaptics = setHapticFeedback();
   const Stack = createNativeStackNavigator();
   const isAuthenticated = useAuth();
+  const [mode, setMode] = useState(null);
 
   const [headerColor, setHeaderColor] = useState('black');
   const [screenLocation, setScreenLocation] = useState('');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [textColor, setTextColor] = useState('#373d43');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const bottomHeight = getNavMenuHeight(device);
+  const bottomHeight = getNavMenuHeight(device, mode);
 
   const [showPPModal, setShowPPModal] = useState(false);
   const [showTOSModal, setShowTOSModal] = useState(true);
@@ -93,6 +95,24 @@ const Main = props => {
 
   const [renderDisplay, setRenderDisplay] = useState('auth');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    console.log('⏱ running getNavigationMode once...');
+
+    let isMounted = true;
+
+    NavigationMode.getNavigationMode()
+      .then(result => {
+        if (isMounted) {
+          setMode(result);
+        }
+      })
+      .catch(err => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Step 1: Handle base state – app readiness and auth
   useEffect(() => {
@@ -167,13 +187,8 @@ const Main = props => {
   const hasResetToday = useRef(false);
 
   useEffect(() => {
-    console.log('[RESET_COUNTERS] useEffect triggered');
-
     if (renderDisplay !== 'main') return;
-    if (!account?.lastSearchDate) {
-      console.log('[RESET_COUNTERS] Skipped — no lastSearchDate');
-      return;
-    }
+    if (!account?.lastSearchDate) return;
 
     const today = moment().format('MMDDYYYY');
     const lastSearchDate = dateTimeStringDate(account.lastSearchDate);
@@ -187,6 +202,7 @@ const Main = props => {
         console.log('[RESET_COUNTERS] Dispatching RESET_DAILY_COUNTERS');
         await AsyncStorage.setItem('lastResetDate', today);
         hasResetToday.current = true;
+
         dispatch({
           type: 'RESET_DAILY_COUNTERS',
           payload: {accountID: account.id},
@@ -487,6 +503,7 @@ const Main = props => {
             toggleMenu={toggleMenu}
             setIsSheetOpen={setIsSheetOpen}
             device={device}
+            navMode={mode}
           />
         </SafeAreaView>
         {currentModal === 'TOS' && (

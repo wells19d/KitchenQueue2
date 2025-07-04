@@ -7,7 +7,6 @@ import {
   getDoc,
   updateDoc,
   doc,
-  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 import {select} from 'redux-saga/effects';
@@ -30,7 +29,7 @@ function* fetchFavorites(action) {
         yield call(() =>
           updateDoc(favoritesRef, {
             items: [],
-            lastUpdated: serverTimestamp(),
+            lastUpdated: new Date().toISOString(),
           }),
         );
       }
@@ -78,14 +77,14 @@ function* addItemToFavorites(action) {
           ...newItem,
           itemId: uuid.v4(),
           createdBy: profileID,
-          itemDate: serverTimestamp(),
+          itemDate: new Date().toISOString(),
         },
       ];
 
       yield call(() =>
         updateDoc(favoritesRef, {
           items: updatedItems,
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -133,7 +132,7 @@ function* updateItemInFavorites(action) {
       yield call(() =>
         updateDoc(favoritesRef, {
           items: updatedItems,
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -210,7 +209,7 @@ function* deleteItemFromFavorites(action) {
       yield call(() =>
         updateDoc(favoritesRef, {
           items: updatedItems,
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -253,7 +252,7 @@ function* resetFavorites(action) {
       yield call(() =>
         updateDoc(favoritesRef, {
           items: [],
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );

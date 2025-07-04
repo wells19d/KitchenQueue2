@@ -69,7 +69,7 @@ const App = () => {
         <GestureHandlerRootView style={{flex: 1}}>
           <SafeAreaProvider>
             <View style={{flex: 1, backgroundColor: '#fff'}}>
-              <StatusBar barStyle="light-content" />
+              <StatusBar barStyle="light-content" backgroundColor={'#319177'} />
               <Main appReady={appReady} isSplashVisible={isSplashVisible} />
               <Toast config={toastConfig} />
             </View>

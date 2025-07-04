@@ -43,8 +43,10 @@ function* updateProfile(action) {
   const {userId, updatedData} = action.payload;
   try {
     const profileRef = doc(db, 'profiles', userId);
+    let time = moment(serverTimestamp()).format('YYYY-MM-DD HH:mm:ss');
     const updatedProfile = {
       ...updatedData,
+      // lastUpdated: new Date().toISOString(),
       lastUpdated: serverTimestamp(),
     };
 

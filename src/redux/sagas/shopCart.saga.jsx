@@ -8,7 +8,6 @@ import {
   updateDoc,
   doc,
   writeBatch,
-  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 import {select} from 'redux-saga/effects';
@@ -31,7 +30,7 @@ function* fetchShopCart(action) {
         yield call(() =>
           updateDoc(shopCartRef, {
             items: [],
-            lastUpdated: serverTimestamp(),
+            lastUpdated: new Date().toISOString(),
           }),
         );
       }
@@ -79,14 +78,14 @@ function* addItemToShopCart(action) {
           ...newItem,
           itemId: uuid.v4(),
           createdBy: profileID,
-          itemDate: serverTimestamp(),
+          itemDate: new Date().toISOString(),
         },
       ];
 
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -134,7 +133,7 @@ function* updateItemInShopCart(action) {
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -211,7 +210,7 @@ function* deleteItemFromShopCart(action) {
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -261,7 +260,7 @@ function* deleteListFromShopCart(action) {
       yield call(() =>
         updateDoc(shopCartRef, {
           items: updatedItems,
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -325,7 +324,7 @@ function* batchToShopping(action) {
             category: category || '',
             notes: notes || '',
             itemId: uuid.v4(),
-            itemDate: serverTimestamp(),
+            itemDate: new Date().toISOString(),
             quantity: 1,
             createdBy: profileID,
             status:
@@ -338,7 +337,7 @@ function* batchToShopping(action) {
 
       batch.update(shopCartRef, {
         items: updatedItems,
-        lastUpdated: serverTimestamp(),
+        lastUpdated: new Date().toISOString(),
         lastUpdatedBy: profileID,
       });
 
@@ -389,7 +388,7 @@ function* resetShopCart(action) {
       yield call(() =>
         updateDoc(shopCartRef, {
           items: [],
-          lastUpdated: serverTimestamp(),
+          lastUpdated: new Date().toISOString(),
           lastUpdatedBy: profileID,
         }),
       );

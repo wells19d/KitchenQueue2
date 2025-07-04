@@ -15,13 +15,20 @@ import {useCoreInfo} from '../utilities/coreInfo';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
 
 const NavMenu = props => {
-  const {bottomHeight, bottomWidth, toggleMenu, device, setIsSheetOpen} = props;
+  const {
+    bottomHeight,
+    bottomWidth,
+    toggleMenu,
+    device,
+    setIsSheetOpen,
+    navMode,
+  } = props;
   const core = useCoreInfo();
   const useHaptics = setHapticFeedback();
   const navigation = useNavigation();
 
   const navHeight = useMemo(
-    () => getNavBarHeight(device, bottomHeight),
+    () => getNavBarHeight(device, bottomHeight, navMode),
     [device, bottomHeight],
   );
 

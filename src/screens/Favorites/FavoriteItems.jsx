@@ -90,8 +90,8 @@ const FavoriteItems = () => {
         brandName: brandName || '',
         description: description || '',
         packageSize: Number(packageSize) > 0 ? Number(packageSize) : 1,
-        measurement: measurement?.key || '',
-        category: category?.key || '',
+        measurement: measurement?.key?.trim() || 'each',
+        category: category?.key?.trim() || 'other',
         notes: notes || '',
       };
 
@@ -120,7 +120,7 @@ const FavoriteItems = () => {
         });
       }
 
-      handleClose();
+      resetForm();
     }
   };
 

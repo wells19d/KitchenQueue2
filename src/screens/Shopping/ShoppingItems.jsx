@@ -97,8 +97,8 @@ const ShoppingItems = () => {
         description: description || '',
         packageSize: Number(packageSize) > 0 ? Number(packageSize) : 1,
         quantity: Number(quantity) > 0 ? Number(quantity) : 1,
-        measurement: measurement?.key || '',
-        category: category?.key || '',
+        measurement: measurement?.key?.trim() || 'each',
+        category: category?.key?.trim() || 'other',
         notes: notes || '',
         status: itemToUpdate?.status ?? statusTo ?? 'shopping-list',
       };
@@ -132,7 +132,7 @@ const ShoppingItems = () => {
         });
       }
 
-      handleClose();
+      resetForm();
     }
   };
 
