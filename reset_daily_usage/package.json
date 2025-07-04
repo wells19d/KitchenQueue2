@@ -1,0 +1,17 @@
+{
+  "name": "reset_daily_usage",
+  "description": "Scheduled Cloud Function to reset daily usage counters",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "firebase deploy --only functions:resetDailyUsage",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.3.2"
+  },
+  "private": true
+}

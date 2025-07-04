@@ -84,7 +84,6 @@ function* createNewAccount(action) {
     const recipeBoxLimit = 5;
     const recipeSearchLimit = 0;
     const upcSearchLimit = 0;
-    const lastSearchDate = new Date().toISOString(); //2025-06-29T09:00:00.000Z
     const dailyRecipeCounter = 0;
     const dailyUPCCounter = 0;
 
@@ -108,7 +107,6 @@ function* createNewAccount(action) {
       shoppingCartLimit: shoppingCartLimit,
       subType: 'Free',
       upcSearchLimit: upcSearchLimit,
-      lastSearchDate: lastSearchDate,
       dailyRecipeCounter: dailyRecipeCounter,
       dailyUPCCounter: dailyUPCCounter,
     };

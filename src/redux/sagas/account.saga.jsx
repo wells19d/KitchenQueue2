@@ -94,25 +94,6 @@ function* updateAccount(action) {
   }
 }
 
-function* resetDailyCounters(action) {
-  const {accountID} = action.payload;
-
-  try {
-    const accountRef = doc(db, 'accounts', accountID);
-    const updatedData = {dailyRecipeCounter: 0, dailyUPCCounter: 0};
-    const updatedAccount = {
-      ...updatedData,
-      lastSearchDate: new Date().toISOString(),
-    };
-
-    yield call(updateDoc, accountRef, updatedAccount);
-    yield put({type: 'RESET_DAILY_COUNTERS_SUCCESS', payload: updatedAccount});
-  } catch (error) {
-    // console.error('[Saga] ❌ Update Profile Error:', error);
-    yield put({type: 'RESET_DAILY_COUNTERS_FAILED', payload: error.message});
-  }
-}
-
 function* countUpDaily(action) {
   const {profileID, accountID, updatedData} = action.payload;
 
@@ -120,7 +101,6 @@ function* countUpDaily(action) {
     const accountRef = doc(db, 'accounts', accountID);
     const updatedAccount = {
       ...updatedData,
-      lastSearchDate: new Date().toISOString(),
       lastUpdated: new Date().toISOString(),
       lastUpdatedBy: profileID,
     };
@@ -137,6 +117,5 @@ export default function* accountSaga() {
   yield takeLatest('FETCH_ACCOUNT', fetchAccount);
   yield takeLatest('FETCH_ALLOWED_PROFILES', fetchAllowedProfiles);
   yield takeLatest('UPDATE_ACCOUNT', updateAccount);
-  yield takeLatest('RESET_DAILY_COUNTERS', resetDailyCounters);
   yield takeLatest('COUNT_UP_DAILY', countUpDaily);
 }

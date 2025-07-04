@@ -1,5 +1,4 @@
 // algolia_search/index.js
-// algolia_search/index.js
 const functions = require('firebase-functions');
 const algoliasearch = require('algoliasearch');
 

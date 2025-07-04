@@ -1,3 +1,4 @@
+// functions/index.js - For node mailer
 const {initializeApp} = require('firebase-admin/app');
 const {onDocumentCreated} = require('firebase-functions/v2/firestore');
 const {logger} = require('firebase-functions');

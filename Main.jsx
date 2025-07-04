@@ -8,7 +8,6 @@ import {
   Image,
   StatusBar,
   ActivityIndicator,
-  AppState,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -64,10 +63,6 @@ import AccountSetup from './src/screens/Account/AccountSetup';
 import FavoriteItems from './src/screens/Favorites/FavoriteItems';
 import FavoritesList from './src/screens/Favorites/FavoritesList';
 import RecipeSearch from './src/screens/Recipe/RecipeSearch';
-import {compareByDate} from './src/utilities/helpers';
-import moment from 'moment';
-import {dateTimeStringDate} from './src/utilities/dateTime';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import NavigationMode from 'react-native-navigation-mode';
 
 const Main = props => {
@@ -97,8 +92,6 @@ const Main = props => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log('⏱ running getNavigationMode once...');
-
     let isMounted = true;
 
     NavigationMode.getNavigationMode()
@@ -183,41 +176,6 @@ const Main = props => {
       }
     }
   }, [isAuthenticated, profile, account]);
-
-  const hasResetToday = useRef(false);
-
-  useEffect(() => {
-    if (renderDisplay !== 'main') return;
-    if (!account?.lastSearchDate) return;
-
-    const today = moment().format('MMDDYYYY');
-    const lastSearchDate = dateTimeStringDate(account.lastSearchDate);
-    const isSameDay = compareByDate(today, lastSearchDate);
-
-    const checkReset = async () => {
-      const lastReset = await AsyncStorage.getItem('lastResetDate');
-      if (lastReset === today) return;
-
-      if (!isSameDay && account?.id && !hasResetToday.current) {
-        console.log('[RESET_COUNTERS] Dispatching RESET_DAILY_COUNTERS');
-        await AsyncStorage.setItem('lastResetDate', today);
-        hasResetToday.current = true;
-
-        dispatch({
-          type: 'RESET_DAILY_COUNTERS',
-          payload: {accountID: account.id},
-        });
-      }
-    };
-
-    checkReset();
-
-    const subscription = AppState.addEventListener('change', nextState => {
-      if (nextState === 'active') checkReset();
-    });
-
-    return () => subscription.remove();
-  }, [renderDisplay, account?.lastSearchDate, account?.id]);
 
   useEffect(() => {
     dispatch({type: 'FETCH_DEVICE_INFO'});
