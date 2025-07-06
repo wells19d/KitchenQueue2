@@ -1,4 +1,4 @@
-//* edamanFood.saga.jsx
+//* edaman.saga.jsx
 import {takeLatest, call, put} from 'redux-saga/effects';
 import {fetchRemoteKeys} from '../../../firebase.config';
 

@@ -19,7 +19,6 @@ const RecipeSearch = () => {
   const core = useCoreInfo();
 
   const recipesFound = useRecipesData();
-  console.log('recipesFound', recipesFound);
   const recipeLoading = useRecipeDataLoading();
 
   const [storedData, setStoredData] = useState([]);

@@ -7,6 +7,8 @@ const KQText = ({
   children,
   italic = false,
   centered = false,
+  justified = false,
+  rightAlign = false,
   style,
   size = 'small',
   kqColor = 'black',
@@ -21,7 +23,13 @@ const KQText = ({
       style={[
         fontStyles,
         {
-          textAlign: centered ? 'center' : 'left',
+          textAlign: justified
+            ? 'justify'
+            : rightAlign
+            ? 'right'
+            : centered
+            ? 'center'
+            : 'left',
         },
         style,
       ]}

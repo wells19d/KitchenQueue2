@@ -68,6 +68,7 @@ export const Icons = {
   Filter: props => (
     <IIcons name="filter-outline" size={20} color="#000" {...props} />
   ),
+  Frame: props => <SIIcons name="frame" size={20} color="#000" {...props} />,
   Forward: props => (
     <MIIcons name="arrow-forward-ios" size={20} color="#000" {...props} />
   ),

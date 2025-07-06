@@ -9,3 +9,4 @@ export {default as Input} from './KQInput';
 export {default as Dropdown} from './KQDropdown';
 export {default as ScrollView} from './KQScrollView';
 export {default as Image} from './KQImage';
+export {default as Camera} from './KQCamera';

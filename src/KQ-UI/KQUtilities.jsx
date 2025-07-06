@@ -1,5 +1,6 @@
 //* KQUtilities.jsx
 import {Platform} from 'react-native';
+import {useDeviceInfo} from '../hooks/useHooks';
 
 export const useColors = color => {
   if (!color || typeof color !== 'string') return '#000000'; // Default to black
@@ -269,19 +270,36 @@ export const useFonts = (font = DEFAULT_FONT, italic = false) => {
 };
 
 export const useFontSizes = (size = 'medium', font = 'OpenSans') => {
-  const sizes = {
-    micro: 8,
-    xTiny: 10,
-    tiny: 12,
-    xSmall: 14,
-    small: 16,
-    medium: 18,
-    large: 20,
-    xLarge: 24,
-    giant: 28,
-    massive: 36,
-    gargantuan: 48,
+  const device = useDeviceInfo();
+
+  const getSizes = deviceSize => {
+    const factorMap = {
+      xSmall: 0.9,
+      small: 0.925,
+      medium: 0.95,
+      large: 0.975,
+      xLarge: 1,
+    };
+
+    const factor = factorMap[deviceSize] || 1;
+
+    return {
+      micro: 8 * factor,
+      xTiny: 10 * factor,
+      tiny: 12 * factor,
+      xSmall: 14 * factor,
+      small: 16 * factor,
+      medium: 18 * factor,
+      large: 20 * factor,
+      xLarge: 24 * factor,
+      giant: 28 * factor,
+      massive: 36 * factor,
+      gargantuan: 48 * factor,
+    };
   };
+
+  const deviceSize = device?.system?.deviceSize || 'xLarge';
+  const sizes = getSizes(deviceSize);
 
   const fontScale = {
     cherry: 1.1,
@@ -290,6 +308,7 @@ export const useFontSizes = (size = 'medium', font = 'OpenSans') => {
 
   const baseSize = sizes[size] || sizes.medium;
   const scaleFactor = fontScale[font.toLowerCase()] || 1;
+
   return {fontSize: baseSize * scaleFactor};
 };
 

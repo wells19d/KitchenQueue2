@@ -5,7 +5,7 @@ export const displayNutrients = [
   {index: 1, key: 'CHOCDF', label: 'Total Carbohydrates', unit: 'g'},
   {index: 2, key: 'CHOCDF.net', label: 'Net Carbohydrates', unit: 'g'},
   {index: 3, key: 'CHOLE', label: 'Cholesterol', unit: 'mg'},
-  {index: 4, key: 'ENERC_KCAL', label: 'Calories', unit: 'kcal'},
+  {index: 4, key: 'ENERC_KCAL', label: 'Calories', unit: null},
   {index: 5, key: 'FAMS', label: 'Monounsaturated Fat', unit: 'g'},
   {index: 6, key: 'FAPU', label: 'Polyunsaturated Fat', unit: 'g'},
   {index: 7, key: 'FASAT', label: 'Saturated Fat', unit: 'g'},

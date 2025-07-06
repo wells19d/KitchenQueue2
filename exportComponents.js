@@ -10,8 +10,8 @@ const codeExtensions = ['.js', '.jsx', '.ts', '.tsx', '.json']; // for z-export
 const structureExtensions = [...codeExtensions, '.png']; // for y-structure
 
 const ignoreFolders = [
-  'ios',
-  'android',
+  // 'ios',
+  // 'android',
   '.vscode',
   '.bundle',
   '__tests__',

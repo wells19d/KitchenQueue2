@@ -101,5 +101,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+<string>Kitchen Queue needs access to your Camera for scanning.</string>
 </dict>
 </plist>

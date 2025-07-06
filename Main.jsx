@@ -64,6 +64,7 @@ import FavoriteItems from './src/screens/Favorites/FavoriteItems';
 import FavoritesList from './src/screens/Favorites/FavoritesList';
 import RecipeSearch from './src/screens/Recipe/RecipeSearch';
 import NavigationMode from 'react-native-navigation-mode';
+import {requestCameraPermission} from './src/utilities/cameraRequest';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;

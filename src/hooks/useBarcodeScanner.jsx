@@ -8,22 +8,24 @@ const useBarcodeScanner = () => {
 
   const toggleTorch = () => setTorchEnabled(prev => !prev);
 
-  const onReadCode = event => {
+  const onReadCode = (codes = []) => {
     const supportedCodeFormats = ['ean-8', 'ean-13', 'upc-a', 'upc-e'];
-    const codeFormat = event.nativeEvent.codeFormat?.toLowerCase();
-    const codeValue = event.nativeEvent.codeStringValue;
 
-    if (supportedCodeFormats.includes(codeFormat)) {
-      if (lastScannedCode.current === codeValue) {
-        // console.log('Duplicate scan detected, ignoring...');
-        return;
+    for (const code of codes) {
+      const codeFormat = code.type?.toLowerCase();
+      const codeValue = code.value;
+
+      if (supportedCodeFormats.includes(codeFormat)) {
+        if (lastScannedCode.current === codeValue) {
+          // console.log('Duplicate scan detected, ignoring...');
+          return;
+        }
+        lastScannedCode.current = codeValue;
+        const scannedCode = {format: codeFormat, value: codeValue};
+        setScannedData(scannedCode);
+        setShowScanner(false);
+        break; // Exit after first valid scan
       }
-      lastScannedCode.current = codeValue;
-      const scannedCode = {format: codeFormat, value: codeValue};
-      setScannedData(scannedCode);
-      setShowScanner(false);
-    } else {
-      //   console.log('Unsupported Code Format:', codeFormat);
     }
   };
 
