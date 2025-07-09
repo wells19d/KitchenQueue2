@@ -1,6 +1,6 @@
 //* ShoppingList.jsx
 import React, {useCallback, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useShoppingCart} from '../../hooks/useHooks';
 import {View} from 'react-native';
@@ -15,6 +15,13 @@ const ShoppingList = () => {
   const navigation = useNavigation();
   const core = useCoreInfo();
   const dispatch = useDispatch();
+  const [refreshFlag, setRefreshFlag] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setRefreshFlag(prev => !prev);
+    }, [shopping?.items]),
+  );
 
   const shoppingList = Array.isArray(shopping?.items)
     ? shopping.items.filter(item => item.status === 'shopping-list')
@@ -138,6 +145,7 @@ const ShoppingList = () => {
         <View style={ListStyles.viewContainer}>
           <SwipeableItem
             list={shoppingList}
+            key={refreshFlag}
             core={core}
             showItemInfo={showItemInfo}
             setShowItemInfo={setShowItemInfo}

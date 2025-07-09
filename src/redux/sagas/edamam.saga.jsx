@@ -3,7 +3,7 @@ import {takeLatest, call, put} from 'redux-saga/effects';
 import {fetchRemoteKeys} from '../../../firebase.config';
 
 function* fetchFoodData(action) {
-  const {barcode} = action.payload;
+  const {barcode, allowance, profileID, accountID} = action.payload;
 
   const {food} = yield call(fetchRemoteKeys);
   const appId = food.appId;
@@ -19,6 +19,16 @@ function* fetchFoodData(action) {
 
       if (data.hints && data.hints.length > 0) {
         yield put({type: 'SET_FOOD_DATA', payload: data});
+        yield put({
+          type: 'COUNT_UP_DAILY',
+          payload: {
+            updatedData: {
+              dailyUPCCounter: allowance + 1,
+            },
+            profileID,
+            accountID,
+          },
+        });
       } else {
         yield put({
           type: 'FOOD_API_FETCH_FAILED',

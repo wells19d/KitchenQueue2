@@ -1,5 +1,5 @@
 //* CupboardGroup.jsx
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useCallback} from 'react';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useCupboard} from '../../hooks/useHooks';
 import {ListStyles} from '../../styles/Styles';
@@ -7,10 +7,18 @@ import {View} from 'react-native';
 import SwipeableItem from '../../components/SwipeableItem';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
 import {useCoreInfo} from '../../utilities/coreInfo';
+import {useFocusEffect} from '@react-navigation/native';
 
 const CupboardGroup = () => {
   const core = useCoreInfo();
   const cupboard = useCupboard();
+  const [refreshFlag, setRefreshFlag] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setRefreshFlag(prev => !prev);
+    }, [cupboard?.items]),
+  );
   const cupboardItems = cupboard?.items ?? [];
 
   const groupedList = useMemo(() => {
@@ -96,6 +104,7 @@ const CupboardGroup = () => {
       ) : (
         <View style={ListStyles.viewContainer}>
           <SwipeableItem
+            key={refreshFlag}
             core={core}
             list={groupedList}
             setShowItemInfo={setShowItemInfo}

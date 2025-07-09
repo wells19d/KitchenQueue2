@@ -1,6 +1,6 @@
 //* FavoritesList.jsx
 import React, {useCallback, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useFavorites} from '../../hooks/useHooks';
 import {View} from 'react-native';
@@ -15,6 +15,14 @@ const FavoritesList = () => {
   const navigation = useNavigation();
   const core = useCoreInfo();
   const dispatch = useDispatch();
+
+  const [refreshFlag, setRefreshFlag] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setRefreshFlag(prev => !prev);
+    }, [favorites?.items]),
+  );
 
   const favoritesList = favorites?.items ?? [];
 
@@ -87,6 +95,7 @@ const FavoritesList = () => {
       ) : (
         <View style={ListStyles.viewContainer}>
           <SwipeableItem
+            key={refreshFlag}
             list={favoritesList}
             core={core}
             showItemInfo={showItemInfo}

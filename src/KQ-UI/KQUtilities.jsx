@@ -274,9 +274,9 @@ export const useFontSizes = (size = 'medium', font = 'OpenSans') => {
 
   const getSizes = deviceSize => {
     const factorMap = {
-      xSmall: 0.9,
-      small: 0.925,
-      medium: 0.95,
+      xSmall: 0.875,
+      small: 0.9,
+      medium: 0.925,
       large: 0.975,
       xLarge: 1,
     };

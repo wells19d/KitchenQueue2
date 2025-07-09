@@ -188,7 +188,7 @@ const CupboardItems = () => {
 
   const displayRemaining = (packageSize, remainingAmount) => {
     let percent = (remainingAmount / packageSize) * 100;
-    return `${percent.toFixed(0)}% left in pkg`;
+    return `${percent.toFixed(0)}% left`;
   };
 
   useFocusEffect(useCallback(() => () => resetForm(), []));
@@ -242,13 +242,13 @@ const CupboardItems = () => {
             label="Package Size"
             value={packageSize}
             onChangeText={handlePackageChange}
-            caption="Total in a Pkg"
+            caption="Total in Pkg"
             capitalMode="sentences"
           />
         </View>
         <View style={{flex: 1.75}}>
           <Input
-            label="Remaining Amt."
+            label="Remaining"
             value={remainingAmount}
             onChangeText={handleRemainingAmountChange}
             caption={displayRemaining(packageSize, remainingAmount)}

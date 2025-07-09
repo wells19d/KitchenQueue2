@@ -1,4 +1,49 @@
+// transformNutritionFacts.js
+
 import {formatNutrient} from './nutrients';
+
+const normalizeUnit = rawUnit => {
+  const unit = rawUnit?.toLowerCase().trim();
+  const map = {
+    // volume
+    'fl oz': 'fluidounce',
+    floz: 'fluidounce',
+    'fluid oz': 'fluidounce',
+    ml: 'milliliter',
+    l: 'liter',
+    cup: 'cup',
+    pint: 'pint',
+    quart: 'quart',
+    gallon: 'gallon',
+    tbsp: 'tablespoon',
+    tablespoon: 'tablespoon',
+    tsp: 'teaspoon',
+    teaspoon: 'teaspoon',
+
+    // weight
+    oz: 'ounce',
+    g: 'gram',
+    gram: 'gram',
+    kg: 'kilogram',
+    kilogram: 'kilogram',
+    lb: 'pound',
+    lbs: 'pound',
+    pound: 'pound',
+
+    // count/package
+    count: 'each',
+    ct: 'each',
+    pk: 'package',
+    package: 'package',
+    bag: 'bag',
+    bottle: 'bottle',
+    box: 'box',
+    jar: 'jar',
+    can: 'can',
+    bar: 'bar',
+  };
+  return map[unit] || unit;
+};
 
 export const transformNutritionFacts = (food = {}) => {
   if (!food || typeof food !== 'object') return null;
@@ -14,7 +59,6 @@ export const transformNutritionFacts = (food = {}) => {
     servingSizes = [],
   } = food;
 
-  // 🧠 Inline extractPackageSizeFromLabel
   const extractPackageSizeFromLabel = label => {
     if (!label || typeof label !== 'string') return null;
 
@@ -23,16 +67,17 @@ export const transformNutritionFacts = (food = {}) => {
     if (!match) return null;
 
     const quantity = parseFloat(match[1]);
-    const unit = match[2].toLowerCase();
+    const rawUnit = match[2].toLowerCase();
+    const unit = normalizeUnit(rawUnit);
 
     let approxMl = null;
     let approxGrams = null;
 
-    if (unit === 'fl oz') approxMl = quantity * 29.5735;
-    else if (unit === 'oz') approxGrams = quantity * 28.3495;
-    else if (unit === 'ml') approxMl = quantity;
-    else if (unit === 'l') approxMl = quantity * 1000;
-    else if (unit === 'g') approxGrams = quantity;
+    if (rawUnit === 'fl oz') approxMl = quantity * 29.5735;
+    else if (rawUnit === 'oz') approxGrams = quantity * 28.3495;
+    else if (rawUnit === 'ml') approxMl = quantity;
+    else if (rawUnit === 'l') approxMl = quantity * 1000;
+    else if (rawUnit === 'g') approxGrams = quantity;
 
     return {
       quantity,
@@ -51,7 +96,6 @@ export const transformNutritionFacts = (food = {}) => {
       ? servingQty
       : null;
 
-  // Estimate servings per container
   const packageSizeData = extractPackageSizeFromLabel(label);
   let servingsPerContainer = 1;
 
@@ -66,7 +110,6 @@ export const transformNutritionFacts = (food = {}) => {
 
   servingsPerContainer = Math.max(servingsPerContainer, 1);
 
-  // 🧪 Edamam 100g normalization fix
   const assumePer100g =
     servingSizeGrams &&
     servingSizeGrams < 100 &&
@@ -112,6 +155,7 @@ export const transformNutritionFacts = (food = {}) => {
     servingsPerContainer,
     servingSizeLabel: primaryServing?.label || '',
     packageSize: packageSizeData || null,
+    measurement: packageSizeData?.unit || null, // ✅ matches displayMeasurements key
     nutrients: {
       perServing,
       perContainer,

@@ -5,7 +5,7 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import React, {useCallback, useEffect, useState, useMemo} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Button,
   Camera,
@@ -33,13 +33,13 @@ import {View, Image, TouchableOpacity} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import useBarcodeScanner from '../../hooks/useBarcodeScanner';
-import {ListStyles, SelectedRecipeStyles} from '../../styles/Styles';
-import {formatNutrient} from '../../utilities/nutrients';
+import {ListStyles} from '../../styles/Styles';
 import EdamamAttribution from '../../components/EdamanBadge';
 import Toast from 'react-native-toast-message';
 import {transformNutritionFacts} from '../../utilities/transformNutritionFacts';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {useColors} from '../../KQ-UI/KQUtilities';
+import {dailyCheckLimit} from '../../utilities/checkLimit';
 
 const ShoppingItems = () => {
   const route = useRoute();
@@ -53,9 +53,11 @@ const ShoppingItems = () => {
   const foodData = useFoodData();
   const foodError = useFoodDataError();
   const [showAttModal, setShowAttModal] = useState(false);
-  const [tempStorage, setTempStorage] = useState(null);
   const [storedData, setStoredData] = useState(null);
   const [showAsContainer, setShowAsContainer] = useState(false);
+
+  const count = core?.dailyUPCCounter || 0;
+  const limit = core?.maxUPCSearchLimit || 0;
 
   const {
     showScanner,
@@ -65,7 +67,7 @@ const ShoppingItems = () => {
     scannedData,
     onReadCode,
     resetScanner,
-  } = useBarcodeScanner();
+  } = useBarcodeScanner(core);
 
   const itemToUpdate =
     shopping?.items?.find(item => item.itemId === itemId) ?? null;
@@ -94,10 +96,7 @@ const ShoppingItems = () => {
   useEffect(() => {
     if (foodData) {
       if (!foodData?.hints || foodData?.hints.length === 0) {
-        setTempStorage(null);
         setStoredData(null);
-      } else if (foodData?.hints.length > 1) {
-        setTempStorage(foodData);
       } else {
         setStoredData(foodData?.hints[0]);
       }
@@ -155,10 +154,8 @@ const ShoppingItems = () => {
   }, [itemName]);
 
   const handlePackageChange = value => {
-    // Allow typing decimals freely
     const safeValue = value.replace(/[^0-9.]/g, '');
 
-    // Prevent more than one "."
     const parts = safeValue.split('.');
     if (parts.length > 2) return;
 
@@ -190,7 +187,7 @@ const ShoppingItems = () => {
         packageSize: Number(packageSize) > 0 ? Number(packageSize) : 1,
         quantity: Number(quantity) > 0 ? Number(quantity) : 1,
         measurement: measurement?.key?.trim() || 'each',
-        category: category?.key?.trim() || 'other',
+        category: category?.key?.trim() || 'na',
         notes: notes || '',
         status: itemToUpdate?.status ?? statusTo ?? 'shopping-list',
       };
@@ -229,26 +226,33 @@ const ShoppingItems = () => {
   };
 
   const handleClose = () => {
-    dispatch({type: 'RESET_FOOD_DATA'}); // this is for edamam later
+    dispatch({type: 'RESET_FOOD_DATA'});
     resetForm();
-    setStoredData(null); // this is for edamam later
+    setStoredData(null);
     navigation.goBack();
   };
 
   const handleClear = () => {
-    dispatch({type: 'RESET_FOOD_DATA'}); // this is for edamam later
+    dispatch({type: 'RESET_FOOD_DATA'});
     resetForm();
-    setStoredData(null); // this is for edamam later
-    // navigation.goBack();
+    setStoredData(null);
   };
 
   useFocusEffect(useCallback(() => () => resetForm(), []));
 
   const ScanAction = () => {
-    if (showScanner) {
-      toggleTorch();
+    if (count < limit) {
+      if (showScanner) {
+        toggleTorch();
+      } else {
+        setShowScanner(true);
+      }
     } else {
-      setShowScanner(true);
+      dailyCheckLimit({
+        current: count,
+        max: limit,
+        label: 'UPC',
+      });
     }
   };
 
@@ -259,21 +263,6 @@ const ShoppingItems = () => {
   const RenderModalContent = () => {
     if (storedData) {
       let foodObject = transformNutritionFacts(storedData?.food) || {};
-
-      const imageStyle = useMemo(() => {
-        switch (device?.system?.deviceSize) {
-          case 'small':
-            return {height: 100, width: 100};
-          case 'medium':
-            return {height: 125, width: 125};
-          case 'large':
-            return {height: 150, width: 150};
-          case 'xLarge':
-            return {height: 175, width: 175};
-          default:
-            return {height: 150, width: 150};
-        }
-      }, [device?.system?.deviceSize]);
 
       return (
         <View style={ListStyles.rmcContainer}>
@@ -288,7 +277,15 @@ const ShoppingItems = () => {
                 }}
               />
             ) : (
-              <Text>No Image Available</Text>
+              <View
+                style={{
+                  width: '100%',
+                  height: 150,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text>No Image Available</Text>
+              </View>
             )}
           </View>
           <ScrollView style={ListStyles.rmcScroll}>

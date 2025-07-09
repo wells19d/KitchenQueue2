@@ -1,6 +1,6 @@
 //* CupboardSingle.jsx
 import React, {useCallback, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useAccount, useCupboard} from '../../hooks/useHooks';
 import {useDispatch} from 'react-redux';
@@ -16,6 +16,14 @@ const CupboardSingle = () => {
   const cupboard = useCupboard();
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const [refreshFlag, setRefreshFlag] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setRefreshFlag(prev => !prev);
+    }, [cupboard?.items]),
+  );
 
   const cupboardList = cupboard?.items ?? [];
 
@@ -107,6 +115,7 @@ const CupboardSingle = () => {
       ) : (
         <View style={ListStyles.viewContainer}>
           <SwipeableItem
+            key={refreshFlag}
             core={core}
             list={cupboardList}
             setShowItemInfo={setShowItemInfo}

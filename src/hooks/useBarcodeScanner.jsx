@@ -1,37 +1,61 @@
+//* useBarcodeScanner.jsx
 import {useState, useRef} from 'react';
+import {dailyCheckLimit} from '../utilities/checkLimit';
+import {useDispatch} from 'react-redux';
 
-const useBarcodeScanner = () => {
+const useBarcodeScanner = core => {
+  const dispatch = useDispatch();
   const [showScanner, setShowScanner] = useState(false);
   const [torchEnabled, setTorchEnabled] = useState(false);
   const [scannedData, setScannedData] = useState(null);
-  const lastScannedCode = useRef(null); // Store the last scanned code
+  const lastScannedCode = useRef(null);
 
   const toggleTorch = () => setTorchEnabled(prev => !prev);
 
+  const debounceRef = useRef(false);
+  const count = core?.dailyUPCCounter || 0;
+  const limit = core?.maxUPCSearchLimit || 0;
+
   const onReadCode = (codes = []) => {
-    const supportedCodeFormats = ['ean-8', 'ean-13', 'upc-a', 'upc-e'];
+    if (count < limit) {
+      if (debounceRef.current) return;
 
-    for (const code of codes) {
-      const codeFormat = code.type?.toLowerCase();
-      const codeValue = code.value;
+      const supportedCodeFormats = ['ean-8', 'ean-13', 'upc-a', 'upc-e'];
+      for (const code of codes) {
+        const codeFormat = code.type?.toLowerCase();
+        const codeValue = code.value;
+        if (supportedCodeFormats.includes(codeFormat)) {
+          if (lastScannedCode.current === codeValue) return;
 
-      if (supportedCodeFormats.includes(codeFormat)) {
-        if (lastScannedCode.current === codeValue) {
-          // console.log('Duplicate scan detected, ignoring...');
-          return;
+          debounceRef.current = true;
+          lastScannedCode.current = codeValue;
+
+          const scannedCode = {format: codeFormat, value: codeValue};
+          dispatch({
+            type: 'COUNT_UP_DAILY',
+            payload: {
+              updatedData: {
+                dailyUPCCounter: count + 1,
+              },
+              profileID: core?.profileID,
+              accountID: core?.accountID,
+            },
+          });
+          setScannedData(scannedCode);
+          setShowScanner(false);
+
+          setTimeout(() => {
+            debounceRef.current = false;
+          }, 1500);
+          break;
         }
-        lastScannedCode.current = codeValue;
-        const scannedCode = {format: codeFormat, value: codeValue};
-        setScannedData(scannedCode);
-        setShowScanner(false);
-        break; // Exit after first valid scan
       }
     }
   };
 
   const resetScanner = () => {
     setScannedData(null);
-    lastScannedCode.current = null; // Reset last scanned code
+    lastScannedCode.current = null;
   };
 
   return {

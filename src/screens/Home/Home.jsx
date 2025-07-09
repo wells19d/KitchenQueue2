@@ -47,6 +47,7 @@ const Home = () => {
       infoCentered,
       onPress = () => {},
       children,
+      disabled = false,
     } = props;
     const fixedHeight = height || 90;
     const {color, border} = useMemo(() => {
@@ -102,6 +103,7 @@ const Home = () => {
           elevation: 8,
           overflow: 'hidden',
         }}
+        disabled={disabled}
         onPress={onPress}>
         {blank ? (
           <View style={[{padding: 5}, blankStyle]}>{children}</View>
@@ -241,6 +243,7 @@ const Home = () => {
           // iconStyles={{marginTop: -4}}
           icon={<Icons.Chest size={25} />}
           // onPress={() => navigation.navigate('RecipeSearch')}
+          disabled
         />
       </DisplayRow>
       <DisplayRow>
@@ -253,6 +256,7 @@ const Home = () => {
           // iconStyles={{marginTop: -1}}
           icon={<Icons.Barcode size={20} />}
           // onPress={() => navigation.navigate('FavoritesList')}
+          disabled
         />
         <DisplayCell
           infoCentered
