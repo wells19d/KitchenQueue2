@@ -204,7 +204,7 @@ const SelectedItemInfo = props => {
               <ItemRow title="Notes" info={selectedItem?.notes} />
             )}
             {!addToList && !groupedView && (
-              <View style={{marginTop: 15}}>
+              <View style={{marginLeft: 10, marginTop: 15}}>
                 <Button
                   size="large"
                   color={useColors('gold')}
