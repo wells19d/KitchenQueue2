@@ -105,52 +105,13 @@ const SwipeableItem = props => {
     );
   };
 
-  const renderLeftActions = itemId => {
-    if (leftButtons.length === 0) return null;
-
-    return (
-      <View style={ListStyles.leftActionsContainer}>
-        {leftButtons.map((button, index) => (
-          <Animated.View
-            key={index}
-            style={[ListStyles.leftActionButton, button.style]}>
-            <TouchableOpacity
-              onPress={() => {
-                button.action(itemId);
-                closeSwipeable(itemId);
-                useHaptics(core?.userSettings?.hapticStrength || 'light');
-              }}>
-              <View style={ListStyles.buttonContainer}>
-                {button.text1 && (
-                  <Text size="xSmall" font="open-7" kqColor="white">
-                    {button.text1}
-                  </Text>
-                )}
-                {button.text2 && (
-                  <Text size="xSmall" font="open-7" kqColor="white">
-                    {button.text2}
-                  </Text>
-                )}
-                {button.starIcon === true && (
-                  <Icons.Favorite size={30} color={useColors('white')} />
-                )}
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
-        ))}
-      </View>
-    );
-  };
-
   const renderSwipeableItem = useCallback(
     ({item}) => (
       <Swipeable
         ref={ref => swipeableRefs.current.set(item.itemId, ref)}
         onSwipeableOpen={() => handleSwipeableOpen(item.itemId)}
         renderRightActions={() => renderRightActions(item.itemId)}
-        renderLeftActions={() => renderLeftActions(item.itemId)}
         rightThreshold={100}
-        leftThreshold={75}
         friction={1}
         overshootFriction={8}>
         <FlashCell
