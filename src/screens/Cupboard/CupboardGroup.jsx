@@ -1,5 +1,5 @@
 //* CupboardGroup.jsx
-import React, {useState, useMemo, useCallback} from 'react';
+import React, {useState, useMemo, useCallback, useEffect} from 'react';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useCupboard} from '../../hooks/useHooks';
 import {ListStyles} from '../../styles/Styles';
@@ -69,6 +69,12 @@ const CupboardGroup = () => {
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+
+  useEffect(() => {
+    if (showItemInfo === false) {
+      setSelectedItem(null);
+    }
+  }, [showItemInfo]);
 
   const SelectedItem = () => (
     <BottomSheet

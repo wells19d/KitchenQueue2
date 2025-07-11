@@ -1,5 +1,5 @@
 //* CupboardSingle.jsx
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useCupboard} from '../../hooks/useHooks';
@@ -28,6 +28,12 @@ const CupboardSingle = () => {
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+
+  useEffect(() => {
+    if (showItemInfo === false) {
+      setSelectedItem(null);
+    }
+  }, [showItemInfo]);
 
   const handleUpdateItem = itemId => {
     navigation.navigate('CupboardItems', {

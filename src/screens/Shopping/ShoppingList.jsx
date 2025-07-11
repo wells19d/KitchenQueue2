@@ -1,5 +1,5 @@
 //* ShoppingList.jsx
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
 import {useShoppingCart} from '../../hooks/useHooks';
@@ -29,6 +29,12 @@ const ShoppingList = () => {
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+
+  useEffect(() => {
+    if (showItemInfo === false) {
+      setSelectedItem(null);
+    }
+  }, [showItemInfo]);
 
   const handleAddToCart = itemId => {
     const latestItem = shopping?.items?.find(i => i.itemId === itemId);
