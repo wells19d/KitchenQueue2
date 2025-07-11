@@ -11,7 +11,7 @@ export const useColors = color => {
     //---
     primary10: '#8dd1bd',
     primary30: '#4ea68e',
-    primary: '#319177',
+    primary: '#29856c',
     primary70: '#198064',
     primary90: '#0a654c',
     //---
