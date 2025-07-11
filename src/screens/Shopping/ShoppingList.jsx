@@ -84,29 +84,6 @@ const ShoppingList = () => {
     [dispatch, core.profileID, shoppingList],
   );
 
-  const handleAddToFavorites = itemId => {
-    const latestItem = shopping?.items?.find(i => i.itemId === itemId);
-
-    const newItem = {
-      itemName: latestItem?.itemName || '',
-      brandName: latestItem?.brandName || '',
-      description: latestItem?.description || '',
-      packageSize: Number(latestItem?.packageSize),
-      measurement: latestItem?.measurement || '',
-      category: latestItem?.category || '',
-      notes: latestItem?.notes || '',
-    };
-
-    dispatch({
-      type: 'ADD_ITEM_TO_FAVORITES',
-      payload: {
-        favoriteItemsID: core.favoriteItemsID,
-        newItem: newItem,
-        profileID: core.profileID,
-      },
-    });
-  };
-
   const SelectedItem = () => (
     <BottomSheet
       visible={showItemInfo}
@@ -167,13 +144,6 @@ const ShoppingList = () => {
                 action: itemId => handleDeleteItem(itemId),
                 text1: 'Delete',
                 style: ListStyles.deleteButton,
-              },
-            ]}
-            leftButtons={[
-              {
-                action: itemId => handleAddToFavorites(itemId),
-                starIcon: true,
-                style: ListStyles.favButton,
               },
             ]}
           />

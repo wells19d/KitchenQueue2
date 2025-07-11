@@ -15,7 +15,7 @@ const hapticOptions = [
       {label: 'Off', icon: null},
       {
         label: 'Light',
-        icon: <Icons.Wave size={25} color={'#319177'} />,
+        icon: <Icons.Wave size={25} color={'#29856c'} />,
         activeIcon: <Icons.Wave size={25} color={'#fff'} />,
       },
     ],
@@ -27,10 +27,10 @@ const hapticOptions = [
         icon: (
           <View>
             <View style={{position: 'relative', top: 9.25}}>
-              <Icons.Wave size={25} color={'#319177'} />
+              <Icons.Wave size={25} color={'#29856c'} />
             </View>
             <View style={{position: 'relative', bottom: 9.25}}>
-              <Icons.Wave size={25} color={'#319177'} />
+              <Icons.Wave size={25} color={'#29856c'} />
             </View>
           </View>
         ),
@@ -50,13 +50,13 @@ const hapticOptions = [
         icon: (
           <View>
             <View style={{position: 'relative', top: 18.5}}>
-              <Icons.Wave size={25} color={'#319177'} />
+              <Icons.Wave size={25} color={'#29856c'} />
             </View>
             <View>
-              <Icons.Wave size={25} color={'#319177'} />
+              <Icons.Wave size={25} color={'#29856c'} />
             </View>
             <View style={{position: 'relative', bottom: 18.5}}>
-              <Icons.Wave size={25} color={'#319177'} />
+              <Icons.Wave size={25} color={'#29856c'} />
             </View>
           </View>
         ),
@@ -138,7 +138,7 @@ const Vibrations = () => {
         style={[
           SettingsStyles.hapticButton,
           {
-            backgroundColor: isActive ? '#319177' : '#fff',
+            backgroundColor: isActive ? '#29856c' : '#fff',
             borderWidth: isActive ? 0 : 1,
           },
         ]}>
@@ -151,7 +151,7 @@ const Vibrations = () => {
               weight="w7"
               size="small"
               style={{
-                color: isActive ? '#fff' : '#319177',
+                color: isActive ? '#fff' : '#29856c',
               }}>
               {option.label}
             </Text>

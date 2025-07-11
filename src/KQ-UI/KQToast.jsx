@@ -19,7 +19,7 @@ const toastStyles = {
     paddingVertical: 10,
     height: 'auto',
   },
-  primary: {borderLeftColor: '#319177'},
+  primary: {borderLeftColor: '#29856c'},
   success: {borderLeftColor: '#63b76C'},
   info: {borderLeftColor: '#009DC4'},
   warning: {borderLeftColor: '#dda44b'},

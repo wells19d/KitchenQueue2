@@ -278,7 +278,7 @@ const AccountSetup = () => {
               type="ghost"
               onPress={handleGoBack}
               textStyle={{position: 'relative', left: -5}}>
-              <Icons.ChevronLeft size={15} color={'#319177'} />
+              <Icons.ChevronLeft size={15} color={'#29856c'} />
               Go Back
             </Button>
           </>

@@ -63,7 +63,7 @@ export const MenuButtonStyles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     borderColor: '#c4c4c480',
-    backgroundColor: '#319177',
+    backgroundColor: '#29856c',
     zIndex: 2300, // Over Layer
   },
   menuButton: {
@@ -378,7 +378,7 @@ export const SelectItemStyles = StyleSheet.create({
     marginHorizontal: 5,
     marginBottom: 5,
     borderRadius: 10,
-    backgroundColor: backgroundColor || '#319177',
+    backgroundColor: backgroundColor || '#29856c',
     alignItems: 'center',
     justifyContent: 'center',
   }),
@@ -451,7 +451,7 @@ export const SettingsStyles = StyleSheet.create({
   card: {
     marginTop: 15,
     marginHorizontal: 15,
-    backgroundColor: '#319177',
+    backgroundColor: '#29856c',
     borderTopRightRadius: 8,
     borderTopLeftRadius: 8,
     borderWidth: 1,
@@ -529,7 +529,7 @@ export const SettingsStyles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: '#319177',
+    borderColor: '#29856c',
     height: 45,
   },
   hbInner: {

@@ -326,7 +326,7 @@ const RenderModal = React.memo(props => {
     if (isLoading) {
       return (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <ActivityIndicator size="large" color="#319177" />
+          <ActivityIndicator size="large" color="#29856c" />
           <Text size="medium" font="open-7">
             Generating Invite...
           </Text>

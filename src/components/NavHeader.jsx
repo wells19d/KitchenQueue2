@@ -12,7 +12,7 @@ import {useCoreInfo} from '../utilities/coreInfo';
 
 const NavHeader = ({
   title = '',
-  headerColor = '#319177',
+  headerColor = '#29856c',
   textColor = '#000',
   LeftButton = 'None',
   RightButton = 'None',

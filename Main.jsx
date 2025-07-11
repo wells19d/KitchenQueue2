@@ -411,7 +411,7 @@ const Main = props => {
           alignItems: 'center',
         }}>
         <View style={{margin: 20}}>
-          <ActivityIndicator size="large" color="#319177" />
+          <ActivityIndicator size="large" color="#29856c" />
         </View>
         <Text size="medium" font="open-6">
           Just getting things ready...
@@ -448,7 +448,7 @@ const Main = props => {
     return (
       <NavigationContainer>
         <SafeAreaView
-          style={{flex: 1, backgroundColor: '#319177'}}
+          style={{flex: 1, backgroundColor: '#29856c'}}
           edges={['top']}>
           <View style={{flex: 1}}>
             <Navigation />

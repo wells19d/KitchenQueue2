@@ -111,7 +111,7 @@ const CupboardGroup = () => {
             setSelectedItem={setSelectedItem}
             leftButtons={[]}
             rightButton={[]}
-            // groupedView
+            groupedView
           />
           <SelectedItem />
         </View>

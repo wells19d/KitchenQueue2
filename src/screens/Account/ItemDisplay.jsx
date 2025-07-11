@@ -182,7 +182,7 @@ const ItemDisplay = () => {
                     paddingHorizontal: 5,
                     opacity: index === 0 ? 0.4 : 1,
                   }}>
-                  <Icons.ChevronUp size={18} color="#319177" />
+                  <Icons.ChevronUp size={18} color="#29856c" />
                 </TouchableOpacity>
                 <TouchableOpacity
                   disabled={index === flashCellOrder.length - 1}
@@ -191,7 +191,7 @@ const ItemDisplay = () => {
                     paddingHorizontal: 5,
                     opacity: index === flashCellOrder.length - 1 ? 0.4 : 1,
                   }}>
-                  <Icons.ChevronDown size={18} color="#319177" />
+                  <Icons.ChevronDown size={18} color="#29856c" />
                 </TouchableOpacity>
               </View>
             </View>

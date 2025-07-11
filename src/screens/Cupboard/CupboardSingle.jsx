@@ -2,7 +2,7 @@
 import React, {useCallback, useState} from 'react';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {BottomSheet, Layout, Text} from '../../KQ-UI';
-import {useAccount, useCupboard} from '../../hooks/useHooks';
+import {useCupboard} from '../../hooks/useHooks';
 import {useDispatch} from 'react-redux';
 import {ListStyles} from '../../styles/Styles';
 import {View} from 'react-native';
@@ -12,7 +12,6 @@ import SelectedItemInfo from '../../components/SelectedItemInfo';
 
 const CupboardSingle = () => {
   const core = useCoreInfo();
-  const account = useAccount();
   const cupboard = useCupboard();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -25,7 +24,7 @@ const CupboardSingle = () => {
     }, [cupboard?.items]),
   );
 
-  const cupboardList = cupboard?.items ?? [];
+  const cupboardList = Array.isArray(cupboard?.items) ? cupboard?.items : [];
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -57,29 +56,6 @@ const CupboardSingle = () => {
     },
     [dispatch, core, cupboardList],
   );
-
-  const handleAddToFavorites = itemId => {
-    const latestItem = cupboard?.items?.find(i => i.itemId === itemId);
-
-    const newItem = {
-      itemName: latestItem?.itemName || '',
-      brandName: latestItem?.brandName || '',
-      description: latestItem?.description || '',
-      packageSize: Number(latestItem?.packageSize),
-      measurement: latestItem?.measurement || '',
-      category: latestItem?.category || '',
-      notes: latestItem?.notes || '',
-    };
-
-    dispatch({
-      type: 'ADD_ITEM_TO_FAVORITES',
-      payload: {
-        favoriteItemsID: core.favoriteItemsID,
-        newItem: newItem,
-        profileID: core.profileID,
-      },
-    });
-  };
 
   const SelectedItem = () => (
     <BottomSheet
@@ -132,13 +108,6 @@ const CupboardSingle = () => {
                 action: itemId => handleDeleteItem(itemId),
                 text1: 'Delete',
                 style: ListStyles.deleteButton,
-              },
-            ]}
-            leftButtons={[
-              {
-                action: itemId => handleAddToFavorites(itemId),
-                starIcon: true,
-                style: ListStyles.favButton,
               },
             ]}
           />

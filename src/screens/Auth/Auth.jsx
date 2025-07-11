@@ -496,7 +496,7 @@ function Auth(props) {
         }}>
         {isSplashVisible && (
           <View style={{position: 'relative', top: actPosition}}>
-            <ActivityIndicator size="large" color="#319177" />
+            <ActivityIndicator size="large" color="#29856c" />
           </View>
         )}
         <Image

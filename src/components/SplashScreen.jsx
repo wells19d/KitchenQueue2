@@ -10,7 +10,7 @@ const SplashScreen = () => {
         <Image source={logo} style={styles.image} />
       </View>
       <View style={{position: 'absolute', top: '44%', left: '50%'}}>
-        <ActivityIndicator size="large" color="#319177" />
+        <ActivityIndicator size="large" color="#29856c" />
       </View>
     </View>
   );

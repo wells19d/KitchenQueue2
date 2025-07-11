@@ -255,7 +255,7 @@ const RecipeSearch = () => {
             {recipeLoading ? (
               <View style={RecipeSearchStyles.loadingWrapper}>
                 <View style={RecipeSearchStyles.loadingContainer}>
-                  <ActivityIndicator size="large" color="#319177" />
+                  <ActivityIndicator size="large" color="#29856c" />
                 </View>
                 <View style={RecipeSearchStyles.loadingText}>
                   <Text size="small">Searching...</Text>

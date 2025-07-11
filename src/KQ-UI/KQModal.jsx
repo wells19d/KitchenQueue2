@@ -217,7 +217,7 @@ const styles = {
   subContainer: (fullScreen, midHeight, insets) => ({
     flex: 1,
     height: midHeight,
-    borderColor: '#319177',
+    borderColor: '#29856c',
     backgroundColor: '#fff',
     paddingTop: fullScreen ? insets.top : 0,
     paddingBottom: fullScreen ? insets.bottom : 0,

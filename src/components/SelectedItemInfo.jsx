@@ -9,6 +9,7 @@ import {Button, Text, ScrollView} from '../KQ-UI';
 import {Icons} from './IconListRouter';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../utilities/coreInfo';
+import {useColors} from '../KQ-UI/KQUtilities';
 
 const SelectedItemInfo = props => {
   const {
@@ -25,6 +26,28 @@ const SelectedItemInfo = props => {
   const core = useCoreInfo();
 
   const [quantity, setQuantity] = useState(1);
+
+  const handleAddToFavorites = () => {
+    const newItem = {
+      itemName: selectedItem?.itemName || '',
+      brandName: selectedItem?.brandName || '',
+      description: selectedItem?.description || '',
+      packageSize: Number(selectedItem?.packageSize),
+      measurement: selectedItem?.measurement || '',
+      category: selectedItem?.category || '',
+      notes: selectedItem?.notes || '',
+    };
+
+    dispatch({
+      type: 'ADD_ITEM_TO_FAVORITES',
+      payload: {
+        favoriteItemsID: core.favoriteItemsID,
+        newItem: newItem,
+        profileID: core.profileID,
+      },
+    });
+    setShowItemInfo(false);
+  };
 
   const handleAddFavToShopList = item => {
     const newItem = {
@@ -179,6 +202,23 @@ const SelectedItemInfo = props => {
             />
             {selectedItem?.notes && (
               <ItemRow title="Notes" info={selectedItem?.notes} />
+            )}
+            {!addToList && !groupedView && (
+              <View style={{marginTop: 15}}>
+                <Button
+                  size="large"
+                  color={useColors('gold')}
+                  onPress={() => handleAddToFavorites()}>
+                  <View style={{flexDirection: 'row'}}>
+                    <View style={{marginRight: 10}}>
+                      <Icons.Star color={useColors('dark')} />
+                    </View>
+                    <View>
+                      <Text font="open-6">Add to Favorites</Text>
+                    </View>
+                  </View>
+                </Button>
+              </View>
             )}
             {addToList && (
               <View style={SelectItemStyles.addToContainer}>
