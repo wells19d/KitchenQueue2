@@ -4,7 +4,7 @@ import {Alert, TouchableOpacity, View} from 'react-native';
 import CurvedBottomBar from './CurvedBottomBar';
 import {Icons} from '../components/IconListRouter';
 import {useNavigation} from '@react-navigation/native';
-import {getNavBarHeight} from '../utilities/deviceUtils';
+import {getMenuButtonHeight, getNavBarHeight} from '../utilities/deviceUtils';
 import {
   CurvedBarStyles,
   MenuButtonStyles,
@@ -26,6 +26,11 @@ const NavMenu = props => {
   const core = useCoreInfo();
   const useHaptics = setHapticFeedback();
   const navigation = useNavigation();
+
+  const menuButtonHeight = useMemo(
+    () => getMenuButtonHeight(device, bottomHeight, navMode),
+    [device, bottomHeight],
+  );
 
   const navHeight = useMemo(
     () => getNavBarHeight(device, bottomHeight, navMode),
@@ -122,7 +127,13 @@ const NavMenu = props => {
               <TouchableOpacity
                 key={index}
                 onPress={() => handleNavPress(item)}
-                style={MenuButtonStyles.menuButton}>
+                style={[
+                  MenuButtonStyles.menuButton,
+                  {
+                    height: menuButtonHeight,
+                    // borderWidth: 1
+                  },
+                ]}>
                 {item.icon}
                 <Text size="tiny" font="open-6">
                   {item.title}

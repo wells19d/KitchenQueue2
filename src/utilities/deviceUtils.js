@@ -23,6 +23,52 @@ export const isiOSPhone = device =>
 export const isiOSTablet = device =>
   device?.system?.os === 'iOS' && device?.system?.device === 'Tablet';
 
+export const getMenuButtonHeight = (device, mode) => {
+  const hasButtons = mode?.type !== 'gesture';
+
+  const {deviceSize, model, os} = device?.system || {};
+  const isHomeButton = isHBDevice(model);
+
+  let baseHeight = 75; // Fallback for unknown devices (just to be safe)
+
+  switch (deviceSize) {
+    case 'xLarge':
+      baseHeight = 75;
+      break;
+    case 'large':
+      baseHeight = 75;
+      break;
+    case 'medium':
+      baseHeight = 75;
+      break;
+    case 'small':
+      baseHeight = 75;
+      break;
+    case 'xSmall':
+      baseHeight = 65;
+      break;
+    default:
+      baseHeight = 65; // Unknown devices default to xSmall
+      break;
+  }
+
+  // Special adjustment for iOS devices
+  if (os === 'iOS') {
+    baseHeight -= 5;
+  }
+
+  if (os === 'Android' && hasButtons) {
+    baseHeight -= 0;
+  }
+
+  // Special adjustment for home button devices
+  if (isHomeButton) {
+    baseHeight -= 10;
+  }
+
+  return baseHeight;
+};
+
 export const getNavMenuHeight = (device, mode) => {
   const hasButtons = mode?.type !== 'gesture';
 
@@ -58,7 +104,7 @@ export const getNavMenuHeight = (device, mode) => {
   }
 
   if (os === 'Android' && hasButtons) {
-    baseHeight -= 30;
+    baseHeight -= 40;
   }
 
   // Special adjustment for home button devices
