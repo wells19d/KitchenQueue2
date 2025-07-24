@@ -36,7 +36,7 @@ function* fetchFavorites(action) {
 
       let favorite = {
         ...favoritesData,
-        lastUpdated: favoritesData?.lastUpdated || null,
+        lastUpdated: favoritesData?.toDate?.().toISOString() ?? null,
       };
 
       yield put({type: 'SET_FAVORITES', payload: favorite});

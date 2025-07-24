@@ -75,13 +75,13 @@ function CenterMenu(props) {
 
   const SectionHeaderComponent = ({title, state, onPress}) => {
     return (
-      <View style={CMStyles.shContainer}>
+      <TouchableOpacity style={CMStyles.shContainer} onPress={onPress}>
         <View style={CMStyles.shLine}></View>
         <View style={{flex: 1, zIndex: 2}}>
           <View style={[CMStyles.shTWrap, {flex: 1}]}>
-            <TouchableOpacity style={CMStyles.shTO} onPress={onPress}>
+            <View style={CMStyles.shTO}>
               {state ? <Icons.ChevronUp /> : <Icons.ChevronDown />}
-            </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -90,7 +90,7 @@ function CenterMenu(props) {
             <Text>{title}</Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

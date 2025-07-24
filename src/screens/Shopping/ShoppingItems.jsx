@@ -118,7 +118,12 @@ const ShoppingItems = () => {
     if (scannedData) {
       dispatch({
         type: 'FETCH_FOOD_DATA',
-        payload: {barcode: scannedData?.value},
+        payload: {
+          barcode: scannedData?.value,
+          allowance: core?.dailyUPCCounter,
+          profileID: core?.profileID,
+          accountID: core?.accountID,
+        },
       });
       resetScanner();
     }

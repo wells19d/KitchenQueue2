@@ -13,7 +13,7 @@ const KQInput = ({
   value = '',
   onChangeText = () => {},
   capitalize = false,
-  capitalMode = 'none',
+  capitalMode = 'none', // 'none' | 'sentences' | 'words' | 'characters' |
   multiline = false,
   multiHeight = 'medium',
   scrollEnabled = true,
@@ -76,7 +76,7 @@ const KQInput = ({
       {label && (
         <View style={styles.labelContainer}>
           <Text
-            size="small"
+            size="xSmall"
             font="open-6"
             style={[styles.label(validation, props.disabled), labelStyles]}>
             {label} {required && '*'}
@@ -168,6 +168,7 @@ const styles = {
   },
   textInputContainer: {
     flex: 1,
+    // height: 40,
     paddingHorizontal: 1,
     paddingVertical: 3,
   },

@@ -31,16 +31,6 @@ const useBarcodeScanner = core => {
           lastScannedCode.current = codeValue;
 
           const scannedCode = {format: codeFormat, value: codeValue};
-          dispatch({
-            type: 'COUNT_UP_DAILY',
-            payload: {
-              updatedData: {
-                dailyUPCCounter: count + 1,
-              },
-              profileID: core?.profileID,
-              accountID: core?.accountID,
-            },
-          });
           setScannedData(scannedCode);
           setShowScanner(false);
 

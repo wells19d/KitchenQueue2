@@ -2,7 +2,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {ScrollView, View, StyleSheet} from 'react-native';
 
-const KQScrollView = ({children, style, noBar = false}) => {
+const KQScrollView = ({children, style, noBar = false, hideBar = false}) => {
   const [scrollBarHeight, setScrollBarHeight] = useState(0);
   const [scrollBarTop, setScrollBarTop] = useState(0);
   const [layoutHeight, setLayoutHeight] = useState(0);
@@ -42,14 +42,16 @@ const KQScrollView = ({children, style, noBar = false}) => {
   };
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container(hideBar), style]}>
       <ScrollView
         ref={scrollViewRef}
         onScroll={handleScroll}
         onLayout={handleLayout}
         onContentSizeChange={handleContentSizeChange}
         scrollEventThrottle={16}
-        contentContainerStyle={noBar ? {flex: 1} : styles.scrollContent}
+        contentContainerStyle={
+          noBar ? {flex: 1} : styles.scrollContent(hideBar)
+        }
         showsVerticalScrollIndicator={false}>
         {children}
       </ScrollView>
@@ -71,18 +73,18 @@ const KQScrollView = ({children, style, noBar = false}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container: hideBar => ({
     flex: 1,
     position: 'relative',
-    marginHorizontal: 3,
-    paddingHorizontal: 5,
-  },
-  scrollContent: {
+    marginHorizontal: hideBar ? 0 : 3,
+    paddingHorizontal: hideBar ? 0 : 5,
+  }),
+  scrollContent: hideBar => ({
     flexGrow: 1,
-    paddingRight: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
-  },
+    paddingRight: hideBar ? 0 : 10,
+    paddingTop: hideBar ? 0 : 5,
+    paddingBottom: hideBar ? 0 : 5,
+  }),
   scrollBar: {
     position: 'absolute',
     right: 2,

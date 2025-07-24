@@ -34,6 +34,7 @@ export const useCoreInfo = () => {
     ppVersion: profile?.ppVersion || null,
     tosVersion: profile?.tosVersion || null,
     userSettings: profile?.userSettings || null,
+    onboarding: profile?.onboarding || null,
 
     // Account
     accountID: account?.id || null,

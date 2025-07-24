@@ -37,7 +37,7 @@ function* fetchShopCart(action) {
 
       let shopCart = {
         ...shopCartData,
-        lastUpdated: shopCartData?.lastUpdated || null,
+        lastUpdated: shopCartData?.toDate?.().toISOString() ?? null,
       };
 
       yield put({type: 'SET_SHOP_CART', payload: shopCart});

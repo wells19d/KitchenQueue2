@@ -22,7 +22,8 @@ const useRealTimeProfiles = enabled => {
           const profileData = snapshot.data();
           const profilePayload = {
             ...profileData,
-            lastUpdated: profileData?.lastUpdated || null, // ✅ No more toDate()
+            lastUpdated:
+              profileData?.lastUpdated?.toDate?.().toISOString() ?? null,
           };
           dispatch({type: 'SET_PROFILE', payload: profilePayload});
         } else {

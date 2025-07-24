@@ -351,6 +351,9 @@ export const useButtonStyles = (type = 'filled', color = 'primary') => {
 
 export const useButtonSizes = (size = 'medium') => {
   const sizes = {
+    macro: 15,
+    micro: 20,
+    xTiny: 25,
     tiny: 30,
     small: 35,
     medium: 40,

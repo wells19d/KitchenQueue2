@@ -75,7 +75,8 @@ const KQButton = ({
 const ButtonStyles = StyleSheet.create({
   buttonOC: {
     borderRadius: 5,
-    margin: 5,
+    marginHorizontal: 5,
+    marginVertical: 5,
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',

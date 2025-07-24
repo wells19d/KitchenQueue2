@@ -57,9 +57,12 @@ const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
 
       <View style={SelectedRecipeStyles.selectedViewWrapper}>
         <Text size="tiny" centered font="open-7" kqColor="dark90">
+          KQ Recipe provided by{' '}
           {selectedRecipe?.displayAuthorName
-            ? `KQ Recipe provided by ${selectedRecipe?.authorName}`
-            : `KQ Recipe provided by ${selectedRecipe?.source}`}
+            ? `${selectedRecipe?.authorFirstName} ${selectedRecipe?.authorLastName}`
+            : selectedRecipe?.source
+            ? `${selectedRecipe?.source}`
+            : `${selectedRecipe?.credit}`}
         </Text>
         <ScrollView>
           {selectedRecipe?.aboutRecipe && (

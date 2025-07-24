@@ -23,8 +23,9 @@ const useRealTimeAccounts = enabled => {
           const accountData = snapshot.data();
           const account = {
             ...accountData,
-            lastUpdated: accountData?.lastUpdated || null, // ✅ No more toDate()
-            createdOn: accountData?.createdOn || null, // ✅ No more toDate()
+            lastUpdated:
+              accountData?.lastUpdated?.toDate?.().toISOString() ?? null,
+            createdOn: accountData?.createdOn?.toDate?.().toISOString() ?? null,
           };
           dispatch({type: 'SET_ACCOUNT', payload: account});
         } else {

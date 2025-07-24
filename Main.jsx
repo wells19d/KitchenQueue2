@@ -65,6 +65,8 @@ import FavoritesList from './src/screens/Favorites/FavoritesList';
 import RecipeSearch from './src/screens/Recipe/RecipeSearch';
 import NavigationMode from 'react-native-navigation-mode';
 import {requestCameraPermission} from './src/utilities/cameraRequest';
+import RecipeBox from './src/screens/Recipe/RecipeBox';
+import AddRecipe from './src/screens/Recipe/AddRecipe';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -306,6 +308,16 @@ const Main = props => {
           <Stack.Screen
             name="RecipeSearch"
             component={RecipeSearch}
+            options={{freezeOnBlur: true}}
+          />
+          <Stack.Screen
+            name="AddRecipe"
+            component={AddRecipe}
+            options={{freezeOnBlur: true}}
+          />
+          <Stack.Screen
+            name="RecipeBox"
+            component={RecipeBox}
             options={{freezeOnBlur: true}}
           />
           <Stack.Screen

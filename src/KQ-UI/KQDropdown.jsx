@@ -47,13 +47,13 @@ const KQDropdown = ({
   const renderStyles = useMemo(() => {
     if (isIOS && value === null) {
       return {
-        color: '#373d4350',
+        color: '#373d4360',
         padding: 0,
       };
     }
     if (!isIOS && value === null) {
       return {
-        color: '#373d43',
+        color: '#373d4360',
         padding: 0,
         opacity: 0.8,
       };
@@ -92,19 +92,21 @@ const KQDropdown = ({
     <View style={styles.dropContainer}>
       {label && (
         <View style={styles.labelContainer}>
-          <View style={styles.labelContainer}>
-            <Text
-              size="small"
-              font="open-6"
-              style={[styles.label(validation, props.disabled), labelStyles]}>
-              {label} {required && '*'}
-            </Text>
-          </View>
+          <Text
+            size="xSmall"
+            font="open-6"
+            style={[styles.label(validation, props.disabled), labelStyles]}>
+            {label} {required && '*'}
+          </Text>
         </View>
       )}
       <View style={styles.dropWrapper}>
-        <TouchableOpacity onPress={handleOnPress} style={{flex: 1}}>
-          <Text style={renderStyles}>{value?.label || placeholder}</Text>
+        <TouchableOpacity
+          onPress={handleOnPress}
+          style={styles.textInputContainer(isIOS)}>
+          <Text style={renderStyles} numberOfLines={1}>
+            {value?.label || placeholder}
+          </Text>
         </TouchableOpacity>
 
         {value && (
@@ -241,7 +243,10 @@ const KQDropdown = ({
                             justifyContent: 'center',
                             paddingHorizontal: 5,
                           }}
-                          onPress={() => setSelectedItem(item)}>
+                          onPress={() => {
+                            setSelectedItem(item);
+                            handleSave(item);
+                          }}>
                           <View style={{flexDirection: 'row'}}>
                             <View style={{flex: 1}}>
                               <Text
@@ -281,7 +286,7 @@ const KQDropdown = ({
 const styles = {
   dropContainer: {
     marginHorizontal: 5,
-    marginVertical: 10,
+    marginVertical: 5,
     paddingHorizontal: 2,
   },
   labelContainer: {position: 'relative', left: 0},
@@ -292,19 +297,20 @@ const styles = {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderColor: '#c4c4c4',
-    paddingTop: 2,
-    paddingBottom: 4,
+    // paddingTop: 2,
+    paddingBottom: 0,
   },
   captionContainer: {
     flexDirection: 'row',
     paddingHorizontal: 2,
     marginTop: 2,
   },
-  textInputContainer: {
+  textInputContainer: isIOS => ({
     flex: 1,
+    height: isIOS ? 28 : 34,
     paddingHorizontal: 1,
     paddingVertical: 3,
-  },
+  }),
   modalContainer: {flex: 1, flexDirection: 'column'},
   headerContainer: {
     height: 50,

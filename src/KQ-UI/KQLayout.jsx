@@ -26,6 +26,7 @@ const KQLayout = ({
   innerViewStyles = {},
   outerViewStyles = {},
   noBar = false,
+  hideBar = false,
 }) => {
   const baseStyle = {
     flex: 1,
@@ -62,6 +63,7 @@ const KQLayout = ({
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
                 <KQScrollView
                   noBar={noBar}
+                  hideBar={hideBar}
                   onScrollBeginDrag={Keyboard.dismiss}
                   contentContainerStyle={{flexGrow: 1}}
                   keyboardShouldPersistTaps="handled">
@@ -96,7 +98,7 @@ const KQLayout = ({
       return (
         <View style={[baseStyle, outerViewStyles]}>
           {renderHeader()}
-          <KQScrollView noBar={noBar}>
+          <KQScrollView noBar={noBar} hideBar={hideBar}>
             <View style={[{flex: 1}, innerViewStyles]}>{children}</View>
           </KQScrollView>
         </View>

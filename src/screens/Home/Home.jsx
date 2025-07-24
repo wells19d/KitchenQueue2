@@ -7,6 +7,7 @@ import {Image, TouchableOpacity, View} from 'react-native';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {useAccount, useDeviceInfo} from '../../hooks/useHooks';
 import {Icons} from '../../components/IconListRouter';
+import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 
 const Home = () => {
   const core = useCoreInfo();
@@ -49,6 +50,7 @@ const Home = () => {
       children,
       disabled = false,
     } = props;
+    const useHaptics = setHapticFeedback();
     const fixedHeight = height || 90;
     const {color, border} = useMemo(() => {
       const newValue1 = value1 || 0;
@@ -86,6 +88,11 @@ const Home = () => {
       };
     }, [value1, value2]);
 
+    const handleOnPress = () => {
+      useHaptics(core?.userSettings?.hapticStrength || 'light');
+      onPress();
+    };
+
     return (
       <TouchableOpacity
         style={{
@@ -104,7 +111,7 @@ const Home = () => {
           overflow: 'hidden',
         }}
         disabled={disabled}
-        onPress={onPress}>
+        onPress={() => handleOnPress()}>
         {blank ? (
           <View style={[{padding: 5}, blankStyle]}>{children}</View>
         ) : (
@@ -242,8 +249,7 @@ const Home = () => {
           value2={core?.maxRecipeBoxItems}
           // iconStyles={{marginTop: -4}}
           icon={<Icons.Chest size={25} />}
-          // onPress={() => navigation.navigate('RecipeSearch')}
-          disabled
+          onPress={() => navigation.navigate('RecipeBox')}
         />
       </DisplayRow>
       <DisplayRow>
@@ -253,7 +259,6 @@ const Home = () => {
           subTitle="(Daily Limit)"
           value1={core?.dailyUPCCounter}
           value2={core?.maxUPCSearchLimit}
-          // iconStyles={{marginTop: -1}}
           icon={<Icons.Barcode size={20} />}
           // onPress={() => navigation.navigate('FavoritesList')}
           disabled
@@ -264,7 +269,6 @@ const Home = () => {
           subTitle="(Daily Limit)"
           value1={core?.dailyRecipeCounter}
           value2={core?.maxRecipeSearchLimit}
-          // iconStyles={{marginTop: -4}}
           icon={<Icons.Search size={25} />}
           onPress={() => navigation.navigate('RecipeSearch')}
         />

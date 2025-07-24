@@ -7,6 +7,7 @@ export {default as Modal} from './KQModal';
 export {default as Button} from './KQButton';
 export {default as Input} from './KQInput';
 export {default as Dropdown} from './KQDropdown';
+export {default as MultiDropdown} from './KQMultiDropDown';
 export {default as ScrollView} from './KQScrollView';
 export {default as Image} from './KQImage';
 export {default as Camera} from './KQCamera';

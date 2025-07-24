@@ -28,8 +28,9 @@ function* fetchAccount(action) {
           type: 'SET_ACCOUNT',
           payload: {
             ...accountData,
-            lastUpdated: accountData?.lastUpdated || null,
-            createdOn: accountData?.createdOn || null,
+            lastUpdated:
+              accountData?.lastUpdated?.toDate?.().toISOString() ?? null,
+            createdOn: accountData?.createdOn?.toDate?.().toISOString() ?? null,
           },
         });
       } else {

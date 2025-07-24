@@ -1,11 +1,14 @@
 let myRecipe = [
   {
     id: '4f46b0b1-3847-41d6-9ca6-12858aae341d',
-    createdOn: 1750968000000,
+    createdOn: {
+      seconds: 1751389200,
+      nanoseconds: 902000000,
+    },
     glutenFree: null,
     summary: null,
-    other: null,
     isArchived: false,
+    authorLastName: 'Wells',
     ingredientList: [
       'cream cheese',
       'penne pasta',
@@ -18,20 +21,19 @@ let myRecipe = [
       'parsley',
     ],
     credit: 'DarkCav19D',
-    url: '',
-    description: null,
     seasonal: null,
-    publicEdit: false,
-    displayAuthorEmail: false,
+    authorOnlineName: 'DarkCav19D',
     publicAuthor: true,
     image: 'wells-creamy-chicken-alfredo.jpg',
     pictureApproved: true,
     dairyFree: null,
-    updatedOn: 1750968000000,
-    source: 'Kitchen Queue',
+    updatedOn: {
+      seconds: 1751389200,
+      nanoseconds: 540000000,
+    },
+    source: null,
     sourceMaterial: 'personal',
     servings: 4,
-    recipeApproved: true,
     ingredients: [
       {
         amount: 8,
@@ -89,7 +91,8 @@ let myRecipe = [
       },
     ],
     prep: null,
-    displayAuthorName: true,
+    displayAuthorName: false,
+    sharedStatus: null,
     cuisines: ['italian'],
     recipeShared: false,
     instructions: [
@@ -216,15 +219,14 @@ let myRecipe = [
       'tasting spoon(s)',
     ],
     vegan: null,
-    authorName: 'DarkCav19D',
     cooking: null,
     dishTypes: ['dinner', 'supper'],
     authorID: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
     adminEdit: true,
-    vegetarian: false,
+    authorFirstName: 'AJ',
     occasions: null,
+    vegetarian: false,
     healthScore: null,
-    visibility: true,
     keywords: [
       'creamy chicken alfredo w/ penne pasta',
       'creamy',
@@ -233,7 +235,7 @@ let myRecipe = [
       'penne',
       'pasta',
     ],
-    sourceURL: '',
+    sourceURL: null,
     ratingScore: 4.5,
     aboutRecipe:
       "I came across a version of this recipe years ago and have been tweaking it ever since to match my personal taste. It’s now one of those dishes my family asks for regularly — simple, creamy, and packed with flavor. It's become a go-to comfort meal in our home.",
@@ -247,3 +249,178 @@ let myRecipe = [
       'https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2Fwells-creamy-chicken-alfredo.jpg?alt=media',
   },
 ];
+
+let dataNeeded = [
+  {
+    // user sets
+    // title: null, //string - Name of the recipe
+    // source: null, // string - Where the recipe came from // null if personal
+    // sourceMaterial: null, // string - dropdown list for source types
+    // sourceURL: null, //string - used if sourceMaterial is online
+    // displayAuthorName: false, // boolean - If the author wants their name displayed
+    // publicAuthor: false, // boolean - If the author wants their name displayed publicly or anonymously
+    // recipeShared: false, // boolean - If the recipe is shared with the community, can only be set if recipeApproved
+    // cuisines: null, // array of strings - ['italian', 'mexican', 'american'], etc.
+    // dishTypes: null, // array of strings - ['breakfast', 'lunch', 'dinner'], etc.
+    summary: null, // string - Short description of the recipe - 'Chicken, Penne Noodles, with a Creamy Alfredo sauce'
+    aboutRecipe: null, // string - Author's information about of the recipe
+    notes: null, // string - Author's notes/hints for the recipe
+    // prep: null, // number - Prep time in minutes
+    // cooking: null, // number - Cooking time in minutes
+    // readyIn: null, // number - Total time in minutes
+    // servings: null, // number - Number of servings
+    // diets: null, // array of strings - 'paleo', 'keto', 'low-carb', etc.
+    // seasonal: null, // array of strings - 'summer', 'fall', 'winter', 'spring'
+    // occasions: null, // array of strings - 'birthday', 'holiday', 'party', etc.
+
+    tools: null, // array of strings
+    ingredientList: null, // string - pulled from ingredients name's, Used for searching recipes, pulled apart from the ingredients
+    ingredients: null, // array of objects
+    instructions: null, // array of objects
+    image: null, // string - user will attach an image and is then used to upload to firebase plus for the importer for the imageUri
+
+    // admin sets
+    sharedStatus: null, // string - 'request', 'pending', 'admin review', 'needs update', 'reject', 'processing', 'approved', 'complete'
+    pictureApproved: true, // boolean - If the picture is approved by the admin
+    isArchived: false, // boolean - If the recipe is archived, can not be used anymore
+
+    // background sets
+    adminEdit: true, // boolean - This will always be true unless an archived recipe
+    authorID: null, // string - used to link to profileID, to the author, for editing
+    authorFirstName: null, // string
+    authorLastName: null, // string
+    authorOnlineName: null, // string
+    credit: null, // string
+    accountID: null, // string
+    healthScore: null,
+    id: null, // string - unique ID for the recipe
+    createdOn: null, // number - timestamp from firebase
+    updatedOn: null, // number - timestamp from firebase
+
+    ratingScore: null,
+    keywords: null, // array of strings - Used for searching recipes, pulled apart from the title
+  },
+];
+
+/*
+
+Now...  When the user begins creating a recipe for the first time, we are going to have a modal popup, it is going to be based on a new field inside of useProfile, that will be called recipeFTU, and it will be set the false on when the profile is first created.  This will tell us, no, the user hasn't read the disclaimer yet about creating recipes.  We will need a message and I might need help with this. I'm just going to give you the basics and we'll go from there.  Overall, the user must adhere to these guidelines and are not subject for negotiations or compromise. The information requested is needed for proper reference and referral, in case the recipe is ever questioned about it originality.  1. Recipe requires an appropriate name. (this is just an example for you chatGPT, we will not use this as an actual example to tell the user it is a bad one.) It can not be called Ex: "Dog Shit on a Bun".   2: Source Material is required. All Sources that are under the "Private" options, the Source Name will be private / not displayed on the recipe it is "Shared" with the community, and the user selects to show it. Online and Published selection, will be shown and the user will not be able to block it.  3: Source Name is required, except if it is a personal recipe (because it will be auto filled in). This will also remain private when shared with the community unless the user selects for it to not be shown, however, their online name (might) be displayed instead.   4: Source URL is required when it is from an online source. This is needed in case we need to check and make sure the recipe you entered, wasn't taken illegally and it is from an open source / reference.
+
+
+🆕 recipeShared + sharedStatus
+This design is excellent. Here's how I'd lay out sharedStatus:
+
+/22,685 / 22700 / 23334 
+
+Value	          Meaning
+request	        User clicked "Request Share"
+pending	        In algorithm queue
+admin           Review	Human needs to review
+needsUpdate	    Feedback sent to user
+reject	        Recipe declined
+processing	    Being moved to community
+approved	      Accepted but not yet public
+complete	      Live in community box
+*/
+
+/*
+
+Flow
+User taps "Add Ingredients" → opens bottom sheet.
+Sheet displays each row as:
+If visible: true → show fields (amount, unit, name)
+If visible: false → hide or grey out the fields
+When user hits the ➕ on a row:
+Current row’s visible is set to true
+A new row is added with { amount: '', unit: '', name: '', visible: false }
+
+const [ingredients, setIngredients] = useState([
+  { amount: '', unit: '', name: '', visible: false },
+]);
+
+const handleAddIngredient = index => {
+  setIngredients(prev => {
+    const updated = [...prev];
+    updated[index].visible = true;
+    updated.push({ amount: '', unit: '', name: '', visible: false });
+    return updated;
+  });
+};
+
+const cleanedIngredients = ingredients
+  .filter(i => i.visible || i.amount || i.unit || i.name)
+  .map(i => ({
+    amount: i.amount.trim(),
+    unit: i.unit.trim(),
+    name: i.name.trim(),
+  }));
+
+
+
+Flow
+User taps "Add New Instruction" → opens bottom sheet
+Inside modal:
+User enters name (e.g., “Making the Sauce”)
+First step is hidden until they press ➕
+On ➕ press:
+Reveals current step
+Adds new step { step: N+1, action: '', visible: false }
+
+
+  const [instructions, setInstructions] = useState([
+  {
+    index: 0,
+    name: '',
+    steps: [{ step: 0, action: '', visible: false }],
+  },
+]);
+
+const handleAddStep = (instructionIndex, stepIndex) => {
+  setInstructions(prev => {
+    const updated = [...prev];
+    const steps = updated[instructionIndex].steps;
+
+    steps[stepIndex].visible = true;
+    steps.push({ step: steps.length, action: '', visible: false });
+
+    return updated;
+  });
+};
+
+
+const cleanedInstructions = instructions
+  .map((instr, i) => ({
+    index: i,
+    name: instr.name.trim(),
+    steps: instr.steps
+      .filter(s => s.visible || s.action.trim() !== '')
+      .map((s, j) => ({
+        step: j,
+        action: s.action.trim(),
+      })),
+  }))
+  .filter(instr => instr.name || instr.steps.length > 0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/

@@ -9,6 +9,7 @@ import {
 import pluralize from 'pluralize';
 import {Icons} from './IconListRouter';
 import {useColors} from '../KQ-UI/KQUtilities';
+import {formatMeasurementWithPlural} from '../utilities/helpers';
 
 const FlashCell = props => {
   const {
@@ -36,33 +37,6 @@ const FlashCell = props => {
       .join(' ');
 
     return displayText || item.itemName;
-  };
-
-  const formatMeasurementWithPlural = (packageSize, measurement, itemName) => {
-    if (packageSize !== undefined && measurement !== undefined) {
-      if (packageSize === 1 && measurement === 'each') {
-        return '';
-      }
-
-      if (measurement === 'each') {
-        return `${packageSize} ${pluralize(itemName)}`;
-      }
-
-      const match = displayMeasurements.find(m => m.key === measurement);
-
-      if (match) {
-        const label = match.label;
-        return `${packageSize} ${packageSize > 1 ? pluralize(label) : label}`;
-      }
-
-      // Custom value fallback
-      const formatted = formatMeasurement(measurement);
-      return `${packageSize} ${
-        packageSize > 1 ? pluralize(formatted) : formatted
-      }`;
-    }
-
-    return '';
   };
 
   const displayRemaining = (packageSize, remainingAmount) => {

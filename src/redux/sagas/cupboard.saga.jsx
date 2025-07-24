@@ -37,7 +37,7 @@ function* fetchCupboard(action) {
 
       let cupboard = {
         ...cupboardData,
-        lastUpdated: cupboardData?.lastUpdated || null,
+        lastUpdated: cupboardData?.toDate?.().toISOString() ?? null,
       };
 
       yield put({type: 'SET_CUPBOARD', payload: cupboard});
