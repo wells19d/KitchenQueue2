@@ -25,7 +25,7 @@ import {
 import {displayMeasurements} from '../../utilities/measurements';
 import {displayCategories} from '../../utilities/categories';
 import {
-  displayCustom,
+  displayDropField,
   setNumericValue,
   titleCase,
 } from '../../utilities/helpers';
@@ -84,10 +84,10 @@ const ShoppingItems = () => {
     String(itemToUpdate?.quantity ?? '1'),
   );
   const [measurement, setMeasurement] = useState(
-    displayCustom(itemToUpdate?.measurement, displayMeasurements) ?? null,
+    displayDropField(itemToUpdate?.measurement, displayMeasurements) ?? null,
   );
   const [category, setCategory] = useState(
-    displayCustom(itemToUpdate?.category, displayCategories) ?? null,
+    displayDropField(itemToUpdate?.category, displayCategories) ?? null,
   );
   const [notes, setNotes] = useState(itemToUpdate?.notes ?? '');
   const [validation, setValidation] = useState(false);
@@ -499,7 +499,7 @@ const ShoppingItems = () => {
           </View>
           <Dropdown
             label="Measurement"
-            customLabel="Custom Measurement"
+            // customLabel="Custom Measurement"
             placeholder="Select a measurement"
             value={measurement}
             setValue={setMeasurement}

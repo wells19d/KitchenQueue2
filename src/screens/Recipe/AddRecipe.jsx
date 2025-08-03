@@ -1,96 +1,66 @@
 //* AddRecipe.jsx
 
 import React, {useEffect, useMemo, useState} from 'react';
-import {TouchableOpacity, View} from 'react-native';
-import {
-  BottomSheet,
-  Button,
-  Dropdown,
-  Input,
-  Layout,
-  MultiDropdown,
-  ScrollView,
-  Text,
-} from '../../KQ-UI';
+import {BottomSheet, Button, Layout, View} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {displaySourceType} from '../../utilities/materialSource';
-import {
-  capEachWord,
-  displayCustom,
-  displayCustomArray,
-  formatMeasurementWithPluralRec,
-} from '../../utilities/helpers';
+import {displayDropField, displayDropArray} from '../../utilities/helpers';
 import {displayCuisineTypes} from '../../utilities/cuisineType';
 import {displayDishTypes} from '../../utilities/dishType';
 import {displayDietTypes} from '../../utilities/dietType';
 import {displayMeasurements} from '../../utilities/measurements';
-import {Icons} from '../../components/IconListRouter';
-import {useColors} from '../../KQ-UI/KQUtilities';
-import {setHapticFeedback} from '../../hooks/setHapticFeedback';
+import IngredientForm from './IngredientForm';
+import RecipeForm from './RecipeForm';
+import InstructionForm from './InstructionForm';
 
 const AddRecipe = () => {
   const core = useCoreInfo();
-  const useHaptics = setHapticFeedback();
-  // console.log('core', core);
+
+  // kqconsole.log('core', core);
 
   const [validation1, setValidation1] = useState(false);
   const [validation2, setValidation2] = useState(false);
   const [validation3, setValidation3] = useState(false);
   const [validation4, setValidation4] = useState(false);
-  const [validation5, setValidation5] = useState(false);
   const [canSave, setCanSave] = useState(false);
 
   const [recipeName, setRecipeName] = useState(null);
   const [sourceMaterial, setSourceMaterial] = useState(
-    displayCustom(displaySourceType) ?? null,
+    displayDropField(displaySourceType) ?? null,
   );
   const [source, setSource] = useState(null);
   const [sourceURL, setSourceURL] = useState(null);
   const [cuisineType, setCuisineType] = useState(
-    displayCustomArray(displayCuisineTypes) ?? null,
+    displayDropArray(displayCuisineTypes) ?? null,
   );
   const [dishType, setDishType] = useState(
-    displayCustomArray(displayDishTypes) ?? null,
+    displayDropArray(displayDishTypes) ?? null,
   );
   const [dietType, setDietType] = useState(
-    displayCustomArray(displayDietTypes) ?? null,
+    displayDropArray(displayDietTypes) ?? null,
   );
   const [servings, setServings] = useState(null);
   const [prepTime, setPrepTime] = useState(null);
   const [cookTime, setCookTime] = useState(null);
 
   const [ingredients, setIngredients] = useState([]);
+  const [instructions, setInstructions] = useState([]);
 
   const [showInstructions, setShowInstructions] = useState(false);
-  const [showIngredients, setShowIngredients] = useState(true);
+  const [showIngredients, setShowIngredients] = useState(false);
   const [canPressIngredients, setCanPressIngredients] = useState(true);
   const [canPressInstructions, setCanPressInstructions] = useState(true);
 
   const [tempIngAmount, setTempIngAmount] = useState(null);
   const [tempIngMeasurement, setTempIngMeasurement] = useState(
-    displayCustomArray(displayMeasurements) ?? null,
+    displayDropField(displayMeasurements) ?? null,
   );
   const [tempIngName, setTempIngName] = useState(null);
   const [tempNote, setTempNote] = useState(null);
 
-  const handleCloseIngredients = () => {
-    setCanPressIngredients(false);
-    setShowIngredients(false);
-    setTempIngAmount(null);
-    setTempIngMeasurement(null);
-    setTempIngName(null);
-    setTimeout(() => {
-      setCanPressIngredients(true);
-    }, 2000);
-  };
-
-  const handleCloseInstructions = () => {
-    setCanPressInstructions(false);
-    setShowInstructions(false);
-    setTimeout(() => {
-      setCanPressInstructions(true);
-    }, 2000);
-  };
+  const [tempName, setTempName] = useState(null);
+  const [tempSteps, setTempSteps] = useState([]);
+  const [tempAction, setTempAction] = useState(null);
 
   const sourceType = useMemo(() => {
     if (!sourceMaterial) {
@@ -154,183 +124,160 @@ const AddRecipe = () => {
     cookTime: cookTime ? Number(cookTime) : null,
     readyIn: prepTime && cookTime ? Number(prepTime) + Number(cookTime) : null,
     ingredients: ingredients, // later addition
+    instructions: instructions, // later addition
+    notes: null, // later addition
   };
 
-  console.log('recipeObject', recipeObject);
+  const isValidText = value =>
+    typeof value === 'string' && value.trim().length >= 2;
 
   useEffect(() => {
-    if (recipeName === null) {
-      setValidation1(false);
-      setCanSave(false);
-    } else if (recipeName === '') {
-      setValidation1(true);
-      setCanSave(false);
-    } else {
-      setValidation1(false);
-      setCanSave(true);
-    }
-  }, [recipeName]);
+    const nameValid = isValidText(recipeName);
+    const materialValid = sourceMaterial !== null;
+
+    const sourceRequired = sourceType !== 'personal';
+    const sourceValid = !sourceRequired || isValidText(source);
+
+    const urlRequired = sourceType === 'online';
+    const urlValid = !urlRequired || isValidText(sourceURL);
+
+    const ingredientValid = ingredients?.length > 0;
+    const instructionValid = instructions?.length > 0;
+
+    // For debugging purposes
+    // if (recipeName === null) console.log('Recipe Name is null');
+    // if (!isValidText(recipeName)) console.log('Recipe Name is invalid');
+    // if (!materialValid) console.log('Source Material is null');
+    // if (!sourceValid) console.log('Source is invalid');
+    // if (!urlValid) console.log('Source URL is invalid');
+    // if (!ingredientValid) console.log('Ingredients are empty');
+    // if (!instructionValid) console.log('Instructions are empty');
+
+    // Show red error on name only
+    setValidation1(
+      recipeName === '' ||
+        (typeof recipeName === 'string' && recipeName.trim() === ''),
+    );
+
+    // Disable save unless all are valid
+    const allValid =
+      nameValid &&
+      materialValid &&
+      sourceValid &&
+      urlValid &&
+      ingredientValid &&
+      instructionValid;
+    setCanSave(allValid);
+  }, [
+    recipeName,
+    sourceMaterial,
+    source,
+    sourceURL,
+    sourceType,
+    ingredients,
+    instructions,
+  ]);
+
+  const displaySourceExample = useMemo(() => {
+    if (sourceMaterial?.key === 'friend') return 'Ex: Jane Doe';
+    if (sourceMaterial?.key === 'family') return 'Ex: Grandma Jane';
+    if (sourceMaterial?.key === 'social') return 'Ex: Facebook';
+    if (sourceMaterial?.key === 'website') return 'Ex: Pinch of Yum';
+    if (sourceMaterial?.key === 'app') return 'Ex: ChatGPT';
+    if (sourceMaterial?.key === 'cookbook') return 'Ex: Better Homes Cook Book';
+    if (sourceMaterial?.key === 'restaurant') return 'Ex: Olive Garden';
+    if (sourceMaterial?.key === 'tv') return 'Ex: Iron Chef';
+    if (sourceMaterial?.key === 'magazine') return 'Ex: Food Network Magazine';
+    if (sourceMaterial?.key === 'package') return 'Ex: Nestle Toll House';
+    if (sourceMaterial?.key === 'event') return 'Ex: Square One';
+    return null;
+  }, [sourceMaterial]);
+
+  const handleCloseIngredients = () => {
+    setCanPressIngredients(false);
+    setShowIngredients(false);
+    setTempIngAmount(null);
+    setTempIngMeasurement(null);
+    setTempIngName(null);
+    setTimeout(() => {
+      setCanPressIngredients(true);
+    }, 2000);
+  };
+
+  const handleCloseInstructions = () => {
+    setCanPressInstructions(false);
+    setShowInstructions(false);
+    setTempName(null);
+    setTempSteps([]);
+    setTempAction(null);
+    setTimeout(() => {
+      setCanPressInstructions(true);
+    }, 2000);
+  };
 
   const resetForm = () => {
     setRecipeName(null);
-    setSourceMaterial(displayCustom(displaySourceType));
+    setSourceMaterial(displayDropField(displaySourceType));
     setSource(null);
     setSourceURL(null);
     setValidation1(false);
     setValidation2(false);
     setValidation3(false);
     setValidation4(false);
-    setValidation5(false);
   };
 
-  const handleAddIngredient = () => {
-    let newObject = {
-      amount: tempIngAmount ? Number(tempIngAmount) : null,
-      measurement: tempIngMeasurement?.key,
-      name: tempIngName?.toLowerCase().trim(),
-      note: tempNote ? tempNote.trim() : null,
-    };
-    console.log('newObject', newObject);
-    setIngredients(prev => [...prev, newObject]);
-    setTempIngAmount(null);
-    setTempIngMeasurement(null);
-    setTempIngName(null);
-    setTempNote(null);
-  };
-
-  const moveIngredient = (fromIndex, toIndex) => {
-    setIngredients(prev => {
-      const updated = [...prev];
-      const item = updated.splice(fromIndex, 1)[0];
-      updated.splice(toIndex, 0, item);
-      return updated;
-    });
+  const handleSaveRecipe = () => {
+    if (canSave) {
+      kqconsole.log('Saving Recipe', recipeObject);
+    }
   };
 
   return (
     <Layout
       headerTitle="Add Recipe"
-      LeftButton=""
-      RightButton=""
+      LeftButton="Back"
+      RightButton={canSave ? 'Save' : ''}
       LeftAction={null}
-      RightAction={null}
+      RightAction={handleSaveRecipe}
       sheetOpen={false}
       outerViewStyles={{paddingBottom: 0}}
       innerViewStyles={{paddingHorizontal: 5}}
-      mode="static"
+      mode="keyboard-scroll"
       hideBar>
-      <Input
-        required
-        label="Recipe Name"
-        value={recipeName}
-        onChangeText={setRecipeName}
-        // validation={validation1}
-        // validationMessage="Recipe Name is required"
-        capitalize
-        capitalMode="words"
+      <RecipeForm
+        recipeName={recipeName}
+        setRecipeName={setRecipeName}
+        validation1={validation1}
+        sourceMaterial={sourceMaterial}
+        setSourceMaterial={setSourceMaterial}
+        displaySourceType={displaySourceType}
+        validation2={validation2}
+        sourceType={sourceType}
+        validation3={validation3}
+        validation4={validation4}
+        displaySourceExample={displaySourceExample}
+        source={source}
+        setSource={setSource}
+        sourceURL={sourceURL}
+        setSourceURL={setSourceURL}
+        cuisineType={cuisineType}
+        setCuisineType={setCuisineType}
+        displayCuisineTypes={displayCuisineTypes}
+        dishType={dishType}
+        setDishType={setDishType}
+        displayDishTypes={displayDishTypes}
+        dietType={dietType}
+        setDietType={setDietType}
+        displayDietTypes={displayDietTypes}
+        servings={servings}
+        setServings={setServings}
+        prepTime={prepTime}
+        setPrepTime={setPrepTime}
+        cookTime={cookTime}
+        setCookTime={setCookTime}
       />
-      <Dropdown
-        required
-        label="Source Material"
-        placeholder="Select a Material Type"
-        value={sourceMaterial}
-        setValue={setSourceMaterial}
-        caption={'Where the recipe is from'}
-        mapData={displaySourceType}
-        // validation={validation2}
-        // validationMessage="Source Material is required"
-      />
-      {sourceType !== 'personal' && sourceType !== null && (
-        <Input
-          required
-          label="Source Name"
-          value={source}
-          onChangeText={setSource}
-          // validation={sourceType !== 'personal' ? validation3 : null}
-          // validationMessage="Source Name is required"
-          capitalize
-          capitalMode="words"
-          caption={
-            sourceType === 'private' && 'Not Displayed Publicly. Reference Only'
-          }
-        />
-      )}
-      {sourceType === 'online' && sourceType !== null && (
-        <Input
-          required={sourceType === 'online'}
-          label="Source URL"
-          placeholder="https://www.example.com"
-          value={sourceURL}
-          onChangeText={setSourceURL}
-          // validation={sourceType === 'online' ? validation4 : null}
-          // validationMessage="Source URL is required"
-          capitalize
-          capitalMode="none"
-        />
-      )}
-
-      <MultiDropdown
-        required
-        label="Cuisine Type"
-        placeholder="Select a Cuisine Type"
-        caption="Ex: Italian, Mexican, etc."
-        value={cuisineType}
-        setValue={setCuisineType}
-        mapData={displayCuisineTypes}
-        // validation={validation2}
-        // validationMessage="Source Material is required"
-      />
-      <MultiDropdown
-        required
-        label="Dish Type"
-        placeholder="Select a Dish Type"
-        value={dishType}
-        setValue={setDishType}
-        mapData={displayDishTypes}
-        // validation={validation2}
-        // validationMessage="Source Material is required"
-      />
-      <MultiDropdown
-        // required
-        label="Diet Type"
-        placeholder="Select a Diet Type"
-        value={dietType}
-        setValue={setDietType}
-        mapData={displayDietTypes}
-        // validation={validation2}
-        // validationMessage="Source Material is required"
-      />
-      <View style={{flexDirection: 'row'}}>
-        <View style={{flex: 1}}>
-          <Input
-            label="Servings"
-            caption="Ex: 4 serv."
-            value={servings}
-            onChangeText={setServings}
-            keyboardType="numeric"
-          />
-        </View>
-        <View style={{flex: 1}}>
-          <Input
-            label="Prep Time"
-            caption="Ex: 15 Min"
-            value={prepTime}
-            onChangeText={setPrepTime}
-            keyboardType="numeric"
-          />
-        </View>
-        <View style={{flex: 1}}>
-          <Input
-            label="Cook Time"
-            caption="Ex: 15 Min"
-            value={cookTime}
-            onChangeText={setCookTime}
-            keyboardType="numeric"
-          />
-        </View>
-      </View>
-      <View style={{flexDirection: 'row'}}>
-        <View style={{flex: 1, marginVertical: 5}}>
+      <View row>
+        <View flex mv5>
           <Button
             type="outline"
             textSize="xSmall"
@@ -343,7 +290,7 @@ const AddRecipe = () => {
             {ingredients.length > 0 && ` (${ingredients.length})`}
           </Button>
         </View>
-        <View style={{flex: 1, marginVertical: 5}}>
+        <View flex mv5>
           <Button
             type="outline"
             textSize="xSmall"
@@ -353,204 +300,46 @@ const AddRecipe = () => {
               setShowInstructions(true);
             }}>
             Add Instructions
+            {instructions.length > 0 && ` (${instructions.length})`}
           </Button>
         </View>
       </View>
       <BottomSheet
         visible={showIngredients}
         onClose={handleCloseIngredients}
-        snapPoints={[0.01, 0.925]}>
-        <View style={{flexDirection: 'row'}}>
-          <View style={{flex: 1}}>
-            <Input
-              labelStyles={{fontSize: 13}}
-              label="Amount"
-              value={tempIngAmount}
-              onChangeText={setTempIngAmount}
-              keyboardType="numeric"
-              // capitalMode="words"
-              size="tiny"
-            />
-          </View>
-          <View style={{flex: 1}}>
-            <Dropdown
-              required
-              label="Measurement"
-              labelStyles={{fontSize: 13}}
-              // customLabel="Custom Measurement"
-              // placeholder="Select a measurement"
-              value={tempIngMeasurement}
-              setValue={setTempIngMeasurement}
-              mapData={displayMeasurements}
-            />
-          </View>
-        </View>
-        <View style={{flexDirection: 'row'}}>
-          <View style={{flex: 1}}>
-            <Input
-              label="Name"
-              labelStyles={{fontSize: 13}}
-              value={tempIngName}
-              onChangeText={setTempIngName}
-              capitalMode="words"
-            />
-          </View>
-        </View>
-        {/* 
-        Note sure if we need this, but leaving it for now
-        <View style={{flexDirection: 'row'}}>
-          <View style={{flex: 1}}>
-            <Input
-              label="Note"
-              caption="Optional note for the ingredient"
-              labelStyles={{fontSize: 13}}
-              value={tempNote}
-              onChangeText={setTempNote}
-              capitalMode="sentences"
-              counter
-              maxCount={100}
-              multiHeight="small"
-            />
-          </View>
-        </View> */}
-        <View style={{flexDirection: 'row', marginTop: 10}}>
-          <View>
-            <Button
-              type="outline"
-              color="primary"
-              textSize="xSmall"
-              size="tiny"
-              onPress={() => handleAddIngredient()}>
-              Add Item
-            </Button>
-          </View>
-          <View style={{flex: 1}}></View>
-          <View>
-            <Button
-              textSize="xSmall"
-              size="tiny"
-              onPress={handleCloseIngredients}>
-              Finished
-            </Button>
-          </View>
-        </View>
-        <ScrollView
-          style={{
-            flex: 1,
-            marginTop: 10,
-            backgroundColor: '#fff',
-          }}>
-          {ingredients.length > 0 ? (
-            ingredients.map((ing, index) => (
-              <View
-                key={index}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingVertical: 5,
-                }}>
-                {/* Delete button */}
-                <TouchableOpacity
-                  style={{marginRight: 10}}
-                  onPress={() => {
-                    useHaptics(core?.userSettings?.hapticStrength || 'light');
-                    setIngredients(prev => prev.filter((_, i) => i !== index));
-                  }}>
-                  <Icons.XCircle size={20} color={useColors('danger')} />
-                </TouchableOpacity>
-
-                {/* Ingredient text */}
-                <View style={{marginRight: 5, flex: 1}}>
-                  <Text size="xSmall" font="open-6">
-                    {formatMeasurementWithPluralRec(
-                      ing.amount,
-                      ing.measurement,
-                      ing.name,
-                    )}
-                  </Text>
-                  {ing.note && (
-                    <Text size="tiny" font="open-5" italic>
-                      ** {ing.note}
-                    </Text>
-                  )}
-                </View>
-
-                {/* Reorder arrows */}
-                <View style={{flexDirection: 'row'}}>
-                  {index > 0 && (
-                    <TouchableOpacity
-                      onPress={() => {
-                        useHaptics(
-                          core?.userSettings?.hapticStrength || 'light',
-                        );
-                        moveIngredient(index, index - 1);
-                      }}
-                      style={{
-                        marginRight: 5,
-                        borderWidth: 1,
-                        width: 30,
-                        height: 25,
-                        alignContent: 'center',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderWidth: 1,
-                        borderRadius: 5,
-                        borderColor: useColors('dark60'),
-                      }}>
-                      <Icons.ChevronUp size={16} color={useColors('dark60')} />
-                    </TouchableOpacity>
-                  )}
-                  {index < ingredients.length - 1 && (
-                    <TouchableOpacity
-                      style={{
-                        marginRight: 5,
-                        borderWidth: 1,
-                        width: 30,
-                        height: 25,
-                        alignContent: 'center',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderWidth: 1,
-                        borderRadius: 5,
-                        borderColor: useColors('dark60'),
-                      }}
-                      onPress={() => {
-                        useHaptics(
-                          core?.userSettings?.hapticStrength || 'light',
-                        );
-                        moveIngredient(index, index + 1);
-                      }}>
-                      <Icons.ChevronDown
-                        size={16}
-                        color={useColors('dark60')}
-                      />
-                    </TouchableOpacity>
-                  )}
-                </View>
-              </View>
-            ))
-          ) : (
-            <View style={{alignItems: 'center', marginTop: 20}}>
-              <Text size="xSmall" font="open-6" centered>
-                No ingredients added yet.
-              </Text>
-            </View>
-          )}
-        </ScrollView>
-        {/* <Text>showIngredients</Text>
-        <Button
-          type="outline"
-          textSize="xSmall"
-          size="small"
-          onPress={handleCloseIngredients}>
-          Close
-        </Button> */}
+        snapPoints={[0.01, 0.95]}
+        innerStyles={{margin: 0}}>
+        <IngredientForm
+          ingredients={ingredients}
+          setIngredients={setIngredients}
+          tempIngAmount={tempIngAmount}
+          setTempIngAmount={setTempIngAmount}
+          tempIngMeasurement={tempIngMeasurement}
+          setTempIngMeasurement={setTempIngMeasurement}
+          tempIngName={tempIngName}
+          setTempIngName={setTempIngName}
+          handleCloseIngredients={handleCloseIngredients}
+          tempNote={tempNote}
+          setTempNote={setTempNote}
+        />
       </BottomSheet>
 
       <BottomSheet
         visible={showInstructions}
         onClose={handleCloseInstructions}
-        snapPoints={[0.01, 0.925]}></BottomSheet>
+        snapPoints={[0.01, 0.95]}>
+        <InstructionForm
+          instructions={instructions}
+          setInstructions={setInstructions}
+          handleCloseInstructions={handleCloseInstructions}
+          tempName={tempName}
+          setTempName={setTempName}
+          tempSteps={tempSteps}
+          setTempSteps={setTempSteps}
+          tempAction={tempAction}
+          setTempAction={setTempAction}
+        />
+      </BottomSheet>
     </Layout>
   );
 };

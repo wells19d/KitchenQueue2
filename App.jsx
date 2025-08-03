@@ -20,8 +20,10 @@ import Main from './Main';
 import {getAuth, onAuthStateChanged} from '@react-native-firebase/auth';
 import {initializeApp, getApps} from '@react-native-firebase/app';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {kqconsole} from './src/utilities/helpers';
 
 const App = () => {
+  global.kqconsole = kqconsole;
   const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {

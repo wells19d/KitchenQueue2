@@ -135,11 +135,13 @@ const NavHeader = ({
       'To-List',
     ];
     const allowedRightButtons = [
-      'Scan',
+      'Add',
       'Checkout',
+      'Create',
       'Edit',
       'Logout',
       'Save',
+      'Scan',
       'Submit',
       'To-Cart',
       'Torch-On',
@@ -168,6 +170,14 @@ const NavHeader = ({
     };
 
     switch (buttonType) {
+      case 'Add':
+        buttonProps.title = 'Add';
+        buttonProps.icon = (
+          <Icons.AddList size={20} color={sheetOpen ? fadeText : textColor} />
+        );
+        buttonProps.action = () => RightAction();
+        break;
+
       case 'Back':
         buttonProps.title = 'Back';
         buttonProps.icon = (
@@ -203,6 +213,14 @@ const NavHeader = ({
       case 'Close':
         buttonProps.title = 'Close';
         buttonProps.action = () => LeftAction();
+        break;
+
+      case 'Create':
+        buttonProps.title = 'Create';
+        buttonProps.icon = (
+          <Icons.AddList size={20} color={sheetOpen ? fadeText : textColor} />
+        );
+        buttonProps.action = () => RightAction();
         break;
 
       case 'Edit':

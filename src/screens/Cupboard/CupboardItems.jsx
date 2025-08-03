@@ -10,7 +10,7 @@ import {Dropdown, Input, Layout} from '../../KQ-UI';
 import {useCupboard} from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
 import {displayCategories} from '../../utilities/categories';
-import {displayCustom, setNumericValue} from '../../utilities/helpers';
+import {displayDropField, setNumericValue} from '../../utilities/helpers';
 import {View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
@@ -42,10 +42,10 @@ const CupboardItems = () => {
     String(itemToUpdate?.remainingAmount ?? '1'),
   );
   const [measurement, setMeasurement] = useState(
-    displayCustom(itemToUpdate?.measurement, displayMeasurements) ?? null,
+    displayDropField(itemToUpdate?.measurement, displayMeasurements) ?? null,
   );
   const [category, setCategory] = useState(
-    displayCustom(itemToUpdate?.category, displayCategories) ?? null,
+    displayDropField(itemToUpdate?.category, displayCategories) ?? null,
   );
   const [notes, setNotes] = useState(itemToUpdate?.notes ?? '');
 

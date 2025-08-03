@@ -12,6 +12,7 @@ import {Modal, Text, ScrollView, Input} from '../KQ-UI/';
 import {Icons} from '../components/IconListRouter';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
 import {useCoreInfo} from '../utilities/coreInfo';
+import {useDeviceInfo} from '../hooks/useHooks';
 
 const KQDropdown = ({
   label = '',
@@ -27,11 +28,13 @@ const KQDropdown = ({
   caption,
   hapticFeedback = 'light',
   mapData,
+  onRow = false,
   ...props
 }) => {
   const isIOS = Platform.OS === 'ios';
   const useHaptics = setHapticFeedback();
   const core = useCoreInfo();
+  const devices = useDeviceInfo();
   const [showDropModal, setShowDropModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [customValue, setCustomValue] = useState('');
@@ -103,7 +106,7 @@ const KQDropdown = ({
       <View style={styles.dropWrapper}>
         <TouchableOpacity
           onPress={handleOnPress}
-          style={styles.textInputContainer(isIOS)}>
+          style={styles.textInputContainer(isIOS, onRow)}>
           <Text style={renderStyles} numberOfLines={1}>
             {value?.label || placeholder}
           </Text>
@@ -112,14 +115,14 @@ const KQDropdown = ({
         {value && (
           <TouchableOpacity
             onPress={handleClear}
-            style={{paddingHorizontal: 5}}>
+            style={styles.textInputAccessory(isIOS, onRow)}>
             <Icons.Close />
           </TouchableOpacity>
         )}
 
         <TouchableOpacity
           onPress={handleOnPress}
-          style={{paddingHorizontal: 5}}>
+          style={styles.textInputAccessory(isIOS, onRow)}>
           <Icons.ChevronDown />
         </TouchableOpacity>
       </View>
@@ -305,11 +308,18 @@ const styles = {
     paddingHorizontal: 2,
     marginTop: 2,
   },
-  textInputContainer: isIOS => ({
+  textInputContainer: (isIOS, onRow) => ({
     flex: 1,
-    height: isIOS ? 28 : 34,
+    height: isIOS ? 28 : onRow ? 34 : 28,
     paddingHorizontal: 1,
     paddingVertical: 3,
+    position: 'relative',
+    top: isIOS ? 0 : onRow ? 7 : 0,
+  }),
+  textInputAccessory: (isIOS, onRow) => ({
+    paddingHorizontal: 2,
+    position: 'relative',
+    top: isIOS ? 4 : onRow ? 11 : 4,
   }),
   modalContainer: {flex: 1, flexDirection: 'column'},
   headerContainer: {

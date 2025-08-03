@@ -1,9 +1,10 @@
+// helpers.js
 import moment from 'moment';
 import {displayMeasurements, formatMeasurement} from './measurements';
 import pluralize from 'pluralize';
 
 //*helpers.js
-export function displayCustom(value, mapData = []) {
+export function displayDropField(value, mapData = []) {
   if (!value || typeof value !== 'string') return null;
 
   const lowerVal = value.trim().toLowerCase();
@@ -23,7 +24,7 @@ export function displayCustom(value, mapData = []) {
   };
 }
 
-export function displayCustomArray(valueArray, mapData = []) {
+export function displayDropArray(valueArray, mapData = []) {
   if (!Array.isArray(valueArray)) return [];
 
   return valueArray
@@ -159,3 +160,57 @@ export const formatMeasurementWithPluralRec = (
 
   return '';
 };
+
+// Logger function to handle console output with color coding and time stamps
+// Use this function as a normal kqconsole.log using kqconsole.log('message', data);
+// Be sure to import it from the helpers file to use this functionality
+
+const makeLogger =
+  type =>
+  (...args) => {
+    if (!__DEV__) return;
+
+    const time = moment().format('HH:mm:ss:SSS');
+    const color =
+      {
+        log: '#63b76C',
+        warn: '#E6B800',
+        error: '#D32F2F',
+        debug: '#009DC4', // Alias for log
+      }[type] || '#63b76C';
+
+    const [first, ...rest] = args;
+    const prefix = `%c[${time}]`;
+    const style = `color: ${color};`;
+
+    if (type === 'table') {
+      const dataArgs = typeof first === 'object' && first?.title ? rest : args;
+
+      const validTables = dataArgs.filter(
+        item =>
+          (Array.isArray(item) && item.length && typeof item[0] === 'object') ||
+          (typeof item === 'object' && !Array.isArray(item) && item !== null),
+      );
+
+      if (!validTables.length) {
+        kqconsole.log(prefix, style, 'Table (invalid data):', ...dataArgs);
+      } else {
+        validTables.forEach((item, index) => {
+          const label = validTables.length > 1 ? `Table ${index + 1}` : 'Table';
+          kqconsole.log(prefix, style, `${label}:`);
+          console.table(item);
+        });
+      }
+
+      return;
+    } else {
+      console[type](prefix, style, `${capEachWord(type)}:`, first, ...rest);
+    }
+  };
+
+export const kqconsole = (...args) => makeLogger('log')(...args);
+
+kqconsole.log = makeLogger('log');
+kqconsole.warn = makeLogger('warn');
+kqconsole.error = makeLogger('error');
+kqconsole.table = makeLogger('table');

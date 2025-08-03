@@ -9,7 +9,7 @@ import {Dropdown, Input, Layout} from '../../KQ-UI';
 import {useFavorites} from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
 import {displayCategories} from '../../utilities/categories';
-import {displayCustom} from '../../utilities/helpers';
+import {displayDropField} from '../../utilities/helpers';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
 
@@ -34,10 +34,10 @@ const FavoriteItems = () => {
     String(itemToUpdate?.packageSize ?? '1'),
   );
   const [measurement, setMeasurement] = useState(
-    displayCustom(itemToUpdate?.measurement, displayMeasurements) ?? null,
+    displayDropField(itemToUpdate?.measurement, displayMeasurements) ?? null,
   );
   const [category, setCategory] = useState(
-    displayCustom(itemToUpdate?.category, displayCategories) ?? null,
+    displayDropField(itemToUpdate?.category, displayCategories) ?? null,
   );
   const [notes, setNotes] = useState(itemToUpdate?.notes ?? '');
 

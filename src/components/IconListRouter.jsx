@@ -38,6 +38,9 @@ export const Icons = {
   XCircle: props => (
     <OctIcons name="x-circle-fill" size={20} color="#000" {...props} />
   ),
+  XCircleOutline: props => (
+    <OctIcons name="x-circle" size={20} color="#000" {...props} />
+  ),
   Chest: props => (
     <MCIcons name="treasure-chest" size={20} color="#000" {...props} />
   ),

@@ -15,6 +15,7 @@ import {setHapticFeedback} from '../hooks/setHapticFeedback';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useColors} from './KQUtilities';
 import {useCoreInfo} from '../utilities/coreInfo';
+import NavigationMode from 'react-native-navigation-mode';
 
 const KQModal = ({
   visible,
@@ -39,6 +40,7 @@ const KQModal = ({
   const core = useCoreInfo();
   const insets = useSafeAreaInsets();
   const isClosingRef = useRef(false);
+  const [mode, setMode] = useState(null);
 
   const handleClose = (event = null) => {
     const isBackdropTap = event?.target === event?.currentTarget;
@@ -56,6 +58,24 @@ const KQModal = ({
       }, 100);
     }
   };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    NavigationMode.getNavigationMode()
+      .then(result => {
+        if (isMounted) {
+          setMode(result);
+        }
+      })
+      .catch(err => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const hasButtons = mode?.type !== 'gesture';
 
   const setBarStyle = useMemo(() => {
     if (barStyle === 'light') {
@@ -128,10 +148,12 @@ const KQModal = ({
   const topHeight = fullScreen
     ? 0
     : insets.top + (screenSize.height - (screenSize.height * prsHeight) / 100);
+
   const btmHeight = fullScreen
     ? 0
     : insets.bottom +
       (screenSize.height - (screenSize.height * prsHeight) / 100);
+
   const midHeight = screenSize.height - topHeight - btmHeight;
 
   const midLeftWidth = fullScreen
@@ -167,7 +189,13 @@ const KQModal = ({
             style={styles.pressLeft(midLeftWidth, midHeight)}
             onPress={handleClose}
           />
-          <View style={styles.subContainer(fullScreen, midHeight, insets)}>
+          <View
+            style={styles.subContainer(
+              fullScreen,
+              midHeight,
+              hasButtons,
+              insets,
+            )}>
             <Header />
             {children}
           </View>
@@ -214,9 +242,14 @@ const styles = {
     backgroundColor: 'transparent',
   }),
   container: {flex: 1, flexDirection: 'row'},
-  subContainer: (fullScreen, midHeight, insets) => ({
+  subContainer: (fullScreen, midHeight, hasButtons, insets) => ({
     flex: 1,
-    height: midHeight,
+    height: midHeight
+      ? hasButtons
+        ? midHeight + insets.top
+        : midHeight
+      : '100%',
+    // height: midHeight,
     borderColor: '#29856c',
     backgroundColor: '#fff',
     paddingTop: fullScreen ? insets.top : 0,

@@ -1,4 +1,5 @@
 //* index.js (KQ-UI)
+export {default as View} from './KQView';
 export {default as Text} from './KQText';
 export {default as BottomSheet} from './KQBottomSheet';
 export {default as Toast} from './KQToast';

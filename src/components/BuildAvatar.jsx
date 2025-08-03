@@ -57,7 +57,7 @@ const BuildAvatar = props => {
 
   const avatars = allowedProfiles?.map((profile, index) => (
     <View key={`profile-${index}`} style={AvatarStyles.avatarCard}>
-      {/* <TouchableOpacity onPress={() => console.log('View Profile')}> */}
+      {/* <TouchableOpacity onPress={() => kqconsole.log('View Profile')}> */}
       <Avatar
         profilePicture={profile?.pictureURL}
         viewStyles={customAvatarWidth}

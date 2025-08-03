@@ -27,6 +27,7 @@ const KQMultiDropdown = ({
   caption,
   hapticFeedback = 'light',
   mapData,
+  onRow = false,
   ...props
 }) => {
   const isIOS = Platform.OS === 'ios';
@@ -128,7 +129,7 @@ const KQMultiDropdown = ({
       <View style={styles.dropWrapper}>
         <TouchableOpacity
           onPress={handleOnPress}
-          style={styles.textInputContainer(isIOS)}>
+          style={styles.textInputContainer(isIOS, onRow)}>
           <Text style={renderStyles} numberOfLines={1}>
             {Array.isArray(value) && value.length > 0
               ? value.map(v => v.label).join(', ')
@@ -139,14 +140,14 @@ const KQMultiDropdown = ({
         {value?.length > 0 && (
           <TouchableOpacity
             onPress={handleClear}
-            style={{paddingHorizontal: 5}}>
+            style={styles.textInputAccessory(isIOS, onRow)}>
             <Icons.Close />
           </TouchableOpacity>
         )}
 
         <TouchableOpacity
           onPress={handleOnPress}
-          style={{paddingHorizontal: 5}}>
+          style={styles.textInputAccessory(isIOS, onRow)}>
           <Icons.ChevronDown />
         </TouchableOpacity>
       </View>
@@ -332,11 +333,18 @@ const styles = {
     paddingHorizontal: 2,
     marginTop: 2,
   },
-  textInputContainer: isIOS => ({
+  textInputContainer: (isIOS, onRow) => ({
     flex: 1,
-    height: isIOS ? 28 : 34,
+    height: isIOS ? 28 : onRow ? 34 : 28,
     paddingHorizontal: 1,
     paddingVertical: 3,
+    position: 'relative',
+    top: isIOS ? 3 : onRow ? 10 : 3,
+  }),
+  textInputAccessory: (isIOS, onRow) => ({
+    paddingHorizontal: 2,
+    position: 'relative',
+    top: isIOS ? 6 : onRow ? 13 : 6,
   }),
   modalContainer: {flex: 1, flexDirection: 'column'},
   headerContainer: {
