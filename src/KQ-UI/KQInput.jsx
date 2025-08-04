@@ -22,6 +22,7 @@ const KQInput = ({
   counter = false,
   maxCount = 250,
   containerStyles = {},
+  textInputStyles = {},
   wrapperStyles = {},
   disabled = false,
   ...props
@@ -84,7 +85,7 @@ const KQInput = ({
         </View>
       )}
       <View style={[styles.inputWrapper, {...wrapperStyles}]}>
-        <View style={styles.textInputContainer}>
+        <View style={[styles.textInputContainer, {...textInputStyles}]}>
           {disabled ? (
             <Text style={[fontStyles, {padding: 0, color: '#c4c4c4'}]}>
               {value}
@@ -96,7 +97,12 @@ const KQInput = ({
               autoCapitalize={capMode}
               multiline={multiline}
               allowFontScaling={false}
-              style={[fontStyles, multiMode, {padding: 0}]}
+              style={[
+                fontStyles,
+                multiMode,
+                {padding: 0},
+                {...textInputStyles},
+              ]}
               onSubmitEditing={Keyboard.dismiss}
               placeholderTextColor={useColors('dark60')}
               {...props}

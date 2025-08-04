@@ -1,7 +1,7 @@
 //* AddRecipe.jsx
 
 import React, {useEffect, useMemo, useState} from 'react';
-import {BottomSheet, Button, Layout, View} from '../../KQ-UI';
+import {BottomSheet, Button, Input, Layout, View} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {displaySourceType} from '../../utilities/materialSource';
 import {displayDropField, displayDropArray} from '../../utilities/helpers';
@@ -15,9 +15,6 @@ import InstructionForm from './InstructionForm';
 
 const AddRecipe = () => {
   const core = useCoreInfo();
-
-  // kqconsole.log('core', core);
-
   const [validation1, setValidation1] = useState(false);
   const [validation2, setValidation2] = useState(false);
   const [validation3, setValidation3] = useState(false);
@@ -45,11 +42,20 @@ const AddRecipe = () => {
 
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState([]);
+  const [recipeNotes, setRecipeNotes] = useState(null);
+  const [aboutRecipe, setAboutRecipe] = useState(null);
 
   const [showInstructions, setShowInstructions] = useState(false);
   const [showIngredients, setShowIngredients] = useState(false);
+
   const [canPressIngredients, setCanPressIngredients] = useState(true);
   const [canPressInstructions, setCanPressInstructions] = useState(true);
+
+  const [showRecipeNote, setShowRecipeNote] = useState(false);
+  const [showAboutRecipe, setShowAboutRecipe] = useState(false);
+
+  const [canPressRecipeNote, setCanPressRecipeNote] = useState(true);
+  const [canPressAboutRecipe, setCanPressAboutRecipe] = useState(true);
 
   const [tempIngAmount, setTempIngAmount] = useState(null);
   const [tempIngMeasurement, setTempIngMeasurement] = useState(
@@ -123,9 +129,10 @@ const AddRecipe = () => {
     prepTime: prepTime ? Number(prepTime) : null,
     cookTime: cookTime ? Number(cookTime) : null,
     readyIn: prepTime && cookTime ? Number(prepTime) + Number(cookTime) : null,
-    ingredients: ingredients, // later addition
-    instructions: instructions, // later addition
-    notes: null, // later addition
+    ingredients: ingredients,
+    instructions: instructions,
+    notes: recipeNotes,
+    aboutRecipe: aboutRecipe,
   };
 
   const isValidText = value =>
@@ -215,6 +222,22 @@ const AddRecipe = () => {
     }, 2000);
   };
 
+  const handleCloseRecipeNote = () => {
+    setCanPressRecipeNote(false);
+    setShowRecipeNote(false);
+    setTimeout(() => {
+      setCanPressRecipeNote(true);
+    }, 2000);
+  };
+
+  const handleCloseAboutRecipe = () => {
+    setCanPressAboutRecipe(false);
+    setShowAboutRecipe(false);
+    setTimeout(() => {
+      setCanPressAboutRecipe(true);
+    }, 2000);
+  };
+
   const resetForm = () => {
     setRecipeName(null);
     setSourceMaterial(displayDropField(displaySourceType));
@@ -242,7 +265,11 @@ const AddRecipe = () => {
       sheetOpen={false}
       outerViewStyles={{paddingBottom: 0}}
       innerViewStyles={{paddingHorizontal: 5}}
-      mode="keyboard-scroll"
+      mode={
+        showIngredients || showInstructions || showAboutRecipe || showRecipeNote
+          ? 'static'
+          : 'keyboard-scroll'
+      }
       hideBar>
       <RecipeForm
         recipeName={recipeName}
@@ -277,11 +304,34 @@ const AddRecipe = () => {
         setCookTime={setCookTime}
       />
       <View row>
-        <View flex mv5>
+        <View flex mt20>
           <Button
-            type="outline"
-            textSize="xSmall"
-            size="small"
+            textSize="small"
+            size="medium"
+            disabled={!canPressRecipeNote}
+            onPress={() => {
+              setShowRecipeNote(true);
+            }}>
+            Add Note
+          </Button>
+        </View>
+        <View flex mt20>
+          <Button
+            textSize="small"
+            size="medium"
+            disabled={!canPressAboutRecipe}
+            onPress={() => {
+              setShowAboutRecipe(true);
+            }}>
+            Add Description
+          </Button>
+        </View>
+      </View>
+      <View row>
+        <View flex mt5>
+          <Button
+            textSize="small"
+            size="medium"
             disabled={!canPressIngredients}
             onPress={() => {
               setShowIngredients(true);
@@ -290,11 +340,10 @@ const AddRecipe = () => {
             {ingredients.length > 0 && ` (${ingredients.length})`}
           </Button>
         </View>
-        <View flex mv5>
+        <View flex mt5>
           <Button
-            type="outline"
-            textSize="xSmall"
-            size="small"
+            textSize="small"
+            size="medium"
             disabled={!canPressInstructions}
             onPress={() => {
               setShowInstructions(true);
@@ -304,6 +353,9 @@ const AddRecipe = () => {
           </Button>
         </View>
       </View>
+
+      <View style={{height: 100}} />
+
       <BottomSheet
         visible={showIngredients}
         onClose={handleCloseIngredients}
@@ -339,6 +391,56 @@ const AddRecipe = () => {
           tempAction={tempAction}
           setTempAction={setTempAction}
         />
+      </BottomSheet>
+      <BottomSheet
+        visible={showRecipeNote}
+        onClose={handleCloseRecipeNote}
+        snapPoints={[0.01, 0.95]}>
+        <Input
+          label="Recipe Note"
+          caption="Optional: Notes about the recipe"
+          placeholder="Ex: Don't forget to preheat..."
+          value={aboutRecipe}
+          onChangeText={setAboutRecipe}
+          capitalize
+          capitalMode="sentences"
+          multiline
+          multiHeight="small"
+          counter
+          maxCount={300}
+          textInputStyles={{height: 140}}
+        />
+        <View row>
+          <View flex />
+          <View>
+            <Button onPress={handleCloseRecipeNote}>Finished</Button>
+          </View>
+        </View>
+      </BottomSheet>
+      <BottomSheet
+        visible={showAboutRecipe}
+        onClose={handleCloseAboutRecipe}
+        snapPoints={[0.01, 0.95]}>
+        <Input
+          label="Recipe Description"
+          caption="Optional: Info about this recipe"
+          placeholder="Ex: This is a warm and hearty dish that..."
+          value={recipeNotes}
+          onChangeText={setRecipeNotes}
+          capitalize
+          capitalMode="sentences"
+          multiline
+          multiHeight="large"
+          counter
+          maxCount={300}
+          textInputStyles={{height: 140}}
+        />
+        <View row>
+          <View flex />
+          <View>
+            <Button onPress={handleCloseAboutRecipe}>Finished</Button>
+          </View>
+        </View>
       </BottomSheet>
     </Layout>
   );

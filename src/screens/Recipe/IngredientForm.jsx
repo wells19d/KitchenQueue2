@@ -115,10 +115,12 @@ const IngredientForm = props => {
             labelStyles={{fontSize: 13}}
             value={tempNote}
             onChangeText={setTempNote}
+            capitalize
             capitalMode="sentences"
             counter
             maxCount={100}
-            multiHeight="small"
+            multiline
+            multiHeight="large"
           />
         </View>
       </View>
