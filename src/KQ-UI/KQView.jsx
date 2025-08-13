@@ -49,6 +49,8 @@ const KQView = ({
   centerH = false,
   centerVH = false,
   rightAlign = false,
+  bottomAlign = false,
+  topAlign = false,
 
   // Margin and padding (numeric or shorthand)
   m,
@@ -93,6 +95,14 @@ const KQView = ({
     if (rightAlign) {
       s.alignItems = 'flex-end';
       s.alignContent = 'flex-end';
+    }
+
+    if (bottomAlign) {
+      s.justifyContent = 'flex-end';
+    }
+
+    if (topAlign) {
+      s.justifyContent = 'flex-start';
     }
 
     // Merge explicit + shorthand spacing

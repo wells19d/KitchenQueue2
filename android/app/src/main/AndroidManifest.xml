@@ -1,10 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.kitchenqueue.kitchenque">
 
+    <!-- 🔹 Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <!-- 🔹 Fix Manifest Merge Conflict -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"
+        tools:replace="android:maxSdkVersion" />
 
     <application
         android:name=".MainApplication"
@@ -13,14 +23,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:allowBackup="false"
         android:theme="@style/AppTheme"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true">
 
-        <!-- Squircle Icon Support -->
+        <!-- 🔹 Squircle Icon Support -->
         <meta-data
             android:name="android.app.squircle_icon"
-            android:resource="@mipmap/ic_launcher_squircle"/>
+            android:resource="@mipmap/ic_launcher_squircle" />
 
-        <!-- Main App Activity -->
+        <!-- 🔹 Main App Activity -->
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -28,13 +39,19 @@
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan"
             android:exported="true"
-            android:theme="@style/Theme.SplashScreen">  <!-- 🔥 Make sure this is correct -->
-            
+            android:theme="@style/Theme.SplashScreen">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- 🔹 UCrop Activity for react-native-image-crop-picker -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:theme="@style/UCropTheme"
+            android:exported="false"
+            tools:replace="android:theme" />
     </application>
 </manifest>

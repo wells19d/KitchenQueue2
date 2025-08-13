@@ -35,6 +35,8 @@ export const useCoreInfo = () => {
     tosVersion: profile?.tosVersion || null,
     userSettings: profile?.userSettings || null,
     onboarding: profile?.onboarding || null,
+    permissionsGranted: profile?.permissionsGranted || false,
+    permissionsRequested: profile?.permissionsRequested || false,
 
     // Account
     accountID: account?.id || null,

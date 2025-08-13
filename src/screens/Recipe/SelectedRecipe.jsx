@@ -15,6 +15,8 @@ const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
 
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
 
+  console.log('SelectedRecipe', selectedRecipe);
+
   const SectionHead = ({title, value, style}) => {
     if (value) {
       return (
@@ -87,23 +89,11 @@ const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
               </TouchableOpacity>
             </>
           )}
-          <SectionHead
-            title="Tools"
-            value={selectedRecipe?.tools?.length > 0}
-            style={{marginTop: 5}}
-          />
-          <View style={SelectedRecipeStyles.toolWrapper}>
-            {selectedRecipe?.tools?.map((tool, index) => (
-              <View key={index} style={SelectedRecipeStyles.toolText}>
-                <Text size="xSmall" font="open-7" numberOfLines={1}>
-                  {capFirst(tool)}
-                </Text>
-              </View>
-            ))}
-          </View>
+
           <SectionHead
             title="Ingredients"
             value={selectedRecipe?.ingredients?.length > 0}
+            style={{marginTop: 5}}
           />
           <View style={SelectedRecipeStyles.ingWrapper}>
             {selectedRecipe?.ingredients?.map((ing, index) => (
@@ -148,16 +138,6 @@ const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
             title="Instructions"
             value={selectedRecipe?.instructions?.length > 0}
           />
-          {selectedRecipe?.notes && (
-            <View style={SelectedRecipeStyles.noteWrapper}>
-              <Text size="xSmall" font="open-7">
-                Note:
-              </Text>
-              <Text size="tiny" font="open-6">
-                {endWithPeriod(selectedRecipe?.notes)}
-              </Text>
-            </View>
-          )}
           <View style={{margin: 5, marginBottom: 10}}>
             {Array.isArray(selectedRecipe?.instructions) &&
               selectedRecipe.instructions.length > 0 &&

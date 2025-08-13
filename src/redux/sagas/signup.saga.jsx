@@ -50,6 +50,8 @@ function* createNewUser(action) {
         forceShowFTU: false, // this lets the user force to show the ftu again
         recipeFTU: false, // this is for a modal that shows a disclaimer when the user creates their first recipe
       },
+      permissionsGranted: false,
+      permissionsRequested: false,
       userSettings: {
         flashCellOrder: [
           {index: 0, key: 'brandName', label: 'Brand Name'},

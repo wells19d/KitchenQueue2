@@ -274,6 +274,8 @@ function Auth(props) {
               capitalize={false}
               value={email}
               onChangeText={handleInputChange(setEmail)}
+              autoComplete="email"
+              textContentType="emailAddress"
             />
             <Input
               placeholder="Password"
@@ -282,7 +284,9 @@ function Auth(props) {
               accessoryRight={() =>
                 renderEyeIcon(secureTextEntry, setSecureTextEntry)
               }
-              secureTextEntry={secureTextEntry}
+              autoComplete="password"
+              textContentType="password"
+              secureTextEntry={true}
               capitalize={false}
             />
             <Button

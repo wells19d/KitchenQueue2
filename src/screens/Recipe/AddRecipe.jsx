@@ -9,9 +9,12 @@ import {displayCuisineTypes} from '../../utilities/cuisineType';
 import {displayDishTypes} from '../../utilities/dishType';
 import {displayDietTypes} from '../../utilities/dietType';
 import {displayMeasurements} from '../../utilities/measurements';
-import IngredientForm from './IngredientForm';
-import RecipeForm from './RecipeForm';
-import InstructionForm from './InstructionForm';
+import {normalizeTitleForKeywords} from '../../utilities/normalizeTitle';
+import FastImage from 'react-native-fast-image';
+import UploadPicture from './UploadPicture';
+import IngredientForm from './Forms/IngredientForm';
+import InstructionForm from './Forms/InstructionForm';
+import RecipeForm from './Forms/RecipeForm';
 
 const AddRecipe = () => {
   const core = useCoreInfo();
@@ -36,14 +39,16 @@ const AddRecipe = () => {
   const [dietType, setDietType] = useState(
     displayDropArray(displayDietTypes) ?? null,
   );
+
   const [servings, setServings] = useState(null);
   const [prepTime, setPrepTime] = useState(null);
   const [cookTime, setCookTime] = useState(null);
 
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState([]);
-  const [recipeNotes, setRecipeNotes] = useState(null);
   const [aboutRecipe, setAboutRecipe] = useState(null);
+
+  const [finalImage, setFinalImage] = useState(null);
 
   const [showInstructions, setShowInstructions] = useState(false);
   const [showIngredients, setShowIngredients] = useState(false);
@@ -51,10 +56,10 @@ const AddRecipe = () => {
   const [canPressIngredients, setCanPressIngredients] = useState(true);
   const [canPressInstructions, setCanPressInstructions] = useState(true);
 
-  const [showRecipeNote, setShowRecipeNote] = useState(false);
+  const [showUploadPicture, setShowUploadPicture] = useState(false);
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
 
-  const [canPressRecipeNote, setCanPressRecipeNote] = useState(true);
+  const [canPressUploadPicture, setCanPressUploadPicture] = useState(true);
   const [canPressAboutRecipe, setCanPressAboutRecipe] = useState(true);
 
   const [tempIngAmount, setTempIngAmount] = useState(null);
@@ -109,31 +114,49 @@ const AddRecipe = () => {
   }, [sourceMaterial]);
 
   const recipeObject = {
+    // id: created on save
+    // createdOn: created on save
+    // updatedOn: created on save || updated on edit
     title: recipeName?.toLowerCase().trim(),
     sourceMaterial: sourceMaterial?.key,
     source: source?.toLowerCase().trim(),
     sourceURL: sourceURL?.trim().toLowerCase().replace(/\s+/g, ''),
+    credit: core?.onlineName,
     authorOnlineName: core?.onlineName,
     authorFirstName: core?.firstName,
     authorLastName: core?.lastName,
     authorID: core?.userID,
+    accountID: core?.accountID,
     adminEdit: true,
-    cuisineType: cuisineType?.map(c => c.value),
-    dishType: dishType?.map(c => c.value),
-    seasonal: null, // later addition
-    occasions: null, // later addition
+    cuisines: cuisineType?.map(c => c.value),
+    dishTypes: dishType?.map(c => c.value),
+    diets: dietType?.map(c => c.value),
     displayAuthorName: false, // later addition - for shared recipes
     publicAuthor: false, // later addition - for shared recipes
     recipeShared: false, // later addition - for shared recipes
+    sharedStatus: null, // later addition - for shared recipes // for admin approvals
     servings: servings ? Number(servings) : null,
     prepTime: prepTime ? Number(prepTime) : null,
     cookTime: cookTime ? Number(cookTime) : null,
     readyIn: prepTime && cookTime ? Number(prepTime) + Number(cookTime) : null,
     ingredients: ingredients,
     instructions: instructions,
-    notes: recipeNotes,
-    aboutRecipe: aboutRecipe,
+    imageUri: finalImage
+      ? `https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2F${finalImage?.name}?alt=media`
+      : null,
+    image: finalImage?.name ?? null,
+    pictureApproved: true,
+    ingredientList: ingredients.map(ing => ing.name?.toLowerCase().trim()),
+    isArchived: false,
+    keywords: normalizeTitleForKeywords(recipeName),
+    aboutRecipe: aboutRecipe?.trim(),
+    seasonal: null, // later addition
+    occasions: null, // later addition
+    healthScore: null, // later addition
+    ratingScore: null, // later addition
   };
+
+  // console.log('Recipe Object:', recipeObject);
 
   const isValidText = value =>
     typeof value === 'string' && value.trim().length >= 2;
@@ -222,11 +245,11 @@ const AddRecipe = () => {
     }, 2000);
   };
 
-  const handleCloseRecipeNote = () => {
-    setCanPressRecipeNote(false);
-    setShowRecipeNote(false);
+  const handleCloseUploadPicture = () => {
+    setCanPressUploadPicture(false);
+    setShowUploadPicture(false);
     setTimeout(() => {
-      setCanPressRecipeNote(true);
+      setCanPressUploadPicture(true);
     }, 2000);
   };
 
@@ -266,7 +289,10 @@ const AddRecipe = () => {
       outerViewStyles={{paddingBottom: 0}}
       innerViewStyles={{paddingHorizontal: 5}}
       mode={
-        showIngredients || showInstructions || showAboutRecipe || showRecipeNote
+        showIngredients ||
+        showInstructions ||
+        showAboutRecipe ||
+        showUploadPicture
           ? 'static'
           : 'keyboard-scroll'
       }
@@ -308,22 +334,24 @@ const AddRecipe = () => {
           <Button
             textSize="small"
             size="medium"
-            disabled={!canPressRecipeNote}
+            disabled={!canPressAboutRecipe}
             onPress={() => {
-              setShowRecipeNote(true);
+              setShowAboutRecipe(true);
             }}>
-            Add Note
+            Add Description
           </Button>
         </View>
         <View flex mt20>
           <Button
             textSize="small"
             size="medium"
-            disabled={!canPressAboutRecipe}
+            disabled={
+              !canPressUploadPicture || recipeName === null || recipeName === ''
+            }
             onPress={() => {
-              setShowAboutRecipe(true);
+              setShowUploadPicture(true);
             }}>
-            Add Description
+            Upload Picture
           </Button>
         </View>
       </View>
@@ -392,31 +420,7 @@ const AddRecipe = () => {
           setTempAction={setTempAction}
         />
       </BottomSheet>
-      <BottomSheet
-        visible={showRecipeNote}
-        onClose={handleCloseRecipeNote}
-        snapPoints={[0.01, 0.95]}>
-        <Input
-          label="Recipe Note"
-          caption="Optional: Notes about the recipe"
-          placeholder="Ex: Don't forget to preheat..."
-          value={aboutRecipe}
-          onChangeText={setAboutRecipe}
-          capitalize
-          capitalMode="sentences"
-          multiline
-          multiHeight="small"
-          counter
-          maxCount={300}
-          textInputStyles={{height: 140}}
-        />
-        <View row>
-          <View flex />
-          <View>
-            <Button onPress={handleCloseRecipeNote}>Finished</Button>
-          </View>
-        </View>
-      </BottomSheet>
+
       <BottomSheet
         visible={showAboutRecipe}
         onClose={handleCloseAboutRecipe}
@@ -425,8 +429,8 @@ const AddRecipe = () => {
           label="Recipe Description"
           caption="Optional: Info about this recipe"
           placeholder="Ex: This is a warm and hearty dish that..."
-          value={recipeNotes}
-          onChangeText={setRecipeNotes}
+          value={aboutRecipe}
+          onChangeText={setAboutRecipe}
           capitalize
           capitalMode="sentences"
           multiline
@@ -441,6 +445,17 @@ const AddRecipe = () => {
             <Button onPress={handleCloseAboutRecipe}>Finished</Button>
           </View>
         </View>
+      </BottomSheet>
+      <BottomSheet
+        visible={showUploadPicture}
+        onClose={handleCloseUploadPicture}
+        snapPoints={[0.01, 0.95]}>
+        <UploadPicture
+          recipeName={recipeName?.toLowerCase().trim()}
+          handleCloseUploadPicture={handleCloseUploadPicture}
+          finalImage={finalImage}
+          setFinalImage={setFinalImage}
+        />
       </BottomSheet>
     </Layout>
   );

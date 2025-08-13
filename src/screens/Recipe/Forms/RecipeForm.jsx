@@ -1,6 +1,6 @@
 //* RecipeForm.jsx
 import React from 'react';
-import {Dropdown, Input, MultiDropdown, View} from '../../KQ-UI';
+import {Dropdown, Input, MultiDropdown, View} from '../../../KQ-UI';
 
 const RecipeForm = props => {
   const {

@@ -4,7 +4,6 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   Alert,
   Dimensions,
-  View,
   Image,
   StatusBar,
   ActivityIndicator,
@@ -26,7 +25,7 @@ import Account from './src/screens/Account/Account';
 import CupboardSingle from './src/screens/Cupboard/CupboardSingle';
 import ShoppingList from './src/screens/Shopping/ShoppingList';
 import CenterMenu from './src/screens/CenterMenu/CenterMenu';
-import {BottomSheet, Modal, Text} from './src/KQ-UI';
+import {BottomSheet, Button, Modal, Text, View} from './src/KQ-UI';
 import DevInputs from './src/screens/Dev/DevInputs';
 import DevButtons from './src/screens/Dev/DevButtons';
 import DevDropdowns from './src/screens/Dev/DevDropdowns';
@@ -64,9 +63,9 @@ import FavoriteItems from './src/screens/Favorites/FavoriteItems';
 import FavoritesList from './src/screens/Favorites/FavoritesList';
 import RecipeSearch from './src/screens/Recipe/RecipeSearch';
 import NavigationMode from 'react-native-navigation-mode';
-import {requestCameraPermission} from './src/utilities/cameraRequest';
 import RecipeBox from './src/screens/Recipe/RecipeBox';
 import AddRecipe from './src/screens/Recipe/AddRecipe';
+import {requestPermissions} from './src/utilities/permissions';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -88,6 +87,7 @@ const Main = props => {
 
   const [showPPModal, setShowPPModal] = useState(false);
   const [showTOSModal, setShowTOSModal] = useState(true);
+  const [showAppPermissions, setShowAppPermissions] = useState(false);
   const [currentModal, setCurrentModal] = useState('');
   enableScreens(true);
 
@@ -178,6 +178,13 @@ const Main = props => {
         setShowPPModal(true);
       }
     }
+    if (profile?.permissionsRequested === false) {
+      setCurrentModal('Permissions');
+      setShowAppPermissions(true);
+    } else {
+      setShowAppPermissions(false);
+      setCurrentModal('');
+    }
   }, [isAuthenticated, profile, account]);
 
   useEffect(() => {
@@ -215,6 +222,45 @@ const Main = props => {
       payload: {userId: profile?.id, updatedData},
     });
     setShowTOSModal(false);
+    setCurrentModal('');
+  };
+
+  const handlePermissionRequest = async () => {
+    const granted = await requestPermissions();
+    if (!granted) {
+      Toast.show({
+        type: 'error',
+        text1: 'Some permissions were denied',
+        text2: 'Please enable them in system settings.',
+      });
+    } else {
+      let updatedData = {
+        permissionsRequested: true,
+        permissionsGranted: true,
+      };
+      dispatch({
+        type: 'UPDATE_PROFILE_REQUEST',
+        payload: {userId: profile?.id, updatedData},
+      });
+      Toast.show({
+        type: 'success',
+        text1: 'All permissions granted',
+      });
+      setShowAppPermissions(false);
+      setCurrentModal('');
+    }
+  };
+
+  const handlePermissionDeline = () => {
+    let updatedData = {
+      permissionsRequested: true,
+      permissionsGranted: false,
+    };
+    dispatch({
+      type: 'UPDATE_PROFILE_REQUEST',
+      payload: {userId: profile?.id, updatedData},
+    });
+    setShowAppPermissions(false);
     setCurrentModal('');
   };
 
@@ -500,6 +546,39 @@ const Main = props => {
               handlePPConfirm={handlePPConfirm}
               handleCancel={handleCancel}
             />
+          </Modal>
+        )}
+
+        {currentModal === 'Permissions' && (
+          <Modal
+            height="70%"
+            width="90%"
+            visible={showAppPermissions}
+            title="App Permissions"
+            // fullScreen
+            hideClose>
+            <View flex column m15>
+              <View>
+                <Text size="small" centered italic>
+                  Key features in Kitchen Queue require permissions from your
+                  device. We use your camera and storage to allow you to scan
+                  items to your cupboard, shopping cart, recipes, and add
+                  photos. If you declined these permissions, you will be limited
+                  in the features you can use in the app.
+                </Text>
+              </View>
+              <View flex />
+              <View>
+                <Button onPress={handlePermissionRequest}>Accept</Button>
+                <Button
+                  type="outline"
+                  onPress={handlePermissionDeline}
+                  variant="secondary"
+                  mt10>
+                  Decline
+                </Button>
+              </View>
+            </View>
           </Modal>
         )}
       </NavigationContainer>

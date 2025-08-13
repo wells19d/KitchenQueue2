@@ -5,8 +5,6 @@ let myRecipe = [
       seconds: 1751389200,
       nanoseconds: 902000000,
     },
-    glutenFree: null,
-    summary: null,
     isArchived: false,
     authorLastName: 'Wells',
     ingredientList: [
@@ -26,7 +24,6 @@ let myRecipe = [
     publicAuthor: true,
     image: 'wells-creamy-chicken-alfredo.jpg',
     pictureApproved: true,
-    dairyFree: null,
     updatedOn: {
       seconds: 1751389200,
       nanoseconds: 540000000,
@@ -90,7 +87,6 @@ let myRecipe = [
         unit: 'tbsp',
       },
     ],
-    prep: null,
     displayAuthorName: false,
     sharedStatus: null,
     cuisines: ['italian'],
@@ -208,24 +204,11 @@ let myRecipe = [
         ],
       },
     ],
-    tools: [
-      'large pot',
-      'colander',
-      'large skillet',
-      'whisk',
-      'spatula',
-      'measuring cups',
-      'measuring spoons',
-      'tasting spoon(s)',
-    ],
-    vegan: null,
-    cooking: null,
     dishTypes: ['dinner', 'supper'],
     authorID: 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2',
     adminEdit: true,
     authorFirstName: 'AJ',
     occasions: null,
-    vegetarian: false,
     healthScore: null,
     keywords: [
       'creamy chicken alfredo w/ penne pasta',
@@ -239,8 +222,6 @@ let myRecipe = [
     ratingScore: 4.5,
     aboutRecipe:
       "I came across a version of this recipe years ago and have been tweaking it ever since to match my personal taste. It’s now one of those dishes my family asks for regularly — simple, creamy, and packed with flavor. It's become a go-to comfort meal in our home.",
-    notes:
-      'To prevent the sauce from sticking, use a flat whisk to better reach the bottom and edges of the pan',
     title: 'Creamy Chicken Alfredo w/ Penne Pasta',
     accountID: null,
     diets: null,
@@ -400,7 +381,6 @@ const cleanedInstructions = instructions
       })),
   }))
   .filter(instr => instr.name || instr.steps.length > 0);
-
 
 
 

@@ -9,7 +9,6 @@ import EIcons from 'react-native-vector-icons/Entypo';
 import FIcons from 'react-native-vector-icons/Fontisto';
 import FEIcons from 'react-native-vector-icons/Feather';
 import SIIcons from 'react-native-vector-icons/SimpleLineIcons';
-import MIcons from 'react-native-vector-icons/MaterialIcons';
 import OctIcons from 'react-native-vector-icons/Octicons';
 import ZOIcons from 'react-native-vector-icons/Zocial';
 import {Keyboard} from 'react-native';
@@ -27,6 +26,7 @@ export const Icons = {
   Barcode: props => (
     <FAIcons name="barcode" size={20} color="#000" {...props} />
   ),
+  Camera: props => <FEIcons name="camera" size={20} color="#000" {...props} />,
   Check: props => <FA5Icons name="check" size={20} color="#000" {...props} />,
   CheckFilledCircle: props => (
     <OctIcons name="check-circle-fill" size={20} color="#000" {...props} />
@@ -116,6 +116,7 @@ export const Icons = {
     <MCIcons name="set-split" size={20} color="#000" {...props} />
   ),
   Star: props => <MCIcons name="star" size={20} color="#000" {...props} />,
+  Upload: props => <FEIcons name="upload" size={20} color="#000" {...props} />,
   Wave: props => <MCIcons name="wave" size={20} color="#000" {...props} />,
   Waves: props => <MCIcons name="waves" size={20} color="#000" {...props} />,
 };

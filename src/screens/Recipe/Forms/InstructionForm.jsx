@@ -1,14 +1,14 @@
 //* InstructionForm.jsx
 
 import React, {useEffect, useMemo, useState} from 'react';
-import {setHapticFeedback} from '../../hooks/setHapticFeedback';
-import {useCoreInfo} from '../../utilities/coreInfo';
-import {Button, Input, Text, View} from '../../KQ-UI';
-import {Icons} from '../../components/IconListRouter';
+import {setHapticFeedback} from '../../../hooks/setHapticFeedback';
+import {useCoreInfo} from '../../../utilities/coreInfo';
+import {Button, Input, Text, View} from '../../../KQ-UI';
+import {Icons} from '../../../components/IconListRouter';
 import {ScrollView} from 'react-native-gesture-handler';
 import {TouchableOpacity} from 'react-native';
-import {useColors} from '../../KQ-UI/KQUtilities';
-import {capEachWord, capFirst} from '../../utilities/helpers';
+import {useColors} from '../../../KQ-UI/KQUtilities';
+import {capEachWord, capFirst} from '../../../utilities/helpers';
 
 const InstructionForm = props => {
   const {
