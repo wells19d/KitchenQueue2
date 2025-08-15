@@ -112,7 +112,7 @@ const InstructionForm = props => {
             onChangeText={setTempName}
             size="tiny"
             capitalize
-            capitalMode="words"
+            capitalMode="sentences"
           />
         </View>
       </View>
@@ -126,7 +126,7 @@ const InstructionForm = props => {
             onChangeText={setTempAction}
             size="tiny"
             capitalize
-            capitalMode="words"
+            capitalMode="sentences"
           />
         </View>
         <View style={{justifyContent: 'flex-end', paddingBottom: 3}}>

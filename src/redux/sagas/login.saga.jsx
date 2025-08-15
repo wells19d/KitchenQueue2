@@ -20,10 +20,12 @@ function* handleLogin(action) {
     const accountData = yield call(waitForAccount);
 
     // ✅ Step 3: Fetch shoppingCart / cupboard / favorites
-    const {shoppingCartID, cupboardID, favoriteItemsID} = accountData;
+    const {shoppingCartID, cupboardID, favoriteItemsID, recipeBoxID} =
+      accountData;
     yield put({type: 'FETCH_SHOP_CART', payload: {shoppingCartID}});
     yield put({type: 'FETCH_CUPBOARD', payload: {cupboardID}});
     yield put({type: 'FETCH_FAVORITES', payload: {favoriteItemsID}});
+    yield put({type: 'FETCH_RECIPE_BOX', payload: {recipeBoxID}});
   } catch (error) {
     yield put({type: 'LOGIN_SEQUENCE_FAILED', payload: error.message});
   }

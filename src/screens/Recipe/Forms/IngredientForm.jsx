@@ -5,7 +5,10 @@ import {Button, Dropdown, Input, ScrollView, Text, View} from '../../../KQ-UI';
 import {Icons} from '../../../components/IconListRouter';
 import {setHapticFeedback} from '../../../hooks/setHapticFeedback';
 import {useColors} from '../../../KQ-UI/KQUtilities';
-import {formatMeasurementWithPluralRec} from '../../../utilities/helpers';
+import {
+  capFirst,
+  formatMeasurementWithPluralRec,
+} from '../../../utilities/helpers';
 import {useCoreInfo} from '../../../utilities/coreInfo';
 import {displayMeasurements} from '../../../utilities/measurements';
 
@@ -32,8 +35,8 @@ const IngredientForm = props => {
       let newObject = {
         amount: tempIngAmount ? Number(tempIngAmount) : null,
         measurement: tempIngMeasurement?.key,
-        name: tempIngName?.toLowerCase().trim(),
-        note: tempNote ? tempNote.trim() : null,
+        name: tempIngName ? tempIngName?.toLowerCase().trim() : null,
+        note: tempNote ? tempNote?.toLowerCase().trim() : null,
       };
       setIngredients(prev => [...prev, newObject]);
       setTempIngAmount(null);
@@ -147,8 +150,8 @@ const IngredientForm = props => {
         </View>
       </View>
       <ScrollView style={styles.scrollStyles} hideBar>
-        {ingredients.length > 0 ? (
-          ingredients.map((ing, index) => (
+        {ingredients?.length > 0 ? (
+          ingredients?.map((ing, index) => (
             <View key={index} row centerH pv5>
               {/* Ingredient text */}
               <View flex ml5>
@@ -161,7 +164,7 @@ const IngredientForm = props => {
                 </Text>
                 {ing.note && (
                   <Text size="tiny" font="open-5" italic>
-                    ** {ing.note}
+                    ** {capFirst(ing.note)}
                   </Text>
                 )}
               </View>

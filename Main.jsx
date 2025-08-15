@@ -43,6 +43,7 @@ import {
   RTUsers,
   RTAllowedProfiles,
   RTFavorites,
+  RTRecipeBox,
 } from './src/utilities/realtime';
 import TermsService from './src/screens/Legal/TermsService';
 import PrivacyPolicy from './src/screens/Legal/PrivacyPolicy';
@@ -144,6 +145,7 @@ const Main = props => {
   RTCupboards(RTEnabled);
   RTAllowedProfiles(RTEnabled);
   RTFavorites(RTEnabled);
+  RTRecipeBox(RTEnabled);
 
   useEffect(() => {
     try {

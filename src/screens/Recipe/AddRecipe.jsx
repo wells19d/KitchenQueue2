@@ -15,9 +15,11 @@ import UploadPicture from './UploadPicture';
 import IngredientForm from './Forms/IngredientForm';
 import InstructionForm from './Forms/InstructionForm';
 import RecipeForm from './Forms/RecipeForm';
+import {useDispatch} from 'react-redux';
 
 const AddRecipe = () => {
   const core = useCoreInfo();
+  const dispatch = useDispatch();
   const [validation1, setValidation1] = useState(false);
   const [validation2, setValidation2] = useState(false);
   const [validation3, setValidation3] = useState(false);
@@ -114,13 +116,10 @@ const AddRecipe = () => {
   }, [sourceMaterial]);
 
   const recipeObject = {
-    // id: created on save
-    // createdOn: created on save
-    // updatedOn: created on save || updated on edit
     title: recipeName?.toLowerCase().trim(),
-    sourceMaterial: sourceMaterial?.key,
+    sourceMaterial: sourceMaterial?.key ?? null,
     source: source?.toLowerCase().trim(),
-    sourceURL: sourceURL?.trim().toLowerCase().replace(/\s+/g, ''),
+    sourceURL: sourceURL?.trim().toLowerCase().replace(/\s+/g, '') ?? null,
     credit: core?.onlineName,
     authorOnlineName: core?.onlineName,
     authorFirstName: core?.firstName,
@@ -146,10 +145,10 @@ const AddRecipe = () => {
       : null,
     image: finalImage?.name ?? null,
     pictureApproved: true,
-    ingredientList: ingredients.map(ing => ing.name?.toLowerCase().trim()),
+    ingredientList: ingredients?.map(ing => ing.name?.toLowerCase().trim()),
     isArchived: false,
     keywords: normalizeTitleForKeywords(recipeName),
-    aboutRecipe: aboutRecipe?.trim(),
+    aboutRecipe: aboutRecipe?.trim() ?? null,
     seasonal: null, // later addition
     occasions: null, // later addition
     healthScore: null, // later addition
@@ -266,6 +265,32 @@ const AddRecipe = () => {
     setSourceMaterial(displayDropField(displaySourceType));
     setSource(null);
     setSourceURL(null);
+    setCuisineType(displayDropArray(displayCuisineTypes));
+    setDishType(displayDropArray(displayDishTypes));
+    setDietType(displayDropArray(displayDietTypes));
+    setServings(null);
+    setPrepTime(null);
+    setCookTime(null);
+    setIngredients([]);
+    setInstructions([]);
+    setAboutRecipe(null);
+    setFinalImage(null);
+    setTempIngAmount(null);
+    setTempIngMeasurement(displayDropField(displayMeasurements));
+    setTempIngName(null);
+    setTempNote(null);
+    setTempName(null);
+    setTempSteps([]);
+    setTempAction(null);
+    setShowInstructions(false);
+    setShowIngredients(false);
+    setShowUploadPicture(false);
+    setShowAboutRecipe(false);
+    setCanPressIngredients(true);
+    setCanPressInstructions(true);
+    setCanPressUploadPicture(true);
+    setCanPressAboutRecipe(true);
+    setRecipeName(null);
     setValidation1(false);
     setValidation2(false);
     setValidation3(false);
@@ -275,6 +300,16 @@ const AddRecipe = () => {
   const handleSaveRecipe = () => {
     if (canSave) {
       kqconsole.log('Saving Recipe', recipeObject);
+      dispatch({
+        type: 'ADD_ITEM_TO_RECIPE_BOX',
+        payload: {
+          recipeBoxID: core?.recipeBoxID,
+          newRecipe: recipeObject,
+          finalImage: finalImage,
+          profileID: core?.userID,
+        },
+      });
+      // resetForm();
     }
   };
 
@@ -365,7 +400,7 @@ const AddRecipe = () => {
               setShowIngredients(true);
             }}>
             Add Ingredients
-            {ingredients.length > 0 && ` (${ingredients.length})`}
+            {ingredients?.length > 0 && ` (${ingredients?.length})`}
           </Button>
         </View>
         <View flex mt5>
@@ -377,7 +412,7 @@ const AddRecipe = () => {
               setShowInstructions(true);
             }}>
             Add Instructions
-            {instructions.length > 0 && ` (${instructions.length})`}
+            {instructions?.length > 0 && ` (${instructions?.length})`}
           </Button>
         </View>
       </View>

@@ -5,9 +5,12 @@ import {View} from 'react-native';
 import {Layout, Text} from '../../KQ-UI';
 import {ListStyles} from '../../styles/Styles';
 import {useNavigation} from '@react-navigation/native';
+import {useRecipeBox} from '../../hooks/useHooks';
 
 const RecipeBox = () => {
   const navigation = useNavigation();
+  const recipeBox = useRecipeBox();
+  console.log('Recipe Box Data:', recipeBox?.items);
 
   const handleCreateRecipe = () => {
     navigation.navigate('AddRecipe');

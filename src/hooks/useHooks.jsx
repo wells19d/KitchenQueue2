@@ -115,3 +115,7 @@ export const useFoundAccount = () => {
 export const useFavorites = () => {
   return useSelector(state => state.favorites?.favorites);
 };
+
+export const useRecipeBox = () => {
+  return useSelector(state => state.recipe?.recipeBox || [], shallowEqual);
+};
