@@ -15,6 +15,7 @@ import {useCoreInfo} from '../../utilities/coreInfo';
 import {useTakePhoto} from './ImageFunctions/takePhoto';
 import {useCropPhoto} from './ImageFunctions/cropPhoto';
 import {UploadPictureStyles} from '../../styles/Styles';
+import {useSelectPhoto} from './ImageFunctions/selectPhoto';
 
 const UploadPicture = props => {
   const coreInfo = useCoreInfo();
@@ -40,18 +41,26 @@ const UploadPicture = props => {
     setFlashOption,
   } = useTakePhoto();
 
+  const {selectedData, selectedError, pickImageFromGallery} = useSelectPhoto();
   const {croppedData, cropError, cropPhoto, cropView} = useCropPhoto();
+  const [cameraActive, setCameraActive] = useState(false);
+  const [tempImage, setTempImage] = useState(null);
+  const [screenView, setScreenView] = useState('action');
+  const [isCropping, setIsCropping] = useState(false);
 
   const toastProps = {
     fontSize1: useFontSizes('small')?.fontSize,
     fontSize2: useFontSizes('xSmall')?.fontSize,
   };
 
-  const [cameraActive, setCameraActive] = useState(false);
-  const [tempImage, setTempImage] = useState(null);
-
-  const [screenView, setScreenView] = useState('action');
-  const [isCropping, setIsCropping] = useState(false);
+  const toggleFlash = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
+    setFlashOption(prev => {
+      if (prev === 'off') return 'on';
+      if (prev === 'on') return 'auto';
+      return 'off';
+    });
+  };
 
   const pictureName = useMemo(() => {
     const slug = String(recipeName || '')
@@ -81,16 +90,6 @@ const UploadPicture = props => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (screenView === 'final') {
-  //     setTempImage(null);
-  //     setFinalImage(null); // optional
-  //     // 💡 Clear crop state to prevent stale reuse
-  //     cropError && setCropError(null);
-  //     croppedData && setCroppedData(null);
-  //   }
-  // }, [screenView]);
-
   useMemo(() => {
     if (screenView === 'crop' && tempImage?.uri && !isCropping && !cropView) {
       setIsCropping(true);
@@ -102,10 +101,10 @@ const UploadPicture = props => {
       setIsCropping(false);
     }
     if (cropError) {
-      console.log('Crop Error:', cropError);
+      handleCloseUploadPicture();
       setScreenView('action');
       setIsCropping(false);
-      handleCloseUploadPicture();
+
       Toast.show({
         type: cropError?.type || 'error',
         text1: cropError?.text1 || 'Crop Error',
@@ -137,73 +136,67 @@ const UploadPicture = props => {
     ],
   });
 
-  if (!device) return <View style={{flex: 1, backgroundColor: 'white'}} />; // do we even need this?
+  if (!device) return <View style={{flex: 1, backgroundColor: 'white'}} />;
 
   useMemo(() => {
-    if (photoData) {
-      setTempImage(photoData);
+    const imageSource = photoData || selectedData;
+    const errorSource = photoError || selectedError;
+
+    if (imageSource) {
+      setTempImage(imageSource);
       setScreenView('crop');
     }
-    if (photoError) {
-      Toast.show({
-        type: 'error',
-        text1: 'Photo Error',
-        text2: photoError,
-        props: toastProps,
-      });
+
+    if (errorSource) {
+      handleCloseUploadPicture();
       setScreenView('action');
       setTempImage(null);
       setFinalImage(null);
-      handleCloseUploadPicture();
-    }
-  }, [photoData, photoError]);
-
-  const toggleFlash = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    setFlashOption(prev => {
-      if (prev === 'off') return 'on';
-      if (prev === 'on') return 'auto';
-      return 'off';
-    });
-  };
-
-  const handleActionPress = action => {
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    if (action === 'photo') {
-      setCameraActive(true);
-      setScreenView('camera');
-    }
-  };
-
-  const handleTakePhoto = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    takePhoto(flashOption);
-  };
-
-  const handleCancelCamera = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    setCameraActive(false);
-    setScreenView('action');
-    setTempImage(null);
-  };
-
-  const handleFinalizeImage = () => {
-    if (!pictureName) {
       Toast.show({
-        type: 'error',
-        text1: 'Missing name',
-        text2: 'Add a recipe name first.',
+        type: errorSource.type || 'error',
+        text1: errorSource.text1,
+        text2: errorSource.text2,
         props: toastProps,
       });
-      return;
     }
-    handleCloseUploadPicture();
+  }, [photoData, photoError, selectedData, selectedError]);
+
+  const handleOnPress = pressType => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
+    if (pressType === 'cameraUpload') {
+      setCameraActive(true);
+      setScreenView(pressType);
+    }
+    if (pressType === 'storageUpload') {
+      pickImageFromGallery(pictureName);
+      setScreenView('crop');
+    }
+    if (pressType === 'takePhoto') {
+      takePhoto(flashOption);
+    }
+    if (pressType === 'cancelPhoto') {
+      setCameraActive(false);
+      setScreenView('action');
+      setTempImage(null);
+    }
+    if (pressType === 'finalize') {
+      if (!pictureName) {
+        Toast.show({
+          type: 'error',
+          text1: 'Missing name',
+          text2: 'Add a recipe name first.',
+          props: toastProps,
+        });
+        return;
+      }
+      handleCloseUploadPicture();
+    }
   };
 
   const UploadActionButton = ({action, icon, label}) => (
     <TouchableOpacity
       style={UploadPictureStyles.button}
-      onPress={() => handleActionPress(action)}>
+      onPress={() => handleOnPress(action)}>
       <View column flex>
         <View flex={1.25} pb={2.5} centerH bottomAlign>
           {icon}
@@ -226,14 +219,14 @@ const UploadPicture = props => {
         <View row>
           <View flex>
             <UploadActionButton
-              action="upload"
+              action="storageUpload"
               icon={<Icons.Upload size={30} color={useColors('dark70')} />}
               label="Upload Image"
             />
           </View>
           <View flex>
             <UploadActionButton
-              action="photo"
+              action="cameraUpload"
               icon={<Icons.Camera size={30} color={useColors('dark70')} />}
               label="Take Photo"
             />
@@ -248,9 +241,7 @@ const UploadPicture = props => {
               <FastImage
                 style={{width: '100%', height: '100%', index: 2000}}
                 source={{
-                  uri: finalImage?.uri.startsWith('file://')
-                    ? finalImage?.uri
-                    : `file://${finalImage?.uri}`,
+                  uri: finalImage?.uri,
                   priority: FastImage.priority.normal,
                   cache: FastImage.cacheControl.immutable,
                 }}
@@ -263,7 +254,7 @@ const UploadPicture = props => {
     );
   }
 
-  if (screenView === 'camera') {
+  if (screenView === 'cameraUpload') {
     return (
       <View style={UploadPictureStyles.cameraWrapper}>
         <View flex>
@@ -277,7 +268,7 @@ const UploadPicture = props => {
             frameColor="white"
             zoom={1.5}
             enableZoomGesture={false}
-            enableShutterSound
+            enableShutterSound={true}
           />
         </View>
         <View row style={UploadPictureStyles.btWrapper}>
@@ -296,7 +287,7 @@ const UploadPicture = props => {
             </View>
           </View>
           <View flex rightAlign mh15>
-            <TouchableOpacity onPress={handleCancelCamera}>
+            <TouchableOpacity onPress={() => handleOnPress('cancelPhoto')}>
               <Icons.XCircleOutline size={25} color={useColors('white')} />
             </TouchableOpacity>
           </View>
@@ -305,7 +296,7 @@ const UploadPicture = props => {
           <View flex />
           <View centerVH>
             <TouchableOpacity
-              onPress={handleTakePhoto}
+              onPress={() => handleOnPress('takePhoto')}
               style={UploadPictureStyles.cameraButton(buttonWidth)}>
               <View flex style={UploadPictureStyles.redDot} />
             </TouchableOpacity>
@@ -333,9 +324,7 @@ const UploadPicture = props => {
           <FastImage
             style={{width: '100%', height: '100%', index: 2000}}
             source={{
-              uri: finalImage?.uri.startsWith('file://')
-                ? finalImage?.uri
-                : `file://${finalImage?.uri}`,
+              uri: finalImage?.uri,
               priority: FastImage.priority.normal,
               cache: FastImage.cacheControl.immutable,
             }}
@@ -352,7 +341,7 @@ const UploadPicture = props => {
           </Button>
         </View>
         <View mt5>
-          <Button onPress={handleFinalizeImage}>Done</Button>
+          <Button onPress={() => handleOnPress('finalize')}>Done</Button>
         </View>
       </View>
     );
