@@ -24,6 +24,7 @@ const useRealTimeProfiles = enabled => {
             ...profileData,
             lastUpdated:
               profileData?.lastUpdated?.toDate?.().toISOString() ?? null,
+            createdOn: profileData?.createdOn?.toDate?.().toISOString() ?? null,
           };
           dispatch({type: 'SET_PROFILE', payload: profilePayload});
         } else {

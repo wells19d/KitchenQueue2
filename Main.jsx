@@ -7,6 +7,7 @@ import {
   Image,
   StatusBar,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -66,10 +67,12 @@ import RecipeSearch from './src/screens/Recipe/RecipeSearch';
 import NavigationMode from 'react-native-navigation-mode';
 import RecipeBox from './src/screens/Recipe/RecipeBox';
 import AddRecipe from './src/screens/Recipe/AddRecipe';
-import {requestPermissions} from './src/utilities/permissions';
+import {useFirstLaunch} from './src/utilities/useFirstLaunch';
+import {requestSelectedPermissions} from './src/utilities/requestSelectedPermissions';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
+
   const dispatch = useDispatch();
   const device = useDeviceInfo();
   const profile = useProfile();
@@ -88,12 +91,35 @@ const Main = props => {
 
   const [showPPModal, setShowPPModal] = useState(false);
   const [showTOSModal, setShowTOSModal] = useState(true);
-  const [showAppPermissions, setShowAppPermissions] = useState(false);
   const [currentModal, setCurrentModal] = useState('');
   enableScreens(true);
 
   const [renderDisplay, setRenderDisplay] = useState('auth');
   const [loading, setLoading] = useState(false);
+
+  //-- Permissions Request ---//
+  const hasShownPermsRef = useRef(false);
+  const {isFirstLaunch, markSeen} = useFirstLaunch();
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    if (renderDisplay !== 'main') return;
+    if (!isFirstLaunch) return;
+
+    (async () => {
+      try {
+        await requestSelectedPermissions({
+          notifications: true,
+          camera: true,
+          storage: true,
+        });
+      } finally {
+        await markSeen();
+      }
+    })();
+  }, [renderDisplay, isFirstLaunch]);
+
+  //-- Permissions Request (end) ---//
 
   useEffect(() => {
     let isMounted = true;
@@ -180,13 +206,6 @@ const Main = props => {
         setShowPPModal(true);
       }
     }
-    if (profile?.permissionsRequested === false) {
-      setCurrentModal('Permissions');
-      setShowAppPermissions(true);
-    } else {
-      setShowAppPermissions(false);
-      setCurrentModal('');
-    }
   }, [isAuthenticated, profile, account]);
 
   useEffect(() => {
@@ -224,45 +243,6 @@ const Main = props => {
       payload: {userId: profile?.id, updatedData},
     });
     setShowTOSModal(false);
-    setCurrentModal('');
-  };
-
-  const handlePermissionRequest = async () => {
-    const granted = await requestPermissions();
-    if (!granted) {
-      Toast.show({
-        type: 'error',
-        text1: 'Some permissions were denied',
-        text2: 'Please enable them in system settings.',
-      });
-    } else {
-      let updatedData = {
-        permissionsRequested: true,
-        permissionsGranted: true,
-      };
-      dispatch({
-        type: 'UPDATE_PROFILE_REQUEST',
-        payload: {userId: profile?.id, updatedData},
-      });
-      Toast.show({
-        type: 'success',
-        text1: 'All permissions granted',
-      });
-      setShowAppPermissions(false);
-      setCurrentModal('');
-    }
-  };
-
-  const handlePermissionDeline = () => {
-    let updatedData = {
-      permissionsRequested: true,
-      permissionsGranted: false,
-    };
-    dispatch({
-      type: 'UPDATE_PROFILE_REQUEST',
-      payload: {userId: profile?.id, updatedData},
-    });
-    setShowAppPermissions(false);
     setCurrentModal('');
   };
 
@@ -548,39 +528,6 @@ const Main = props => {
               handlePPConfirm={handlePPConfirm}
               handleCancel={handleCancel}
             />
-          </Modal>
-        )}
-
-        {currentModal === 'Permissions' && (
-          <Modal
-            height="70%"
-            width="90%"
-            visible={showAppPermissions}
-            title="App Permissions"
-            // fullScreen
-            hideClose>
-            <View flex column m15>
-              <View>
-                <Text size="small" centered italic>
-                  Key features in Kitchen Queue require permissions from your
-                  device. We use your camera and storage to allow you to scan
-                  items to your cupboard, shopping cart, recipes, and add
-                  photos. If you declined these permissions, you will be limited
-                  in the features you can use in the app.
-                </Text>
-              </View>
-              <View flex />
-              <View>
-                <Button onPress={handlePermissionRequest}>Accept</Button>
-                <Button
-                  type="outline"
-                  onPress={handlePermissionDeline}
-                  variant="secondary"
-                  mt10>
-                  Decline
-                </Button>
-              </View>
-            </View>
           </Modal>
         )}
       </NavigationContainer>

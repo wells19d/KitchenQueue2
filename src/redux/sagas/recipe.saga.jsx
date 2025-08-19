@@ -8,12 +8,14 @@ import {
   updateDoc,
   doc,
   writeBatch,
+  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 import algoliasearch from 'algoliasearch';
 import {fetchRemoteKeys} from '../../../firebase.config';
 import {checkLimit} from '../../utilities/checkLimit';
 import {capFirst} from '../../utilities/helpers';
+import storage from '@react-native-firebase/storage';
 
 const db = getFirestore(getApp());
 
@@ -105,6 +107,7 @@ function* fetchPersonalRecipes(action) {
 
     if (recipeBoxDoc.exists) {
       let recipeBoxData = recipeBoxDoc.data();
+      console.log('Recipe Box Data:', recipeBoxData);
 
       if (!recipeBoxData.items) {
         recipeBoxData = {...recipeBoxData, items: []};
@@ -112,14 +115,16 @@ function* fetchPersonalRecipes(action) {
         yield call(() =>
           updateDoc(recipeBoxRef, {
             items: [],
-            lastUpdated: new Date().toISOString(),
+            lastUpdated: serverTimestamp(),
           }),
         );
       }
 
       let recipe = {
         ...recipeBoxData,
-        lastUpdated: recipeBoxData?.toDate?.().toISOString() ?? null,
+        createdOn: recipeBoxData?.createdOn?.toDate?.().toISOString() ?? null,
+        lastUpdated:
+          recipeBoxData?.lastUpdated?.toDate?.().toISOString() ?? null,
       };
 
       yield put({type: 'SET_RECIPE_BOX', payload: recipe});
@@ -134,7 +139,6 @@ function* fetchPersonalRecipes(action) {
 function* addToPersonalRecipes(action) {
   const {recipeBoxID, newRecipe, finalImage, profileID} = action.payload;
   console.log('action', action.payload);
-
   try {
     const account = yield select(state => state.account.account);
     const recipeBox = yield select(state => state.recipe.recipeBox);
@@ -162,22 +166,60 @@ function* addToPersonalRecipes(action) {
           ...newRecipe,
           itemId: uuid.v4(),
           createdBy: profileID,
-          itemDate: new Date().toISOString(),
+          itemDate: serverTimestamp(),
         },
       ];
 
+      // 🔑 Step 1: Upload image (if any)
+      let imageSuccess = false;
+      if (finalImage) {
+        try {
+          // const reference = storage().ref(`recipes/${finalImage.name}`);
+          const reference = storage().ref(`testFolder/${finalImage.name}`);
+          yield call([reference, reference.putFile], finalImage.uri);
+          yield call([reference, reference.getDownloadURL]); // optional, confirms upload
+          imageSuccess = true;
+          console.log('✅ Image uploaded successfully');
+        } catch (error) {
+          console.error('❌ Image upload failed:', error);
+          imageSuccess = false;
+        }
+      }
+
+      // 🔑 Step 2: Save recipe
       yield call(() =>
         updateDoc(recipeBoxRef, {
           items: updatedItems,
-          lastUpdated: new Date().toISOString(),
+          lastUpdated: serverTimestamp(),
           lastUpdatedBy: profileID,
         }),
       );
-      Toast.show({
-        type: 'success',
-        text1: 'Item Added',
-        text2: `${capFirst(newRecipe?.title)} added to the recipe box.`,
-      });
+
+      if (finalImage) {
+        if (imageSuccess) {
+          Toast.show({
+            type: 'success',
+            text1: 'Item Added',
+            text2: `${capFirst(
+              newRecipe?.title,
+            )} and image was added to the recipe box.`,
+          });
+        } else {
+          Toast.show({
+            type: 'success',
+            text1: 'Item Added',
+            text2: `${capFirst(
+              newRecipe?.title,
+            )} added to the recipe box, but the image failed. You can try to add the image again using recipe update.`,
+          });
+        }
+      } else {
+        Toast.show({
+          type: 'success',
+          text1: 'Item Added',
+          text2: `${capFirst(newRecipe?.title)} added to the recipe box.`,
+        });
+      }
     } else {
       yield put({
         type: 'RECIPE_BOX_ADD_FAILED',
@@ -198,7 +240,7 @@ function* addToPersonalRecipes(action) {
       text1: 'Failed to Add Recipe',
       text2: `${capFirst(
         newRecipe?.title,
-      )} could not be added. Please try again later.`,
+      )} could not be added.Please try again later.`,
     });
   }
 }

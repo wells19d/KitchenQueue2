@@ -90,7 +90,7 @@ const UploadPicture = props => {
     };
   }, []);
 
-  useMemo(() => {
+  useEffect(() => {
     if (screenView === 'crop' && tempImage?.uri && !isCropping && !cropView) {
       setIsCropping(true);
       cropPhoto(tempImage, pictureName);
@@ -138,7 +138,7 @@ const UploadPicture = props => {
 
   if (!device) return <View style={{flex: 1, backgroundColor: 'white'}} />;
 
-  useMemo(() => {
+  useEffect(() => {
     const imageSource = photoData || selectedData;
     const errorSource = photoError || selectedError;
 

@@ -7,6 +7,7 @@ import {
   getDoc,
   updateDoc,
   doc,
+  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 import {select} from 'redux-saga/effects';
@@ -29,14 +30,16 @@ function* fetchFavorites(action) {
         yield call(() =>
           updateDoc(favoritesRef, {
             items: [],
-            lastUpdated: new Date().toISOString(),
+            lastUpdated: serverTimestamp(),
           }),
         );
       }
 
       let favorite = {
         ...favoritesData,
-        lastUpdated: favoritesData?.toDate?.().toISOString() ?? null,
+        createdOn: favoritesData?.createdOn?.toDate?.().toISOString() ?? null,
+        lastUpdated:
+          favoritesData?.lastUpdated?.toDate?.().toISOString() ?? null,
       };
 
       yield put({type: 'SET_FAVORITES', payload: favorite});
@@ -77,14 +80,14 @@ function* addItemToFavorites(action) {
           ...newItem,
           itemId: uuid.v4(),
           createdBy: profileID,
-          itemDate: new Date().toISOString(),
+          itemDate: serverTimestamp(),
         },
       ];
 
       yield call(() =>
         updateDoc(favoritesRef, {
           items: updatedItems,
-          lastUpdated: new Date().toISOString(),
+          lastUpdated: serverTimestamp(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -132,7 +135,7 @@ function* updateItemInFavorites(action) {
       yield call(() =>
         updateDoc(favoritesRef, {
           items: updatedItems,
-          lastUpdated: new Date().toISOString(),
+          lastUpdated: serverTimestamp(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -209,7 +212,7 @@ function* deleteItemFromFavorites(action) {
       yield call(() =>
         updateDoc(favoritesRef, {
           items: updatedItems,
-          lastUpdated: new Date().toISOString(),
+          lastUpdated: serverTimestamp(),
           lastUpdatedBy: profileID,
         }),
       );
@@ -252,7 +255,7 @@ function* resetFavorites(action) {
       yield call(() =>
         updateDoc(favoritesRef, {
           items: [],
-          lastUpdated: new Date().toISOString(),
+          lastUpdated: serverTimestamp(),
           lastUpdatedBy: profileID,
         }),
       );

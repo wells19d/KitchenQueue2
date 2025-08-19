@@ -5,13 +5,12 @@ import {Layout, Text} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {Image, TouchableOpacity, View} from 'react-native';
 import {useColors} from '../../KQ-UI/KQUtilities';
-import {useAccount, useDeviceInfo} from '../../hooks/useHooks';
+import {useDeviceInfo} from '../../hooks/useHooks';
 import {Icons} from '../../components/IconListRouter';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 
 const Home = () => {
   const core = useCoreInfo();
-  const account = useAccount();
   const device = useDeviceInfo();
   const navigation = useNavigation();
 

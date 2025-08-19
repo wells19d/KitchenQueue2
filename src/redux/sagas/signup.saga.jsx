@@ -1,7 +1,12 @@
 //* signup.saga.jsx
 
 import {put, takeLatest, call} from 'redux-saga/effects';
-import {getFirestore, setDoc, doc} from '@react-native-firebase/firestore';
+import {
+  getFirestore,
+  setDoc,
+  doc,
+  serverTimestamp,
+} from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 import {getAuth} from '@react-native-firebase/auth';
 import uuid from 'react-native-uuid';
@@ -35,7 +40,8 @@ function* createNewUser(action) {
       id: user.uid,
       isActive: true,
       lastName: null,
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: serverTimestamp(),
+      createdOn: serverTimestamp(),
       onlineName: null,
       pictureApproved: false,
       pictureURL: '',
@@ -44,7 +50,7 @@ function* createNewUser(action) {
         onboardDisabled: false, // after a certain number of steps, user can turn off onboarding
         onboardingAllowedDisabled: false, // if true, user can turn off onboarding
         lastStepCompleted: 'created-userProfile', // this is the last step completed in onboarding
-        lastStepCompletedOn: new Date().toISOString(), // this is the date the last step was completed
+        lastStepCompletedOn: serverTimestamp(), // this is the date the last step was completed
         onboardingCompleted: false, // this is true when the user has completed all steps
         completedOn: null, // this is the date the last step was completed
         forceShowFTU: false, // this lets the user force to show the ftu again
@@ -92,7 +98,7 @@ function* createNewAccount(action) {
 
     const newAccount = {
       allowedUsers: [userID],
-      createdOn: new Date().toISOString(),
+      createdOn: serverTimestamp(),
       cupboardID: cupboardID,
       cupboardLimit: cupboardLimit,
       favoriteItemsID: favoriteItemsID,
@@ -100,7 +106,7 @@ function* createNewAccount(action) {
       id: accountID,
       isActive: true,
       joinCode: joinCode,
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: serverTimestamp(),
       lastUpdatedBy: userID,
       owner: userID,
       recipeBoxID: recipeBoxID,
@@ -119,9 +125,9 @@ function* createNewAccount(action) {
     const newShopping = {
       id: shoppingCartID,
       accountID: accountID,
-      createdOn: new Date().toISOString(),
+      createdOn: serverTimestamp(),
       // items: [''],
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: serverTimestamp(),
       lastUpdatedBy: userID,
     };
 
@@ -130,9 +136,9 @@ function* createNewAccount(action) {
     const newCupboard = {
       id: cupboardID,
       accountID: accountID,
-      createdOn: new Date().toISOString(),
+      createdOn: serverTimestamp(),
       // items: [''],
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: serverTimestamp(),
       lastUpdatedBy: userID,
     };
 
@@ -141,9 +147,9 @@ function* createNewAccount(action) {
     const newRecipeBox = {
       id: recipeBoxID,
       accountID: accountID,
-      createdOn: new Date().toISOString(),
+      createdOn: serverTimestamp(),
       // items: [''],
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: serverTimestamp(),
       lastUpdatedBy: userID,
     };
 
@@ -152,9 +158,9 @@ function* createNewAccount(action) {
     const newFavoriteItems = {
       id: favoriteItemsID,
       accountID: accountID,
-      createdOn: new Date().toISOString(),
+      createdOn: serverTimestamp(),
       // items: [''],
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: serverTimestamp(),
       lastUpdatedBy: userID,
     };
 
@@ -170,7 +176,7 @@ function* createNewAccount(action) {
       {
         account: accountID,
         role: 'owner',
-        lastUpdated: new Date().toISOString(),
+        lastUpdated: serverTimestamp(),
       },
       {merge: true},
     );

@@ -117,5 +117,5 @@ export const useFavorites = () => {
 };
 
 export const useRecipeBox = () => {
-  return useSelector(state => state.recipe?.recipeBox || [], shallowEqual);
+  return useSelector(state => state.recipe?.recipeBox);
 };

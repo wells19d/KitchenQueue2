@@ -2,11 +2,9 @@
 import {getApp} from '@react-native-firebase/app';
 import {
   getRemoteConfig,
-  fetchAndActivate,
   getValue,
   setDefaults,
 } from '@react-native-firebase/remote-config';
-import {write} from 'firebase-functions/logger';
 
 export const fetchRemoteKeys = async () => {
   const app = getApp();

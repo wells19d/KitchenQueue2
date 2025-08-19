@@ -5,6 +5,7 @@ import {
   getDoc,
   updateDoc,
   doc,
+  serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 
@@ -83,7 +84,7 @@ function* updateAccount(action) {
     const accountRef = doc(db, 'accounts', accountID);
     const updatedAccount = {
       ...updatedData,
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: serverTimestamp(),
       lastUpdatedBy: profileID,
     };
 
@@ -102,7 +103,7 @@ function* countUpDaily(action) {
     const accountRef = doc(db, 'accounts', accountID);
     const updatedAccount = {
       ...updatedData,
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: serverTimestamp(),
       lastUpdatedBy: profileID,
     };
 

@@ -1,7 +1,7 @@
 //* Account.jsx
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Button, Input, Layout, Modal, Text} from '../../KQ-UI';
-import {ActivityIndicator, View} from 'react-native';
+import {Button, Input, Layout, Modal, Text, View} from '../../KQ-UI';
+import {ActivityIndicator} from 'react-native';
 import {Icons} from '../../components/IconListRouter';
 import {
   useAccount,

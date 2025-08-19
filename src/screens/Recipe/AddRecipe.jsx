@@ -10,7 +10,6 @@ import {displayDishTypes} from '../../utilities/dishType';
 import {displayDietTypes} from '../../utilities/dietType';
 import {displayMeasurements} from '../../utilities/measurements';
 import {normalizeTitleForKeywords} from '../../utilities/normalizeTitle';
-import FastImage from 'react-native-fast-image';
 import UploadPicture from './UploadPicture';
 import IngredientForm from './Forms/IngredientForm';
 import InstructionForm from './Forms/InstructionForm';
@@ -75,44 +74,44 @@ const AddRecipe = () => {
   const [tempSteps, setTempSteps] = useState([]);
   const [tempAction, setTempAction] = useState(null);
 
-  const sourceType = useMemo(() => {
+  const [sourceType, setSourceType] = useState(null);
+
+  useEffect(() => {
     if (!sourceMaterial) {
       setSource(null);
-      return null;
+      setSourceType(null);
+      return;
     }
 
     if (sourceMaterial?.key === 'personal') {
       setSource('personal');
-      return 'personal';
+      setSourceType('personal');
+      return;
     }
 
-    if (sourceMaterial?.key === 'friend' || sourceMaterial?.key === 'family') {
+    if (['friend', 'family'].includes(sourceMaterial?.key)) {
       setSource(null);
-      return 'private';
+      setSourceType('private');
+      return;
+    }
+
+    if (['social', 'website', 'app'].includes(sourceMaterial?.key)) {
+      setSource(null);
+      setSourceType('online');
+      return;
     }
 
     if (
-      sourceMaterial?.key === 'social' ||
-      sourceMaterial?.key === 'website' ||
-      sourceMaterial?.key === 'app'
+      ['cookbook', 'restaurant', 'tv', 'magazine', 'package', 'event'].includes(
+        sourceMaterial?.key,
+      )
     ) {
       setSource(null);
-      return 'online';
+      setSourceType('published');
+      return;
     }
 
-    if (
-      sourceMaterial?.key === 'cookbook' ||
-      sourceMaterial?.key === 'restaurant' ||
-      sourceMaterial?.key === 'tv' ||
-      sourceMaterial?.key === 'magazine' ||
-      sourceMaterial?.key === 'package' ||
-      sourceMaterial?.key === 'event'
-    ) {
-      setSource(null);
-      return 'published';
-    }
-
-    return null;
+    setSourceType(null);
   }, [sourceMaterial]);
 
   const recipeObject = {
@@ -154,8 +153,6 @@ const AddRecipe = () => {
     healthScore: null, // later addition
     ratingScore: null, // later addition
   };
-
-  // console.log('Recipe Object:', recipeObject);
 
   const isValidText = value =>
     typeof value === 'string' && value.trim().length >= 2;
@@ -300,6 +297,7 @@ const AddRecipe = () => {
   const handleSaveRecipe = () => {
     if (canSave) {
       kqconsole.log('Saving Recipe', recipeObject);
+      console.log('Final Image:', finalImage);
       dispatch({
         type: 'ADD_ITEM_TO_RECIPE_BOX',
         payload: {

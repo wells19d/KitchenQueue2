@@ -2,16 +2,16 @@
 import {Platform} from 'react-native';
 
 export const imageScale = (origKB, opts = {}) => {
-  const BASE_W = opts.baseW ?? 275;
-  const BASE_H = opts.baseH ?? 170;
-  const SCALE = opts.scale ?? 2.5; // ~688x425
+  const BASE_W = opts.baseW ?? 400;
+  const BASE_H = opts.baseH ?? 400;
+  const SCALE = opts.scale ?? 1.5; // ~688x425
 
   const TARGET_KB = opts.targetKB ?? 45;
 
   const ENC_KB_PER_QPX =
     opts.encKbPerQpx ?? (Platform.OS === 'android' ? 0.00022 : 0.00028);
 
-  const MIN_Q = opts.minQ ?? (Platform.OS === 'android' ? 0.7 : 0.5);
+  const MIN_Q = opts.minQ ?? (Platform.OS === 'android' ? 0.65 : 0.5);
   const MAX_Q = opts.maxQ ?? 0.95;
 
   // Parse original size (KB)

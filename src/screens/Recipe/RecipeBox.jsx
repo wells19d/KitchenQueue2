@@ -10,7 +10,7 @@ import {useRecipeBox} from '../../hooks/useHooks';
 const RecipeBox = () => {
   const navigation = useNavigation();
   const recipeBox = useRecipeBox();
-  console.log('Recipe Box Data:', recipeBox?.items);
+  console.log('Recipe Box Data:', recipeBox);
 
   const handleCreateRecipe = () => {
     navigation.navigate('AddRecipe');

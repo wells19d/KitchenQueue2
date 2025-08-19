@@ -6,6 +6,7 @@ import {
   useProfile,
   useShoppingCart,
   useFavorites,
+  useRecipeBox,
 } from '../hooks/useHooks';
 
 export const useCoreInfo = () => {
@@ -14,7 +15,8 @@ export const useCoreInfo = () => {
   const account = useAccount();
   const shopping = useShoppingCart();
   const cupboard = useCupboard();
-  const favorites = useFavorites(); // Assuming useFavorites is defined in hooks
+  const favorites = useFavorites();
+  const recipeBox = useRecipeBox();
 
   return {
     // User
@@ -30,6 +32,7 @@ export const useCoreInfo = () => {
     isActive: profile?.isActive || null,
     pictureApproved: profile?.pictureApproved || null,
     pictureUrl: profile?.pictureUrl || null,
+    profileCreatedOn: profile?.createdOn || null,
     profileLastUpdated: profile?.lastUpdated || null,
     ppVersion: profile?.ppVersion || null,
     tosVersion: profile?.tosVersion || null,
@@ -82,8 +85,13 @@ export const useCoreInfo = () => {
     favoriteItemsLastUpdated: favorites?.lastUpdated || null,
     favoriteItemsLastUpdatedBy: favorites?.lastUpdatedBy || null,
 
+    // Recipe Box Metadata
+    recipeBoxLength: recipeBox?.items?.length || 0,
+    recipeBoxCreatedOn: recipeBox?.createdOn || null,
+    recipeBoxLastUpdated: recipeBox?.lastUpdated || null,
+    recipeBoxLastUpdatedBy: recipeBox?.lastUpdatedBy || null,
+
     // Recipes Metadata - feature not yet implemented
-    recipeBoxLength: 0,
     dailyRecipeCounter: account?.dailyRecipeCounter || 0,
     dailyUPCCounter: account?.dailyUPCCounter || 0,
   };
