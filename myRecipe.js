@@ -1,4 +1,4 @@
-let myRecipe = [
+export const myRecipe = [
   {
     id: '4f46b0b1-3847-41d6-9ca6-12858aae341d',
     createdOn: {
@@ -35,38 +35,38 @@ let myRecipe = [
       {
         amount: 8,
         name: 'cream cheese',
-        note: '',
-        unit: 'oz',
+        note: 'Philadelphia brand is best',
+        unit: 'ounce',
       },
       {
         amount: 16,
         name: 'penne pasta',
         note: '',
-        unit: 'oz',
+        unit: 'ounce',
       },
       {
         amount: 5,
         name: 'parmesan cheese',
-        note: '',
-        unit: 'oz',
+        note: 'Use a higher quality and grated for easier melting and taste (BelGioioso is great)',
+        unit: 'ounce',
       },
       {
         amount: 1,
         name: 'pepper',
         note: '',
-        unit: 'tbsp',
+        unit: 'tablespoon',
       },
       {
-        amount: 1,
+        amount: 2,
         name: 'garlic',
-        note: 'I recommend using paste to prevent chunks in the sauce',
-        unit: 'tbsp',
+        note: 'Use garlic paste for a smoother sauce',
+        unit: 'tablespoon',
       },
       {
-        amount: 1,
+        amount: 8,
         name: 'milk',
         note: '2% or whole milk works best',
-        unit: 'cup',
+        unit: 'fluidounce',
       },
       {
         amount: 4,
@@ -78,18 +78,18 @@ let myRecipe = [
         amount: 4,
         name: 'butter',
         note: '',
-        unit: 'oz',
+        unit: 'ounce',
       },
       {
         amount: 1,
         name: 'parsley',
         note: 'For garnish, optional',
-        unit: 'tbsp',
+        unit: 'tablespoon',
       },
     ],
     displayAuthorName: false,
     sharedStatus: null,
-    cuisines: ['italian'],
+    cuisines: ['italian', 'american'],
     recipeShared: false,
     instructions: [
       {
@@ -225,6 +225,8 @@ let myRecipe = [
     title: 'Creamy Chicken Alfredo w/ Penne Pasta',
     accountID: null,
     diets: null,
+    prepTime: 10,
+    cookTime: 30,
     readyIn: 30,
     imageUri:
       'https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2Fwells-creamy-chicken-alfredo.jpg?alt=media',

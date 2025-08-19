@@ -34,9 +34,9 @@ const IngredientForm = props => {
     if (canAdd) {
       let newObject = {
         amount: tempIngAmount ? Number(tempIngAmount) : null,
-        measurement: tempIngMeasurement?.key,
+        unit: tempIngMeasurement?.key,
         name: tempIngName ? tempIngName?.toLowerCase().trim() : null,
-        note: tempNote ? tempNote?.toLowerCase().trim() : null,
+        note: tempNote ?? null,
       };
       setIngredients(prev => [...prev, newObject]);
       setTempIngAmount(null);
@@ -158,13 +158,13 @@ const IngredientForm = props => {
                 <Text size="xSmall" font="open-6">
                   {formatMeasurementWithPluralRec(
                     ing.amount,
-                    ing.measurement,
+                    ing.unit,
                     ing.name,
                   )}
                 </Text>
                 {ing.note && (
                   <Text size="tiny" font="open-5" italic>
-                    ** {capFirst(ing.note)}
+                    ** {ing.note}
                   </Text>
                 )}
               </View>

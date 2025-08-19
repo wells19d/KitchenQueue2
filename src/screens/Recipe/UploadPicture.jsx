@@ -11,14 +11,12 @@ import {useColors, useFontSizes} from '../../KQ-UI/KQUtilities';
 import {Icons} from '../../components/IconListRouter';
 import {capFirst} from '../../utilities/helpers';
 import Toast from 'react-native-toast-message';
-import {useCoreInfo} from '../../utilities/coreInfo';
 import {useTakePhoto} from './ImageFunctions/takePhoto';
 import {useCropPhoto} from './ImageFunctions/cropPhoto';
 import {UploadPictureStyles} from '../../styles/Styles';
 import {useSelectPhoto} from './ImageFunctions/selectPhoto';
 
 const UploadPicture = props => {
-  const coreInfo = useCoreInfo();
   const profile = useProfile();
   const useHaptics = setHapticFeedback();
   const deviceInfo = useDeviceInfo();
@@ -27,7 +25,7 @@ const UploadPicture = props => {
   const {
     handleCloseUploadPicture,
     cameraStyles,
-    recipeName,
+    pictureName,
     finalImage,
     setFinalImage,
   } = props;
@@ -61,28 +59,6 @@ const UploadPicture = props => {
       return 'off';
     });
   };
-
-  const pictureName = useMemo(() => {
-    const slug = String(recipeName || '')
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/gi, '-')
-      .replace(/^-+|-+$/g, '');
-
-    if (!slug) return null;
-
-    const prefix = coreInfo?.lastName?.trim()
-      ? coreInfo.lastName.trim().toLowerCase()
-      : coreInfo?.onlineName?.trim();
-    coreInfo?.profileID;
-
-    return `${prefix}-${slug}`;
-  }, [
-    recipeName,
-    coreInfo?.lastName,
-    coreInfo?.onlineName,
-    coreInfo?.profileID,
-  ]);
 
   useEffect(() => {
     return () => {

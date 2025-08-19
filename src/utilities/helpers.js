@@ -103,21 +103,17 @@ export const compareByDate = (date1, date2) => {
   return date1 === date2;
 };
 
-export const formatMeasurementWithPlural = (
-  packageSize,
-  measurement,
-  itemName,
-) => {
-  if (packageSize !== undefined && measurement !== undefined) {
-    if (packageSize === 1 && measurement === 'each') {
+export const formatMeasurementWithPlural = (packageSize, unit, itemName) => {
+  if (packageSize !== undefined && unit !== undefined) {
+    if (packageSize === 1 && unit === 'each') {
       return '';
     }
 
-    if (measurement === 'each') {
+    if (unit === 'each') {
       return `${packageSize} ${pluralize(itemName)}`;
     }
 
-    const match = displayMeasurements.find(m => m.key === measurement);
+    const match = displayMeasurements.find(m => m.key === unit);
 
     if (match) {
       const label = match.label;
@@ -125,7 +121,7 @@ export const formatMeasurementWithPlural = (
     }
 
     // Custom value fallback
-    const formatted = formatMeasurement(measurement);
+    const formatted = formatMeasurement(unit);
     return `${packageSize} ${
       packageSize > 1 ? pluralize(formatted) : formatted
     }`;
@@ -134,31 +130,65 @@ export const formatMeasurementWithPlural = (
   return '';
 };
 
-export const formatMeasurementWithPluralRec = (
-  packageSize,
-  measurement,
-  itemName,
-) => {
-  if (packageSize !== undefined && measurement !== undefined) {
-    if (measurement === 'each') {
+const UNIT_DISPLAY = {
+  oz: 'Ounce',
+  g: 'Gram',
+  ml: 'mMilliliter',
+  kg: 'Kilogram',
+  mg: 'Milligram',
+  l: 'Liter',
+  tsp: 'Teaspoon',
+  tbsp: 'Tablespoon',
+  'fl oz': 'Fluid Ounce',
+};
+
+export const formatMeasurementWithPluralRec = (packageSize, unit, itemName) => {
+  if (packageSize !== undefined && unit !== undefined) {
+    // special-case "each"
+    if (unit === 'each') {
       const name = packageSize > 1 ? pluralize(itemName) : itemName;
       return `${packageSize} ${capEachWord(name)}`;
     }
 
-    const match = displayMeasurements.find(m => m.key === measurement);
+    // 🔑 check mapping first
+    if (UNIT_DISPLAY[unit]) {
+      const base = UNIT_DISPLAY[unit];
+      const label = packageSize > 1 ? pluralize(base) : base;
+      return `${packageSize} ${label} ${capEachWord(itemName)}`;
+    }
 
+    // fallback to displayMeasurements
+    const match = displayMeasurements.find(m => m.key === unit);
     if (match) {
       const label = packageSize > 1 ? pluralize(match.label) : match.label;
       return `${packageSize} ${label} ${capEachWord(itemName)}`;
     }
 
-    // Custom value fallback
-    const formatted = formatMeasurement(measurement);
+    // ultimate fallback
+    const formatted = formatMeasurement(unit);
     const label = packageSize > 1 ? pluralize(formatted) : formatted;
     return `${packageSize} ${label} ${capEachWord(itemName)}`;
   }
 
   return '';
+};
+
+const UNIT_REPLACEMENT = {
+  oz: 'ounce',
+  g: 'gram',
+  ml: 'milliliter',
+  kg: 'kilogram',
+  mg: 'milligram',
+  l: 'liter',
+  tsp: 'teaspoon',
+  tbsp: 'tablespoon',
+  'fl oz': 'fluid ounce',
+};
+
+export const unitReplacement = unit => {
+  if (!unit) return unit;
+  const key = unit.toLowerCase().trim();
+  return UNIT_REPLACEMENT[key] || unit;
 };
 
 // Logger function to handle console output with color coding and time stamps

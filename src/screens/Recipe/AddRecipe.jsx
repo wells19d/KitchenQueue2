@@ -15,6 +15,7 @@ import IngredientForm from './Forms/IngredientForm';
 import InstructionForm from './Forms/InstructionForm';
 import RecipeForm from './Forms/RecipeForm';
 import {useDispatch} from 'react-redux';
+import {myRecipe} from '../../../myRecipe';
 
 const AddRecipe = () => {
   const core = useCoreInfo();
@@ -76,6 +77,9 @@ const AddRecipe = () => {
 
   const [sourceType, setSourceType] = useState(null);
 
+  const [keywords, setKeywords] = useState(null);
+  const [pictureName, setPictureName] = useState(null);
+
   useEffect(() => {
     if (!sourceMaterial) {
       setSource(null);
@@ -114,6 +118,21 @@ const AddRecipe = () => {
     setSourceType(null);
   }, [sourceMaterial]);
 
+  useMemo(() => {
+    if (!recipeName) return;
+
+    const normalized = normalizeTitleForKeywords(recipeName);
+    setKeywords(normalized);
+
+    const slug = normalized.slice(1).join('-');
+
+    const prefix = core?.lastName?.trim()
+      ? core.lastName.trim().toLowerCase()
+      : core?.onlineName?.trim();
+
+    setPictureName(`${prefix}-${slug}`);
+  }, [recipeName]);
+
   const recipeObject = {
     title: recipeName?.toLowerCase().trim(),
     sourceMaterial: sourceMaterial?.key ?? null,
@@ -146,7 +165,8 @@ const AddRecipe = () => {
     pictureApproved: true,
     ingredientList: ingredients?.map(ing => ing.name?.toLowerCase().trim()),
     isArchived: false,
-    keywords: normalizeTitleForKeywords(recipeName),
+    // keywords: normalizeTitleForKeywords(recipeName),
+    keywords: keywords ?? null,
     aboutRecipe: aboutRecipe?.trim() ?? null,
     seasonal: null, // later addition
     occasions: null, // later addition
@@ -307,9 +327,45 @@ const AddRecipe = () => {
           profileID: core?.userID,
         },
       });
-      // resetForm();
+      resetForm();
     }
   };
+
+  // Dev testing code to import a recipe
+  // const importRecipe = myRecipe[0];
+
+  // useMemo(() => {
+  //   if (importRecipe) {
+  //     setRecipeName(importRecipe.title);
+  //     setSourceMaterial(
+  //       displaySourceType.find(
+  //         item => item.key === importRecipe.sourceMaterial,
+  //       ) || null,
+  //     );
+  //     setSource('personal');
+  //     setSourceType('personal');
+  //     setCuisineType(
+  //       displayCuisineTypes.filter(c =>
+  //         importRecipe.cuisines?.includes(c.value),
+  //       ) || null,
+  //     );
+  //     setDishType(
+  //       displayDishTypes.filter(d =>
+  //         importRecipe.dishTypes?.includes(d.value),
+  //       ) || null,
+  //     );
+  //     setDietType(
+  //       displayDietTypes.filter(d => importRecipe.diets?.includes(d.value)) ||
+  //         null,
+  //     );
+  //     setServings(importRecipe.servings?.toString() || null);
+  //     setPrepTime(importRecipe.prepTime?.toString() || null);
+  //     setCookTime(importRecipe.cookTime?.toString() || null);
+  //     setIngredients(importRecipe.ingredients || []);
+  //     setInstructions(importRecipe.instructions || []);
+  //     setAboutRecipe(importRecipe.aboutRecipe || null);
+  //   }
+  // }, [importRecipe]);
 
   return (
     <Layout
@@ -484,7 +540,7 @@ const AddRecipe = () => {
         onClose={handleCloseUploadPicture}
         snapPoints={[0.01, 0.95]}>
         <UploadPicture
-          recipeName={recipeName?.toLowerCase().trim()}
+          pictureName={pictureName}
           handleCloseUploadPicture={handleCloseUploadPicture}
           finalImage={finalImage}
           setFinalImage={setFinalImage}
