@@ -165,7 +165,7 @@ function* addToPersonalRecipes(action) {
           ...newRecipe,
           itemId: uuid.v4(),
           createdBy: profileID,
-          itemDate: serverTimestamp(),
+          itemDate: new Date().toISOString(),
         },
       ];
 

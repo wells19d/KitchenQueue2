@@ -78,6 +78,8 @@ const STOP_WORDS = new Set([
   'every',
   'each',
   'all',
+  '/w',
+  'w/',
 ]);
 
 export const normalizeTitleForKeywords = (title = '') => {

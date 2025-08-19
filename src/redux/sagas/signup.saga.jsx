@@ -40,8 +40,8 @@ function* createNewUser(action) {
       id: user.uid,
       isActive: true,
       lastName: null,
-      lastUpdated: serverTimestamp(),
-      createdOn: serverTimestamp(),
+      lastUpdated: new Date().toISOString(),
+      createdOn: new Date().toISOString(),
       onlineName: null,
       pictureApproved: false,
       pictureURL: '',
@@ -50,7 +50,7 @@ function* createNewUser(action) {
         onboardDisabled: false, // after a certain number of steps, user can turn off onboarding
         onboardingAllowedDisabled: false, // if true, user can turn off onboarding
         lastStepCompleted: 'created-userProfile', // this is the last step completed in onboarding
-        lastStepCompletedOn: serverTimestamp(), // this is the date the last step was completed
+        lastStepCompletedOn: new Date().toISOString(), // this is the date the last step was completed
         onboardingCompleted: false, // this is true when the user has completed all steps
         completedOn: null, // this is the date the last step was completed
         forceShowFTU: false, // this lets the user force to show the ftu again
@@ -98,7 +98,7 @@ function* createNewAccount(action) {
 
     const newAccount = {
       allowedUsers: [userID],
-      createdOn: serverTimestamp(),
+      createdOn: new Date().toISOString(),
       cupboardID: cupboardID,
       cupboardLimit: cupboardLimit,
       favoriteItemsID: favoriteItemsID,
@@ -106,7 +106,7 @@ function* createNewAccount(action) {
       id: accountID,
       isActive: true,
       joinCode: joinCode,
-      lastUpdated: serverTimestamp(),
+      lastUpdated: new Date().toISOString(),
       lastUpdatedBy: userID,
       owner: userID,
       recipeBoxID: recipeBoxID,
@@ -125,9 +125,9 @@ function* createNewAccount(action) {
     const newShopping = {
       id: shoppingCartID,
       accountID: accountID,
-      createdOn: serverTimestamp(),
+      createdOn: new Date().toISOString(),
       // items: [''],
-      lastUpdated: serverTimestamp(),
+      lastUpdated: new Date().toISOString(),
       lastUpdatedBy: userID,
     };
 
@@ -136,9 +136,9 @@ function* createNewAccount(action) {
     const newCupboard = {
       id: cupboardID,
       accountID: accountID,
-      createdOn: serverTimestamp(),
+      createdOn: new Date().toISOString(),
       // items: [''],
-      lastUpdated: serverTimestamp(),
+      lastUpdated: new Date().toISOString(),
       lastUpdatedBy: userID,
     };
 
@@ -147,9 +147,9 @@ function* createNewAccount(action) {
     const newRecipeBox = {
       id: recipeBoxID,
       accountID: accountID,
-      createdOn: serverTimestamp(),
+      createdOn: new Date().toISOString(),
       // items: [''],
-      lastUpdated: serverTimestamp(),
+      lastUpdated: new Date().toISOString(),
       lastUpdatedBy: userID,
     };
 
@@ -158,9 +158,9 @@ function* createNewAccount(action) {
     const newFavoriteItems = {
       id: favoriteItemsID,
       accountID: accountID,
-      createdOn: serverTimestamp(),
+      createdOn: new Date().toISOString(),
       // items: [''],
-      lastUpdated: serverTimestamp(),
+      lastUpdated: new Date().toISOString(),
       lastUpdatedBy: userID,
     };
 
