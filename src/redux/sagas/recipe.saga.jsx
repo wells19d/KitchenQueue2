@@ -107,7 +107,6 @@ function* fetchPersonalRecipes(action) {
 
     if (recipeBoxDoc.exists) {
       let recipeBoxData = recipeBoxDoc.data();
-      console.log('Recipe Box Data:', recipeBoxData);
 
       if (!recipeBoxData.items) {
         recipeBoxData = {...recipeBoxData, items: []};
@@ -174,8 +173,7 @@ function* addToPersonalRecipes(action) {
       let imageSuccess = false;
       if (finalImage) {
         try {
-          // const reference = storage().ref(`recipes/${finalImage.name}`);
-          const reference = storage().ref(`testFolder/${finalImage.name}`);
+          const reference = storage().ref(`recipes/${finalImage.name}`);
           yield call([reference, reference.putFile], finalImage.uri);
           yield call([reference, reference.getDownloadURL]); // optional, confirms upload
           imageSuccess = true;

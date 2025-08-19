@@ -24,6 +24,7 @@ const useRealTimeRecipeBox = enabled => {
           items: Array.isArray(recipeBoxData.items) ? recipeBoxData.items : [],
           lastUpdated:
             recipeBoxData?.lastUpdated?.toDate?.().toISOString() ?? null,
+          createdOn: recipeBoxData?.createdOn?.toDate?.().toISOString() ?? null,
         };
 
         const prev = prevRecipeBoxRef.current;
