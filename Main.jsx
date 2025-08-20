@@ -69,6 +69,7 @@ import RecipeBox from './src/screens/Recipe/RecipeBox';
 import AddRecipe from './src/screens/Recipe/AddRecipe';
 import {useFirstLaunch} from './src/utilities/useFirstLaunch';
 import {requestSelectedPermissions} from './src/utilities/requestSelectedPermissions';
+import FastImage from 'react-native-fast-image';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -217,6 +218,18 @@ const Main = props => {
 
     return () => subscription?.remove();
   }, [dispatch]);
+
+  useEffect(() => {
+    const clearCaches = async () => {
+      await FastImage.clearMemoryCache();
+      await FastImage.clearDiskCache();
+      // console.log('🧹 FastImage cache cleared on app launch (prod only)');
+    };
+
+    if (!__DEV__) {
+      clearCaches();
+    }
+  }, []);
 
   const handlePPConfirm = () => {
     let updatedData = {

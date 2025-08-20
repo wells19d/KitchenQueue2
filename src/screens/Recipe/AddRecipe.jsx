@@ -158,10 +158,10 @@ const AddRecipe = () => {
     readyIn: prepTime && cookTime ? Number(prepTime) + Number(cookTime) : null,
     ingredients: ingredients,
     instructions: instructions,
+    image: finalImage?.name ?? null,
     imageUri: finalImage
       ? `https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2F${finalImage?.name}?alt=media`
       : null,
-    image: finalImage?.name ?? null,
     pictureApproved: true,
     ingredientList: ingredients?.map(ing => ing.name?.toLowerCase().trim()),
     isArchived: false,
@@ -332,40 +332,40 @@ const AddRecipe = () => {
   };
 
   // Dev testing code to import a recipe
-  // const importRecipe = myRecipe[0];
+  const importRecipe = myRecipe[0];
 
-  // useMemo(() => {
-  //   if (importRecipe) {
-  //     setRecipeName(importRecipe.title);
-  //     setSourceMaterial(
-  //       displaySourceType.find(
-  //         item => item.key === importRecipe.sourceMaterial,
-  //       ) || null,
-  //     );
-  //     setSource('personal');
-  //     setSourceType('personal');
-  //     setCuisineType(
-  //       displayCuisineTypes.filter(c =>
-  //         importRecipe.cuisines?.includes(c.value),
-  //       ) || null,
-  //     );
-  //     setDishType(
-  //       displayDishTypes.filter(d =>
-  //         importRecipe.dishTypes?.includes(d.value),
-  //       ) || null,
-  //     );
-  //     setDietType(
-  //       displayDietTypes.filter(d => importRecipe.diets?.includes(d.value)) ||
-  //         null,
-  //     );
-  //     setServings(importRecipe.servings?.toString() || null);
-  //     setPrepTime(importRecipe.prepTime?.toString() || null);
-  //     setCookTime(importRecipe.cookTime?.toString() || null);
-  //     setIngredients(importRecipe.ingredients || []);
-  //     setInstructions(importRecipe.instructions || []);
-  //     setAboutRecipe(importRecipe.aboutRecipe || null);
-  //   }
-  // }, [importRecipe]);
+  useMemo(() => {
+    if (importRecipe) {
+      setRecipeName(importRecipe.title);
+      setSourceMaterial(
+        displaySourceType.find(
+          item => item.key === importRecipe.sourceMaterial,
+        ) || null,
+      );
+      setSource('personal');
+      setSourceType('personal');
+      setCuisineType(
+        displayCuisineTypes.filter(c =>
+          importRecipe.cuisines?.includes(c.value),
+        ) || null,
+      );
+      setDishType(
+        displayDishTypes.filter(d =>
+          importRecipe.dishTypes?.includes(d.value),
+        ) || null,
+      );
+      setDietType(
+        displayDietTypes.filter(d => importRecipe.diets?.includes(d.value)) ||
+          null,
+      );
+      setServings(importRecipe.servings?.toString() || null);
+      setPrepTime(importRecipe.prepTime?.toString() || null);
+      setCookTime(importRecipe.cookTime?.toString() || null);
+      setIngredients(importRecipe.ingredients || []);
+      setInstructions(importRecipe.instructions || []);
+      setAboutRecipe(importRecipe.aboutRecipe || null);
+    }
+  }, [importRecipe]);
 
   return (
     <Layout
