@@ -1,7 +1,7 @@
 //* AddRecipe.jsx
 
 import React, {useEffect, useMemo, useState} from 'react';
-import {BottomSheet, Button, Input, Layout, View} from '../../KQ-UI';
+import {BottomSheet, Button, Input, Layout, Text, View} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {displaySourceType} from '../../utilities/materialSource';
 import {displayDropField, displayDropArray} from '../../utilities/helpers';
@@ -19,6 +19,7 @@ import {myRecipe} from '../../../myRecipe';
 
 const AddRecipe = () => {
   const core = useCoreInfo();
+  console.log('Core Info:', core);
   const dispatch = useDispatch();
   const [validation1, setValidation1] = useState(false);
   const [validation2, setValidation2] = useState(false);
@@ -125,10 +126,7 @@ const AddRecipe = () => {
     setKeywords(normalized);
 
     const slug = normalized.slice(1).join('-');
-
-    const prefix = core?.lastName?.trim()
-      ? core.lastName.trim().toLowerCase()
-      : core?.onlineName?.trim();
+    const prefix = core?.profileID || core?.userID;
 
     setPictureName(`${prefix}-${slug}`);
   }, [recipeName]);
@@ -332,40 +330,40 @@ const AddRecipe = () => {
   };
 
   // Dev testing code to import a recipe
-  const importRecipe = myRecipe[0];
+  // const importRecipe = myRecipe[0];
 
-  useMemo(() => {
-    if (importRecipe) {
-      setRecipeName(importRecipe.title);
-      setSourceMaterial(
-        displaySourceType.find(
-          item => item.key === importRecipe.sourceMaterial,
-        ) || null,
-      );
-      setSource('personal');
-      setSourceType('personal');
-      setCuisineType(
-        displayCuisineTypes.filter(c =>
-          importRecipe.cuisines?.includes(c.value),
-        ) || null,
-      );
-      setDishType(
-        displayDishTypes.filter(d =>
-          importRecipe.dishTypes?.includes(d.value),
-        ) || null,
-      );
-      setDietType(
-        displayDietTypes.filter(d => importRecipe.diets?.includes(d.value)) ||
-          null,
-      );
-      setServings(importRecipe.servings?.toString() || null);
-      setPrepTime(importRecipe.prepTime?.toString() || null);
-      setCookTime(importRecipe.cookTime?.toString() || null);
-      setIngredients(importRecipe.ingredients || []);
-      setInstructions(importRecipe.instructions || []);
-      setAboutRecipe(importRecipe.aboutRecipe || null);
-    }
-  }, [importRecipe]);
+  // useMemo(() => {
+  //   if (importRecipe) {
+  //     setRecipeName(importRecipe.title);
+  //     setSourceMaterial(
+  //       displaySourceType.find(
+  //         item => item.key === importRecipe.sourceMaterial,
+  //       ) || null,
+  //     );
+  //     setSource('personal');
+  //     setSourceType('personal');
+  //     setCuisineType(
+  //       displayCuisineTypes.filter(c =>
+  //         importRecipe.cuisines?.includes(c.value),
+  //       ) || null,
+  //     );
+  //     setDishType(
+  //       displayDishTypes.filter(d =>
+  //         importRecipe.dishTypes?.includes(d.value),
+  //       ) || null,
+  //     );
+  //     setDietType(
+  //       displayDietTypes.filter(d => importRecipe.diets?.includes(d.value)) ||
+  //         null,
+  //     );
+  //     setServings(importRecipe.servings?.toString() || null);
+  //     setPrepTime(importRecipe.prepTime?.toString() || null);
+  //     setCookTime(importRecipe.cookTime?.toString() || null);
+  //     setIngredients(importRecipe.ingredients || []);
+  //     setInstructions(importRecipe.instructions || []);
+  //     setAboutRecipe(importRecipe.aboutRecipe || null);
+  //   }
+  // }, [importRecipe]);
 
   return (
     <Layout
@@ -528,11 +526,18 @@ const AddRecipe = () => {
           maxCount={300}
           textInputStyles={{height: 140}}
         />
+
         <View row>
           <View flex />
           <View>
             <Button onPress={handleCloseAboutRecipe}>Finished</Button>
           </View>
+        </View>
+        <View mt25 ph15>
+          <Text centered size="xSmall" italic kqColor="dark70">
+            Note: Description will not be shown in Recipe Box Recipe View. It
+            will appear when/if recipe is shared publicly.
+          </Text>
         </View>
       </BottomSheet>
       <BottomSheet

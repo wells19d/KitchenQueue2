@@ -93,6 +93,81 @@ function* fetchCommunityRecipes(action) {
   }
 }
 
+function* bookmarkCommunityRecipes(action) {
+  const {recipeBoxID, selectedRecipe, profileID} = action.payload;
+  console.log('action', action.payload);
+  try {
+    const account = yield select(state => state.account.account);
+    const recipeBox = yield select(state => state.recipe.recipeBox);
+
+    const maxRecipeBoxItems = account?.recipeBoxLimit || 0;
+    const recipeBoxLength = recipeBox?.items?.length || 0;
+
+    const isAllowed = checkLimit({
+      current: recipeBoxLength,
+      max: maxRecipeBoxItems,
+      label: 'Recipe Box',
+    });
+
+    if (!isAllowed) return;
+
+    const recipeBoxRef = doc(db, 'recipeBoxes', recipeBoxID);
+    const recipeBoxDoc = yield call(getDoc, recipeBoxRef);
+
+    if (recipeBoxDoc.exists) {
+      const recipeBoxData = recipeBoxDoc.data();
+
+      const updatedItems = [
+        ...(recipeBoxData.items || []),
+        {
+          ...selectedRecipe,
+          id: selectedRecipe.id,
+          createdBy: profileID,
+          itemDate: new Date().toISOString(),
+        },
+      ];
+
+      // 🔑 Step 1: Upload image (if any)
+
+      // 🔑 Step 2: Save recipe
+      yield call(() =>
+        updateDoc(recipeBoxRef, {
+          items: updatedItems,
+          lastUpdated: serverTimestamp(),
+          lastUpdatedBy: profileID,
+        }),
+      );
+
+      Toast.show({
+        type: 'success',
+        text1: 'Recipe Added',
+        text2: `${capFirst(selectedRecipe?.title)} added to the recipe box.`,
+      });
+    } else {
+      yield put({
+        type: 'BOOKMARK_ADD_FAILED',
+        payload: 'Recipe box not found.',
+      });
+
+      Toast.show({
+        type: 'danger',
+        text1: 'Failed to Add Recipe',
+        text2: 'Recipe box not found. Please try again later.',
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    yield put({type: 'BOOKMARK_ADD_FAILED', payload: error.message});
+    Toast.show({
+      type: 'danger',
+      text1: 'Failed to Add Recipe',
+      text2: `${capFirst(
+        selectedRecipe?.title,
+      )} could not be added.Please try again later.`,
+    });
+  }
+}
+
 function* addToCommunityRecipes(action) {}
 
 function* updateToCommunityRecipes(action) {}
@@ -163,7 +238,7 @@ function* addToPersonalRecipes(action) {
         ...(recipeBoxData.items || []),
         {
           ...newRecipe,
-          itemId: uuid.v4(),
+          id: uuid.v4(),
           createdBy: profileID,
           itemDate: new Date().toISOString(),
         },
@@ -197,7 +272,7 @@ function* addToPersonalRecipes(action) {
         if (imageSuccess) {
           Toast.show({
             type: 'success',
-            text1: 'Item Added',
+            text1: 'Recipe Added',
             text2: `${capFirst(
               newRecipe?.title,
             )} and image was added to the recipe box.`,
@@ -205,7 +280,7 @@ function* addToPersonalRecipes(action) {
         } else {
           Toast.show({
             type: 'success',
-            text1: 'Item Added',
+            text1: 'Recipe Added',
             text2: `${capFirst(
               newRecipe?.title,
             )} added to the recipe box, but the image failed. You can try to add the image again using recipe update.`,
@@ -214,7 +289,7 @@ function* addToPersonalRecipes(action) {
       } else {
         Toast.show({
           type: 'success',
-          text1: 'Item Added',
+          text1: 'Recipe Added',
           text2: `${capFirst(newRecipe?.title)} added to the recipe box.`,
         });
       }
@@ -244,7 +319,79 @@ function* addToPersonalRecipes(action) {
 }
 
 function* updateToPersonalRecipes(action) {}
-function* deleteFromPersonalRecipes(action) {}
+function* deleteFromPersonalRecipes(action) {
+  const {recipeBoxID, selectedRecipe, profileID, owner} = action.payload;
+  try {
+    const recipeBoxRef = doc(db, 'recipeBoxes', recipeBoxID);
+    const recipeBoxDoc = yield call(getDoc, recipeBoxRef);
+
+    const recipeID = selectedRecipe?.id;
+    const itemName = selectedRecipe?.title || 'Recipe';
+    const imageName = selectedRecipe?.image; // stored filename like "xxx.jpg"
+
+    if (recipeBoxDoc.exists) {
+      const recipeBoxData = recipeBoxDoc.data();
+
+      const updatedItems = recipeBoxData?.items?.filter(
+        item => item.id !== recipeID,
+      );
+
+      // 🔑 Step 1: Remove from recipeBox
+      yield call(() =>
+        updateDoc(recipeBoxRef, {
+          items: updatedItems,
+          lastUpdated: serverTimestamp(),
+          lastUpdatedBy: profileID,
+        }),
+      );
+
+      // 🔑 Step 2: Delete image only if owner
+      if (owner && imageName) {
+        try {
+          const ref = storage().ref(`recipes/${imageName}`);
+          yield call([ref, ref.getMetadata]); // ensure it exists
+          yield call([ref, ref.delete]);
+          console.log(`🗑️ Deleted image from storage: ${imageName}`);
+        } catch (err) {
+          if (err.code === 'storage/object-not-found') {
+            console.warn(`⚠️ Image ${imageName} not found in storage`);
+          } else {
+            console.error('❌ Failed to delete image:', err);
+          }
+        }
+      }
+
+      Toast.show({
+        type: 'success',
+        text1: owner ? 'Recipe Deleted' : 'Recipe Removed',
+        text2: `${itemName} was ${
+          owner ? 'deleted' : 'removed'
+        } from the Recipe Box.`,
+      });
+    } else {
+      yield put({
+        type: 'RECIPE_BOX_DELETE_ITEM_FAILED',
+        payload: 'Recipe not found.',
+      });
+      Toast.show({
+        type: 'danger',
+        text1: `Failed to ${owner ? 'Delete' : 'Remove'} Recipe`,
+        text2: 'Recipe not found. Please try again later.',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    yield put({type: 'RECIPE_BOX_DELETE_ITEM_FAILED', payload: error.message});
+    Toast.show({
+      type: 'danger',
+      text1: `Failed to ${owner ? 'Delete' : 'Remove'} Recipe`,
+      text2: `${selectedRecipe?.title || 'Recipe'} could not be ${
+        owner ? 'deleted' : 'removed'
+      }. Please try again later.`,
+    });
+  }
+}
+
 function* resetRecipeBox(action) {}
 
 export default function* recipeSaga() {
@@ -254,6 +401,7 @@ export default function* recipeSaga() {
   yield takeLatest('DELETE_FROM_COMMUNITY_RECIPES', deleteFromCommunityRecipes);
   yield takeLatest('FETCH_RECIPE_BOX', fetchPersonalRecipes);
   yield takeLatest('ADD_ITEM_TO_RECIPE_BOX', addToPersonalRecipes);
+  yield takeLatest('BOOKMARK_TO_RECIPE_BOX', bookmarkCommunityRecipes);
   yield takeLatest('UPDATE_ITEM_IN_RECIPE_BOX', updateToPersonalRecipes);
   yield takeLatest('DELETE_ITEM_FROM_RECIPE_BOX', deleteFromPersonalRecipes);
   yield takeLatest('RESET_FAVORITES', resetRecipeBox);

@@ -26,6 +26,13 @@ export const Icons = {
   Barcode: props => (
     <FAIcons name="barcode" size={20} color="#000" {...props} />
   ),
+
+  BookmarkPlus: props => (
+    <MCIcons name="bookmark-plus-outline" size={20} color="#000" {...props} />
+  ),
+  BookmarkMinus: props => (
+    <MCIcons name="bookmark-remove-outline" size={20} color="#000" {...props} />
+  ),
   Camera: props => <FEIcons name="camera" size={20} color="#000" {...props} />,
   Check: props => <FA5Icons name="check" size={20} color="#000" {...props} />,
   CheckFilledCircle: props => (
@@ -95,6 +102,9 @@ export const Icons = {
     <MCIcons name="set-merge" size={20} color="#000" {...props} />
   ),
   Minus: props => <MCIcons name="minus" size={20} color="#000" {...props} />,
+  Options: props => (
+    <MCIcons name="dots-horizontal" size={20} color="#000" {...props} />
+  ),
   Plus: props => <MCIcons name="plus" size={20} color="#000" {...props} />,
   Profile: props => (
     <ADIcons name="profile" size={20} color="#000" {...props} />
@@ -109,6 +119,7 @@ export const Icons = {
   Settings: props => (
     <FA5Icons name="wrench" size={20} color="#000" {...props} />
   ),
+  Share: props => <MCIcons name="share" size={20} color="#000" {...props} />,
   Shopping: props => (
     <FAIcons name="shopping-cart" size={20} color="#000" {...props} />
   ),

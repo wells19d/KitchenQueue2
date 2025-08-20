@@ -1,21 +1,55 @@
 //* SelectedRecips.jsx
 
-import React, {useState} from 'react';
-import {View, ScrollView, TouchableOpacity} from 'react-native';
-import {Modal, Text, Image} from '../../KQ-UI';
+import React, {useMemo, useState} from 'react';
+import {
+  ActionSheetIOS,
+  Alert,
+  Platform,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import {Modal, Text, Image, View} from '../../KQ-UI';
 import {Icons} from '../../components/IconListRouter';
 import {useColors} from '../../KQ-UI/KQUtilities';
-import {capFirst, capEachWord, endWithPeriod} from '../../utilities/helpers';
+import {capEachWord, endWithPeriod} from '../../utilities/helpers';
 import {toFraction} from '../../utilities/fractionUnit';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {SelectedRecipeStyles} from '../../styles/Styles';
+import {setHapticFeedback} from '../../hooks/setHapticFeedback';
+import {useProfile} from '../../hooks/useHooks';
+import {useCoreInfo} from '../../utilities/coreInfo';
+import {useDispatch} from 'react-redux';
 
-const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
+const SelectedRecipe = ({
+  selectedRecipe,
+  visible,
+  useOneColumn,
+  recipeBox,
+  onClose,
+}) => {
   if (!selectedRecipe) return null;
+  const useHaptics = setHapticFeedback();
+  const dispatch = useDispatch();
+  const coreInfo = useCoreInfo();
+  const profile = useProfile();
+
+  console.log('selectedRecipe:', selectedRecipe);
 
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
 
-  console.log('SelectedRecipe', selectedRecipe);
+  const providedBy = useMemo(() => {
+    if (selectedRecipe?.publicAuthor) {
+      if (selectedRecipe?.displayAuthorName) {
+        return `KQ Recipe provided by ${selectedRecipe.authorFirstName} ${selectedRecipe.authorLastName}`;
+      } else {
+        return `KQ Recipe provided by ${selectedRecipe.authorOnlineName}`;
+      }
+    } else if (selectedRecipe?.source === 'Epicurious') {
+      return `KQ Recipe provided by Kitchen Queue`;
+    } else {
+      return `KQ Recipe provided by a Private User`;
+    }
+  }, [selectedRecipe]);
 
   const SectionHead = ({title, value, style}) => {
     if (value) {
@@ -34,10 +68,134 @@ const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
     return null;
   };
 
+  const handleShowOptions = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ['Cancel', 'Edit', 'Delete'],
+          destructiveButtonIndex: 2, // Delete in red
+          cancelButtonIndex: 0,
+        },
+        buttonIndex => {
+          if (buttonIndex === 1) handleEditRec?.(selectedRecipe);
+          if (buttonIndex === 2) handleDeleteRec?.(selectedRecipe);
+        },
+      );
+    } else {
+      Alert.alert(
+        'More Options',
+        'Choose an option below:',
+        [
+          {text: 'Cancel', style: 'cancel'},
+          {text: 'Edit', onPress: () => handleEditRec?.(selectedRecipe)},
+          {
+            text: 'Delete',
+            style: 'destructive',
+            onPress: () => handleDeleteRec?.(selectedRecipe),
+          },
+        ],
+        {cancelable: true},
+      );
+    }
+  };
+
+  const handleEditRec = () => {
+    console.log('Edit recipe', selectedRecipe?.title);
+  };
+
+  const handleShareRec = () => {
+    console.log('Share recipe', selectedRecipe?.title);
+  };
+
+  const handleDeleteRec = () => {
+    onClose();
+    dispatch({
+      type: 'DELETE_ITEM_FROM_RECIPE_BOX',
+      payload: {
+        recipeBoxID: coreInfo?.recipeBoxID,
+        selectedRecipe: selectedRecipe,
+        profileID: coreInfo?.userID,
+        owner: selectedRecipe?.accountID === coreInfo?.accountID,
+      },
+    });
+  };
+
+  const handleAddBM = () => {
+    onClose();
+    dispatch({
+      type: 'BOOKMARK_TO_RECIPE_BOX',
+      payload: {
+        recipeBoxID: coreInfo?.recipeBoxID,
+        selectedRecipe: selectedRecipe,
+        profileID: coreInfo?.userID,
+      },
+    });
+  };
+
+  const handleRemoveBM = () => {
+    onClose();
+    dispatch({
+      type: 'DELETE_ITEM_FROM_RECIPE_BOX',
+      payload: {
+        recipeBoxID: coreInfo?.recipeBoxID,
+        selectedRecipe: selectedRecipe,
+        profileID: coreInfo?.userID,
+        owner: selectedRecipe?.accountID === coreInfo?.accountID,
+      },
+    });
+  };
+
+  const renderButtons = useMemo(() => {
+    const owner = selectedRecipe?.accountID === coreInfo?.accountID;
+
+    if (recipeBox && owner) {
+      return (
+        <>
+          <TouchableOpacity
+            style={SelectedRecipeStyles.selectedTRButton}
+            onPress={handleShowOptions}>
+            <Icons.Options size={25} color={useColors('white')} />
+          </TouchableOpacity>
+
+          {/* <TouchableOpacity
+            style={SelectedRecipeStyles.selectedBLButton}
+            onPress={handleShareRec}>
+            <View style={{position: 'relative', top: -2}}>
+              <Icons.Share size={25} color={useColors('white')} />
+            </View>
+          </TouchableOpacity> */}
+        </>
+      );
+    }
+
+    if (!recipeBox && !owner) {
+      return (
+        <TouchableOpacity
+          style={SelectedRecipeStyles.selectedTRButton}
+          onPress={handleAddBM}>
+          <Icons.BookmarkPlus size={25} color={useColors('white')} />
+        </TouchableOpacity>
+      );
+    }
+
+    if (recipeBox && !owner) {
+      return (
+        <TouchableOpacity
+          style={SelectedRecipeStyles.selectedTRButton}
+          onPress={handleRemoveBM}>
+          <Icons.BookmarkMinus size={25} color={useColors('white')} />
+        </TouchableOpacity>
+      );
+    }
+
+    return null;
+  }, [recipeBox, selectedRecipe, coreInfo?.accountID]);
+
   return (
     <Modal
       visible={visible}
-      title={selectedRecipe?.title}
+      title={capEachWord(selectedRecipe?.title)}
       headerFont="open-6"
       headerSize="small"
       height="99.5%"
@@ -51,49 +209,77 @@ const SelectedRecipe = ({selectedRecipe, visible, useOneColumn, onClose}) => {
           style={SelectedRecipeStyles.imageSelectedStyles}
         />
       </View>
+
       <TouchableOpacity
         style={SelectedRecipeStyles.selectedCloseButton}
         onPress={onClose}>
         <Icons.Close size={25} color={useColors('white')} />
       </TouchableOpacity>
 
-      <View style={SelectedRecipeStyles.selectedViewWrapper}>
-        <Text size="tiny" centered font="open-7" kqColor="dark90">
-          KQ Recipe provided by{' '}
-          {selectedRecipe?.displayAuthorName
-            ? `${selectedRecipe?.authorFirstName} ${selectedRecipe?.authorLastName}`
-            : selectedRecipe?.source
-            ? `${selectedRecipe?.source}`
-            : `${selectedRecipe?.credit}`}
-        </Text>
+      {renderButtons}
+
+      {/* {!recipeBox && (
+        <TouchableOpacity
+          style={SelectedRecipeStyles.selectedBookmarkButton}
+          onPress={handleAddBM}>
+          <Icons.BookmarkPlus size={25} color={useColors('white')} />
+        </TouchableOpacity>
+      )} */}
+
+      {/* {recipeBox && !selectedRecipe?.communityRecipe && (
+        <TouchableOpacity
+          style={SelectedRecipeStyles.selectedOptionsButton}
+          onPress={handleShowOptions}>
+          <Icons.Options size={25} color={useColors('white')} />
+        </TouchableOpacity>
+      )}
+
+      {recipeBox && selectedRecipe?.communityRecipe && (
+        <TouchableOpacity
+          style={SelectedRecipeStyles.selectedOptionsButton}
+          onPress={handleRemoveBM}>
+          <Icons.BookmarkPlus size={25} color={useColors('white')} />
+        </TouchableOpacity>
+      )} */}
+
+      <View style={SelectedRecipeStyles.selectedViewWrapper} ph5>
+        {!recipeBox && (
+          <Text size="tiny" centered font="open-7" kqColor="dark90">
+            {providedBy}
+          </Text>
+        )}
         <ScrollView>
-          {selectedRecipe?.aboutRecipe && (
-            <>
-              <View style={SelectedRecipeStyles.aboutRecipe}>
-                <Text size="xSmall" font="open-7">
-                  About this Recipe:
-                </Text>
-                <Text
-                  size="tiny"
-                  font="open-6"
-                  numberOfLines={showAboutRecipe ? 10 : 1}>
-                  {endWithPeriod(selectedRecipe?.aboutRecipe)}
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={SelectedRecipeStyles.aboutRecipeButton}
-                onPress={() => setShowAboutRecipe(!showAboutRecipe)}>
-                <Text size="tiny" font="open-5" kqColor="rgb(56, 71, 234)">
-                  {showAboutRecipe ? 'Show Less' : 'Show More'}
-                </Text>
-              </TouchableOpacity>
-            </>
-          )}
+          {!recipeBox &&
+            selectedRecipe?.publicAuthor &&
+            selectedRecipe?.aboutRecipe && (
+              <>
+                <View style={SelectedRecipeStyles.aboutRecipe}>
+                  <Text size="xSmall" font="open-7">
+                    About this Recipe:
+                  </Text>
+                  <Text
+                    size="tiny"
+                    font="open-6"
+                    numberOfLines={showAboutRecipe ? 10 : 1}>
+                    {endWithPeriod(selectedRecipe?.aboutRecipe)}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={SelectedRecipeStyles.aboutRecipeButton}
+                  onPress={() => setShowAboutRecipe(!showAboutRecipe)}>
+                  <Text size="tiny" font="open-5" kqColor="rgb(56, 71, 234)">
+                    {showAboutRecipe ? 'Show Less' : 'Show More'}
+                  </Text>
+                </TouchableOpacity>
+              </>
+            )}
 
           <SectionHead
             title="Ingredients"
             value={selectedRecipe?.ingredients?.length > 0}
-            style={{marginTop: 5}}
+            style={{
+              marginTop: recipeBox ? 10 : selectedRecipe?.publicAuthor ? 5 : 10,
+            }}
           />
           <View style={SelectedRecipeStyles.ingWrapper}>
             {selectedRecipe?.ingredients?.map((ing, index) => (

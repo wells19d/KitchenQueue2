@@ -1,19 +1,23 @@
 //* RecipeBox.jsx
 
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Button, Image, Layout, Text, View} from '../../KQ-UI';
 import {ListStyles, RecipeSearchStyles} from '../../styles/Styles';
 import {useNavigation} from '@react-navigation/native';
-import {useRecipeBox} from '../../hooks/useHooks';
+import {useProfile, useRecipeBox} from '../../hooks/useHooks';
 import {FlashList} from '@shopify/flash-list';
 import {TouchableOpacity} from 'react-native';
 import {Icons} from '../../components/IconListRouter';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {capEachWord} from '../../utilities/helpers';
+import SelectedRecipe from './SelectedRecipe';
+import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 
 const RecipeBox = () => {
   const navigation = useNavigation();
   const recipeBox = useRecipeBox();
+  const useHaptics = setHapticFeedback();
+  const profile = useProfile();
   const recipesList = recipeBox?.items || [];
   console.log('RecipeBox recipesList:', recipesList);
 
@@ -25,14 +29,25 @@ const RecipeBox = () => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
   const handleSelectedRecipe = item => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
     setShowRecipeInfo(true);
     setSelectedRecipe(item);
   };
 
   const handleCloseSelectedRecipe = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
     setShowRecipeInfo(false);
     setSelectedRecipe(null);
   };
+
+  const [useOneColumn, setUseOneColumn] = useState(false);
+
+  useEffect(() => {
+    const hasLongIngredient = selectedRecipe?.ingredients?.some(
+      ing => ing?.name?.length > 35,
+    );
+    setUseOneColumn(hasLongIngredient);
+  }, [selectedRecipe]);
 
   const renderItem = useCallback(({item, index}) => {
     const isLeft = index % 2 === 0;
@@ -106,6 +121,13 @@ const RecipeBox = () => {
           </View>
         )}
       </View>
+      <SelectedRecipe
+        visible={showRecipeInfo}
+        selectedRecipe={selectedRecipe}
+        useOneColumn={useOneColumn}
+        onClose={() => handleCloseSelectedRecipe()}
+        recipeBox
+      />
     </Layout>
   );
 };
