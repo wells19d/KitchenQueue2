@@ -19,7 +19,6 @@ import {myRecipe} from '../../../myRecipe';
 
 const AddRecipe = () => {
   const core = useCoreInfo();
-  console.log('Core Info:', core);
   const dispatch = useDispatch();
   const [validation1, setValidation1] = useState(false);
   const [validation2, setValidation2] = useState(false);
