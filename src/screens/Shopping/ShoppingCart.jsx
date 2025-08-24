@@ -134,9 +134,9 @@ const ShoppingCart = () => {
               dispatch({
                 type: 'BATCH_TO_CUPBOARD',
                 payload: {
-                  cupboardID: core.cupboardID,
+                  cupboardID: core?.cupboardID,
                   items: shoppingCart,
-                  profileID: core.profileID,
+                  profileID: core?.profileID,
                 },
               });
 

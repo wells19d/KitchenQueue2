@@ -314,7 +314,6 @@ const AddRecipe = () => {
   const handleSaveRecipe = () => {
     if (canSave) {
       kqconsole.log('Saving Recipe', recipeObject);
-      console.log('Final Image:', finalImage);
       dispatch({
         type: 'ADD_ITEM_TO_RECIPE_BOX',
         payload: {

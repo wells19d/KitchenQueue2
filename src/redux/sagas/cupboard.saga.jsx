@@ -273,7 +273,7 @@ function* batchToCupboard(action) {
             category: category || '',
             notes: notes || '',
             itemId: uuid.v4(),
-            itemDate: serverTimestamp(),
+            itemDate: new Date().toISOString(),
             createdBy: profileID,
           };
 
@@ -380,7 +380,7 @@ function* batchAddToCupboard(action) {
           category: category || '',
           notes: notes || '',
           itemId: uuid.v4(),
-          itemDate: serverTimestamp(),
+          itemDate: new Date().toISOString(),
           createdBy: profileID,
         };
 

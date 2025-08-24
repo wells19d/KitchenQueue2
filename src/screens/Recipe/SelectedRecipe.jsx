@@ -33,8 +33,6 @@ const SelectedRecipe = ({
   const coreInfo = useCoreInfo();
   const profile = useProfile();
 
-  console.log('selectedRecipe:', selectedRecipe);
-
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
 
   const providedBy = useMemo(() => {
@@ -101,11 +99,11 @@ const SelectedRecipe = ({
   };
 
   const handleEditRec = () => {
-    console.log('Edit recipe', selectedRecipe?.title);
+    // console.log('Edit recipe', selectedRecipe?.title);
   };
 
   const handleShareRec = () => {
-    console.log('Share recipe', selectedRecipe?.title);
+    // console.log('Share recipe', selectedRecipe?.title);
   };
 
   const handleDeleteRec = () => {

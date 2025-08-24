@@ -19,7 +19,6 @@ const RecipeBox = () => {
   const useHaptics = setHapticFeedback();
   const profile = useProfile();
   const recipesList = recipeBox?.items || [];
-  console.log('RecipeBox recipesList:', recipesList);
 
   const handleCreateRecipe = () => {
     navigation.navigate('AddRecipe');

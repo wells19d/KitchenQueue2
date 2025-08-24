@@ -139,9 +139,11 @@ const ShoppingItems = () => {
       setMeasurement(null);
       setCategory(null);
       setNotes('');
-      if (!showAttModal) {
+      const timer = setTimeout(() => {
         setShowAttModal(true);
-      }
+      }, 1000);
+
+      return () => clearTimeout(timer);
     }
   }, [storedData]);
 

@@ -13,9 +13,9 @@ export const cleanupPhoto = async fileUri => {
     const exists = await RNFS.exists(path);
     if (exists) {
       await RNFS.unlink(path);
-      console.log(`Deleted image: ${path}`);
+      // console.log(`Deleted image: ${path}`);
     }
   } catch (err) {
-    console.log('Error cleaning up image:', err);
+    // console.log('Error cleaning up image:', err);
   }
 };

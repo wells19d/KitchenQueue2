@@ -105,7 +105,7 @@ export const useCropPhoto = () => {
       setCroppedData(null);
 
       //   ImagePicker.clean();
-      console.log('Crop error:', msg);
+      // console.log('Crop error:', msg);
       if (msg === 'User cancelled image selection') {
         setCropError({
           type: 'info',

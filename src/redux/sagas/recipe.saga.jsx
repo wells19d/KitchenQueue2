@@ -68,7 +68,7 @@ function* fetchCommunityRecipes(action) {
           )}?alt=media`,
         });
       } else {
-        console.warn(`[Saga] Firestore doc missing for ID: ${id}`);
+        // console.warn(`[Saga] Firestore doc missing for ID: ${id}`);
       }
     }
     yield put({
@@ -83,7 +83,7 @@ function* fetchCommunityRecipes(action) {
     });
     yield put({type: 'SET_COMMUNITY_RECIPES', payload: fetchedRecipes});
   } catch (error) {
-    console.error('Algolia/Firestore search error:', error);
+    // console.error('Algolia/Firestore search error:', error);
     Toast.show({
       type: 'error',
       text1: 'Search Error',
@@ -95,7 +95,7 @@ function* fetchCommunityRecipes(action) {
 
 function* bookmarkCommunityRecipes(action) {
   const {recipeBoxID, selectedRecipe, profileID} = action.payload;
-  console.log('action', action.payload);
+  // console.log('action', action.payload);
   try {
     const account = yield select(state => state.account.account);
     const recipeBox = yield select(state => state.recipe.recipeBox);
@@ -156,7 +156,7 @@ function* bookmarkCommunityRecipes(action) {
       });
     }
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     yield put({type: 'BOOKMARK_ADD_FAILED', payload: error.message});
     Toast.show({
       type: 'danger',
@@ -212,7 +212,7 @@ function* fetchPersonalRecipes(action) {
 
 function* addToPersonalRecipes(action) {
   const {recipeBoxID, newRecipe, finalImage, profileID} = action.payload;
-  console.log('action', action.payload);
+  // console.log('action', action.payload);
   try {
     const account = yield select(state => state.account.account);
     const recipeBox = yield select(state => state.recipe.recipeBox);
@@ -252,9 +252,9 @@ function* addToPersonalRecipes(action) {
           yield call([reference, reference.putFile], finalImage.uri);
           yield call([reference, reference.getDownloadURL]); // optional, confirms upload
           imageSuccess = true;
-          console.log('✅ Image uploaded successfully');
+          // console.log('✅ Image uploaded successfully');
         } catch (error) {
-          console.error('❌ Image upload failed:', error);
+          // console.error('❌ Image upload failed:', error);
           imageSuccess = false;
         }
       }
@@ -306,7 +306,7 @@ function* addToPersonalRecipes(action) {
       });
     }
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     yield put({type: 'RECIPE_BOX_ADD_FAILED', payload: error.message});
     Toast.show({
       type: 'danger',
@@ -351,12 +351,12 @@ function* deleteFromPersonalRecipes(action) {
           const ref = storage().ref(`recipes/${imageName}`);
           yield call([ref, ref.getMetadata]); // ensure it exists
           yield call([ref, ref.delete]);
-          console.log(`🗑️ Deleted image from storage: ${imageName}`);
+          // console.log(`🗑️ Deleted image from storage: ${imageName}`);
         } catch (err) {
           if (err.code === 'storage/object-not-found') {
-            console.warn(`⚠️ Image ${imageName} not found in storage`);
+            // console.warn(`⚠️ Image ${imageName} not found in storage`);
           } else {
-            console.error('❌ Failed to delete image:', err);
+            // console.error('❌ Failed to delete image:', err);
           }
         }
       }
@@ -380,7 +380,7 @@ function* deleteFromPersonalRecipes(action) {
       });
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     yield put({type: 'RECIPE_BOX_DELETE_ITEM_FAILED', payload: error.message});
     Toast.show({
       type: 'danger',
