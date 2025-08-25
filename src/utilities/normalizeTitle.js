@@ -84,12 +84,14 @@ const STOP_WORDS = new Set([
   'w',
 ]);
 
-export const normalizeTitleForKeywords = (title = '') => {
-  if (!title || title === undefined || title.trim() === '') return [];
-  const base = title?.toLowerCase().trim();
+export const normalizeTitleForKeywords = title => {
+  if (!title || typeof title !== 'string') return [];
+
+  const base = title.toLowerCase().trim();
+  if (!base) return [];
 
   const words = base
-    .replace(/[-_]/g, ' ') // convert hyphens to space
+    .replace(/[-_]/g, ' ') // convert hyphens/underscores to space
     .replace(/[^\w\s]/g, '') // remove punctuation
     .split(/\s+/) // split into words
     .filter(word => word && !STOP_WORDS.has(word));

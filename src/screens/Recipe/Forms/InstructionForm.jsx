@@ -60,7 +60,7 @@ const InstructionForm = props => {
     if (canAdd) {
       let newObject = {
         index: instructions?.length,
-        name: tempName?.toLowerCase().trim(),
+        name: tempName?.toLowerCase().trim() ?? null,
         steps: tempSteps,
       };
       setInstructions(prev => [...prev, newObject]);
@@ -73,7 +73,7 @@ const InstructionForm = props => {
     if (canAdd) {
       let newStep = {
         step: tempSteps?.length,
-        action: tempAction?.toLowerCase().trim(),
+        action: tempAction?.toLowerCase().trim() ?? null,
       };
       setTempSteps(prev => [...prev, newStep]);
       setTempAction(null);

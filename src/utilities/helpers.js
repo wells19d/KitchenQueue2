@@ -186,8 +186,11 @@ const UNIT_REPLACEMENT = {
 };
 
 export const unitReplacement = unit => {
-  if (!unit) return unit;
+  if (!unit || typeof unit !== 'string') return unit ?? null;
+
   const key = unit.toLowerCase().trim();
+  if (!key) return unit; // empty string, just return original
+
   return UNIT_REPLACEMENT[key] || unit;
 };
 

@@ -35,7 +35,7 @@ const IngredientForm = props => {
       let newObject = {
         amount: tempIngAmount ? Number(tempIngAmount) : null,
         unit: tempIngMeasurement?.key,
-        name: tempIngName ? tempIngName?.toLowerCase().trim() : null,
+        name: tempIngName?.toLowerCase().trim() ?? null,
         note: tempNote ?? null,
       };
       setIngredients(prev => [...prev, newObject]);

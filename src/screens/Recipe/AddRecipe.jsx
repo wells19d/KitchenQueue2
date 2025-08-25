@@ -131,9 +131,9 @@ const AddRecipe = () => {
   }, [recipeName]);
 
   const recipeObject = {
-    title: recipeName?.toLowerCase().trim(),
+    title: recipeName?.toLowerCase().trim() ?? null,
     sourceMaterial: sourceMaterial?.key ?? null,
-    source: source?.toLowerCase().trim(),
+    source: source?.toLowerCase().trim() ?? null,
     sourceURL: sourceURL?.trim().toLowerCase().replace(/\s+/g, '') ?? null,
     credit: core?.onlineName,
     authorOnlineName: core?.onlineName,
@@ -160,7 +160,8 @@ const AddRecipe = () => {
       ? `https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2F${finalImage?.name}?alt=media`
       : null,
     pictureApproved: true,
-    ingredientList: ingredients?.map(ing => ing.name?.toLowerCase().trim()),
+    ingredientList:
+      ingredients?.map(ing => ing.name?.toLowerCase().trim() ?? null) ?? null,
     isArchived: false,
     // keywords: normalizeTitleForKeywords(recipeName),
     keywords: keywords ?? null,

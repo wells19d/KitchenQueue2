@@ -3,6 +3,7 @@ export const shortenUnit = unit => {
   if (!unit || typeof unit !== 'string') return '';
 
   const normalized = unit.toLowerCase().trim();
+  if (!normalized) return '';
 
   const unitMap = {
     // explicitly omitted units

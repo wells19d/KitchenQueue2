@@ -4,6 +4,8 @@ import {formatNutrient} from './nutrients';
 
 const normalizeUnit = rawUnit => {
   const unit = rawUnit?.toLowerCase().trim();
+  if (!unit) return null;
+
   const map = {
     // volume
     'fl oz': 'fluidounce',
