@@ -163,7 +163,6 @@ const AddRecipe = () => {
     ingredientList:
       ingredients?.map(ing => ing.name?.toLowerCase().trim() ?? null) ?? null,
     isArchived: false,
-    // keywords: normalizeTitleForKeywords(recipeName),
     keywords: keywords ?? null,
     aboutRecipe: aboutRecipe?.trim() ?? null,
     seasonal: null, // later addition
@@ -314,7 +313,6 @@ const AddRecipe = () => {
 
   const handleSaveRecipe = () => {
     if (canSave) {
-      kqconsole.log('Saving Recipe', recipeObject);
       dispatch({
         type: 'ADD_ITEM_TO_RECIPE_BOX',
         payload: {

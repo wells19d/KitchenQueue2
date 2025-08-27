@@ -123,9 +123,10 @@ const RecipeBox = () => {
       <SelectedRecipe
         visible={showRecipeInfo}
         selectedRecipe={selectedRecipe}
+        recipesList={recipesList}
         useOneColumn={useOneColumn}
         onClose={() => handleCloseSelectedRecipe()}
-        recipeBox
+        recipeBoxView
       />
     </Layout>
   );

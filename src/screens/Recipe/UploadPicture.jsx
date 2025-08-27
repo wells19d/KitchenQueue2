@@ -112,8 +112,6 @@ const UploadPicture = props => {
     ],
   });
 
-  if (!device) return <View style={{flex: 1, backgroundColor: 'white'}} />;
-
   useEffect(() => {
     const imageSource = photoData || selectedData;
     const errorSource = photoError || selectedError;
@@ -231,6 +229,13 @@ const UploadPicture = props => {
   }
 
   if (screenView === 'cameraUpload') {
+    if (!device) {
+      return (
+        <View flex centerVH style={{backgroundColor: 'white'}}>
+          <Text>No Camera Found</Text>
+        </View>
+      );
+    }
     return (
       <View style={UploadPictureStyles.cameraWrapper}>
         <View flex>

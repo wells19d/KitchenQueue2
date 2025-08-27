@@ -13,7 +13,7 @@
     "clean-project": "rm -rf node_modules && yarn cache clean && yarn install && yarn pod-clean && yarn gradle-clean",
     "clean-project-hard": "rm -rf node_modules yarn.lock && yarn cache clean && yarn install && yarn pod-clean && yarn gradle-clean",
     "clean-and-start": "rm -rf node_modules && yarn cache clean && yarn install && yarn pod-clean && yarn gradle-clean && yarn start-clean",
-    "connect-android": "adb -s RFCNB01E5GA reverse tcp:8081 tcp:8081",
+    "connect-android": "adb -s RFCNB01E5GA reverse tcp:8081 tcp:8081 && yarn open-studio",
     "sync-version": "node syncVersion.js",
     "apple-patch++": "node bumpVersion.js apple patch",
     "apple-minor++": "node bumpVersion.js apple minor",

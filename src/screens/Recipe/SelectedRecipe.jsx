@@ -16,7 +16,7 @@ import {toFraction} from '../../utilities/fractionUnit';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {SelectedRecipeStyles} from '../../styles/Styles';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
-import {useProfile} from '../../hooks/useHooks';
+import {useProfile, useRecipeBox} from '../../hooks/useHooks';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {useDispatch} from 'react-redux';
 
@@ -24,14 +24,20 @@ const SelectedRecipe = ({
   selectedRecipe,
   visible,
   useOneColumn,
-  recipeBox,
+  recipeBoxView,
   onClose,
 }) => {
-  if (!selectedRecipe) return null;
   const useHaptics = setHapticFeedback();
   const dispatch = useDispatch();
   const coreInfo = useCoreInfo();
   const profile = useProfile();
+  const recipeBox = useRecipeBox();
+  const recipesListIDs = recipeBox?.items?.map(rec => rec?.id) || [];
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const isBookmarked = useMemo(() => {
+    return recipesListIDs.includes(selectedRecipe?.id);
+  }, [recipesListIDs, selectedRecipe]);
 
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
 
@@ -107,19 +113,35 @@ const SelectedRecipe = ({
   };
 
   const handleDeleteRec = () => {
-    onClose();
-    dispatch({
-      type: 'DELETE_ITEM_FROM_RECIPE_BOX',
-      payload: {
-        recipeBoxID: coreInfo?.recipeBoxID,
-        selectedRecipe: selectedRecipe,
-        profileID: coreInfo?.userID,
-        owner: selectedRecipe?.accountID === coreInfo?.accountID,
-      },
-    });
+    Alert.alert(
+      'Delete Recipe',
+      'Are you sure you want to delete this recipe?',
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            onClose();
+            dispatch({
+              type: 'DELETE_ITEM_FROM_RECIPE_BOX',
+              payload: {
+                recipeBoxID: coreInfo?.recipeBoxID,
+                selectedRecipe: selectedRecipe,
+                profileID: coreInfo?.userID,
+                owner: selectedRecipe?.accountID === coreInfo?.accountID,
+              },
+            });
+          },
+        },
+      ],
+    );
   };
 
   const handleAddBM = () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
     onClose();
     dispatch({
       type: 'BOOKMARK_TO_RECIPE_BOX',
@@ -129,9 +151,12 @@ const SelectedRecipe = ({
         profileID: coreInfo?.userID,
       },
     });
+    setTimeout(() => setIsProcessing(false), 500);
   };
 
   const handleRemoveBM = () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
     onClose();
     dispatch({
       type: 'DELETE_ITEM_FROM_RECIPE_BOX',
@@ -142,12 +167,13 @@ const SelectedRecipe = ({
         owner: selectedRecipe?.accountID === coreInfo?.accountID,
       },
     });
+    setTimeout(() => setIsProcessing(false), 500);
   };
 
   const renderButtons = useMemo(() => {
     const owner = selectedRecipe?.accountID === coreInfo?.accountID;
 
-    if (recipeBox && owner) {
+    if (recipeBoxView && owner) {
       return (
         <>
           <TouchableOpacity
@@ -167,7 +193,7 @@ const SelectedRecipe = ({
       );
     }
 
-    if (!recipeBox && !owner) {
+    if (!recipeBoxView && !owner && !isBookmarked) {
       return (
         <TouchableOpacity
           style={SelectedRecipeStyles.selectedTRButton}
@@ -177,7 +203,7 @@ const SelectedRecipe = ({
       );
     }
 
-    if (recipeBox && !owner) {
+    if ((recipeBoxView && !owner) || isBookmarked) {
       return (
         <TouchableOpacity
           style={SelectedRecipeStyles.selectedTRButton}
@@ -188,7 +214,7 @@ const SelectedRecipe = ({
     }
 
     return null;
-  }, [recipeBox, selectedRecipe, coreInfo?.accountID]);
+  }, [recipeBoxView, selectedRecipe, coreInfo?.accountID]);
 
   return (
     <Modal
@@ -216,7 +242,7 @@ const SelectedRecipe = ({
 
       {renderButtons}
 
-      {/* {!recipeBox && (
+      {/* {!recipeBoxView && (
         <TouchableOpacity
           style={SelectedRecipeStyles.selectedBookmarkButton}
           onPress={handleAddBM}>
@@ -224,7 +250,7 @@ const SelectedRecipe = ({
         </TouchableOpacity>
       )} */}
 
-      {/* {recipeBox && !selectedRecipe?.communityRecipe && (
+      {/* {recipeBoxView && !selectedRecipe?.communityRecipe && (
         <TouchableOpacity
           style={SelectedRecipeStyles.selectedOptionsButton}
           onPress={handleShowOptions}>
@@ -232,7 +258,7 @@ const SelectedRecipe = ({
         </TouchableOpacity>
       )}
 
-      {recipeBox && selectedRecipe?.communityRecipe && (
+      {recipeBoxView && selectedRecipe?.communityRecipe && (
         <TouchableOpacity
           style={SelectedRecipeStyles.selectedOptionsButton}
           onPress={handleRemoveBM}>
@@ -241,13 +267,13 @@ const SelectedRecipe = ({
       )} */}
 
       <View style={SelectedRecipeStyles.selectedViewWrapper} ph5>
-        {!recipeBox && (
+        {!recipeBoxView && (
           <Text size="tiny" centered font="open-7" kqColor="dark90">
             {providedBy}
           </Text>
         )}
         <ScrollView>
-          {!recipeBox &&
+          {!recipeBoxView &&
             selectedRecipe?.publicAuthor &&
             selectedRecipe?.aboutRecipe && (
               <>
@@ -276,7 +302,11 @@ const SelectedRecipe = ({
             title="Ingredients"
             value={selectedRecipe?.ingredients?.length > 0}
             style={{
-              marginTop: recipeBox ? 10 : selectedRecipe?.publicAuthor ? 5 : 10,
+              marginTop: recipeBoxView
+                ? 10
+                : selectedRecipe?.publicAuthor
+                ? 5
+                : 10,
             }}
           />
           <View style={SelectedRecipeStyles.ingWrapper}>
