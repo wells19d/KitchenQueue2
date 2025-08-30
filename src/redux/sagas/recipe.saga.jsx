@@ -313,12 +313,114 @@ function* addToPersonalRecipes(action) {
       text1: 'Failed to Add Recipe',
       text2: `${capFirst(
         newRecipe?.title,
-      )} could not be added.Please try again later.`,
+      )} could not be added. Please try again later.`,
     });
   }
 }
 
-function* updateToPersonalRecipes(action) {}
+function* updateToPersonalRecipes(action) {
+  const {
+    recipeBoxID,
+    editedRecipe,
+    finalImage,
+    profileID,
+    pictureWasChanged,
+    oldImageName,
+  } = action.payload;
+
+  try {
+    const recipeBoxRef = doc(db, 'recipeBoxes', recipeBoxID);
+    const recipeBoxDoc = yield call(getDoc, recipeBoxRef);
+
+    if (recipeBoxDoc.exists) {
+      const recipeBoxData = recipeBoxDoc.data();
+
+      // 🔑 Step 1: Update the correct recipe in the array
+      const updatedItems = (recipeBoxData.items || []).map(item =>
+        item.id === editedRecipe.id
+          ? {...item, ...editedRecipe, lastUpdated: new Date().toISOString()}
+          : item,
+      );
+
+      let imageSuccess = false;
+      let imageDeleted = false;
+
+      // 🔑 Step 2: Remove the old image (if any)
+      if (pictureWasChanged && oldImageName) {
+        try {
+          const oldImageRef = storage().ref(`recipes/${oldImageName}`);
+          yield call([oldImageRef, oldImageRef.delete]);
+          imageDeleted = true;
+        } catch {
+          imageDeleted = false; // ignore delete error
+        }
+      }
+
+      // 🔑 Step 3: Upload the new image (if any)
+      if (pictureWasChanged && finalImage) {
+        try {
+          const reference = storage().ref(`recipes/${finalImage.name}`);
+          yield call([reference, reference.putFile], finalImage.uri);
+          yield call([reference, reference.getDownloadURL]);
+          imageSuccess = true;
+        } catch {
+          imageSuccess = false; // ignore upload error
+        }
+      }
+
+      // 🔑 Step 4: Save the recipe
+      yield call(updateDoc, recipeBoxRef, {
+        items: updatedItems,
+        lastUpdated: serverTimestamp(),
+        lastUpdatedBy: profileID,
+      });
+
+      // 🔑 Step 5: Handle toast conditions
+      if (imageDeleted && imageSuccess && pictureWasChanged) {
+        Toast.show({
+          type: 'success',
+          text1: 'Recipe Updated',
+          text2: `${capFirst(editedRecipe?.title)} and its image were updated.`,
+        });
+      } else if (!imageDeleted && imageSuccess && pictureWasChanged) {
+        Toast.show({
+          type: 'success',
+          text1: 'Recipe Updated',
+          text2: `${capFirst(editedRecipe?.title)} updated and image added.`,
+        });
+      } else if (pictureWasChanged && !imageSuccess) {
+        Toast.show({
+          type: 'warning',
+          text1: 'Recipe Updated',
+          text2: `${capFirst(
+            editedRecipe?.title,
+          )} updated, but the new image could not be saved.`,
+        });
+      } else {
+        Toast.show({
+          type: 'success',
+          text1: 'Recipe Updated',
+          text2: `${capFirst(editedRecipe?.title)} updated successfully.`,
+        });
+      }
+    } else {
+      yield put({
+        type: 'RECIPE_BOX_UPDATE_FAILED',
+        payload: 'Recipe box not found.',
+      });
+    }
+  } catch (error) {
+    yield put({type: 'RECIPE_BOX_UPDATE_FAILED', payload: error.message});
+    Toast.show({
+      type: 'danger',
+      text1: 'Failed to Update Recipe',
+      text2: `${capFirst(
+        editedRecipe?.title,
+      )} could not be updated. Please try again later.`,
+    });
+  }
+}
+
 function* deleteFromPersonalRecipes(action) {
   const {recipeBoxID, selectedRecipe, profileID, owner} = action.payload;
   try {

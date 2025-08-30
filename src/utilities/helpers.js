@@ -3,6 +3,8 @@ import moment from 'moment';
 import {displayMeasurements, formatMeasurement} from './measurements';
 import pluralize from 'pluralize';
 
+export const tempImageString = 'KitchenQueueTempRecipe.jpg';
+
 //*helpers.js
 export function displayDropField(value, mapData = []) {
   if (!value || typeof value !== 'string') return null;

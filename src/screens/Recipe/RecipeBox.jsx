@@ -6,12 +6,13 @@ import {ListStyles, RecipeSearchStyles} from '../../styles/Styles';
 import {useNavigation} from '@react-navigation/native';
 import {useProfile, useRecipeBox} from '../../hooks/useHooks';
 import {FlashList} from '@shopify/flash-list';
-import {TouchableOpacity} from 'react-native';
+import {StyleSheet, TouchableOpacity} from 'react-native';
 import {Icons} from '../../components/IconListRouter';
 import {useColors} from '../../KQ-UI/KQUtilities';
-import {capEachWord} from '../../utilities/helpers';
+import {capEachWord, tempImageString} from '../../utilities/helpers';
 import SelectedRecipe from './SelectedRecipe';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
+import KQTempRecipe from '../../svg/KitchenQueueTempRecipe';
 
 const RecipeBox = () => {
   const navigation = useNavigation();
@@ -43,7 +44,7 @@ const RecipeBox = () => {
 
   useEffect(() => {
     const hasLongIngredient = selectedRecipe?.ingredients?.some(
-      ing => ing?.name?.length > 35,
+      ing => ing?.name?.length > 15,
     );
     setUseOneColumn(hasLongIngredient);
   }, [selectedRecipe]);
@@ -54,7 +55,36 @@ const RecipeBox = () => {
       <TouchableOpacity
         onPress={() => handleSelectedRecipe(item)}
         style={styles.itemWrapper(isLeft)}>
-        <Image image={item.imageUri} style={styles.imageListStyles} />
+        {item.imageUri ? (
+          <Image
+            image={item.imageUri || tempImageString}
+            style={styles.imageListStyles}
+          />
+        ) : (
+          <View style={[styles.imageListStyles, {borderWidth: 1.5}]}>
+            <View
+              style={{
+                ...StyleSheet.absoluteFillObject,
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 1000,
+                pointerEvents: 'none',
+                transform: [{rotate: '-35deg'}],
+              }}>
+              <Text kqColor="dark90" size="small" font="open-7">
+                Temp Image
+              </Text>
+            </View>
+
+            {/* SVG background */}
+            <KQTempRecipe
+              width="100%"
+              height="100%"
+              color={useColors('dark30')}
+              backgroundColor={useColors('white')}
+            />
+          </View>
+        )}
 
         <View style={RecipeSearchStyles.listWrapper}>
           <View style={RecipeSearchStyles.listTitle}>
@@ -65,7 +95,7 @@ const RecipeBox = () => {
           <View style={RecipeSearchStyles.listSubTitleContainer}>
             <View style={RecipeSearchStyles.listReadyIn}>
               <Text size="tiny" font="open-4" kqColor="dark90">
-                {item?.readyIn ? `${item.readyIn}min` : ''}
+                {item?.readyIn ? `${item.readyIn} min` : ''}
               </Text>
             </View>
             <View style={RecipeSearchStyles.listScoreContainer}>

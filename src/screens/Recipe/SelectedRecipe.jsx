@@ -6,12 +6,18 @@ import {
   Alert,
   Platform,
   ScrollView,
+  StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 import {Modal, Text, Image, View} from '../../KQ-UI';
 import {Icons} from '../../components/IconListRouter';
 import {useColors} from '../../KQ-UI/KQUtilities';
-import {capEachWord, endWithPeriod} from '../../utilities/helpers';
+import {
+  capEachWord,
+  capFirst,
+  endWithPeriod,
+  tempImageString,
+} from '../../utilities/helpers';
 import {toFraction} from '../../utilities/fractionUnit';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {SelectedRecipeStyles} from '../../styles/Styles';
@@ -19,6 +25,8 @@ import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 import {useProfile, useRecipeBox} from '../../hooks/useHooks';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {useDispatch} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import KQTempRecipe from '../../svg/KitchenQueueTempRecipe';
 
 const SelectedRecipe = ({
   selectedRecipe,
@@ -29,6 +37,7 @@ const SelectedRecipe = ({
 }) => {
   const useHaptics = setHapticFeedback();
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const coreInfo = useCoreInfo();
   const profile = useProfile();
   const recipeBox = useRecipeBox();
@@ -105,7 +114,11 @@ const SelectedRecipe = ({
   };
 
   const handleEditRec = () => {
-    // console.log('Edit recipe', selectedRecipe?.title);
+    onClose();
+    navigation.navigate('AddRecipe', {
+      recipeToEdit: selectedRecipe,
+      editingRecipe: true,
+    });
   };
 
   const handleShareRec = () => {
@@ -228,10 +241,34 @@ const SelectedRecipe = ({
       headerColor="orange"
       onClose={onClose}>
       <View style={{borderBottomWidth: 1, borderColor: useColors('dark10')}}>
-        <Image
-          image={selectedRecipe?.imageUri}
-          style={SelectedRecipeStyles.imageSelectedStyles}
-        />
+        {selectedRecipe?.imageUri ? (
+          <Image
+            image={selectedRecipe?.imageUri}
+            style={SelectedRecipeStyles.imageSelectedStyles}
+          />
+        ) : (
+          <View style={[SelectedRecipeStyles.imageSelectedStyles]}>
+            <View
+              style={{
+                ...StyleSheet.absoluteFillObject,
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 1000,
+                pointerEvents: 'none',
+                transform: [{rotate: '-35deg'}],
+              }}>
+              <Text kqColor="dark90" size="small" font="open-7">
+                Temp Image
+              </Text>
+            </View>
+            <KQTempRecipe
+              width={'100%'}
+              height={200}
+              color={useColors('dark30')}
+              backgroundColor={useColors('white')}
+            />
+          </View>
+        )}
       </View>
 
       <TouchableOpacity
@@ -316,19 +353,14 @@ const SelectedRecipe = ({
                 style={
                   useOneColumn
                     ? SelectedRecipeStyles.ingColOne
-                    : index % 2 === 0
-                    ? SelectedRecipeStyles.ingColTwo
-                    : SelectedRecipeStyles.ingColTwoAlt
+                    : SelectedRecipeStyles.ingColTwo
                 }>
-                <View style={{flexDirection: 'row'}}>
+                <View row>
                   <View style={SelectedRecipeStyles.ingDot}>
                     <Icons.Dot size={4} />
                   </View>
-                  <View style={{flex: 1}}>
-                    <Text
-                      size="xSmall"
-                      font="open-7"
-                      numberOfLines={useOneColumn ? 3 : 1}>
+                  <View flex>
+                    <Text size="xSmall" font="open-7" numberOfLines={3}>
                       {(() => {
                         if (ing.amount != null) {
                           const pluralUnit = formatPluralUnit(
@@ -352,15 +384,15 @@ const SelectedRecipe = ({
             title="Instructions"
             value={selectedRecipe?.instructions?.length > 0}
           />
-          <View style={{margin: 5, marginBottom: 10}}>
+          <View m={5} mb={10}>
             {Array.isArray(selectedRecipe?.instructions) &&
               selectedRecipe.instructions.length > 0 &&
               selectedRecipe.instructions.map((group, gIndex) => (
-                <View key={`group-${gIndex}`} style={{marginBottom: 25}}>
+                <View key={`group-${gIndex}`} mb={25}>
                   {group.name ? (
-                    <View style={{paddingLeft: 10, paddingBottom: 2}}>
+                    <View pl={10} pb={2}>
                       <Text size="small" font="open-7">
-                        {group.name}
+                        {capEachWord(group.name)}
                       </Text>
                     </View>
                   ) : null}
@@ -374,7 +406,9 @@ const SelectedRecipe = ({
                         </Text>
                       </View>
                       <View style={SelectedRecipeStyles.stepText}>
-                        <Text size="xSmall">{endWithPeriod(ins.action)}</Text>
+                        <Text size="xSmall">
+                          {capFirst(endWithPeriod(ins.action))}
+                        </Text>
                       </View>
                     </View>
                   ))}

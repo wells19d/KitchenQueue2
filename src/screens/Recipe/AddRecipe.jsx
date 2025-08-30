@@ -4,7 +4,12 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {BottomSheet, Button, Input, Layout, Text, View} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {displaySourceType} from '../../utilities/materialSource';
-import {displayDropField, displayDropArray} from '../../utilities/helpers';
+import {
+  displayDropField,
+  displayDropArray,
+  capEachWord,
+  capFirst,
+} from '../../utilities/helpers';
 import {displayCuisineTypes} from '../../utilities/cuisineType';
 import {displayDishTypes} from '../../utilities/dishType';
 import {displayDietTypes} from '../../utilities/dietType';
@@ -15,11 +20,15 @@ import IngredientForm from './Forms/IngredientForm';
 import InstructionForm from './Forms/InstructionForm';
 import RecipeForm from './Forms/RecipeForm';
 import {useDispatch} from 'react-redux';
-import {myRecipe} from '../../../myRecipe';
+import {useNavigation, useRoute} from '@react-navigation/native';
 
 const AddRecipe = () => {
   const core = useCoreInfo();
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const route = useRoute();
+  const {recipeToEdit, editingRecipe} = route.params || {};
+
   const [validation1, setValidation1] = useState(false);
   const [validation2, setValidation2] = useState(false);
   const [validation3, setValidation3] = useState(false);
@@ -87,36 +96,39 @@ const AddRecipe = () => {
       return;
     }
 
-    if (sourceMaterial?.key === 'personal') {
+    const key = sourceMaterial?.key;
+
+    if (key === 'personal') {
       setSource('personal');
       setSourceType('personal');
       return;
     }
 
-    if (['friend', 'family'].includes(sourceMaterial?.key)) {
-      setSource(null);
+    if (['friend', 'family'].includes(key)) {
+      // keep existing source if editing, otherwise clear
+      setSource(prev => (editingRecipe && prev ? prev : null));
       setSourceType('private');
       return;
     }
 
-    if (['social', 'website', 'app'].includes(sourceMaterial?.key)) {
-      setSource(null);
+    if (['social', 'website', 'app'].includes(key)) {
+      setSource(prev => (editingRecipe && prev ? prev : null));
       setSourceType('online');
       return;
     }
 
     if (
       ['cookbook', 'restaurant', 'tv', 'magazine', 'package', 'event'].includes(
-        sourceMaterial?.key,
+        key,
       )
     ) {
-      setSource(null);
+      setSource(prev => (editingRecipe && prev ? prev : null));
       setSourceType('published');
       return;
     }
 
     setSourceType(null);
-  }, [sourceMaterial]);
+  }, [sourceMaterial, editingRecipe]);
 
   useMemo(() => {
     if (!recipeName) return;
@@ -124,7 +136,7 @@ const AddRecipe = () => {
     const normalized = normalizeTitleForKeywords(recipeName);
     setKeywords(normalized);
 
-    const slug = normalized.slice(1).join('-');
+    const slug = normalized.join('-');
     const prefix = core?.profileID || core?.userID;
 
     setPictureName(`${prefix}-${slug}`);
@@ -159,6 +171,7 @@ const AddRecipe = () => {
     imageUri: finalImage
       ? `https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2F${finalImage?.name}?alt=media`
       : null,
+    imageDate: finalImage?.imageDate ?? null,
     pictureApproved: true,
     ingredientList:
       ingredients?.map(ing => ing.name?.toLowerCase().trim() ?? null) ?? null,
@@ -235,6 +248,53 @@ const AddRecipe = () => {
     if (sourceMaterial?.key === 'event') return 'Ex: Square One';
     return null;
   }, [sourceMaterial]);
+
+  useMemo(() => {
+    if (editingRecipe) {
+      setRecipeName(capEachWord(recipeToEdit?.title));
+      setSourceMaterial(
+        displaySourceType.find(
+          item => item.key === recipeToEdit?.sourceMaterial,
+        ) || null,
+      );
+
+      // setSourceType(recipeToEdit?.sourceType || null);
+      setCuisineType(
+        displayCuisineTypes.filter(c =>
+          recipeToEdit?.cuisines?.includes(c.value),
+        ) || null,
+      );
+      setDishType(
+        displayDishTypes.filter(d =>
+          recipeToEdit?.dishTypes?.includes(d.value),
+        ) || null,
+      );
+      setDietType(
+        displayDietTypes.filter(d => recipeToEdit?.diets?.includes(d.value)) ||
+          null,
+      );
+      setServings(recipeToEdit?.servings?.toString() || null);
+      setPrepTime(recipeToEdit?.prepTime?.toString() || null);
+      setCookTime(recipeToEdit?.cookTime?.toString() || null);
+      setIngredients(recipeToEdit?.ingredients || []);
+      setInstructions(recipeToEdit?.instructions || []);
+      setAboutRecipe(recipeToEdit?.aboutRecipe || null);
+      setFinalImage(
+        recipeToEdit?.image
+          ? {
+              imageUri: recipeToEdit?.imageUri,
+              uri: recipeToEdit?.imageUri,
+              imageDate: recipeToEdit?.imageDate,
+            }
+          : null,
+      );
+      setSource(capEachWord(recipeToEdit?.source));
+    }
+  }, [recipeToEdit, editingRecipe]);
+
+  const imageChanged = useMemo(() => {
+    return finalImage?.imageDate !== recipeToEdit?.imageDate;
+  }, [finalImage, recipeToEdit]);
 
   const handleCloseIngredients = () => {
     setCanPressIngredients(false);
@@ -313,58 +373,38 @@ const AddRecipe = () => {
 
   const handleSaveRecipe = () => {
     if (canSave) {
-      dispatch({
-        type: 'ADD_ITEM_TO_RECIPE_BOX',
-        payload: {
-          recipeBoxID: core?.recipeBoxID,
-          newRecipe: recipeObject,
-          finalImage: finalImage,
-          profileID: core?.userID,
-        },
-      });
-      resetForm();
+      if (editingRecipe) {
+        dispatch({
+          type: 'UPDATE_ITEM_IN_RECIPE_BOX',
+          payload: {
+            recipeBoxID: core?.recipeBoxID,
+            editedRecipe: recipeObject,
+            finalImage: finalImage,
+            profileID: core?.userID,
+            pictureWasChanged: imageChanged,
+            oldImageName: recipeToEdit?.image,
+          },
+        });
+        resetForm();
+        navigation.goBack();
+      } else {
+        dispatch({
+          type: 'ADD_ITEM_TO_RECIPE_BOX',
+          payload: {
+            recipeBoxID: core?.recipeBoxID,
+            newRecipe: recipeObject,
+            finalImage: finalImage,
+            profileID: core?.userID,
+          },
+        });
+        resetForm();
+      }
     }
   };
 
-  // Dev testing code to import a recipe
-  // const importRecipe = myRecipe[0];
-
-  // useMemo(() => {
-  //   if (importRecipe) {
-  //     setRecipeName(importRecipe.title);
-  //     setSourceMaterial(
-  //       displaySourceType.find(
-  //         item => item.key === importRecipe.sourceMaterial,
-  //       ) || null,
-  //     );
-  //     setSource('personal');
-  //     setSourceType('personal');
-  //     setCuisineType(
-  //       displayCuisineTypes.filter(c =>
-  //         importRecipe.cuisines?.includes(c.value),
-  //       ) || null,
-  //     );
-  //     setDishType(
-  //       displayDishTypes.filter(d =>
-  //         importRecipe.dishTypes?.includes(d.value),
-  //       ) || null,
-  //     );
-  //     setDietType(
-  //       displayDietTypes.filter(d => importRecipe.diets?.includes(d.value)) ||
-  //         null,
-  //     );
-  //     setServings(importRecipe.servings?.toString() || null);
-  //     setPrepTime(importRecipe.prepTime?.toString() || null);
-  //     setCookTime(importRecipe.cookTime?.toString() || null);
-  //     setIngredients(importRecipe.ingredients || []);
-  //     setInstructions(importRecipe.instructions || []);
-  //     setAboutRecipe(importRecipe.aboutRecipe || null);
-  //   }
-  // }, [importRecipe]);
-
   return (
     <Layout
-      headerTitle="Add Recipe"
+      headerTitle={editingRecipe ? 'Edit Recipe' : 'Add Recipe'}
       LeftButton="Back"
       RightButton={canSave ? 'Save' : ''}
       LeftAction={null}

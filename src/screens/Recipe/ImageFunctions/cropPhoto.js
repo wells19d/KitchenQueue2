@@ -88,6 +88,7 @@ export const useCropPhoto = () => {
           width: image.width,
           height: image.height,
           size: `${sizeKB} KB`,
+          imageDate: new Date().toISOString(),
           type: 'image/jpeg',
         });
       } catch {
@@ -97,6 +98,7 @@ export const useCropPhoto = () => {
           width: image.width,
           height: image.height,
           size: null,
+          imageDate: new Date().toISOString(),
           type: 'image/jpeg',
         });
       }

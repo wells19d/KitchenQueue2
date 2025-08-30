@@ -129,7 +129,7 @@ const RecipeSearch = () => {
 
   useEffect(() => {
     const hasLongIngredient = selectedRecipe?.ingredients?.some(
-      ing => ing?.name?.length > 35,
+      ing => ing?.name?.length > 15,
     );
     setUseOneColumn(hasLongIngredient);
   }, [selectedRecipe]);

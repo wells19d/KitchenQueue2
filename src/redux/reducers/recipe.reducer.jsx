@@ -50,6 +50,8 @@ export default function recipeReducer(state = initialState, action) {
       return {...state, loading: true, error: null};
     case 'RECIPE_BOX_ADD_FAILED':
       return {...state, loading: false, error: action.payload};
+    case 'RECIPE_BOX_UPDATE_FAILED':
+      return {...state, loading: false, error: action.payload};
     case 'BOOKMARK_ADD_FAILED':
       return {...state, loading: false, error: action.payload};
 
