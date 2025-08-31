@@ -51,7 +51,6 @@ const KQView = ({
   rightAlign = false,
   bottomAlign = false,
   topAlign = false,
-  flexGrow = false,
   border = false,
   borderWidth = 1,
   borderColor = 'black',
@@ -84,7 +83,6 @@ const KQView = ({
     if (row) s.flexDirection = 'row';
     if (column) s.flexDirection = 'column';
     if (flex !== undefined) s.flex = flex === true ? 1 : flex;
-    if (flexGrow !== undefined) s.flexGrow = flexGrow === true ? 1 : flexGrow;
     if (border) s.borderWidth = borderWidth;
     if (borderColor) s.borderColor = borderColor;
 

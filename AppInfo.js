@@ -1,4 +1,5 @@
 //* AppInfo.js
+import {Platform} from 'react-native';
 import version from './version.json';
 
 const isIOS = Platform.OS === 'ios';

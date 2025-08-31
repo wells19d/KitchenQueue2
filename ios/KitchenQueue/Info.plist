@@ -102,7 +102,7 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSCameraUsageDescription</key>
-	<string>Kitchen Queue needs access to your Camera for scanning.</string>
+	<string>Kitchen Queue needs access to your Camera for scanning and taking pictures.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Kitchen Queue needs access to your Photo Library for uploading pictures.</string>
 </dict>

@@ -67,9 +67,9 @@ import RecipeSearch from './src/screens/Recipe/RecipeSearch';
 import NavigationMode from 'react-native-navigation-mode';
 import RecipeBox from './src/screens/Recipe/RecipeBox';
 import AddRecipe from './src/screens/Recipe/AddRecipe';
-import {useFirstLaunch} from './src/utilities/useFirstLaunch';
-import {requestSelectedPermissions} from './src/utilities/requestSelectedPermissions';
 import FastImage from 'react-native-fast-image';
+import {useRequestPermissions} from './src/hooks/useRequestPermissions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -96,32 +96,25 @@ const Main = props => {
   enableScreens(true);
 
   const [renderDisplay, setRenderDisplay] = useState('auth');
-  const [loading, setLoading] = useState(false);
 
-  //-- Permissions Request ---//
-  const hasShownPermsRef = useRef(false);
-  const {isFirstLaunch, markSeen} = useFirstLaunch();
+  // Request permissions (for camera and photos) on first launch
+  const {requestPermissions} = useRequestPermissions(renderDisplay);
+  const [showPermModal, setShowPermModal] = useState(false);
 
   useEffect(() => {
-    if (Platform.OS !== 'android') return;
-    if (renderDisplay !== 'main') return;
-    if (!isFirstLaunch) return;
+    const check = async () => {
+      if (renderDisplay !== 'main') return;
 
-    (async () => {
-      try {
-        await requestSelectedPermissions({
-          notifications: true,
-          camera: true,
-          storage: true,
-        });
-      } finally {
-        await markSeen();
+      const alreadyShown = await AsyncStorage.getItem('permissionsModalShown');
+      if (!alreadyShown) {
+        setShowPermModal(true);
+        await AsyncStorage.setItem('permissionsModalShown', 'true');
       }
-    })();
-  }, [renderDisplay, isFirstLaunch]);
+    };
+    check();
+  }, [renderDisplay]);
 
-  //-- Permissions Request (end) ---//
-
+  // checks navigation mode (gesture, buttons, etc) for android
   useEffect(() => {
     let isMounted = true;
 
@@ -274,6 +267,14 @@ const Main = props => {
         },
       ],
     );
+  };
+
+  const permissionLocation = () => {
+    if (Platform.OS === 'ios') {
+      return 'Settings → Apps → Kitchen Queue.';
+    } else if (Platform.OS === 'android') {
+      return 'Settings → Apps → Kitchen Queue → Permissions.';
+    }
   };
 
   const toggleMenu = useCallback(() => {
@@ -541,6 +542,45 @@ const Main = props => {
               handlePPConfirm={handlePPConfirm}
               handleCancel={handleCancel}
             />
+          </Modal>
+        )}
+
+        {showPermModal && (
+          <Modal
+            visible={showPermModal}
+            onClose={() => setShowPermModal(false)}
+            title="Permissions Required"
+            headerFont="open-6"
+            headerSize="small"
+            height="50%"
+            width="90%"
+            // fullScreen
+            hideClose>
+            <View flex column>
+              <View flex ph15 centerVH>
+                <View mv10 ph10>
+                  <Text size="medium" style={{marginBottom: 15}} centered>
+                    Kitchen Queue needs access to your Camera and Photos to take
+                    and upload images, as well as scan UPCs and recipes.
+                  </Text>
+                </View>
+                <View mv10>
+                  <Text centered italic>
+                    You can update these permissions later in{' '}
+                    {permissionLocation()}
+                  </Text>
+                </View>
+              </View>
+              <View mv25 ph15>
+                <Button
+                  onPress={async () => {
+                    setShowPermModal(false);
+                    await requestPermissions(); // triggers native system dialogs
+                  }}>
+                  Set Permissions
+                </Button>
+              </View>
+            </View>
           </Modal>
         )}
       </NavigationContainer>
