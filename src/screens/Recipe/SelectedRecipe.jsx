@@ -14,9 +14,8 @@ import {Icons} from '../../components/IconListRouter';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {
   capEachWord,
-  capFirst,
   endWithPeriod,
-  tempImageString,
+  formatParagraph,
 } from '../../utilities/helpers';
 import {toFraction} from '../../utilities/fractionUnit';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
@@ -43,6 +42,8 @@ const SelectedRecipe = ({
   const recipeBox = useRecipeBox();
   const recipesListIDs = recipeBox?.items?.map(rec => rec?.id) || [];
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // console.log('selectedRecipe:', selectedRecipe);
 
   const isBookmarked = useMemo(() => {
     return recipesListIDs.includes(selectedRecipe?.id);
@@ -406,9 +407,7 @@ const SelectedRecipe = ({
                         </Text>
                       </View>
                       <View style={SelectedRecipeStyles.stepText}>
-                        <Text size="xSmall">
-                          {capFirst(endWithPeriod(ins.action))}
-                        </Text>
+                        <Text size="xSmall">{formatParagraph(ins.action)}</Text>
                       </View>
                     </View>
                   ))}

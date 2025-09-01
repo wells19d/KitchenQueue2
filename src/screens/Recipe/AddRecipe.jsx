@@ -8,7 +8,6 @@ import {
   displayDropField,
   displayDropArray,
   capEachWord,
-  capFirst,
 } from '../../utilities/helpers';
 import {displayCuisineTypes} from '../../utilities/cuisineType';
 import {displayDishTypes} from '../../utilities/dishType';
@@ -50,11 +49,9 @@ const AddRecipe = () => {
   const [dietType, setDietType] = useState(
     displayDropArray(displayDietTypes) ?? null,
   );
-
   const [servings, setServings] = useState(null);
   const [prepTime, setPrepTime] = useState(null);
   const [cookTime, setCookTime] = useState(null);
-
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState([]);
   const [aboutRecipe, setAboutRecipe] = useState(null);
@@ -131,18 +128,17 @@ const AddRecipe = () => {
   }, [sourceMaterial, editingRecipe]);
 
   useMemo(() => {
-    if (!recipeName) return;
-
     const normalized = normalizeTitleForKeywords(recipeName);
     setKeywords(normalized);
 
-    const slug = normalized.join('-');
+    const slug = normalized.slice(1).join('-');
     const prefix = core?.profileID || core?.userID;
 
     setPictureName(`${prefix}-${slug}`);
   }, [recipeName]);
 
   const recipeObject = {
+    ...(editingRecipe && {id: recipeToEdit?.id}),
     title: recipeName?.toLowerCase().trim() ?? null,
     sourceMaterial: sourceMaterial?.key ?? null,
     source: source?.toLowerCase().trim() ?? null,
@@ -167,11 +163,15 @@ const AddRecipe = () => {
     readyIn: prepTime && cookTime ? Number(prepTime) + Number(cookTime) : null,
     ingredients: ingredients,
     instructions: instructions,
-    image: finalImage?.name ?? null,
-    imageUri: finalImage
-      ? `https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2F${finalImage?.name}?alt=media`
-      : null,
-    imageDate: finalImage?.imageDate ?? null,
+    image: imageChanged ? finalImage?.name : recipeToEdit?.image ?? null,
+    imageDate: imageChanged
+      ? finalImage?.imageDate
+      : recipeToEdit?.imageDate ?? null,
+    imageUri: imageChanged
+      ? `https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2F${encodeURIComponent(
+          finalImage?.name,
+        )}?alt=media`
+      : recipeToEdit?.imageUri ?? null,
     pictureApproved: true,
     ingredientList:
       ingredients?.map(ing => ing.name?.toLowerCase().trim() ?? null) ?? null,
@@ -257,8 +257,8 @@ const AddRecipe = () => {
           item => item.key === recipeToEdit?.sourceMaterial,
         ) || null,
       );
-
-      // setSourceType(recipeToEdit?.sourceType || null);
+      setSource(capEachWord(recipeToEdit?.source));
+      setSourceURL(recipeToEdit?.sourceURL || null);
       setCuisineType(
         displayCuisineTypes.filter(c =>
           recipeToEdit?.cuisines?.includes(c.value),
@@ -288,13 +288,14 @@ const AddRecipe = () => {
             }
           : null,
       );
-      setSource(capEachWord(recipeToEdit?.source));
     }
   }, [recipeToEdit, editingRecipe]);
 
   const imageChanged = useMemo(() => {
-    return finalImage?.imageDate !== recipeToEdit?.imageDate;
-  }, [finalImage, recipeToEdit]);
+    return Boolean(
+      finalImage?.imageDate && finalImage.imageDate !== recipeToEdit?.imageDate,
+    );
+  }, [finalImage?.imageDate, recipeToEdit?.imageDate]);
 
   const handleCloseIngredients = () => {
     setCanPressIngredients(false);

@@ -8,7 +8,11 @@ import {Icons} from '../../../components/IconListRouter';
 import {ScrollView} from 'react-native-gesture-handler';
 import {TouchableOpacity} from 'react-native';
 import {useColors} from '../../../KQ-UI/KQUtilities';
-import {capEachWord, capFirst} from '../../../utilities/helpers';
+import {
+  capEachWord,
+  capFirst,
+  formatParagraph,
+} from '../../../utilities/helpers';
 
 const InstructionForm = props => {
   const {
@@ -149,7 +153,7 @@ const InstructionForm = props => {
               italic
               kqColor="black"
               numberOfLines={1}>
-              Step {i.step + 1}: {capFirst(i.action)}
+              Step {i.step + 1}: {formatParagraph(i.action)}
             </Text>
           </View>
         ))}
@@ -202,7 +206,7 @@ const InstructionForm = props => {
                 {instruction.steps?.length > 0 &&
                   instruction.steps.map((step, stepIndex) => (
                     <Text key={stepIndex} size="tiny" font="open-5" italic>
-                      Step {step.step + 1}: {capFirst(step.action)}
+                      Step {step.step + 1}: {formatParagraph(step.action)}
                     </Text>
                   ))}
               </View>

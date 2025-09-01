@@ -13,6 +13,7 @@ import {capEachWord, tempImageString} from '../../utilities/helpers';
 import SelectedRecipe from './SelectedRecipe';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 import KQTempRecipe from '../../svg/KitchenQueueTempRecipe';
+import {deletePicture} from '../../utilities/checkImage';
 
 const RecipeBox = () => {
   const navigation = useNavigation();
@@ -48,6 +49,8 @@ const RecipeBox = () => {
     );
     setUseOneColumn(hasLongIngredient);
   }, [selectedRecipe]);
+
+  const deleteFileName = 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2-homemade'; // Example filename
 
   const renderItem = useCallback(({item, index}) => {
     const isLeft = index % 2 === 0;
@@ -158,6 +161,14 @@ const RecipeBox = () => {
         onClose={() => handleCloseSelectedRecipe()}
         recipeBoxView
       />
+      {/* {__DEV__ && (
+        <Button
+          onPress={() => {
+            deletePicture(deleteFileName);
+          }}>
+          Dev cleanup
+        </Button>
+      )} */}
     </Layout>
   );
 };

@@ -466,7 +466,7 @@ function* deleteFromPersonalRecipes(action) {
       Toast.show({
         type: 'success',
         text1: owner ? 'Recipe Deleted' : 'Recipe Removed',
-        text2: `${itemName} was ${
+        text2: `${capFirst(itemName)} was ${
           owner ? 'deleted' : 'removed'
         } from the Recipe Box.`,
       });
@@ -487,7 +487,7 @@ function* deleteFromPersonalRecipes(action) {
     Toast.show({
       type: 'danger',
       text1: `Failed to ${owner ? 'Delete' : 'Remove'} Recipe`,
-      text2: `${selectedRecipe?.title || 'Recipe'} could not be ${
+      text2: `${capFirst(selectedRecipe?.title) || 'Recipe'} could not be ${
         owner ? 'deleted' : 'removed'
       }. Please try again later.`,
     });

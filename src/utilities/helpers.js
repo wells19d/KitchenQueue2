@@ -132,6 +132,42 @@ export const formatMeasurementWithPlural = (packageSize, unit, itemName) => {
   return '';
 };
 
+export const formatParagraph = (str = '') => {
+  if (typeof str !== 'string') return '';
+
+  // Step 1: normalize spacing + lowercase everything
+  let text = str.trim().toLowerCase();
+
+  // Step 2: split into sentences using punctuation marks
+  const sentences = text
+    .split(/([.!?])/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+
+  // Step 3: rebuild sentences with capitalization
+  let formatted = '';
+  for (let i = 0; i < sentences.length; i++) {
+    let part = sentences[i];
+    if (/[.!?]/.test(part)) {
+      // if it's just punctuation, append directly
+      formatted += part + ' ';
+    } else {
+      // capitalize first letter of sentence text
+      formatted += part.charAt(0).toUpperCase() + part.slice(1);
+    }
+  }
+
+  // Step 4: trim trailing spaces
+  formatted = formatted.trim();
+
+  // Step 5: enforce final punctuation
+  if (!/[.!?]$/.test(formatted)) {
+    formatted += '.';
+  }
+
+  return formatted;
+};
+
 const UNIT_DISPLAY = {
   oz: 'Ounce',
   g: 'Gram',

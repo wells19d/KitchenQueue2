@@ -17,31 +17,27 @@ export const checkImage = async path => {
   }
 };
 
-/*
+export const deletePicture = async fileName => {
+  if (!fileName) {
+    console.error('❌ No filename provided to deletePicture');
+    return;
+  }
 
-import storage from '@react-native-firebase/storage';
-  const deletePicture = async () => {
-    try {
-      const ref = storage().ref(
-        'recipes/wells-creamy-chicken-alfredo-penne-pasta.jpg',
-      );
+  try {
+    const ref = storage().ref(`recipes/${fileName}`);
 
-      // First check if it exists by trying to get metadata
-      await ref.getMetadata();
-      // console.log(
-        '📂 Found image: wells-creamy-chicken-alfredo-penne-pasta.jpg',
-      );
+    // Try to get metadata first (confirms it exists)
+    await ref.getMetadata();
+    console.log(`📂 Found image: ${fileName}`);
 
-      // If that worked, delete it
-      await ref.delete();
-      // console.log(
-        '🗑️ Successfully deleted image: wells-creamy-chicken-alfredo-penne-pasta.jpg',
-      );
-    } catch (error) {
-      if (error.code === 'storage/object-not-found') {
-        console.error('❌ File not found in storage');
-      } else {
-        console.error('❌ Failed to delete image:', error);
-      }
+    // Delete the file
+    await ref.delete();
+    console.log(`🗑️ Successfully deleted image: ${fileName}`);
+  } catch (error) {
+    if (error.code === 'storage/object-not-found') {
+      console.error(`❌ File not found in storage: ${fileName}`);
+    } else {
+      console.error(`❌ Failed to delete image ${fileName}:`, error);
     }
-  };*/
+  }
+};
