@@ -1,4 +1,4 @@
-//* RealTimeCupboard.jsx
+// * RealTimeCupboard.jsx
 import {useEffect, useRef} from 'react';
 import {useDispatch} from 'react-redux';
 import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
@@ -28,15 +28,12 @@ const useRealTimeCupboard = enabled => {
             cupboardData?.lastUpdated?.toDate?.().toISOString() ?? null,
         };
 
-        const prev = prevCupboardRef.current;
-        const hasChanged =
-          JSON.stringify(prev) !== JSON.stringify(nextCupboard);
+        const prevUpdatedAt = prevCupboardRef.current?.lastUpdated;
+        const nextUpdatedAt = nextCupboard.lastUpdated;
 
-        if (hasChanged) {
+        if (prevUpdatedAt !== nextUpdatedAt) {
           prevCupboardRef.current = nextCupboard;
           dispatch({type: 'SET_CUPBOARD', payload: nextCupboard});
-        } else {
-          // na
         }
       },
       error => {

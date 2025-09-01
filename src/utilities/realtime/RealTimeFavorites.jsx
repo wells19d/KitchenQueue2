@@ -1,3 +1,4 @@
+// * RealTimeFavorites.jsx
 import {useEffect, useRef} from 'react';
 import {useDispatch} from 'react-redux';
 import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
@@ -27,11 +28,10 @@ const useRealTimeFavorites = enabled => {
             favoritesData?.lastUpdated?.toDate?.().toISOString() ?? null,
         };
 
-        const prev = prevFavoritesRef.current;
-        const hasChanged =
-          JSON.stringify(prev) !== JSON.stringify(nextFavorites);
+        const prevUpdatedAt = prevFavoritesRef.current?.lastUpdated;
+        const nextUpdatedAt = nextFavorites.lastUpdated;
 
-        if (hasChanged) {
+        if (prevUpdatedAt !== nextUpdatedAt) {
           prevFavoritesRef.current = nextFavorites;
           dispatch({type: 'SET_FAVORITES', payload: nextFavorites});
         }

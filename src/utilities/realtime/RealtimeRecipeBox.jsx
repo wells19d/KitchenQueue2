@@ -1,3 +1,4 @@
+// * RealTimeRecipeBox.jsx
 import {useEffect, useRef} from 'react';
 import {useDispatch} from 'react-redux';
 import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
@@ -8,6 +9,7 @@ const useRealTimeRecipeBox = enabled => {
   const account = useAccount();
   const db = getFirestore();
   const prevRecipeBoxRef = useRef(null);
+
   useEffect(() => {
     if (!enabled || !account?.recipeBoxID) return;
 
@@ -27,11 +29,10 @@ const useRealTimeRecipeBox = enabled => {
           createdOn: recipeBoxData?.createdOn?.toDate?.().toISOString() ?? null,
         };
 
-        const prev = prevRecipeBoxRef.current;
-        const hasChanged =
-          JSON.stringify(prev) !== JSON.stringify(nextRecipeBoxes);
+        const prevUpdatedAt = prevRecipeBoxRef.current?.lastUpdated;
+        const nextUpdatedAt = nextRecipeBoxes.lastUpdated;
 
-        if (hasChanged) {
+        if (prevUpdatedAt !== nextUpdatedAt) {
           prevRecipeBoxRef.current = nextRecipeBoxes;
           dispatch({type: 'SET_RECIPE_BOX', payload: nextRecipeBoxes});
         }

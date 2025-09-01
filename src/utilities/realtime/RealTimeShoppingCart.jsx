@@ -1,4 +1,4 @@
-//* RealTimeShoppingCart.jsx
+// * RealTimeShoppingCart.jsx
 import {useEffect, useRef} from 'react';
 import {useDispatch} from 'react-redux';
 import {getFirestore, doc, onSnapshot} from '@react-native-firebase/firestore';
@@ -28,15 +28,12 @@ const useRealTimeShoppingCart = enabled => {
             shopCartData?.lastUpdated?.toDate?.().toISOString() ?? null,
         };
 
-        const prevCart = prevCartRef.current;
-        const hasChanged =
-          JSON.stringify(prevCart) !== JSON.stringify(nextCart);
+        const prevUpdatedAt = prevCartRef.current?.lastUpdated;
+        const nextUpdatedAt = nextCart.lastUpdated;
 
-        if (hasChanged) {
+        if (prevUpdatedAt !== nextUpdatedAt) {
           prevCartRef.current = nextCart;
           dispatch({type: 'SET_SHOP_CART', payload: nextCart});
-        } else {
-          // na
         }
       },
       error => {
