@@ -77,6 +77,7 @@ const Main = props => {
   const dispatch = useDispatch();
   const device = useDeviceInfo();
   const profile = useProfile();
+  console.log('Profile in Main:', profile);
   const account = useAccount();
   const useHaptics = setHapticFeedback();
   const Stack = createNativeStackNavigator();

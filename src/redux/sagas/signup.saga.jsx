@@ -54,7 +54,8 @@ function* createNewUser(action) {
         onboardingCompleted: false, // this is true when the user has completed all steps
         completedOn: null, // this is the date the last step was completed
         forceShowFTU: false, // this lets the user force to show the ftu again
-        recipeFTU: false, // this is for a modal that shows a disclaimer when the user creates their first recipe
+        recipeSearchFTU: false, // this is for a modal that shows a disclaimer when the user creates their first recipe
+        recipeBoxFTU: false,
       },
       permissionsGranted: false,
       permissionsRequested: false,
