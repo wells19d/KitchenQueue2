@@ -212,18 +212,6 @@ const Main = props => {
     return () => subscription?.remove();
   }, [dispatch]);
 
-  useEffect(() => {
-    const clearCaches = async () => {
-      await FastImage.clearMemoryCache();
-      await FastImage.clearDiskCache();
-      // console.log('🧹 FastImage cache cleared on app launch (prod only)');
-    };
-
-    if (!__DEV__) {
-      clearCaches();
-    }
-  }, []);
-
   const handlePPConfirm = () => {
     let updatedData = {
       ppVersion: AppInfo.ppVersion,
