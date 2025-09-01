@@ -43,10 +43,6 @@ const SelectedRecipe = ({
   const recipesListIDs = recipeBox?.items?.map(rec => rec?.id) || [];
   const [isProcessing, setIsProcessing] = useState(false);
 
-  console.log('selectedRecipe imageUri:', selectedRecipe);
-
-  // console.log('selectedRecipe:', selectedRecipe);
-
   const isBookmarked = useMemo(() => {
     return recipesListIDs.includes(selectedRecipe?.id);
   }, [recipesListIDs, selectedRecipe]);
