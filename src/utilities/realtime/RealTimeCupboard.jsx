@@ -24,8 +24,8 @@ const useRealTimeCupboard = enabled => {
         const nextCupboard = {
           ...cupboardData,
           items: Array.isArray(cupboardData.items) ? cupboardData.items : [],
-          lastUpdated:
-            cupboardData?.lastUpdated?.toDate?.().toISOString() ?? null,
+          // compare on raw millis (faster, no Date/String allocs)
+          lastUpdated: cupboardData?.lastUpdated?.toMillis?.() ?? null,
         };
 
         const prevUpdatedAt = prevCupboardRef.current?.lastUpdated;

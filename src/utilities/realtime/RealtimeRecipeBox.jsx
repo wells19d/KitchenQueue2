@@ -24,8 +24,9 @@ const useRealTimeRecipeBox = enabled => {
         const nextRecipeBoxes = {
           ...recipeBoxData,
           items: Array.isArray(recipeBoxData.items) ? recipeBoxData.items : [],
-          lastUpdated:
-            recipeBoxData?.lastUpdated?.toDate?.().toISOString() ?? null,
+          // compare using raw millis (fewer allocations)
+          lastUpdated: recipeBoxData?.lastUpdated?.toMillis?.() ?? null,
+          // keep createdOn normalized for any UI use
           createdOn: recipeBoxData?.createdOn?.toDate?.().toISOString() ?? null,
         };
 

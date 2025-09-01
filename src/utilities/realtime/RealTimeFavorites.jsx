@@ -24,8 +24,8 @@ const useRealTimeFavorites = enabled => {
         const nextFavorites = {
           ...favoritesData,
           items: Array.isArray(favoritesData.items) ? favoritesData.items : [],
-          lastUpdated:
-            favoritesData?.lastUpdated?.toDate?.().toISOString() ?? null,
+          // faster, no Date/String allocs
+          lastUpdated: favoritesData?.lastUpdated?.toMillis?.() ?? null,
         };
 
         const prevUpdatedAt = prevFavoritesRef.current?.lastUpdated;

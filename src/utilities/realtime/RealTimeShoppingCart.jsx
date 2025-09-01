@@ -24,8 +24,8 @@ const useRealTimeShoppingCart = enabled => {
         const nextCart = {
           ...shopCartData,
           items: Array.isArray(shopCartData.items) ? shopCartData.items : [],
-          lastUpdated:
-            shopCartData?.lastUpdated?.toDate?.().toISOString() ?? null,
+          // compare using raw millis (fewer allocations)
+          lastUpdated: shopCartData?.lastUpdated?.toMillis?.() ?? null,
         };
 
         const prevUpdatedAt = prevCartRef.current?.lastUpdated;
