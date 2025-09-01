@@ -77,10 +77,6 @@ const AddRecipe = () => {
   const [tempIngName, setTempIngName] = useState(null);
   const [tempNote, setTempNote] = useState(null);
 
-  const [tempName, setTempName] = useState(null);
-  const [tempSteps, setTempSteps] = useState([]);
-  const [tempAction, setTempAction] = useState(null);
-
   const [sourceType, setSourceType] = useState(null);
 
   const [keywords, setKeywords] = useState(null);
@@ -311,9 +307,6 @@ const AddRecipe = () => {
   const handleCloseInstructions = () => {
     setCanPressInstructions(false);
     setShowInstructions(false);
-    setTempName(null);
-    setTempSteps([]);
-    setTempAction(null);
     setTimeout(() => {
       setCanPressInstructions(true);
     }, 2000);
@@ -354,9 +347,7 @@ const AddRecipe = () => {
     setTempIngMeasurement(displayDropField(displayMeasurements));
     setTempIngName(null);
     setTempNote(null);
-    setTempName(null);
-    setTempSteps([]);
-    setTempAction(null);
+
     setShowInstructions(false);
     setShowIngredients(false);
     setShowUploadPicture(false);
@@ -532,17 +523,12 @@ const AddRecipe = () => {
       <BottomSheet
         visible={showInstructions}
         onClose={handleCloseInstructions}
-        snapPoints={[0.01, 0.95]}>
+        snapPoints={[0.01, 0.95]}
+        innerStyles={{margin: 0}}>
         <InstructionForm
           instructions={instructions}
           setInstructions={setInstructions}
           handleCloseInstructions={handleCloseInstructions}
-          tempName={tempName}
-          setTempName={setTempName}
-          tempSteps={tempSteps}
-          setTempSteps={setTempSteps}
-          tempAction={tempAction}
-          setTempAction={setTempAction}
         />
       </BottomSheet>
 

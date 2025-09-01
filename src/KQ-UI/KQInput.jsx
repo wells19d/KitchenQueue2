@@ -1,8 +1,8 @@
 //* KQInput.jsx
-import React, {useMemo} from 'react';
+import React, {use, useMemo} from 'react';
 import {View, TextInput, StyleSheet, Keyboard} from 'react-native';
 import {Text} from '../KQ-UI/';
-import {useColors, useFontStyles} from './KQUtilities';
+import {useColors, useFontSizes, useFontStyles} from './KQUtilities';
 
 const KQInput = ({
   label = '',
@@ -25,6 +25,8 @@ const KQInput = ({
   textInputStyles = {},
   wrapperStyles = {},
   disabled = false,
+  textSize = 'small',
+  labelTextSize = 'xSmall',
   ...props
 }) => {
   const fontStyles = useFontStyles('open-6', 'small', 'black');
@@ -77,7 +79,7 @@ const KQInput = ({
       {label && (
         <View style={styles.labelContainer}>
           <Text
-            size="xSmall"
+            size={labelTextSize || 'xSmall'}
             font="open-6"
             style={[styles.label(validation, props.disabled), labelStyles]}>
             {label} {required && '*'}
@@ -103,6 +105,8 @@ const KQInput = ({
                 {padding: 0},
                 {...textInputStyles},
               ]}
+              fontSize={useFontSizes()[textSize]}
+              // fontSize={useFontSizes(textSize).fontSize}
               onSubmitEditing={Keyboard.dismiss}
               placeholderTextColor={useColors('dark60')}
               {...props}

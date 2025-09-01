@@ -1,6 +1,6 @@
 //* IngredientForm.jsx
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
 import {Button, Dropdown, Input, ScrollView, Text, View} from '../../../KQ-UI';
 import {Icons} from '../../../components/IconListRouter';
 import {setHapticFeedback} from '../../../hooks/setHapticFeedback';
@@ -149,69 +149,77 @@ const IngredientForm = props => {
           </Button>
         </View>
       </View>
-      <ScrollView style={styles.scrollStyles} hideBar>
-        {ingredients?.length > 0 ? (
-          ingredients?.map((ing, index) => (
-            <View key={index} row centerH pv5>
-              {/* Ingredient text */}
-              <View flex ml5>
-                <Text size="xSmall" font="open-6">
-                  {formatMeasurementWithPluralRec(
-                    ing.amount,
-                    ing.unit,
-                    ing.name,
-                  )}
-                </Text>
-                {ing.note && (
-                  <Text size="tiny" font="open-5" italic>
-                    ** {ing.note}
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 180 : 180} // adjust depending on your header height
+      >
+        <ScrollView style={styles.scrollStyles} hideBar>
+          {ingredients?.length > 0 ? (
+            ingredients?.map((ing, index) => (
+              <View key={index} row centerH pv5>
+                {/* Ingredient text */}
+                <View flex ml5>
+                  <Text size="xSmall" font="open-6">
+                    {formatMeasurementWithPluralRec(
+                      ing.amount,
+                      ing.unit,
+                      ing.name,
+                    )}
                   </Text>
-                )}
-              </View>
+                  {ing.note && (
+                    <Text size="tiny" font="open-5" italic>
+                      ** {ing.note}
+                    </Text>
+                  )}
+                </View>
 
-              {/* Reorder arrows */}
-              <View row>
-                {index > 0 && (
-                  <TouchableOpacity
-                    style={styles.indexButtons}
-                    onPress={() => handleMove(index, index - 1)}>
-                    <Icons.ChevronUp size={16} color={useColors('dark')} />
-                  </TouchableOpacity>
-                )}
-                {index < ingredients.length - 1 && (
-                  <TouchableOpacity
-                    style={styles.indexButtons}
-                    onPress={() => handleMove(index, index + 1)}>
-                    <Icons.ChevronDown size={16} color={useColors('dark')} />
-                  </TouchableOpacity>
-                )}
-                {/* Delete button */}
-                <View centerVH>
-                  <TouchableOpacity
-                    style={{marginRight: 10}}
-                    onPress={() => {
-                      useHaptics(core?.userSettings?.hapticStrength || 'light');
-                      setIngredients(prev =>
-                        prev.filter((_, i) => i !== index),
-                      );
-                    }}>
-                    <Icons.XCircleOutline
-                      size={20}
-                      color={useColors('danger')}
-                    />
-                  </TouchableOpacity>
+                {/* Reorder arrows */}
+                <View row>
+                  {index > 0 && (
+                    <TouchableOpacity
+                      style={styles.indexButtons}
+                      onPress={() => handleMove(index, index - 1)}>
+                      <Icons.ChevronUp size={16} color={useColors('dark')} />
+                    </TouchableOpacity>
+                  )}
+                  {index < ingredients.length - 1 && (
+                    <TouchableOpacity
+                      style={styles.indexButtons}
+                      onPress={() => handleMove(index, index + 1)}>
+                      <Icons.ChevronDown size={16} color={useColors('dark')} />
+                    </TouchableOpacity>
+                  )}
+                  {/* Delete button */}
+                  <View centerVH>
+                    <TouchableOpacity
+                      style={{marginRight: 10}}
+                      onPress={() => {
+                        useHaptics(
+                          core?.userSettings?.hapticStrength || 'light',
+                        );
+                        setIngredients(prev =>
+                          prev.filter((_, i) => i !== index),
+                        );
+                      }}>
+                      <Icons.XCircleOutline
+                        size={20}
+                        color={useColors('danger')}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
+            ))
+          ) : (
+            <View centerH mt20>
+              <Text size="xSmall" font="open-6" centered>
+                No ingredients added yet.
+              </Text>
             </View>
-          ))
-        ) : (
-          <View centerH mt20>
-            <Text size="xSmall" font="open-6" centered>
-              No ingredients added yet.
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </>
   );
 };

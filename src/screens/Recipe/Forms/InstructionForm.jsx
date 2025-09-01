@@ -1,87 +1,76 @@
 //* InstructionForm.jsx
 
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {setHapticFeedback} from '../../../hooks/setHapticFeedback';
 import {useCoreInfo} from '../../../utilities/coreInfo';
 import {Button, Input, Text, View} from '../../../KQ-UI';
 import {Icons} from '../../../components/IconListRouter';
 import {ScrollView} from 'react-native-gesture-handler';
-import {TouchableOpacity} from 'react-native';
+import {KeyboardAvoidingView, Platform, TouchableOpacity} from 'react-native';
 import {useColors} from '../../../KQ-UI/KQUtilities';
-import {
-  capEachWord,
-  capFirst,
-  formatParagraph,
-} from '../../../utilities/helpers';
+import {capEachWord, formatParagraph} from '../../../utilities/helpers';
+import {Keyboard} from 'react-native';
 
 const InstructionForm = props => {
-  const {
-    instructions,
-    setInstructions,
-    handleCloseInstructions,
-    tempName,
-    setTempName,
-    tempSteps,
-    setTempSteps,
-    tempAction,
-    setTempAction,
-  } = props;
+  const {instructions, setInstructions, handleCloseInstructions, tempName} =
+    props;
   const useHaptics = setHapticFeedback();
   const core = useCoreInfo();
-  const [canAdd, setCanAdd] = useState(false);
 
   useEffect(() => {
-    if (tempName) {
-      setCanAdd(true);
-    } else {
-      setCanAdd(false);
-    }
-  }, [tempName]);
+    const showSub = Keyboard.addListener('keyboardDidShow', e => {
+      console.log('Keyboard height:', e.endCoordinates.height);
+      // you can store this in state and use it for offset
+    });
 
-  const allowReset = useMemo(() => {
-    if (
-      (typeof tempName === 'string' && tempName.trim().length > 0) ||
-      (typeof tempAction === 'string' && tempAction.trim().length > 0)
-    ) {
-      return false;
-    }
-    return true;
-  }, [tempName, tempAction]);
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => {
+      console.log('Keyboard hidden');
+    });
 
-  const allowAdd = useMemo(() => {
-    if (
-      typeof tempName === 'string' &&
-      tempName.trim().length > 0 &&
-      typeof tempAction === 'string' &&
-      tempAction.trim().length > 0
-    ) {
-      return false;
-    }
-    return true;
-  }, [tempName, tempAction]);
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
-  const handleAddInstruction = () => {
-    if (canAdd) {
-      let newObject = {
-        index: instructions?.length,
-        name: tempName?.toLowerCase().trim() ?? null,
-        steps: tempSteps,
-      };
-      setInstructions(prev => [...prev, newObject]);
-      setTempName(null);
-      setTempSteps([]);
-    }
+  const groupRefs = useRef([]);
+
+  const handleAddGroup = () => {
+    setInstructions(prev => {
+      const updated = [...prev, {name: '', steps: [], index: prev.length}];
+      return updated.map((g, i) => ({...g, index: i}));
+    });
+
+    // mark the new group as edit mode
+    setCompleted(prev => ({
+      ...prev,
+      [instructions.length]: true,
+    }));
+
+    setTimeout(() => {
+      const lastIndex = instructions.length;
+      groupRefs.current[lastIndex]?.focus();
+    }, 50);
   };
 
-  const handleAddStep = () => {
-    if (canAdd) {
-      let newStep = {
-        step: tempSteps?.length,
-        action: tempAction?.toLowerCase().trim() ?? null,
+  const stepRefs = useRef({});
+
+  const handleAddStep = groupIndex => {
+    setInstructions(prev => {
+      const updated = [...prev];
+      const newStepIndex = updated[groupIndex].steps.length;
+
+      updated[groupIndex] = {
+        ...updated[groupIndex],
+        steps: [...updated[groupIndex].steps, {step: newStepIndex, action: ''}],
       };
-      setTempSteps(prev => [...prev, newStep]);
-      setTempAction(null);
-    }
+      return updated;
+    });
+
+    setTimeout(() => {
+      const newIndex = instructions[groupIndex]?.steps.length || 0;
+      stepRefs.current[groupIndex]?.[newIndex]?.focus();
+    }, 50);
   };
 
   const moveInstruction = (fromIndex, toIndex) => {
@@ -89,7 +78,7 @@ const InstructionForm = props => {
       const updated = [...prev];
       const item = updated.splice(fromIndex, 1)[0];
       updated.splice(toIndex, 0, item);
-      return updated;
+      return updated.map((g, i) => ({...g, index: i}));
     });
   };
 
@@ -98,171 +87,292 @@ const InstructionForm = props => {
     moveInstruction(index, direction);
   };
 
-  const handleReset = () => {
-    setTempName(null);
-    setTempSteps([]);
-    setTempAction(null);
+  const moveStep = (groupIndex, fromIndex, toIndex) => {
+    setInstructions(prev => {
+      const updated = [...prev];
+      const steps = [...updated[groupIndex].steps];
+      const [moved] = steps.splice(fromIndex, 1);
+      steps.splice(toIndex, 0, moved);
+
+      updated[groupIndex] = {
+        ...updated[groupIndex],
+        steps: steps.map((s, i) => ({...s, step: i})), // reindex
+      };
+      return updated;
+    });
   };
 
-  return (
-    <>
-      <View row>
-        <View flex>
-          <Input
-            required
-            labelStyles={{fontSize: 13}}
-            label="Instruction Group"
-            value={tempName}
-            onChangeText={setTempName}
-            size="tiny"
-            capitalize
-            capitalMode="sentences"
-          />
-        </View>
-      </View>
+  useEffect(() => {
+    if (instructions.length === 0) {
+      setInstructions([{name: '', steps: [], index: 0}]);
+      setCompleted({0: true}); // start in edit mode
+    }
+  }, [instructions, setInstructions]);
 
-      <View row>
+  const [completed, setCompleted] = useState({});
+
+  return (
+    <View flex ph5>
+      <View row mb5>
         <View flex>
-          <Input
-            labelStyles={{fontSize: 13}}
-            label={`Step ${tempSteps.length + 1}`}
-            value={tempAction}
-            onChangeText={setTempAction}
-            size="tiny"
-            capitalize
-            capitalMode="sentences"
-          />
-        </View>
-        <View style={{justifyContent: 'flex-end', paddingBottom: 3}}>
           <Button
-            textSize="xSmall"
-            size="tiny"
-            disabled={allowAdd}
-            onPress={handleAddStep}>
-            <Icons.Plus size={18} color="white" />
-          </Button>
-        </View>
-      </View>
-      <View mh5 mv={2}>
-        {tempSteps?.map((i, index) => (
-          <View key={index}>
-            <Text
-              key={index}
-              size="tiny"
-              font="open-5"
-              italic
-              kqColor="black"
-              numberOfLines={1}>
-              Step {i.step + 1}: {formatParagraph(i.action)}
-            </Text>
-          </View>
-        ))}
-      </View>
-      <View row>
-        <View>
-          <Button
-            textSize="xSmall"
-            size="tiny"
             type="outline"
-            color="danger"
-            disabled={allowReset}
-            onPress={handleReset}>
-            Reset
+            textSize="xSmall"
+            size="tiny"
+            onPress={handleAddGroup}>
+            Add Group
           </Button>
         </View>
-        <View flex />
-        <View>
+        <View flex>
           <Button
             textSize="xSmall"
             size="tiny"
-            disabled={tempSteps?.length <= 0}
-            onPress={handleAddInstruction}>
-            Add Instructions
+            onPress={handleCloseInstructions}>
+            Finished
           </Button>
         </View>
       </View>
-      <ScrollView style={styles.scrollStyles} hideBar>
-        {instructions?.length > 0 ? (
-          instructions?.map((instruction, index) => (
-            <View
-              key={index}
-              row
-              centerH
-              pt={5}
-              pb={5}
-              pl={5}
-              pr={0}
-              mh={5}
-              mv={3}
-              style={{
-                borderWidth: 1,
-                alignItems: 'flex-start',
-                borderRadius: 8,
-              }}>
-              <View flex ml5>
-                <Text size="xSmall" font="open-6">
-                  {capEachWord(instruction.name)}
-                </Text>
-                {instruction.steps?.length > 0 &&
-                  instruction.steps.map((step, stepIndex) => (
-                    <Text key={stepIndex} size="tiny" font="open-5" italic>
-                      Step {step.step + 1}: {formatParagraph(step.action)}
-                    </Text>
-                  ))}
-              </View>
-              <View row centerV>
-                {index > 0 && (
-                  <TouchableOpacity
-                    style={styles.indexButtons}
-                    onPress={() => handleMove(index, index - 1)}>
-                    <Icons.ChevronUp size={15} color={useColors('dark')} />
-                  </TouchableOpacity>
-                )}
-                {index < instructions.length - 1 && (
-                  <TouchableOpacity
-                    style={styles.indexButtons}
-                    onPress={() => handleMove(index, index + 1)}>
-                    <Icons.ChevronDown size={15} color={useColors('dark')} />
-                  </TouchableOpacity>
-                )}
-                <View centerVH>
-                  <TouchableOpacity
-                    style={{marginRight: 10}}
-                    onPress={() => {
-                      useHaptics(core?.userSettings?.hapticStrength || 'light');
-                      setInstructions(prev =>
-                        prev.filter((_, i) => i !== index),
-                      );
-                    }}>
-                    <Icons.XCircleOutline
-                      size={18}
-                      color={useColors('danger')}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 180 : 180} // adjust depending on your header height
+      >
+        <ScrollView style={styles.scrollStyles} hideBar>
+          {instructions?.map((instruction, index) => (
+            <View key={index} style={styles.groupContainer}>
+              {completed[index] ? (
+                <>
+                  <View row>
+                    <View flex>
+                      <Input
+                        ref={el => (groupRefs.current[index] = el)}
+                        required
+                        label="Group Name"
+                        value={capEachWord(instruction.name)}
+                        onChangeText={text => {
+                          setInstructions(prev => {
+                            const updated = [...prev];
+                            updated[index] = {
+                              ...updated[index],
+                              name: text,
+                            };
+                            return updated;
+                          });
+                        }}
+                        textSize="tiny"
+                        labelTextSize="tiny"
+                        capitalize
+                        capitalMode="sentences"
+                        multiline
+                        multiHeight="small"
+                      />
+                    </View>
+                    <View row centerVH>
+                      {index > 0 && (
+                        <TouchableOpacity
+                          style={styles.indexButtons}
+                          onPress={() => handleMove(index, index - 1)}>
+                          <Icons.ChevronUp
+                            size={15}
+                            color={useColors('dark')}
+                          />
+                        </TouchableOpacity>
+                      )}
+                      {index < instructions.length - 1 && (
+                        <TouchableOpacity
+                          style={styles.indexButtons}
+                          onPress={() => handleMove(index, index + 1)}>
+                          <Icons.ChevronDown
+                            size={15}
+                            color={useColors('dark')}
+                          />
+                        </TouchableOpacity>
+                      )}
+                      <TouchableOpacity
+                        style={{marginRight: 10}}
+                        onPress={() => {
+                          useHaptics(
+                            core?.userSettings?.hapticStrength || 'light',
+                          );
+                          setInstructions(prev =>
+                            prev.filter((_, i) => i !== index),
+                          );
+                        }}>
+                        <Icons.XCircleOutline
+                          size={18}
+                          color={useColors('danger')}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <View>
+                    {instruction.steps?.length > 0 &&
+                      instruction.steps.map((step, stepIndex) => (
+                        <View key={stepIndex} row>
+                          <View flex>
+                            <Input
+                              ref={el => {
+                                if (!stepRefs.current[index])
+                                  stepRefs.current[index] = [];
+                                stepRefs.current[index][stepIndex] = el;
+                              }}
+                              label={`Step ${stepIndex + 1}`}
+                              value={step.action}
+                              onChangeText={text => {
+                                setInstructions(prev => {
+                                  const updated = [...prev];
+                                  updated[index] = {
+                                    ...updated[index],
+                                    steps: updated[index].steps.map((s, i) =>
+                                      i === stepIndex
+                                        ? {...s, action: text}
+                                        : s,
+                                    ),
+                                  };
+                                  return updated;
+                                });
+                              }}
+                              textSize="tiny"
+                              labelTextSize="tiny"
+                              capitalize
+                              capitalMode="sentences"
+                              multiline
+                              multiHeight="small"
+                            />
+                          </View>
+                          <View row centerVH>
+                            {stepIndex > 0 && (
+                              <TouchableOpacity
+                                style={styles.indexButtons}
+                                onPress={() => {
+                                  useHaptics(
+                                    core?.userSettings?.hapticStrength ||
+                                      'light',
+                                  );
+                                  moveStep(index, stepIndex, stepIndex - 1);
+                                }}>
+                                <Icons.ChevronUp
+                                  size={15}
+                                  color={useColors('dark')}
+                                />
+                              </TouchableOpacity>
+                            )}
+                            {stepIndex < instruction.steps.length - 1 && (
+                              <TouchableOpacity
+                                style={styles.indexButtons}
+                                onPress={() => {
+                                  useHaptics(
+                                    core?.userSettings?.hapticStrength ||
+                                      'light',
+                                  );
+                                  moveStep(index, stepIndex, stepIndex + 1);
+                                }}>
+                                <Icons.ChevronDown
+                                  size={15}
+                                  color={useColors('dark')}
+                                />
+                              </TouchableOpacity>
+                            )}
+                            <TouchableOpacity
+                              style={{marginRight: 10}}
+                              onPress={() => {
+                                useHaptics(
+                                  core?.userSettings?.hapticStrength || 'light',
+                                );
+                                setInstructions(prev => {
+                                  const updated = [...prev];
+                                  updated[index] = {
+                                    ...updated[index],
+                                    steps: updated[index].steps.filter(
+                                      (_, i) => i !== stepIndex,
+                                    ),
+                                  };
+                                  return updated;
+                                });
+                              }}>
+                              <Icons.XCircleOutline
+                                size={18}
+                                color={useColors('danger')}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      ))}
+                    <View row>
+                      <View>
+                        <Button
+                          textSize="xSmall"
+                          size="tiny"
+                          onPress={() => handleAddStep(index)}>
+                          Add Step
+                        </Button>
+                      </View>
+                      <View flex></View>
+                      <View>
+                        <Button
+                          textSize="xSmall"
+                          size="tiny"
+                          onPress={() => {
+                            setCompleted(prev => ({
+                              ...prev,
+                              [index]: false, // mark this group as complete
+                            }));
+                          }}>
+                          Complete
+                        </Button>
+                      </View>
+                    </View>
+                  </View>
+                </>
+              ) : (
+                <>
+                  <View flex>
+                    <View m5 mh10>
+                      <Text size="small" font="open-7">
+                        {capEachWord(instruction.name)}
+                      </Text>
+                    </View>
+                    {instruction.steps?.length > 0 &&
+                      instruction.steps.map((step, stepIndex) => (
+                        <View key={stepIndex} m5 ph20 row>
+                          <View>
+                            <Text size="xSmall" font="open-7">
+                              Step {step.step + 1}:
+                            </Text>
+                          </View>
+                          <View flex ml5>
+                            <Text size="xSmall" font="open-6">
+                              {formatParagraph(step.action)}
+                            </Text>
+                          </View>
+                        </View>
+                      ))}
+                    <View row>
+                      <View flex />
+                      <View>
+                        <Button
+                          textSize="xSmall"
+                          size="tiny"
+                          onPress={() => {
+                            setCompleted(prev => ({
+                              ...prev,
+                              [index]: true, // mark this group as complete
+                            }));
+                          }}>
+                          Edit
+                        </Button>
+                      </View>
+                    </View>
+                  </View>
+                </>
+              )}
             </View>
-          ))
-        ) : (
-          <View centerH mt20>
-            <Text size="xSmall" font="open-6" centered>
-              No Instructions added yet.
-            </Text>
-          </View>
-        )}
-        <View row>
-          <View flex />
-          <View>
-            <Button
-              textSize="xSmall"
-              size="tiny"
-              onPress={handleCloseInstructions}>
-              Finished
-            </Button>
-          </View>
-        </View>
-      </ScrollView>
-    </>
+          ))}
+          <View style={{height: 50}}></View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -284,6 +394,20 @@ const styles = {
     borderWidth: 1.5,
     borderRadius: 5,
     borderColor: useColors('dark70'),
+  },
+  groupContainer: {
+    backgroundColor: 'white',
+    borderWidth: 1.5,
+    borderColor: useColors('dark50'),
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 1, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    margin: 5,
+    padding: 5, // remove this later
+    marginBottom: 5,
   },
 };
 
