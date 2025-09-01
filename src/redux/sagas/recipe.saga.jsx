@@ -14,7 +14,7 @@ import {getApp} from '@react-native-firebase/app';
 import algoliasearch from 'algoliasearch';
 import {fetchRemoteKeys} from '../../../firebase.config';
 import {checkLimit} from '../../utilities/checkLimit';
-import {capFirst} from '../../utilities/helpers';
+import {capEachWord, capFirst} from '../../utilities/helpers';
 import storage from '@react-native-firebase/storage';
 
 const db = getFirestore(getApp());
@@ -141,7 +141,7 @@ function* bookmarkCommunityRecipes(action) {
       Toast.show({
         type: 'success',
         text1: 'Recipe Added',
-        text2: `${capFirst(selectedRecipe?.title)} added to the recipe box.`,
+        text2: `${capEachWord(selectedRecipe?.title)} added to the recipe box.`,
       });
     } else {
       yield put({
@@ -161,7 +161,7 @@ function* bookmarkCommunityRecipes(action) {
     Toast.show({
       type: 'danger',
       text1: 'Failed to Add Recipe',
-      text2: `${capFirst(
+      text2: `${capEachWord(
         selectedRecipe?.title,
       )} could not be added.Please try again later.`,
     });
@@ -273,7 +273,7 @@ function* addToPersonalRecipes(action) {
           Toast.show({
             type: 'success',
             text1: 'Recipe Added',
-            text2: `${capFirst(
+            text2: `${capEachWord(
               newRecipe?.title,
             )} and image was added to the recipe box.`,
           });
@@ -281,7 +281,7 @@ function* addToPersonalRecipes(action) {
           Toast.show({
             type: 'success',
             text1: 'Recipe Added',
-            text2: `${capFirst(
+            text2: `${capEachWord(
               newRecipe?.title,
             )} added to the recipe box, but the image failed. You can try to add the image again using recipe update.`,
           });
@@ -290,7 +290,9 @@ function* addToPersonalRecipes(action) {
         Toast.show({
           type: 'success',
           text1: 'Recipe Added',
-          text2: `${capFirst(newRecipe?.title)} added to the recipe box.`,
+          text2: `${capEachWord(
+            newRecipe?.title,
+          )} was added to the recipe box.`,
         });
       }
     } else {
@@ -311,7 +313,7 @@ function* addToPersonalRecipes(action) {
     Toast.show({
       type: 'danger',
       text1: 'Failed to Add Recipe',
-      text2: `${capFirst(
+      text2: `${capEachWord(
         newRecipe?.title,
       )} could not be added. Please try again later.`,
     });
@@ -388,19 +390,21 @@ function* updateToPersonalRecipes(action) {
         Toast.show({
           type: 'success',
           text1: 'Recipe Updated',
-          text2: `${capFirst(editedRecipe?.title)} and its image were updated.`,
+          text2: `${capEachWord(
+            editedRecipe?.title,
+          )} and its image were updated.`,
         });
       } else if (!imageDeleted && imageSuccess && pictureWasChanged) {
         Toast.show({
           type: 'success',
           text1: 'Recipe Updated',
-          text2: `${capFirst(editedRecipe?.title)} updated and image added.`,
+          text2: `${capEachWord(editedRecipe?.title)} updated and image added.`,
         });
       } else if (pictureWasChanged && !imageSuccess) {
         Toast.show({
           type: 'warning',
           text1: 'Recipe Updated',
-          text2: `${capFirst(
+          text2: `${capEachWord(
             editedRecipe?.title,
           )} updated, but the new image could not be saved.`,
         });
@@ -408,7 +412,7 @@ function* updateToPersonalRecipes(action) {
         Toast.show({
           type: 'success',
           text1: 'Recipe Updated',
-          text2: `${capFirst(editedRecipe?.title)} updated successfully.`,
+          text2: `${capEachWord(editedRecipe?.title)} updated successfully.`,
         });
       }
     } else {
@@ -422,7 +426,7 @@ function* updateToPersonalRecipes(action) {
     Toast.show({
       type: 'danger',
       text1: 'Failed to Update Recipe',
-      text2: `${capFirst(
+      text2: `${capEachWord(
         editedRecipe?.title,
       )} could not be updated. Please try again later.`,
     });
@@ -482,7 +486,7 @@ function* deleteFromPersonalRecipes(action) {
       Toast.show({
         type: 'success',
         text1: owner ? 'Recipe Deleted' : 'Recipe Removed',
-        text2: `${capFirst(itemName)} was ${
+        text2: `${capEachWord(itemName)} was ${
           owner ? 'deleted' : 'removed'
         } from the Recipe Box.`,
       });
@@ -503,7 +507,7 @@ function* deleteFromPersonalRecipes(action) {
     Toast.show({
       type: 'danger',
       text1: `Failed to ${owner ? 'Delete' : 'Remove'} Recipe`,
-      text2: `${capFirst(selectedRecipe?.title) || 'Recipe'} could not be ${
+      text2: `${capEachWord(selectedRecipe?.title) || 'Recipe'} could not be ${
         owner ? 'deleted' : 'removed'
       }. Please try again later.`,
     });
