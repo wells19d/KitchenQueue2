@@ -85,6 +85,7 @@ const FlashCell = props => {
         <Text size="xSmall" numberOfLines={1}>
           {formatMeasurementWithPlural(
             item.packageSize,
+            item.quantity,
             item.measurement,
             item.itemName,
           )}

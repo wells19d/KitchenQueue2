@@ -105,31 +105,38 @@ export const compareByDate = (date1, date2) => {
   return date1 === date2;
 };
 
-export const formatMeasurementWithPlural = (packageSize, unit, itemName) => {
-  if (packageSize !== undefined && unit !== undefined) {
-    if (packageSize === 1 && unit === 'each') {
-      return '';
-    }
+export const formatMeasurementWithPlural = (
+  packageSize,
+  quantity,
+  unit,
+  itemName,
+) => {
+  if (packageSize == null || unit == null) return '';
 
-    if (unit === 'each') {
-      return `${packageSize} ${pluralize(itemName)}`;
-    }
-
-    const match = displayMeasurements.find(m => m.key === unit);
-
-    if (match) {
-      const label = match.label;
-      return `${packageSize} ${packageSize > 1 ? pluralize(label) : label}`;
-    }
-
-    // Custom value fallback
-    const formatted = formatMeasurement(unit);
-    return `${packageSize} ${
-      packageSize > 1 ? pluralize(formatted) : formatted
-    }`;
+  // 'each' → always show PACK SIZE + SINGULAR item name (e.g., "1 Tomato", "6 Onion")
+  if (unit === 'each') {
+    const base = (
+      pluralize?.singular ? pluralize.singular(itemName || '') : itemName || ''
+    ).trim();
+    const name =
+      packageSize === 1
+        ? base
+        : pluralize?.plural
+        ? pluralize.plural(base)
+        : `${base}s`;
+    return `${packageSize} ${name}`;
   }
 
-  return '';
+  // measured units
+  const match = displayMeasurements.find(m => m.key === unit);
+  if (match) {
+    const label = match.label;
+    return `${packageSize} ${packageSize > 1 ? pluralize(label) : label}`;
+  }
+
+  // custom fallback
+  const formatted = formatMeasurement(unit);
+  return `${packageSize} ${packageSize > 1 ? pluralize(formatted) : formatted}`;
 };
 
 export const formatParagraph = (str = '') => {
