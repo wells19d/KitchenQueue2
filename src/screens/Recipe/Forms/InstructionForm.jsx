@@ -24,7 +24,7 @@ const InstructionForm = props => {
     });
 
     const hideSub = Keyboard.addListener('keyboardDidHide', () => {
-      console.log('Keyboard hidden');
+      // console.log('Keyboard hidden');
     });
 
     return () => {

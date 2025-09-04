@@ -318,14 +318,6 @@ function* addToPersonalRecipes(action) {
       )} could not be added. Please try again later.`,
     });
   }
-  // 🔑 Final Step: Cleanup temp photo
-  if (finalImage) {
-    try {
-      yield call(cleanupPhoto, finalImage.uri);
-    } catch (e) {
-      console.warn('⚠️ Failed to cleanup local photo:', e.message);
-    }
-  }
 }
 
 function* updateToPersonalRecipes(action) {
@@ -430,14 +422,6 @@ function* updateToPersonalRecipes(action) {
         editedRecipe?.title,
       )} could not be updated. Please try again later.`,
     });
-  }
-  // 🔑 Final Step: Cleanup temp photo if a new one was used
-  if (pictureWasChanged && finalImage) {
-    try {
-      yield call(cleanupPhoto, finalImage.uri);
-    } catch (e) {
-      console.warn('⚠️ Failed to cleanup local photo:', e.message);
-    }
   }
 }
 

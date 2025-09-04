@@ -50,7 +50,7 @@ const RecipeBox = () => {
     setUseOneColumn(hasLongIngredient);
   }, [selectedRecipe]);
 
-  const deleteFileName = 'bLZNlr9Zu2ZBPtG8jkdaoAEMCLy2-homemade'; // Example filename
+  const deleteFileName = 'uqHTLaneuvSdmAKw8sY20Okfugm2'; // Example filename
 
   const renderItem = useCallback(({item, index}) => {
     const isLeft = index % 2 === 0;

@@ -134,7 +134,6 @@ const AddRecipe = () => {
   }, [recipeName]);
 
   const recipeObject = {
-    ...(editingRecipe && {id: recipeToEdit?.id}),
     title: recipeName?.toLowerCase().trim() ?? null,
     sourceMaterial: sourceMaterial?.key ?? null,
     source: source?.toLowerCase().trim() ?? null,
@@ -159,15 +158,11 @@ const AddRecipe = () => {
     readyIn: prepTime && cookTime ? Number(prepTime) + Number(cookTime) : null,
     ingredients: ingredients,
     instructions: instructions,
-    image: imageChanged ? finalImage?.name : recipeToEdit?.image ?? null,
-    imageDate: imageChanged
-      ? finalImage?.imageDate
-      : recipeToEdit?.imageDate ?? null,
-    imageUri: imageChanged
-      ? `https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2F${encodeURIComponent(
-          finalImage?.name,
-        )}?alt=media`
-      : recipeToEdit?.imageUri ?? null,
+    image: finalImage?.name ?? null,
+    imageUri: finalImage
+      ? `https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2F${finalImage?.name}?alt=media`
+      : null,
+    imageDate: finalImage?.imageDate ?? null,
     pictureApproved: true,
     ingredientList:
       ingredients?.map(ing => ing.name?.toLowerCase().trim() ?? null) ?? null,
@@ -364,33 +359,45 @@ const AddRecipe = () => {
   };
 
   const handleSaveRecipe = () => {
-    if (canSave) {
-      if (editingRecipe) {
-        dispatch({
-          type: 'UPDATE_ITEM_IN_RECIPE_BOX',
-          payload: {
-            recipeBoxID: core?.recipeBoxID,
-            editedRecipe: recipeObject,
-            finalImage: finalImage,
-            profileID: core?.userID,
-            pictureWasChanged: imageChanged,
-            oldImageName: recipeToEdit?.image,
-          },
-        });
-        resetForm();
-        navigation.goBack();
-      } else {
-        dispatch({
-          type: 'ADD_ITEM_TO_RECIPE_BOX',
-          payload: {
-            recipeBoxID: core?.recipeBoxID,
-            newRecipe: recipeObject,
-            finalImage: finalImage,
-            profileID: core?.userID,
-          },
-        });
-        resetForm();
-      }
+    if (!canSave) return;
+
+    if (editingRecipe) {
+      const editedRecipeSafe = {
+        ...recipeToEdit,
+        ...recipeObject,
+        ...(imageChanged
+          ? {}
+          : {
+              image: recipeToEdit?.image ?? null,
+              imageUri: recipeToEdit?.imageUri ?? null,
+              imageDate: recipeToEdit?.imageDate ?? null,
+            }),
+      };
+
+      dispatch({
+        type: 'UPDATE_ITEM_IN_RECIPE_BOX',
+        payload: {
+          recipeBoxID: core?.recipeBoxID,
+          editedRecipe: editedRecipeSafe,
+          finalImage,
+          profileID: core?.userID,
+          pictureWasChanged: imageChanged,
+          oldImageName: recipeToEdit?.image,
+        },
+      });
+      resetForm();
+      navigation.goBack();
+    } else {
+      dispatch({
+        type: 'ADD_ITEM_TO_RECIPE_BOX',
+        payload: {
+          recipeBoxID: core?.recipeBoxID,
+          newRecipe: recipeObject,
+          finalImage,
+          profileID: core?.userID,
+        },
+      });
+      resetForm();
     }
   };
 
