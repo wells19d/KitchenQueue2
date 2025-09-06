@@ -75,6 +75,31 @@ const SelectedItemInfo = props => {
     setShowItemInfo(false);
   };
 
+  const handleAddToShopList = item => {
+    const newItem = {
+      itemName: item?.itemName || '',
+      brandName: item?.brandName || '',
+      description: item?.description || '',
+      packageSize: item?.packageSize || 1,
+      quantity: 1,
+      measurement: item?.measurement || '',
+      category: item?.category || '',
+      notes: item?.notes || '',
+      status: 'shopping-list',
+    };
+
+    dispatch({
+      type: 'ADD_ITEM_TO_SHOP_CART',
+      payload: {
+        shoppingCartID: core.shoppingCartID,
+        newItem: newItem,
+        profileID: core.profileID,
+      },
+    });
+    navigation.navigate(navigate?.backTo);
+    setShowItemInfo(false);
+  };
+
   const handleUpdateItem = itemId => {
     navigation.navigate(navigate?.to, {
       itemId,
@@ -203,8 +228,31 @@ const SelectedItemInfo = props => {
             {selectedItem?.notes && (
               <ItemRow title="Notes" info={selectedItem?.notes} />
             )}
+            {cupboardView && !groupedView && (
+              <View style={{marginLeft: 5, marginTop: 15}}>
+                <Button
+                  size="large"
+                  // color={useColors('gold')}
+                  onPress={() => handleAddToShopList(selectedItem)}>
+                  <View style={{flexDirection: 'row'}}>
+                    <View style={{marginRight: 10}}>
+                      <Icons.AddList color={useColors('white')} />
+                    </View>
+                    <View>
+                      <Text kqColor="white" font="open-6">
+                        Add to Shopping List
+                      </Text>
+                    </View>
+                  </View>
+                </Button>
+              </View>
+            )}
             {!addToList && !groupedView && (
-              <View style={{marginLeft: 10, marginTop: 15}}>
+              <View
+                style={{
+                  marginLeft: 5,
+                  marginTop: cupboardView && !groupedView ? 5 : 15,
+                }}>
                 <Button
                   size="large"
                   color={useColors('gold')}
@@ -220,6 +268,7 @@ const SelectedItemInfo = props => {
                 </Button>
               </View>
             )}
+
             {addToList && (
               <View style={SelectItemStyles.addToContainer}>
                 <View style={SelectItemStyles.quantityWrapper}>

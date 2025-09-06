@@ -321,12 +321,14 @@ export const SelectItemStyles = StyleSheet.create({
     borderBottomColor: '#c4c4c490',
     paddingBottom: 6,
     paddingTop: 3,
+    marginLeft: 5,
   },
   itemNoteContainer: {
     borderRadius: 8,
     borderBottomColor: '#c4c4c4',
     paddingBottom: 3,
     paddingTop: 7,
+    marginLeft: 5,
   },
   titleWrap: {paddingTop: 3, paddingHorizontal: 3},
   infoWrap: {

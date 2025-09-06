@@ -9,6 +9,7 @@ import {
   doc,
   writeBatch,
   serverTimestamp,
+  setDoc,
 } from '@react-native-firebase/firestore';
 import {getApp} from '@react-native-firebase/app';
 import algoliasearch from 'algoliasearch';
@@ -138,6 +139,15 @@ function* bookmarkCommunityRecipes(action) {
         }),
       );
 
+      yield put({
+        type: 'SET_RECIPE_BOX',
+        payload: {
+          ...recipeBoxData,
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        },
+      });
+
       Toast.show({
         type: 'success',
         text1: 'Recipe Added',
@@ -168,7 +178,88 @@ function* bookmarkCommunityRecipes(action) {
   }
 }
 
-function* addToCommunityRecipes(action) {}
+function* addToCommunityRecipes(action) {
+  let {recipe, admin, recipeBoxID} = action.payload;
+
+  try {
+    if (!recipe?.id) return;
+
+    let docRef = doc(db, 'community', recipe.id);
+
+    // Check if this ID already exists (1 read)
+    const existing = yield call(getDoc, docRef);
+
+    if (existing.exists()) {
+      const newId = uuid.v4();
+      recipe = {...recipe, id: newId};
+      docRef = doc(db, 'community', newId);
+    }
+
+    recipe = {
+      ...recipe,
+      recipeShared: true,
+      userEdit: false,
+      sharedStatus: admin ? 'approved' : 'pending-review',
+    };
+
+    // Write recipe to community
+    yield call(setDoc, docRef, recipe);
+
+    // Update in recipeBox
+    const recipeBoxRef = doc(db, 'recipeBoxes', recipeBoxID);
+    const recipeBoxDoc = yield call(getDoc, recipeBoxRef);
+
+    if (recipeBoxDoc.exists()) {
+      const recipeBoxData = recipeBoxDoc.data();
+
+      const updatedItems = (recipeBoxData.items || []).map(item =>
+        item.id === (action.payload.recipe.id || recipe.id)
+          ? {
+              ...item,
+              recipeShared: true,
+              userEdit: false,
+              sharedStatus: admin ? 'approved' : 'pending-review',
+              ...(action.payload.recipe.id !== recipe.id && {id: recipe.id}),
+            }
+          : item,
+      );
+
+      yield call(updateDoc, recipeBoxRef, {
+        items: updatedItems,
+        lastUpdated: serverTimestamp(),
+      });
+
+      // ✅ update Redux immediately
+      yield put({
+        type: 'SET_RECIPE_BOX',
+        payload: {
+          ...recipeBoxData,
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        },
+      });
+    }
+
+    Toast.show({
+      type: 'success',
+      text1: admin ? 'Recipe Added' : 'Recipe Submitted',
+      text2: admin
+        ? `${capEachWord(recipe?.title)} was added to the community recipes.`
+        : `${capEachWord(
+            recipe?.title,
+          )} was submitted for review. You will be notified once it's approved.`,
+    });
+  } catch (error) {
+    yield put({type: 'COMMUNITY_ADD_FAILED', payload: error.message});
+    Toast.show({
+      type: 'danger',
+      text1: 'Failed to Add Recipe',
+      text2: `${capEachWord(
+        recipe?.title,
+      )} could not be added. Please try again later.`,
+    });
+  }
+}
 
 function* updateToCommunityRecipes(action) {}
 
@@ -267,6 +358,15 @@ function* addToPersonalRecipes(action) {
           lastUpdatedBy: profileID,
         }),
       );
+
+      yield put({
+        type: 'SET_RECIPE_BOX',
+        payload: {
+          ...recipeBoxData,
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        },
+      });
 
       if (finalImage) {
         if (imageSuccess) {
@@ -377,6 +477,15 @@ function* updateToPersonalRecipes(action) {
         lastUpdatedBy: profileID,
       });
 
+      yield put({
+        type: 'SET_RECIPE_BOX',
+        payload: {
+          ...recipeBoxData,
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        },
+      });
+
       // 🔑 Step 5: Handle toast conditions
       if (imageDeleted && imageSuccess && pictureWasChanged) {
         Toast.show({
@@ -450,6 +559,15 @@ function* deleteFromPersonalRecipes(action) {
           lastUpdatedBy: profileID,
         }),
       );
+
+      yield put({
+        type: 'SET_RECIPE_BOX',
+        payload: {
+          ...recipeBoxData,
+          items: updatedItems,
+          lastUpdated: new Date().toISOString(),
+        },
+      });
 
       // 🔑 Step 2: Delete image only if owner
       if (owner && imageName) {

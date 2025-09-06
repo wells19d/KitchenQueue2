@@ -13,7 +13,7 @@ import {capEachWord, tempImageString} from '../../utilities/helpers';
 import SelectedRecipe from './SelectedRecipe';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 import KQTempRecipe from '../../svg/KitchenQueueTempRecipe';
-import {deletePicture} from '../../utilities/checkImage';
+// import {deletePicture} from '../../utilities/checkImage';
 
 const RecipeBox = () => {
   const navigation = useNavigation();
@@ -50,7 +50,7 @@ const RecipeBox = () => {
     setUseOneColumn(hasLongIngredient);
   }, [selectedRecipe]);
 
-  const deleteFileName = 'uqHTLaneuvSdmAKw8sY20Okfugm2'; // Example filename
+  // const deleteFileName = 'uqHTLaneuvSdmAKw8sY20Okfugm2'; // Example filename
 
   const renderItem = useCallback(({item, index}) => {
     const isLeft = index % 2 === 0;
@@ -60,6 +60,7 @@ const RecipeBox = () => {
         style={styles.itemWrapper(isLeft)}>
         {item.imageUri ? (
           <Image
+            key={`${item.id}-${item.imageDate || item.lastUpdated}`}
             image={item.imageUri || tempImageString}
             style={styles.imageListStyles}
           />

@@ -182,6 +182,9 @@ const SelectedRecipe = ({
     setTimeout(() => setIsProcessing(false), 500);
   };
 
+  const handleAdminTransferRecipe = () => {};
+  const handleAdminDeleteRecipe = () => {};
+
   const renderButtons = useMemo(() => {
     const owner = selectedRecipe?.accountID === coreInfo?.accountID;
 
@@ -226,7 +229,7 @@ const SelectedRecipe = ({
     }
 
     return null;
-  }, [recipeBoxView, selectedRecipe, coreInfo?.accountID]);
+  }, [recipeBoxView, selectedRecipe, coreInfo]);
 
   return (
     <Modal

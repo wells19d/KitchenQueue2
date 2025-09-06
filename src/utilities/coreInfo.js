@@ -40,6 +40,7 @@ export const useCoreInfo = () => {
     onboarding: profile?.onboarding || null,
     permissionsGranted: profile?.permissionsGranted || false,
     permissionsRequested: profile?.permissionsRequested || false,
+    admin: profile?.admin || false,
 
     // Account
     accountID: account?.id || null,

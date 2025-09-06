@@ -145,6 +145,7 @@ const AddRecipe = () => {
     authorID: core?.userID,
     accountID: core?.accountID,
     adminEdit: true,
+    userEdit: true,
     cuisines: cuisineType?.map(c => c.value),
     dishTypes: dishType?.map(c => c.value),
     diets: dietType?.map(c => c.value),
