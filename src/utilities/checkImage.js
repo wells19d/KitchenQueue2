@@ -28,16 +28,16 @@ export const deletePicture = async fileName => {
 
     // Try to get metadata first (confirms it exists)
     await ref.getMetadata();
-    console.log(`📂 Found image: ${fileName}`);
+    // console.log(`📂 Found image: ${fileName}`);
 
     // Delete the file
     await ref.delete();
-    console.log(`🗑️ Successfully deleted image: ${fileName}`);
+    // console.log(`🗑️ Successfully deleted image: ${fileName}`);
   } catch (error) {
     if (error.code === 'storage/object-not-found') {
-      console.error(`❌ File not found in storage: ${fileName}`);
+      // console.error(`❌ File not found in storage: ${fileName}`);
     } else {
-      console.error(`❌ Failed to delete image ${fileName}:`, error);
+      // console.error(`❌ Failed to delete image ${fileName}:`, error);
     }
   }
 };

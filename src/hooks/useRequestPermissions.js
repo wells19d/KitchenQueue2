@@ -78,10 +78,10 @@ export function useRequestPermissions(renderDisplay) {
         );
         break;
       case RESULTS.GRANTED:
-        console.log(`${permission} granted`);
+        // console.log(`${permission} granted`);
         break;
       default:
-        console.log(`Unknown status for ${permission}`);
+      // console.log(`Unknown status for ${permission}`);
     }
   };
 
