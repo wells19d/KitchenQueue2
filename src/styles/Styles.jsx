@@ -906,10 +906,21 @@ export const SelectedRecipeStyles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.2)',
   },
-  selectedBLButton: {
+  selectedBRButton: {
     position: 'absolute',
     top: 195,
     right: 10,
+    height: 35,
+    width: 35,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  selectedBLButton: {
+    position: 'absolute',
+    top: 195,
+    left: 10,
     height: 35,
     width: 35,
     borderRadius: 50,

@@ -48,6 +48,8 @@ export default function recipeReducer(state = initialState, action) {
       return {...state, loading: true, error: null};
     case 'BOOKMARK_TO_RECIPE_BOX':
       return {...state, loading: true, error: null};
+    case 'ADD_TO_COMMUNITY_RECIPES':
+      return {...state, loading: true, error: null};
     case 'RECIPE_BOX_ADD_FAILED':
       return {...state, loading: false, error: action.payload};
     case 'COMMUNITY_ADD_FAILED':
@@ -62,11 +64,19 @@ export default function recipeReducer(state = initialState, action) {
       return {...state, loading: true, error: null};
     case 'RECIPE_BOX_UPDATE_ITEM_FAILED':
       return {...state, loading: false, error: action.payload};
+    case 'UPDATE_TO_COMMUNITY_RECIPES':
+      return {...state, loading: true, error: null};
+    case 'UPDATE_TO_COMMUNITY_RECIPES_FAILED':
+      return {...state, loading: false, error: action.payload};
 
     // ❌ Delete Item
     case 'DELETE_ITEM_FROM_RECIPE_BOX':
       return {...state, loading: true, error: null};
     case 'RECIPE_BOX_DELETE_ITEM_FAILED':
+      return {...state, loading: false, error: action.payload};
+    case 'DELETE_FROM_COMMUNITY_RECIPES':
+      return {...state, loading: true, error: null};
+    case 'DELETE_FROM_COMMUNITY_RECIPES_FAILED':
       return {...state, loading: false, error: action.payload};
 
     // ❌ Delete List

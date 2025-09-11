@@ -26,7 +26,10 @@ const AddRecipe = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const route = useRoute();
-  const {recipeToEdit, editingRecipe} = route.params || {};
+  const {recipeToEdit, editingRecipe, fromCommunity} = route.params || {};
+  console.log('recipeToEdit', recipeToEdit);
+  console.log('editingRecipe', editingRecipe);
+  console.log('fromCommunity', fromCommunity);
 
   const [validation1, setValidation1] = useState(false);
   const [validation2, setValidation2] = useState(false);
@@ -375,17 +378,31 @@ const AddRecipe = () => {
             }),
       };
 
-      dispatch({
-        type: 'UPDATE_ITEM_IN_RECIPE_BOX',
-        payload: {
-          recipeBoxID: core?.recipeBoxID,
-          editedRecipe: editedRecipeSafe,
-          finalImage,
-          profileID: core?.userID,
-          pictureWasChanged: imageChanged,
-          oldImageName: recipeToEdit?.image,
-        },
-      });
+      !fromCommunity &&
+        dispatch({
+          type: 'UPDATE_ITEM_IN_RECIPE_BOX',
+          payload: {
+            recipeBoxID: core?.recipeBoxID,
+            editedRecipe: editedRecipeSafe,
+            finalImage,
+            profileID: core?.userID,
+            pictureWasChanged: imageChanged,
+            oldImageName: recipeToEdit?.image,
+          },
+        });
+
+      fromCommunity &&
+        dispatch({
+          type: 'UPDATE_TO_COMMUNITY_RECIPES',
+          payload: {
+            editedRecipe: editedRecipeSafe,
+            finalImage,
+            profileID: core?.userID,
+            pictureWasChanged: imageChanged,
+            oldImageName: recipeToEdit?.image,
+          },
+        });
+
       resetForm();
       navigation.goBack();
     } else {

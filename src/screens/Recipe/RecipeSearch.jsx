@@ -13,6 +13,7 @@ import SelectedRecipe from './SelectedRecipe';
 import {RecipeSearchStyles} from '../../styles/Styles';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {dailyCheckLimit} from '../../utilities/checkLimit';
+import {capEachWord} from '../../utilities/helpers';
 
 const RecipeSearch = () => {
   const dispatch = useDispatch();
@@ -141,18 +142,48 @@ const RecipeSearch = () => {
       <TouchableOpacity
         onPress={() => handleSelectedRecipe(item)}
         style={styles.itemWrapper(isLeft)}>
-        <Image image={item.imageUri} style={styles.imageListStyles} />
+        {item.imageUri ? (
+          <Image
+            key={`${item.id}-${item.imageDate || item.lastUpdated}`}
+            image={item.imageUri || tempImageString}
+            style={styles.imageListStyles}
+          />
+        ) : (
+          <View style={[styles.imageListStyles, {borderWidth: 1.5}]}>
+            <View
+              style={{
+                ...StyleSheet.absoluteFillObject,
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 1000,
+                pointerEvents: 'none',
+                transform: [{rotate: '-35deg'}],
+              }}>
+              <Text kqColor="dark90" size="small" font="open-7">
+                Temp Image
+              </Text>
+            </View>
+
+            {/* SVG background */}
+            <KQTempRecipe
+              width="100%"
+              height="100%"
+              color={useColors('dark30')}
+              backgroundColor={useColors('white')}
+            />
+          </View>
+        )}
 
         <View style={RecipeSearchStyles.listWrapper}>
           <View style={RecipeSearchStyles.listTitle}>
             <Text size="xSmall" numberOfLines={2}>
-              {item?.title || ''}
+              {capEachWord(item?.title || '')}
             </Text>
           </View>
           <View style={RecipeSearchStyles.listSubTitleContainer}>
             <View style={RecipeSearchStyles.listReadyIn}>
               <Text size="tiny" font="open-4" kqColor="dark90">
-                {item?.readyIn ? `${item.readyIn}min` : ''}
+                {item?.readyIn ? `${item.readyIn} min` : ''}
               </Text>
             </View>
             <View style={RecipeSearchStyles.listScoreContainer}>

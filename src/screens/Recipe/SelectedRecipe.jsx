@@ -38,7 +38,10 @@ const SelectedRecipe = ({
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const coreInfo = useCoreInfo();
+  // console.log('coreInfo:', coreInfo);
+
   const profile = useProfile();
+  // console.log('profile:', profile);
   const recipeBox = useRecipeBox();
   const recipesListIDs = recipeBox?.items?.map(rec => rec?.id) || [];
   const [isProcessing, setIsProcessing] = useState(false);
@@ -49,19 +52,19 @@ const SelectedRecipe = ({
 
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
 
-  const providedBy = useMemo(() => {
-    if (selectedRecipe?.publicAuthor) {
-      if (selectedRecipe?.displayAuthorName) {
-        return `KQ Recipe provided by ${selectedRecipe.authorFirstName} ${selectedRecipe.authorLastName}`;
-      } else {
-        return `KQ Recipe provided by ${selectedRecipe.authorOnlineName}`;
-      }
-    } else if (selectedRecipe?.source === 'Epicurious') {
-      return `KQ Recipe provided by Kitchen Queue`;
-    } else {
-      return `KQ Recipe provided by a Private User`;
-    }
-  }, [selectedRecipe]);
+  // const providedBy = useMemo(() => {
+  //   if (selectedRecipe?.publicAuthor) {
+  //     if (selectedRecipe?.displayAuthorName) {
+  //       return `KQ Recipe provided by ${selectedRecipe.authorFirstName} ${selectedRecipe.authorLastName}`;
+  //     } else {
+  //       return `KQ Recipe provided by ${selectedRecipe.authorOnlineName}`;
+  //     }
+  //   } else if (selectedRecipe?.source === 'Epicurious') {
+  //     return `KQ Recipe provided by Kitchen Queue`;
+  //   } else {
+  //     return `KQ Recipe provided by a Private User`;
+  //   }
+  // }, [selectedRecipe]);
 
   const SectionHead = ({title, value, style}) => {
     if (value) {
@@ -112,11 +115,14 @@ const SelectedRecipe = ({
     }
   };
 
+  const handleRequestEditDelete = () => {};
+
   const handleEditRec = () => {
     onClose();
     navigation.navigate('AddRecipe', {
       recipeToEdit: selectedRecipe,
       editingRecipe: true,
+      fromCommunity: recipeBoxView ? false : true,
     });
   };
 
@@ -135,15 +141,27 @@ const SelectedRecipe = ({
           style: 'destructive',
           onPress: () => {
             onClose();
-            dispatch({
-              type: 'DELETE_ITEM_FROM_RECIPE_BOX',
-              payload: {
-                recipeBoxID: coreInfo?.recipeBoxID,
-                selectedRecipe: selectedRecipe,
-                profileID: coreInfo?.userID,
-                owner: selectedRecipe?.accountID === coreInfo?.accountID,
-              },
-            });
+            if (recipeBoxView) {
+              dispatch({
+                type: 'DELETE_ITEM_FROM_RECIPE_BOX',
+                payload: {
+                  recipeBoxID: coreInfo?.recipeBoxID,
+                  selectedRecipe: selectedRecipe,
+                  profileID: coreInfo?.userID,
+                  owner: selectedRecipe?.accountID === coreInfo?.accountID,
+                },
+              });
+            } else {
+              dispatch({
+                type: 'DELETE_FROM_COMMUNITY_RECIPES',
+                payload: {
+                  recipeBoxID: coreInfo?.recipeBoxID,
+                  selectedRecipe: selectedRecipe,
+                  profileID: coreInfo?.userID,
+                  owner: selectedRecipe?.accountID === coreInfo?.accountID,
+                },
+              });
+            }
           },
         },
       ],
@@ -182,54 +200,109 @@ const SelectedRecipe = ({
     setTimeout(() => setIsProcessing(false), 500);
   };
 
-  const handleAdminTransferRecipe = () => {};
+  const handleAdminEditRecipe = () => {};
   const handleAdminDeleteRecipe = () => {};
 
   const renderButtons = useMemo(() => {
-    const owner = selectedRecipe?.accountID === coreInfo?.accountID;
+    const admin = coreInfo?.admin;
+    const btAccount = selectedRecipe?.accountID === coreInfo?.accountID; // belongs to account
+    const btAuthor = selectedRecipe?.authorID === coreInfo?.userID; // belongs to author
+    const bookmarked = isBookmarked;
 
-    if (recipeBoxView && owner) {
-      return (
-        <>
+    if (selectedRecipe === null) return null;
+
+    // 1. Recipe Box View
+    if (recipeBoxView) {
+      if (btAccount) {
+        // Account owns this recipe → edit/delete/share
+        return (
+          <>
+            <TouchableOpacity
+              style={SelectedRecipeStyles.selectedTRButton}
+              onPress={handleShowOptions}>
+              <Icons.Options size={25} color={useColors('white')} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={SelectedRecipeStyles.selectedBRButton}
+              onPress={handleShareRec}>
+              <View style={{position: 'relative', top: -2}}>
+                <Icons.Share size={25} color={useColors('white')} />
+              </View>
+            </TouchableOpacity>
+          </>
+        );
+      } else {
+        // Not account owner → just bookmark toggle
+        return (
           <TouchableOpacity
             style={SelectedRecipeStyles.selectedTRButton}
-            onPress={handleShowOptions}>
-            <Icons.Options size={25} color={useColors('white')} />
+            onPress={bookmarked ? handleRemoveBM : handleAddBM}>
+            {bookmarked ? (
+              <Icons.BookmarkMinus size={25} color={useColors('white')} />
+            ) : (
+              <Icons.BookmarkPlus size={25} color={useColors('white')} />
+            )}
           </TouchableOpacity>
-
-          {/* <TouchableOpacity
-            style={SelectedRecipeStyles.selectedBLButton}
-            onPress={handleShareRec}>
-            <View style={{position: 'relative', top: -2}}>
-              <Icons.Share size={25} color={useColors('white')} />
-            </View>
-          </TouchableOpacity> */}
-        </>
-      );
+        );
+      }
     }
 
-    if (!recipeBoxView && !owner && !isBookmarked) {
-      return (
-        <TouchableOpacity
-          style={SelectedRecipeStyles.selectedTRButton}
-          onPress={handleAddBM}>
-          <Icons.BookmarkPlus size={25} color={useColors('white')} />
-        </TouchableOpacity>
-      );
-    }
-
-    if ((recipeBoxView && !owner) || isBookmarked) {
-      return (
-        <TouchableOpacity
-          style={SelectedRecipeStyles.selectedTRButton}
-          onPress={handleRemoveBM}>
-          <Icons.BookmarkMinus size={25} color={useColors('white')} />
-        </TouchableOpacity>
-      );
+    // 2. Community / Search View
+    if (!recipeBoxView) {
+      if (btAuthor) {
+        // Author of recipe → request edit/delete
+        return (
+          <>
+            <TouchableOpacity
+              style={SelectedRecipeStyles.selectedBRButton}
+              onPress={handleRequestEditDelete}>
+              <Icons.Account size={25} color={useColors('white')} />
+            </TouchableOpacity>
+            {admin && (
+              <TouchableOpacity
+                style={SelectedRecipeStyles.selectedBLButton}
+                onPress={handleShowOptions}>
+                <Icons.AdminEdit size={25} color={useColors('white')} />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={SelectedRecipeStyles.selectedTRButton}
+              onPress={bookmarked ? handleRemoveBM : handleAddBM}>
+              {bookmarked ? (
+                <Icons.BookmarkMinus size={25} color={useColors('white')} />
+              ) : (
+                <Icons.BookmarkPlus size={25} color={useColors('white')} />
+              )}
+            </TouchableOpacity>
+          </>
+        );
+      } else {
+        // Not author → just bookmark toggle
+        return (
+          <>
+            <TouchableOpacity
+              style={SelectedRecipeStyles.selectedTRButton}
+              onPress={bookmarked ? handleRemoveBM : handleAddBM}>
+              {bookmarked ? (
+                <Icons.BookmarkMinus size={25} color={useColors('white')} />
+              ) : (
+                <Icons.BookmarkPlus size={25} color={useColors('white')} />
+              )}
+            </TouchableOpacity>
+            {admin && (
+              <TouchableOpacity
+                style={SelectedRecipeStyles.selectedBLButton}
+                onPress={handleShowOptions}>
+                <Icons.AdminEdit size={25} color={useColors('white')} />
+              </TouchableOpacity>
+            )}
+          </>
+        );
+      }
     }
 
     return null;
-  }, [recipeBoxView, selectedRecipe, coreInfo]);
+  }, [coreInfo, selectedRecipe, isBookmarked, recipeBoxView]);
 
   return (
     <Modal
@@ -281,36 +354,12 @@ const SelectedRecipe = ({
 
       {renderButtons}
 
-      {/* {!recipeBoxView && (
-        <TouchableOpacity
-          style={SelectedRecipeStyles.selectedBookmarkButton}
-          onPress={handleAddBM}>
-          <Icons.BookmarkPlus size={25} color={useColors('white')} />
-        </TouchableOpacity>
-      )} */}
-
-      {/* {recipeBoxView && !selectedRecipe?.communityRecipe && (
-        <TouchableOpacity
-          style={SelectedRecipeStyles.selectedOptionsButton}
-          onPress={handleShowOptions}>
-          <Icons.Options size={25} color={useColors('white')} />
-        </TouchableOpacity>
-      )}
-
-      {recipeBoxView && selectedRecipe?.communityRecipe && (
-        <TouchableOpacity
-          style={SelectedRecipeStyles.selectedOptionsButton}
-          onPress={handleRemoveBM}>
-          <Icons.BookmarkPlus size={25} color={useColors('white')} />
-        </TouchableOpacity>
-      )} */}
-
       <View style={SelectedRecipeStyles.selectedViewWrapper} ph5>
-        {!recipeBoxView && (
+        {/* {!recipeBoxView && (
           <Text size="tiny" centered font="open-7" kqColor="dark90">
             {providedBy}
           </Text>
-        )}
+        )} */}
         <ScrollView>
           {!recipeBoxView &&
             selectedRecipe?.publicAuthor &&

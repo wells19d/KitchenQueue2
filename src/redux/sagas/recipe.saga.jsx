@@ -179,91 +179,203 @@ function* bookmarkCommunityRecipes(action) {
 }
 
 function* addToCommunityRecipes(action) {
-  let {recipe, admin, recipeBoxID} = action.payload;
+  // this comes from someone sharing their recipe
+  // let {recipe, admin, recipeBoxID} = action.payload;
+  // try {
+  //   if (!recipe?.id) return;
+  //   let docRef = doc(db, 'community', recipe.id);
+  //   // Check if this ID already exists (1 read)
+  //   const existing = yield call(getDoc, docRef);
+  //   if (existing.exists()) {
+  //     const newId = uuid.v4();
+  //     recipe = {...recipe, id: newId};
+  //     docRef = doc(db, 'community', newId);
+  //   }
+  //   recipe = {
+  //     ...recipe,
+  //     recipeShared: true,
+  //     userEdit: false,
+  //     sharedStatus: admin ? 'approved' : 'pending-review',
+  //   };
+  //   // Write recipe to community
+  //   yield call(setDoc, docRef, recipe);
+  //   // Update in recipeBox
+  //   const recipeBoxRef = doc(db, 'recipeBoxes', recipeBoxID);
+  //   const recipeBoxDoc = yield call(getDoc, recipeBoxRef);
+  //   if (recipeBoxDoc.exists()) {
+  //     const recipeBoxData = recipeBoxDoc.data();
+  //     const updatedItems = (recipeBoxData.items || []).map(item =>
+  //       item.id === (action.payload.recipe.id || recipe.id)
+  //         ? {
+  //             ...item,
+  //             recipeShared: true,
+  //             userEdit: false,
+  //             sharedStatus: admin ? 'approved' : 'pending-review',
+  //             ...(action.payload.recipe.id !== recipe.id && {id: recipe.id}),
+  //           }
+  //         : item,
+  //     );
+  //     yield call(updateDoc, recipeBoxRef, {
+  //       items: updatedItems,
+  //       lastUpdated: serverTimestamp(),
+  //     });
+  //     // ✅ update Redux immediately
+  //     yield put({
+  //       type: 'SET_RECIPE_BOX',
+  //       payload: {
+  //         ...recipeBoxData,
+  //         items: updatedItems,
+  //         lastUpdated: new Date().toISOString(),
+  //       },
+  //     });
+  //   }
+  //   Toast.show({
+  //     type: 'success',
+  //     text1: admin ? 'Recipe Added' : 'Recipe Submitted',
+  //     text2: admin
+  //       ? `${capEachWord(recipe?.title)} was added to the community recipes.`
+  //       : `${capEachWord(
+  //           recipe?.title,
+  //         )} was submitted for review. You will be notified once it's approved.`,
+  //   });
+  // } catch (error) {
+  //   yield put({type: 'COMMUNITY_ADD_FAILED', payload: error.message});
+  //   Toast.show({
+  //     type: 'danger',
+  //     text1: 'Failed to Add Recipe',
+  //     text2: `${capEachWord(
+  //       recipe?.title,
+  //     )} could not be added. Please try again later.`,
+  //   });
+  // }
+}
+
+function* updateToCommunityRecipes(action) {
+  const {editedRecipe, finalImage, profileID, pictureWasChanged, oldImageName} =
+    action.payload;
 
   try {
-    if (!recipe?.id) return;
+    const communityRef = doc(db, 'community', editedRecipe?.id);
+    const communityDoc = yield call(getDoc, communityRef);
 
-    let docRef = doc(db, 'community', recipe.id);
+    if (communityDoc.exists()) {
+      let imageSuccess = false;
+      let imageDeleted = false;
 
-    // Check if this ID already exists (1 read)
-    const existing = yield call(getDoc, docRef);
+      // 🔑 Step 1: Remove old image
+      if (pictureWasChanged && oldImageName) {
+        try {
+          const oldImageRef = storage().ref(`recipes/${oldImageName}`);
+          yield call([oldImageRef, oldImageRef.delete]);
+          imageDeleted = true;
+        } catch {
+          imageDeleted = false;
+        }
+      }
 
-    if (existing.exists()) {
-      const newId = uuid.v4();
-      recipe = {...recipe, id: newId};
-      docRef = doc(db, 'community', newId);
-    }
+      // 🔑 Step 2: Upload new image
+      if (pictureWasChanged && finalImage) {
+        try {
+          const reference = storage().ref(`recipes/${finalImage.name}`);
+          yield call([reference, reference.putFile], finalImage.uri);
+          const downloadURL = yield call([reference, reference.getDownloadURL]);
 
-    recipe = {
-      ...recipe,
-      recipeShared: true,
-      userEdit: false,
-      sharedStatus: admin ? 'approved' : 'pending-review',
-    };
+          editedRecipe.imageUri = downloadURL;
+          editedRecipe.image = finalImage.name;
+          editedRecipe.imageDate = finalImage.imageDate;
 
-    // Write recipe to community
-    yield call(setDoc, docRef, recipe);
+          imageSuccess = true;
+        } catch {
+          imageSuccess = false;
+        }
+      }
 
-    // Update in recipeBox
-    const recipeBoxRef = doc(db, 'recipeBoxes', recipeBoxID);
-    const recipeBoxDoc = yield call(getDoc, recipeBoxRef);
+      // 🔑 Step 3: Update Firestore doc
+      yield call(updateDoc, communityRef, {
+        ...editedRecipe,
+        lastUpdated: serverTimestamp(),
+        lastUpdatedBy: profileID,
+      });
 
-    if (recipeBoxDoc.exists()) {
-      const recipeBoxData = recipeBoxDoc.data();
+      // 🔑 Step 4: Get updated snapshot
+      const updatedDoc = yield call(getDoc, communityRef);
+      const updatedRecipe = {id: updatedDoc.id, ...updatedDoc.data()};
 
-      const updatedItems = (recipeBoxData.items || []).map(item =>
-        item.id === (action.payload.recipe.id || recipe.id)
-          ? {
-              ...item,
-              recipeShared: true,
-              userEdit: false,
-              sharedStatus: admin ? 'approved' : 'pending-review',
-              ...(action.payload.recipe.id !== recipe.id && {id: recipe.id}),
-            }
-          : item,
+      // 🔑 Step 5: Update Redux state (replace recipe in array)
+      const currentRecipes = yield select(
+        state => state.recipe.communityRecipes,
+      );
+      const updatedList = currentRecipes.map(rec =>
+        rec.id === updatedRecipe.id ? updatedRecipe : rec,
       );
 
-      yield call(updateDoc, recipeBoxRef, {
-        items: updatedItems,
-        lastUpdated: serverTimestamp(),
+      yield put({
+        type: 'SET_COMMUNITY_RECIPES',
+        payload: updatedList,
       });
 
-      // ✅ update Redux immediately
+      // 🔑 Step 6: Toast messages
+      if (imageDeleted && imageSuccess && pictureWasChanged) {
+        Toast.show({
+          type: 'success',
+          text1: 'Recipe Updated',
+          text2: `${capEachWord(
+            editedRecipe?.title,
+          )} and its image were updated.`,
+        });
+      } else if (!imageDeleted && imageSuccess && pictureWasChanged) {
+        Toast.show({
+          type: 'success',
+          text1: 'Recipe Updated',
+          text2: `${capEachWord(editedRecipe?.title)} updated and image added.`,
+        });
+      } else if (pictureWasChanged && !imageSuccess) {
+        Toast.show({
+          type: 'warning',
+          text1: 'Recipe Updated',
+          text2: `${capEachWord(
+            editedRecipe?.title,
+          )} updated, but the new image could not be saved.`,
+        });
+      } else {
+        Toast.show({
+          type: 'success',
+          text1: 'Recipe Updated',
+          text2: `${capEachWord(editedRecipe?.title)} updated successfully.`,
+        });
+      }
+    } else {
       yield put({
-        type: 'SET_RECIPE_BOX',
-        payload: {
-          ...recipeBoxData,
-          items: updatedItems,
-          lastUpdated: new Date().toISOString(),
-        },
+        type: 'UPDATE_TO_COMMUNITY_RECIPES_FAILED',
+        payload: 'Recipe not found.',
       });
     }
-
-    Toast.show({
-      type: 'success',
-      text1: admin ? 'Recipe Added' : 'Recipe Submitted',
-      text2: admin
-        ? `${capEachWord(recipe?.title)} was added to the community recipes.`
-        : `${capEachWord(
-            recipe?.title,
-          )} was submitted for review. You will be notified once it's approved.`,
-    });
   } catch (error) {
-    yield put({type: 'COMMUNITY_ADD_FAILED', payload: error.message});
+    yield put({
+      type: 'UPDATE_TO_COMMUNITY_RECIPES_FAILED',
+      payload: error.message,
+    });
     Toast.show({
       type: 'danger',
-      text1: 'Failed to Add Recipe',
+      text1: 'Failed to Update Recipe',
       text2: `${capEachWord(
-        recipe?.title,
-      )} could not be added. Please try again later.`,
+        editedRecipe?.title,
+      )} could not be updated. Please try again later.`,
     });
   }
 }
 
-function* updateToCommunityRecipes(action) {}
+function* deleteFromCommunityRecipes(action) {
+  // when admin deletes the community recipe
+}
 
-function* deleteFromCommunityRecipes(action) {}
+function* updateToCommunityRecipesRequest(action) {
+  // when someone sends in a request to edit their recipe
+}
+
+function* deleteFromCommunityRecipesRequest(action) {
+  // when someone sends in a request to delete their recipe
+}
 
 function* fetchPersonalRecipes(action) {
   const {recipeBoxID} = action.payload;
@@ -629,4 +741,12 @@ export default function* recipeSaga() {
   yield takeLatest('UPDATE_ITEM_IN_RECIPE_BOX', updateToPersonalRecipes);
   yield takeLatest('DELETE_ITEM_FROM_RECIPE_BOX', deleteFromPersonalRecipes);
   yield takeLatest('RESET_FAVORITES', resetRecipeBox);
+  yield takeLatest(
+    'UPDATE_TO_COMMUNITY_RECIPES_REQUEST',
+    updateToCommunityRecipesRequest,
+  );
+  yield takeLatest(
+    'DELETE_FROM_COMMUNITY_RECIPES_REQUEST',
+    deleteFromCommunityRecipesRequest,
+  );
 }

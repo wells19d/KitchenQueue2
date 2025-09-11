@@ -17,6 +17,9 @@ export const Icons = {
   Account: props => (
     <MCIcons name="account-circle" size={20} color="#000" {...props} />
   ),
+  AdminEdit: props => (
+    <MCIcons name="shield-lock-outline" size={20} color="#000" {...props} />
+  ),
   AddList: props => (
     <MCIcons name="playlist-plus" size={20} color="#000" {...props} />
   ),
