@@ -4,7 +4,7 @@
 
 ---
 
-### This repository is a **curated, read-only mirror** of Kitchen Queue’s **design system and front-end code**. It’s meant for portfolio/code review purposes only. Backend, credentials, and brand assets are intentionally omitted.
+### This repository is a **curated, read-only mirror** of Kitchen Queue’s front-end and design system. You are welcome to review the code and learn from our approach, but this project is **active, proprietary, and fully protected**. No code, assets, or designs from this repository may be copied, reused, or repurposed in any form.
 
 ## License
 
