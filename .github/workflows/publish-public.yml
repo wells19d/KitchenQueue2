@@ -1,64 +1,26 @@
-name: Publish Public Repo
+- name: Prepare public folder (whitelist copy)
+  run: |
+    set -e
+    mkdir -p public
 
-on:
-  push:
-    branches:
-      - main
+    copy_dir_if_exists() { [ -d "$1" ] && mkdir -p "$(dirname "public/$1")" && cp -R "$1" "public/$1"; }
+    copy_file_if_exists() { [ -f "$1" ] && cp "$1" public/; }
 
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout private repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+    # Root files (only the safe ones)
+    for f in App.jsx Main.jsx index.js app.json babel.config.js metro.config.js react-native.config.js jest.config.js; do
+      [ -f "$f" ] && cp "$f" public/
+    done
 
-      - name: Prepare public folder (exclude private files)
-        run: |
-          set -e
-          mkdir -p public
-          # Create a tarball of the repo while excluding private/sensitive paths, then extract to ./public
-          tar -cf public.tar \
-            --exclude='./__tests__' \
-            --exclude='./.bundle' \
-            --exclude='./.github' \
-            --exclude='./.vscode' \
-            --exclude='./algolia_search' \
-            --exclude='./android' \
-            --exclude='./functions' \
-            --exclude='./ios' \
-            --exclude='./node_modules' \
-            --exclude='./reset_daily_usage' \
-            --exclude='./Versioning.MD' \
-            --exclude='./version.json' \
-            --exclude='./syncVersion.js' \
-            --exclude='./bumpVersion.js' \
-            --exclude='./store.js' \
-            --exclude='./package.json' \
-            --exclude='./notes.txt' \
-            --exclude='./myRecipe.js' \
-            --exclude='./firebase.json' \
-            --exclude='./firebase.config.js' \
-            --exclude='./.firebaserc' \
-            --exclude='./exportComponents.js' \
-            --exclude='./src/utilities/realtime' \
-            --exclude='./src/svg' \
-            --exclude='./src/images' \
-            .
-          tar -xf public.tar -C public
+    # src/ whitelist
+    copy_dir_if_exists src/KQ-UI
+    copy_dir_if_exists src/components
+    copy_dir_if_exists src/hooks
+    copy_dir_if_exists src/redux/reducers
+    copy_dir_if_exists src/screens
+    copy_dir_if_exists src/utilities
+    copy_dir_if_exists src/styles
 
-      - name: Push to public repo
-        env:
-          PUBLIC_REPO_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
-        run: |
-          set -e
-          cd public
-          git init
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -B main
-          git add .
-          git commit -m "Sync from private repo"
-          git remote add origin https://x-access-token:${PUBLIC_REPO_TOKEN}@github.com/wells19d/KitchenQueuePublic.git
-          git push --force origin main
+    # Remove private subtrees we don't want
+    rm -rf public/src/utilities/realtime || true
+    rm -rf public/src/svg || true
+    rm -rf public/src/images || true
