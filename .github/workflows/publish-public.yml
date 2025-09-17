@@ -14,39 +14,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install rsync
-        run: sudo apt-get update && sudo apt-get install -y rsync
-
-      - name: Filter safe files
+      - name: Prepare public folder
         run: |
           mkdir public
-          rsync -av --progress ./ public --exclude={
-            "__tests__",
-            ".bundle",
-            ".github",
-            ".vscode",
-            "algolia_search",
-            "android",
-            "functions",
-            "ios",
-            "node_modules",
-            "reset_daily_usage",
-            "Versioning.MD",
-            "version.json",
-            "syncVersion.js",
-            "bumpVersion.js",
-            "store.js",
-            "package.json",
-            "notes.txt",
-            "myRecipe.js",
-            "firebase.json",
-            "firebase.config.js",
-            ".firebaserc",
-            "exportComponents.js",
-            "src/utilities/realtime",
-            "src/svg",
-            "src/images"
-          }
+          shopt -s extglob
+          cp -r !(\
+__tests__|.bundle|.github|.vscode|algolia_search|android|functions|ios|node_modules|reset_daily_usage|Versioning.MD|version.json|syncVersion.js|bumpVersion.js|store.js|package.json|notes.txt|myRecipe.js|firebase.json|firebase.config.js|.firebaserc|exportComponents.js|src/utilities/realtime|src/svg|src/images\
+) public || true
 
       - name: Push to public repo
         run: |
