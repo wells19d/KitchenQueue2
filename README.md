@@ -2,7 +2,7 @@
 
 **Know what you have. Cook what you love.**
 
-**KitchenQueue** is a comprehensive mobile application designed for families to share and streamline meal planning, grocery shopping, and kitchen inventory management. The app is built with React Native, leveraging Redux and Redux-Saga for state management, Firebase for authentication and Firestore for real-time database syncing. It uses a custom-built UI library (`KQ-UI`) for performance-focused, brand-consistent components.
+**Kitchen Queue** is a comprehensive mobile application designed for families to share and streamline meal planning, grocery shopping, and kitchen inventory management. The app is built with React Native, leveraging Redux and Redux-Saga for state management, Firebase for authentication and Firestore for real-time database syncing. It uses a custom-built UI library (`KQ-UI`) for performance-focused, brand-consistent components.
 
 ---
 
