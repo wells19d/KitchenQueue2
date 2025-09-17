@@ -99,3 +99,5 @@ This software is proprietary and confidential. Unauthorized copying, distributio
    - Visionary ideas are under active exploration and will be revealed as development continues.
 
 ---
+
+#### Thank you for visiting our public repository. This Repo has been setup with automatic features to update as we develop the live project that I work on nearly daily, but updated when we publish to our main branch.
