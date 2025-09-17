@@ -16,32 +16,18 @@ This software is proprietary and confidential. Unauthorized copying, distributio
 
 ### Built With
 
-#### Languages
-
 ![Javascript](https://img.shields.io/badge/Javascript-F0DB4F?style=for-the-badge&labelColor=black&logo=javascript&logoColor=F0DB4F)
-
-#### Frameworks & Libraries
-
 ![React](https://img.shields.io/badge/-React/React_Native-61DBFB?style=for-the-badge&labelColor=black&logo=react&logoColor=61DBFB)
 ![Redux](https://img.shields.io/badge/Redux-7248B6?style=for-the-badge&labelColor=black&logo=redux&logoColor=7248B6)
 ![Yarn](https://img.shields.io/badge/yarn-%232C8EBB.svg?style=for-the-badge&labelColor=black&logo=yarn&logoColor=232C8EBB)
 ![Nodejs](https://img.shields.io/badge/Node.js-3C873A?style=for-the-badge&labelColor=black&logo=node.js&logoColor=3C873A)
-
-#### Database / Backend
-
 ![FireBase](https://img.shields.io/badge/Firebase-a08021?style=for-the-badge&labelColor=black&logo=firebase&logoColor=ffcd34)
 ![Algolia](https://img.shields.io/badge/Algolia-5468FF?style=for-the-badge&labelColor=black&logo=algolia&logoColor=5468FF)
-
-#### Tooling
-
 ![VSCode](https://img.shields.io/badge/Visual_Studio_Code-0078d7?style=for-the-badge&labelColor=black&logo=visualstudiocode&logoColor=0078d7)
 ![Xcode](https://img.shields.io/badge/Xcode-007ACC?style=for-the-badge&labelColor=black&logo=Xcode&logoColor=007ACC)
 ![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&labelColor=black&logo=apple&logoColor=white)
 ![Android Studio](https://img.shields.io/badge/Android%20Studio-3DDC84.svg?style=for-the-badge&labelColor=black&logo=android-studio&logoColor=3DDC84)
 ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&labelColor=black&logo=github&logoColor=white)
-
-### Design Tools / OS's:
-
 ![Adobe Illustrator](https://img.shields.io/badge/adobe%20illustrator-%23FF9A00.svg?style=for-the-badge&labelColor=black&logo=adobe%20illustrator&logoColor=23FF9A00)
 ![Adobe Photoshop](https://img.shields.io/badge/adobe%20photoshop-%2331A8FF.svg?style=for-the-badge&labelColor=black&logo=adobe%20photoshop&logoColor=2331A8FF)
 ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&labelColor=black&logo=android&logoColor=3DDC84)
