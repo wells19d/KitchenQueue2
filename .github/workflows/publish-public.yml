@@ -14,6 +14,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install rsync
+        run: sudo apt-get update && sudo apt-get install -y rsync
+
       - name: Filter safe files
         run: |
           mkdir public
@@ -49,7 +52,7 @@ jobs:
         run: |
           cd public
           git init
-          git remote add origin https://github.com/YOUR_USERNAME/KitchenQueuePublic.git
+          git remote add origin https://github.com/wells19d/KitchenQueuePublic.git
           git checkout -b main
           git add .
           git commit -m "Sync from private repo"
