@@ -100,4 +100,6 @@ This software is proprietary and confidential. Unauthorized copying, distributio
 
 ---
 
-#### Thank you for visiting our public repository. This Repo has been setup with automatic features to update as we develop the live project that I work on nearly daily, but updated when we publish to our main branch.
+#### Thank you for visiting our public repository.
+
+This repo is automatically updated whenever we publish changes to the main branch of the private Kitchen Queue project.
