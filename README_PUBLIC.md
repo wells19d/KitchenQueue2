@@ -46,6 +46,7 @@ This software is proprietary and confidential. Unauthorized copying, distributio
 ![Adobe Photoshop](https://img.shields.io/badge/adobe%20photoshop-%2331A8FF.svg?style=for-the-badge&labelColor=black&logo=adobe%20photoshop&logoColor=2331A8FF)
 ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&labelColor=black&logo=android&logoColor=3DDC84)
 ![mac](https://img.shields.io/badge/iOS_/_oSX-%23000000.svg?style=for-the-badge&labelColor=black&logo=apple&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&labelColor=black&logo=windows&logoColor=0078D6)
 
 ---
 
