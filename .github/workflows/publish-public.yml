@@ -26,7 +26,9 @@ jobs:
         run: |
           cd public
           git init
-          git remote add origin https://github.com/wells19d/KitchenQueuePublic.git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/wells19d/KitchenQueuePublic.git
           git checkout -b main
           git add .
           git commit -m "Sync from private repo"
