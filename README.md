@@ -39,47 +39,48 @@
 
 ---
 
-### MVP Stage 2 (Free Version)
+### MVP Stage 2 (Subscription Base)
 
 1. **Recipe Box**
 
    - Users can create and manage their own recipes.
-   - Recipes check against the Cupboard to flag missing ingredients.
-   - Missing items can be added directly to the Shopping list.
-   - When a recipe is marked as "made," it deducts used ingredients from the Cupboard.
+   - Recipes check against the Cupboard to flag missing ingredients. _(In Development)_
+   - Missing items can be added directly to the Shopping list. _(In Development)_
+   - When a recipe is marked as "made," it deducts used ingredients from the Cupboard. _(In Development)_
 
 2. **Favorite Items**
 
    - Users can create and store frequently used or purchased items for quick access when building Shopping lists.
 
-3. **Dark Mode (Theme)**
-   - Users can select between light, dark, or auto theme.
+3. **UPC Scanning**
+
+   - Scan barcodes to quickly add items to Shopping or Cupboard inventories.
+
+4. **Recipe Searching**
+
+   - Search online recipes and save them to your personal Recipe Box.
+
+5. **Community Recipe Box**
+
+   - Share personal recipes within the community-contributed box (publicly or privately).
+   - Users can browse, favorite, and add recipes to their box.
 
 ---
 
 ### Future Enhancements (Subscription-Based Features)
 
-1. **UPC Scanning**
-
-   - Scan barcodes to quickly add items to Shopping or Cupboard inventories.
-
-2. **Recipe Searching**
-
-   - Search online recipes and save them to your personal Recipe Box.
-
-3. **Community Recipe Box**
-
-   - Shared recipe library with community-contributed meals.
-   - Users can browse, favorite, and add recipes to their box.
-
-4. **Meal Planning**
+1. **Meal Planning**
 
    - Plan meals by day, week, or month.
    - Automatically generate shopping lists for missing ingredients.
 
-5. **Nutritional Information**
+2. **Nutritional Information**
+
    - Analyze and display nutritional facts for recipes.
    - Help users make informed dietary choices.
+
+3. **Additional Features**
+   - Visionary ideas are under active exploration and will be revealed as development continues.
 
 ---
 
