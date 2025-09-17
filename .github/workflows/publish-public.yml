@@ -1,0 +1,56 @@
+name: Publish Public Repo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout private repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Filter safe files
+        run: |
+          mkdir public
+          rsync -av --progress ./ public --exclude={
+            "__tests__",
+            ".bundle",
+            ".github",
+            ".vscode",
+            "algolia_search",
+            "android",
+            "functions",
+            "ios",
+            "node_modules",
+            "reset_daily_usage",
+            "Versioning.MD",
+            "version.json",
+            "syncVersion.js",
+            "bumpVersion.js",
+            "store.js",
+            "package.json",
+            "notes.txt",
+            "myRecipe.js",
+            "firebase.json",
+            "firebase.config.js",
+            ".firebaserc",
+            "exportComponents.js",
+            "src/utilities/realtime",
+            "src/svg",
+            "src/images"
+          }
+
+      - name: Push to public repo
+        run: |
+          cd public
+          git init
+          git remote add origin https://github.com/YOUR_USERNAME/KitchenQueuePublic.git
+          git checkout -b main
+          git add .
+          git commit -m "Sync from private repo"
+          git push --force origin main
