@@ -3,13 +3,12 @@ const {initializeApp} = require('firebase-admin/app');
 const {onDocumentCreated} = require('firebase-functions/v2/firestore');
 const {logger} = require('firebase-functions');
 const nodemailer = require('nodemailer');
-const dns = require('dns');
 const {defineSecret} = require('firebase-functions/params');
 
 initializeApp();
 
 const EMAIL_LOGIN = 'admin@kitchen-queue.com';
-const EMAIL_USER = 'support@kitchen-queue.com';
+const EMAIL_USER = 'noreply@kitchen-queue.com'; // use noreply now for invites too?
 const EMAIL_PASS = defineSecret('SMTP_EMAIL_PASSWORD');
 
 exports.sendInviteEmail = onDocumentCreated(
@@ -25,27 +24,21 @@ exports.sendInviteEmail = onDocumentCreated(
       return;
     }
 
-    const transporter = nodemailer.createTransport(
-      {
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-          user: EMAIL_LOGIN,
-          pass: EMAIL_PASS.value(), // ✅ safe here — runtime only
-        },
-        debug: true,
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: EMAIL_LOGIN, // must be admin@
+        pass: EMAIL_PASS.value(), // App Password
       },
-      {
-        from: `Kitchen Queue <${EMAIL_USER}>`,
-      },
-    );
+    });
 
     const recipientEmail = data.email;
     const inviterName = `${data.fromFirst} ${data.fromLast}`;
 
     const mailOptions = {
-      from: `Kitchen Queue <${EMAIL_USER}>`,
+      from: `Kitchen Queue <${EMAIL_USER}>`, // this is the "visible" from
       to: recipientEmail,
       subject: 'You’ve been invited to join a Kitchen Queue account',
       text: `
@@ -62,16 +55,7 @@ This code will expire after 7 days.
 Thanks,  
 The Kitchen Queue Team
       `.trim(),
-      bounce: 'errors@kitchen-queue.com',
     };
-
-    dns.lookup('mail.kitchen-queue.com', (err, address) => {
-      if (err) {
-        logger.error('❌ DNS Lookup failed:', err);
-      } else {
-        logger.info(`✅ DNS Lookup succeeded: ${address}`);
-      }
-    });
 
     try {
       await transporter.sendMail(mailOptions);
