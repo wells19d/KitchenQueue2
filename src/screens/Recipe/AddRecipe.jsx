@@ -27,9 +27,9 @@ const AddRecipe = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const {recipeToEdit, editingRecipe, fromCommunity} = route.params || {};
-  console.log('recipeToEdit', recipeToEdit);
-  console.log('editingRecipe', editingRecipe);
-  console.log('fromCommunity', fromCommunity);
+  // console.log('recipeToEdit', recipeToEdit);
+  // console.log('editingRecipe', editingRecipe);
+  // console.log('fromCommunity', fromCommunity);
 
   const [validation1, setValidation1] = useState(false);
   const [validation2, setValidation2] = useState(false);

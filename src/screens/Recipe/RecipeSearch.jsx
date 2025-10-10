@@ -1,7 +1,11 @@
 //* RecipeSearch.jsx
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Image, Input, Layout, Text} from '../../KQ-UI';
-import {useRecipeDataLoading, useRecipesData} from '../../hooks/useHooks';
+import {
+  useDeviceInfo,
+  useRecipeDataLoading,
+  useRecipesData,
+} from '../../hooks/useHooks';
 import {TouchableOpacity, View, ActivityIndicator} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {FlashList} from '@shopify/flash-list';
@@ -18,6 +22,22 @@ import {capEachWord} from '../../utilities/helpers';
 const RecipeSearch = () => {
   const dispatch = useDispatch();
   const core = useCoreInfo();
+  const deviceInfo = useDeviceInfo();
+  const {view: deviceView, system} = deviceInfo || {};
+  const deviceType = system?.device;
+
+  const columnRows = useMemo(() => {
+    if (deviceType !== 'Tablet') return 2;
+
+    switch (deviceView) {
+      case 'Portrait':
+        return 3;
+      case 'Landscape':
+        return 4;
+      default:
+        return 2;
+    }
+  }, [deviceInfo]);
 
   const recipesFound = useRecipesData();
   const recipeLoading = useRecipeDataLoading();
@@ -301,7 +321,7 @@ const RecipeSearch = () => {
                 }
                 estimatedItemSize={300}
                 extraData={renderItem}
-                numColumns={2}
+                numColumns={columnRows}
               />
             )}
           </View>

@@ -1,7 +1,7 @@
 //* KQButton.jsx
 import React, {useCallback} from 'react';
-import {Keyboard, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {Text} from '../KQ-UI/';
+import {Keyboard, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, View} from '../KQ-UI/';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
 import {
   useColors,
@@ -28,6 +28,8 @@ const KQButton = ({
   underline = false,
   underlineColor = null,
   underlineWidth = 1,
+  symbols = false,
+  symbolStyle = {},
   ...props
 }) => {
   const useHaptics = setHapticFeedback();
@@ -62,11 +64,18 @@ const KQButton = ({
             borderColor: underlineColor || buttonColor,
           },
         ]}>
-        <Text
-          numberOfLines={1}
-          style={[ButtonStyles.buttonText, fontStyles, textStyle]}>
-          {children}
-        </Text>
+        {!symbols && (
+          <Text
+            numberOfLines={1}
+            style={[ButtonStyles.buttonText, fontStyles, textStyle]}>
+            {children}
+          </Text>
+        )}
+        {symbols && (
+          <View centerVH style={symbolStyle}>
+            {children}
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );

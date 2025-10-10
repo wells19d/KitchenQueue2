@@ -275,6 +275,8 @@ const SelectedItemInfo = props => {
                   <View style={SelectItemStyles.quantityContainer}>
                     <Button
                       type="ghost"
+                      symbols
+                      symbolStyle={{width: 35, height: '100%'}}
                       style={{flex: 1}}
                       onPress={() => {
                         setQuantity(prev => Math.max(1, prev - 1));
@@ -289,6 +291,8 @@ const SelectedItemInfo = props => {
                   <View style={SelectItemStyles.quantityContainer}>
                     <Button
                       type="ghost"
+                      symbols
+                      symbolStyle={{width: 35, height: '100%'}}
                       style={{flex: 1}}
                       onPress={() => {
                         setQuantity(prev => prev + 1);

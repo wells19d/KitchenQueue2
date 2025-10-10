@@ -1,5 +1,5 @@
 //* device.saga.jsx
-import {put, takeLatest, call, takeEvery} from 'redux-saga/effects';
+import {put, takeLatest, call, take} from 'redux-saga/effects';
 import {
   getBrand,
   getDeviceType,
@@ -9,7 +9,7 @@ import {
   getSystemVersion,
   hasNotch,
 } from 'react-native-device-info';
-import {Dimensions, PixelRatio} from 'react-native';
+import {Dimensions} from 'react-native';
 import {eventChannel} from 'redux-saga';
 
 function createDimensionChannel() {
@@ -27,7 +27,8 @@ function* watchDeviceDimensions() {
   const channel = createDimensionChannel();
   try {
     while (true) {
-      yield takeEvery(channel, fetchDeviceInfo);
+      yield take(channel);
+      yield call(fetchDeviceInfo);
     }
   } finally {
     channel.close();
@@ -37,28 +38,25 @@ function* watchDeviceDimensions() {
 function* fetchDeviceInfo() {
   try {
     const {width, height} = Dimensions.get('window');
-
-    const ratio = (
-      Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / 100
-    ).toFixed(1);
+    const ratio = (Math.sqrt(width ** 2 + height ** 2) / 100).toFixed(1);
 
     const brand = yield call(getBrand);
     const formattedBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
 
-    // Calculate device size
+    // device size category
     let sizeForDevice = 'xSmall';
+    if (ratio >= 10.5) sizeForDevice = 'xLarge';
+    else if (ratio >= 9.7) sizeForDevice = 'large';
+    else if (ratio >= 9.4) sizeForDevice = 'medium';
+    else if (ratio >= 9.0) sizeForDevice = 'small';
 
-    if (ratio >= 10.5) {
-      sizeForDevice = 'xLarge';
-    } else if (ratio >= 9.7) {
-      sizeForDevice = 'large';
-    } else if (ratio >= 9.4) {
-      sizeForDevice = 'medium';
-    } else if (ratio >= 9.0) {
-      sizeForDevice = 'small';
-    } else {
-      sizeForDevice = 'xSmall';
-    }
+    // ✅ Each call individually resolved
+    const deviceType = yield call(getDeviceType);
+    const model = yield call(getModel);
+    const os = yield call(getSystemName);
+    const version = yield call(getSystemVersion);
+    const notch = yield call(hasNotch);
+    const landscape = yield call(isLandscape);
 
     const deviceInfo = {
       dimensions: {
@@ -68,15 +66,17 @@ function* fetchDeviceInfo() {
       },
       system: {
         brand: formattedBrand,
-        device: yield call(getDeviceType),
+        device: deviceType,
         deviceSize: sizeForDevice,
-        model: yield call(getModel),
-        os: yield call(getSystemName),
-        version: yield call(getSystemVersion),
-        notch: yield call(hasNotch),
+        model,
+        os,
+        version,
+        notch,
       },
-      view: yield call(isLandscape) ? 'Landscape' : 'Portrait',
+      view: landscape ? 'Landscape' : 'Portrait',
     };
+
+    console.log('device type', deviceInfo.system.device);
 
     yield put({type: 'SET_DEVICE_INFO', payload: deviceInfo});
   } catch (error) {
@@ -86,5 +86,5 @@ function* fetchDeviceInfo() {
 
 export default function* deviceSaga() {
   yield takeLatest('FETCH_DEVICE_INFO', fetchDeviceInfo);
-  yield watchDeviceDimensions(); // Listens for dimension changes
+  yield call(watchDeviceDimensions); // watches for dimension changes
 }

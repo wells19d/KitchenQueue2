@@ -1,10 +1,10 @@
 //* RecipeBox.jsx
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Button, Image, Layout, Text, View} from '../../KQ-UI';
 import {ListStyles, RecipeSearchStyles} from '../../styles/Styles';
 import {useNavigation} from '@react-navigation/native';
-import {useProfile, useRecipeBox} from '../../hooks/useHooks';
+import {useDeviceInfo, useProfile, useRecipeBox} from '../../hooks/useHooks';
 import {FlashList} from '@shopify/flash-list';
 import {StyleSheet, TouchableOpacity} from 'react-native';
 import {Icons} from '../../components/IconListRouter';
@@ -21,6 +21,22 @@ const RecipeBox = () => {
   const useHaptics = setHapticFeedback();
   const profile = useProfile();
   const recipesList = recipeBox?.items || [];
+  const deviceInfo = useDeviceInfo();
+  const {view: deviceView, system} = deviceInfo || {};
+  const deviceType = system?.device;
+
+  const columnRows = useMemo(() => {
+    if (deviceType !== 'Tablet') return 2;
+
+    switch (deviceView) {
+      case 'Portrait':
+        return 3;
+      case 'Landscape':
+        return 4;
+      default:
+        return 2;
+    }
+  }, [deviceInfo]);
 
   const handleCreateRecipe = () => {
     navigation.navigate('AddRecipe');
@@ -141,7 +157,7 @@ const RecipeBox = () => {
               }
               estimatedItemSize={300}
               extraData={recipesList}
-              numColumns={2}
+              numColumns={columnRows}
             />
           </View>
         ) : (
