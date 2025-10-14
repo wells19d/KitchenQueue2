@@ -52,20 +52,6 @@ const SelectedRecipe = ({
 
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
 
-  // const providedBy = useMemo(() => {
-  //   if (selectedRecipe?.publicAuthor) {
-  //     if (selectedRecipe?.displayAuthorName) {
-  //       return `KQ Recipe provided by ${selectedRecipe.authorFirstName} ${selectedRecipe.authorLastName}`;
-  //     } else {
-  //       return `KQ Recipe provided by ${selectedRecipe.authorOnlineName}`;
-  //     }
-  //   } else if (selectedRecipe?.source === 'Epicurious') {
-  //     return `KQ Recipe provided by Kitchen Queue`;
-  //   } else {
-  //     return `KQ Recipe provided by a Private User`;
-  //   }
-  // }, [selectedRecipe]);
-
   const SectionHead = ({title, value, style}) => {
     if (value) {
       return (
@@ -119,7 +105,7 @@ const SelectedRecipe = ({
 
   const handleEditRec = () => {
     onClose();
-    navigation.navigate('AddRecipe', {
+    navigation.navigate('EditRecipe', {
       recipeToEdit: selectedRecipe,
       editingRecipe: true,
       fromCommunity: recipeBoxView ? false : true,
@@ -211,7 +197,18 @@ const SelectedRecipe = ({
 
     if (selectedRecipe === null) return null;
 
+    console.log('selectedRecipe:', selectedRecipe);
+    // console.log('recipeBoxView:', recipeBoxView);
+
     // 1. Recipe Box View
+    if (recipeBoxView) {
+    }
+
+    // 2. Community / Search View
+    if (!recipeBoxView) {
+    }
+
+    // // 1. Recipe Box View
     if (recipeBoxView) {
       if (btAccount) {
         // Account owns this recipe → edit/delete/share
@@ -247,7 +244,7 @@ const SelectedRecipe = ({
       }
     }
 
-    // 2. Community / Search View
+    // // 2. Community / Search View
     if (!recipeBoxView) {
       if (btAuthor) {
         // Author of recipe → request edit/delete
@@ -301,7 +298,7 @@ const SelectedRecipe = ({
       }
     }
 
-    return null;
+    // return null;
   }, [coreInfo, selectedRecipe, isBookmarked, recipeBoxView]);
 
   return (

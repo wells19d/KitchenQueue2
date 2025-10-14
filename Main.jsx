@@ -70,6 +70,7 @@ import AddRecipe from './src/screens/Recipe/AddRecipe';
 import FastImage from 'react-native-fast-image';
 import {useRequestPermissions} from './src/hooks/useRequestPermissions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import EditRecipe from './src/screens/Recipe/EditRecipe';
 
 const Main = props => {
   const {appReady, isSplashVisible} = props;
@@ -343,6 +344,11 @@ const Main = props => {
           <Stack.Screen
             name="AddRecipe"
             component={AddRecipe}
+            options={{freezeOnBlur: true}}
+          />
+          <Stack.Screen
+            name="EditRecipe"
+            component={EditRecipe}
             options={{freezeOnBlur: true}}
           />
           <Stack.Screen

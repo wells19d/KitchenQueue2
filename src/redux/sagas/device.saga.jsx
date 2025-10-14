@@ -76,8 +76,6 @@ function* fetchDeviceInfo() {
       view: landscape ? 'Landscape' : 'Portrait',
     };
 
-    console.log('device type', deviceInfo.system.device);
-
     yield put({type: 'SET_DEVICE_INFO', payload: deviceInfo});
   } catch (error) {
     yield put({type: 'DEVICE_INFO_FETCH_FAILED', payload: error.message});

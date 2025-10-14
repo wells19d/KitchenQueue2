@@ -13,6 +13,7 @@ import {Icons} from '../components/IconListRouter';
 import {setHapticFeedback} from '../hooks/setHapticFeedback';
 import {useCoreInfo} from '../utilities/coreInfo';
 import {useDeviceInfo} from '../hooks/useHooks';
+import {useColors} from './KQUtilities';
 
 const KQDropdown = ({
   label = '',
@@ -105,25 +106,35 @@ const KQDropdown = ({
       )}
       <View style={styles.dropWrapper}>
         <TouchableOpacity
+          disabled={props.disabled}
           onPress={handleOnPress}
           style={styles.textInputContainer(isIOS, onRow)}>
-          <Text style={renderStyles} numberOfLines={1}>
+          <Text
+            style={renderStyles}
+            numberOfLines={1}
+            kqColor={props.disabled ? 'dark50' : 'dark90'}>
             {value?.label || placeholder}
           </Text>
         </TouchableOpacity>
 
         {value && (
           <TouchableOpacity
+            disabled={props.disabled}
             onPress={handleClear}
             style={styles.textInputAccessory(isIOS, onRow)}>
-            <Icons.Close />
+            <Icons.Close
+              color={props.disabled ? useColors('dark50') : useColors('black')}
+            />
           </TouchableOpacity>
         )}
 
         <TouchableOpacity
+          disabled={props.disabled}
           onPress={handleOnPress}
           style={styles.textInputAccessory(isIOS, onRow)}>
-          <Icons.ChevronDown />
+          <Icons.ChevronDown
+            color={props.disabled ? useColors('dark50') : useColors('black')}
+          />
         </TouchableOpacity>
       </View>
       {caption && (
@@ -131,7 +142,7 @@ const KQDropdown = ({
           <View style={{flex: 1}}>
             <Text
               size="xSmall"
-              kqColor="dark90"
+              kqColor={props.disabled ? 'dark50' : 'dark90'}
               font="open-5"
               numberOfLines={1}>
               ({caption})
@@ -294,7 +305,7 @@ const styles = {
   },
   labelContainer: {position: 'relative', left: 0},
   label: (validation, disabled) => ({
-    color: validation ? '#fE4949' : disabled ? '#373d4390' : '#373d43',
+    color: validation ? '#DA2C43' : disabled ? '#373d4390' : '#373d43',
   }),
   dropWrapper: {
     flexDirection: 'row',

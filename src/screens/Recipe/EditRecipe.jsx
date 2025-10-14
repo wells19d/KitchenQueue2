@@ -1,10 +1,14 @@
-//* AddRecipe.jsx
+//* EditRecipe.jsx
 
 import React, {useEffect, useMemo, useState} from 'react';
 import {BottomSheet, Button, Input, Layout, Text, View} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {displaySourceType} from '../../utilities/materialSource';
-import {displayDropField, displayDropArray} from '../../utilities/helpers';
+import {
+  displayDropField,
+  displayDropArray,
+  capEachWord,
+} from '../../utilities/helpers';
 import {displayCuisineTypes} from '../../utilities/cuisineType';
 import {displayDishTypes} from '../../utilities/dishType';
 import {displayDietTypes} from '../../utilities/dietType';
@@ -15,10 +19,15 @@ import IngredientForm from './Forms/IngredientForm';
 import InstructionForm from './Forms/InstructionForm';
 import RecipeForm from './Forms/RecipeForm';
 import {useDispatch} from 'react-redux';
+import {useNavigation, useRoute} from '@react-navigation/native';
 
-const AddRecipe = () => {
+const EditRecipe = () => {
   const core = useCoreInfo();
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const route = useRoute();
+  const {recipeToEdit, editingRecipe, fromCommunity} = route.params || {};
+  console.log('recipeToEdit:', recipeToEdit);
 
   const [validation1, setValidation1] = useState(false);
   const [validation2, setValidation2] = useState(false);
@@ -30,8 +39,10 @@ const AddRecipe = () => {
   const [sourceMaterial, setSourceMaterial] = useState(
     displayDropField(displaySourceType) ?? null,
   );
+
   const [source, setSource] = useState(null);
   const [sourceURL, setSourceURL] = useState(null);
+
   const [cuisineType, setCuisineType] = useState(
     displayDropArray(displayCuisineTypes) ?? null,
   );
@@ -74,7 +85,20 @@ const AddRecipe = () => {
   const [keywords, setKeywords] = useState(null);
   const [pictureName, setPictureName] = useState(null);
 
+  const [ignoreSource, setIgnoreSource] = useState(false);
+
   useEffect(() => {
+    if (sourceMaterial && sourceType && source && sourceURL) return;
+
+    if (recipeToEdit?.source === 'Epicurious') {
+      setSourceMaterial(displaySourceType.find(i => i.key === 'website'));
+      setSourceType('online');
+      setSource('Epicurious');
+      setSourceURL(recipeToEdit.sourceURL || 'www.epicurious.com');
+      setIgnoreSource(true);
+      return;
+    }
+
     if (!sourceMaterial) {
       setSource(null);
       setSourceType(null);
@@ -83,39 +107,33 @@ const AddRecipe = () => {
 
     const key = sourceMaterial?.key;
 
-    switch (true) {
-      case key === 'personal':
-        setSource('personal');
-        setSourceType('personal');
-        break;
-
-      case ['friend', 'family'].includes(key):
-        setSource(null);
-        setSourceType('private');
-        break;
-
-      case ['social', 'website', 'app'].includes(key):
-        setSource(null);
-        setSourceType('online');
-        break;
-
-      case [
-        'cookbook',
-        'restaurant',
-        'tv',
-        'magazine',
-        'package',
-        'event',
-      ].includes(key):
-        setSource(null);
-        setSourceType('published');
-        break;
-
-      default:
-        setSourceType(null);
-        break;
+    if (key === 'personal') {
+      setSource('personal');
+      setSourceType('personal');
+    } else if (['friend', 'family'].includes(key)) {
+      setSource(prev => (editingRecipe && prev ? prev : null));
+      setSourceType('private');
+    } else if (['social', 'website', 'app'].includes(key)) {
+      setSource(prev => (editingRecipe && prev ? prev : null));
+      setSourceType('online');
+    } else if (
+      ['cookbook', 'restaurant', 'tv', 'magazine', 'package', 'event'].includes(
+        key,
+      )
+    ) {
+      setSource(prev => (editingRecipe && prev ? prev : null));
+      setSourceType('published');
+    } else {
+      setSourceType(null);
     }
-  }, [sourceMaterial]);
+  }, [
+    recipeToEdit,
+    sourceMaterial,
+    editingRecipe,
+    sourceType,
+    source,
+    sourceURL,
+  ]);
 
   useMemo(() => {
     const normalized = normalizeTitleForKeywords(recipeName);
@@ -128,46 +146,40 @@ const AddRecipe = () => {
   }, [recipeName]);
 
   const recipeObject = {
-    title: recipeName?.toLowerCase().trim() ?? null,
-    sourceMaterial: sourceMaterial?.key ?? null,
-    source: source?.toLowerCase().trim() ?? null,
-    sourceURL: sourceURL?.trim().toLowerCase().replace(/\s+/g, '') ?? null,
-    credit: core?.onlineName,
-    authorOnlineName: core?.onlineName,
-    authorFirstName: core?.firstName,
-    authorLastName: core?.lastName,
-    authorID: core?.userID,
-    accountID: core?.accountID,
-    adminEdit: true,
-    userEdit: true,
-    cuisines: cuisineType?.map(c => c.value),
-    dishTypes: dishType?.map(c => c.value),
-    diets: dietType?.map(c => c.value),
-    displayAuthorName: false, // later addition - for shared recipes
-    publicAuthor: false, // later addition - for shared recipes
-    recipeShared: false, // later addition - for shared recipes
-    sharedStatus: 'approved', // later addition - for shared recipes // for admin approvals
-    servings: servings ? Number(servings) : null,
-    prepTime: prepTime ? Number(prepTime) : null,
-    cookTime: cookTime ? Number(cookTime) : null,
-    readyIn: prepTime && cookTime ? Number(prepTime) + Number(cookTime) : null,
-    ingredients: ingredients,
-    instructions: instructions,
-    image: finalImage?.name ?? null,
+    ...recipeToEdit,
+    title: recipeName?.toLowerCase().trim() ?? recipeToEdit?.title ?? null,
+    sourceMaterial: sourceMaterial?.key ?? recipeToEdit?.sourceMaterial ?? null,
+    source: source?.toLowerCase().trim() ?? recipeToEdit?.source ?? null,
+    sourceURL:
+      sourceURL?.trim().toLowerCase().replace(/\s+/g, '') ??
+      recipeToEdit?.sourceURL ??
+      null,
+    cuisines: cuisineType?.map(c => c.value) ?? recipeToEdit?.cuisines ?? [],
+    dishTypes: dishType?.map(c => c.value) ?? recipeToEdit?.dishTypes ?? [],
+    diets: dietType?.map(c => c.value) ?? recipeToEdit?.diets ?? [],
+    servings: servings ? Number(servings) : recipeToEdit?.servings ?? null,
+    prepTime: prepTime ? Number(prepTime) : recipeToEdit?.prepTime ?? null,
+    cookTime: cookTime ? Number(cookTime) : recipeToEdit?.cookTime ?? null,
+    readyIn:
+      prepTime && cookTime
+        ? Number(prepTime) + Number(cookTime)
+        : recipeToEdit?.readyIn ?? null,
+    ingredients: ingredients?.length
+      ? ingredients
+      : recipeToEdit?.ingredients ?? [],
+    instructions: instructions?.length
+      ? instructions
+      : recipeToEdit?.instructions ?? [],
+    image: finalImage?.name ?? recipeToEdit?.image ?? null,
     imageUri: finalImage
       ? `https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2F${finalImage?.name}?alt=media`
-      : null,
-    imageDate: finalImage?.imageDate ?? null,
-    pictureApproved: true,
-    ingredientList:
-      ingredients?.map(ing => ing.name?.toLowerCase().trim() ?? null) ?? null,
-    isArchived: false,
-    keywords: keywords ?? null,
-    aboutRecipe: aboutRecipe?.trim() ?? null,
-    seasonal: null, // later addition
-    occasions: null, // later addition
-    healthScore: null, // later addition
-    ratingScore: null, // later addition
+      : recipeToEdit?.imageUri ?? null,
+    imageDate: finalImage?.imageDate ?? recipeToEdit?.imageDate ?? null,
+    ingredientList: ingredients?.length
+      ? ingredients.map(ing => ing.name?.toLowerCase().trim())
+      : recipeToEdit?.ingredientList ?? [],
+    keywords: keywords ?? recipeToEdit?.keywords ?? [],
+    aboutRecipe: aboutRecipe?.trim() ?? recipeToEdit?.aboutRecipe ?? null,
   };
 
   const isValidText = value =>
@@ -234,6 +246,54 @@ const AddRecipe = () => {
     if (sourceMaterial?.key === 'event') return 'Ex: Square One';
     return null;
   }, [sourceMaterial]);
+
+  useMemo(() => {
+    if (editingRecipe) {
+      setRecipeName(capEachWord(recipeToEdit?.title));
+      setSourceMaterial(
+        displaySourceType.find(
+          item => item.key === recipeToEdit?.sourceMaterial,
+        ) || null,
+      );
+      setSource(capEachWord(recipeToEdit?.source));
+      setSourceURL(recipeToEdit?.sourceURL || null);
+      setCuisineType(
+        displayCuisineTypes.filter(c =>
+          recipeToEdit?.cuisines?.includes(c.value),
+        ) || null,
+      );
+      setDishType(
+        displayDishTypes.filter(d =>
+          recipeToEdit?.dishTypes?.includes(d.value),
+        ) || null,
+      );
+      setDietType(
+        displayDietTypes.filter(d => recipeToEdit?.diets?.includes(d.value)) ||
+          null,
+      );
+      setServings(recipeToEdit?.servings?.toString() || null);
+      setPrepTime(recipeToEdit?.prepTime?.toString() || null);
+      setCookTime(recipeToEdit?.cookTime?.toString() || null);
+      setIngredients(recipeToEdit?.ingredients || []);
+      setInstructions(recipeToEdit?.instructions || []);
+      setAboutRecipe(recipeToEdit?.aboutRecipe || null);
+      setFinalImage(
+        recipeToEdit?.image
+          ? {
+              imageUri: recipeToEdit?.imageUri,
+              uri: recipeToEdit?.imageUri,
+              imageDate: recipeToEdit?.imageDate,
+            }
+          : null,
+      );
+    }
+  }, [recipeToEdit, editingRecipe]);
+
+  const imageChanged = useMemo(() => {
+    return Boolean(
+      finalImage?.imageDate && finalImage.imageDate !== recipeToEdit?.imageDate,
+    );
+  }, [finalImage?.imageDate, recipeToEdit?.imageDate]);
 
   const handleCloseIngredients = () => {
     setCanPressIngredients(false);
@@ -308,21 +368,49 @@ const AddRecipe = () => {
   const handleSaveRecipe = () => {
     if (!canSave) return;
 
-    dispatch({
-      type: 'ADD_ITEM_TO_RECIPE_BOX',
-      payload: {
-        recipeBoxID: core?.recipeBoxID,
-        newRecipe: recipeObject,
-        finalImage,
-        profileID: core?.userID,
-      },
-    });
+    const editedRecipeSafe = {
+      ...recipeObject,
+      ...(imageChanged
+        ? {}
+        : {
+            image: recipeToEdit?.image ?? null,
+            imageUri: recipeToEdit?.imageUri ?? null,
+            imageDate: recipeToEdit?.imageDate ?? null,
+          }),
+    };
+
+    !fromCommunity &&
+      dispatch({
+        type: 'UPDATE_ITEM_IN_RECIPE_BOX',
+        payload: {
+          recipeBoxID: core?.recipeBoxID,
+          editedRecipe: editedRecipeSafe,
+          finalImage,
+          profileID: core?.userID,
+          pictureWasChanged: imageChanged,
+          oldImageName: recipeToEdit?.image,
+        },
+      });
+
+    fromCommunity &&
+      dispatch({
+        type: 'UPDATE_TO_COMMUNITY_RECIPES',
+        payload: {
+          editedRecipe: editedRecipeSafe,
+          finalImage,
+          profileID: core?.userID,
+          pictureWasChanged: imageChanged,
+          oldImageName: recipeToEdit?.image,
+        },
+      });
+
     resetForm();
+    navigation.goBack();
   };
 
   return (
     <Layout
-      headerTitle={'Add Recipe'}
+      headerTitle={'Edit Recipe'}
       LeftButton="Back"
       RightButton={canSave ? 'Save' : ''}
       LeftAction={null}
@@ -370,6 +458,7 @@ const AddRecipe = () => {
         setPrepTime={setPrepTime}
         cookTime={cookTime}
         setCookTime={setCookTime}
+        ignoreSource={ignoreSource}
       />
       <View row>
         <View flex mt20>
@@ -505,4 +594,4 @@ const AddRecipe = () => {
   );
 };
 
-export default AddRecipe;
+export default EditRecipe;

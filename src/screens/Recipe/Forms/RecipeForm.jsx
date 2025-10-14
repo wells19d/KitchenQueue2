@@ -34,6 +34,7 @@ const RecipeForm = props => {
     setPrepTime,
     cookTime,
     setCookTime,
+    ignoreSource,
   } = props;
 
   return (
@@ -48,6 +49,7 @@ const RecipeForm = props => {
         capitalize
         capitalMode="words"
       />
+
       <Dropdown
         required
         label="Source Material"
@@ -58,6 +60,7 @@ const RecipeForm = props => {
         mapData={displaySourceType}
         validation={validation2}
         validationMessage="Source Material is required"
+        disabled={ignoreSource}
       />
       {sourceType !== 'personal' && sourceType !== null && (
         <Input
@@ -73,6 +76,7 @@ const RecipeForm = props => {
           caption={
             sourceType === 'private' && 'Not Displayed Publicly. Reference Only'
           }
+          disabled={ignoreSource}
         />
       )}
       {sourceType === 'online' && sourceType !== null && (
@@ -86,6 +90,7 @@ const RecipeForm = props => {
           validationMessage="Source URL is required"
           capitalize
           capitalMode="none"
+          disabled={ignoreSource}
         />
       )}
 
