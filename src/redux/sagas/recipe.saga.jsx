@@ -61,6 +61,9 @@ function* fetchCommunityRecipes(action) {
 
       if (recipeDocSnapshot.exists) {
         const data = recipeDocSnapshot.data();
+        if (data.isArchived) {
+          continue; // skip archived recipes
+        }
         fetchedRecipes.push({
           id: recipeDocSnapshot.id,
           ...data,

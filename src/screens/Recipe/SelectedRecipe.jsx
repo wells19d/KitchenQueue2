@@ -1,6 +1,6 @@
 //* SelectedRecips.jsx
 
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import {
   ActionSheetIOS,
   Alert,
@@ -21,11 +21,12 @@ import {toFraction} from '../../utilities/fractionUnit';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {SelectedRecipeStyles} from '../../styles/Styles';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
-import {useProfile, useRecipeBox} from '../../hooks/useHooks';
+import {useProfile} from '../../hooks/useHooks';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import KQTempRecipe from '../../svg/KitchenQueueTempRecipe';
+import HeaderButtons from './HeaderButtons';
 
 const SelectedRecipe = ({
   selectedRecipe,
@@ -38,19 +39,11 @@ const SelectedRecipe = ({
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const coreInfo = useCoreInfo();
-  // console.log('coreInfo:', coreInfo);
-
   const profile = useProfile();
-  // console.log('profile:', profile);
-  const recipeBox = useRecipeBox();
-  const recipesListIDs = recipeBox?.items?.map(rec => rec?.id) || [];
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const isBookmarked = useMemo(() => {
-    return recipesListIDs.includes(selectedRecipe?.id);
-  }, [recipesListIDs, selectedRecipe]);
-
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
+
+  console.log('selectedRecipe:', selectedRecipe);
 
   const SectionHead = ({title, value, style}) => {
     if (value) {
@@ -67,6 +60,40 @@ const SelectedRecipe = ({
       );
     }
     return null;
+  };
+
+  const handleAddBM = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    onClose();
+    dispatch({
+      type: 'BOOKMARK_TO_RECIPE_BOX',
+      payload: {
+        recipeBoxID: coreInfo?.recipeBoxID,
+        selectedRecipe: selectedRecipe,
+        profileID: coreInfo?.userID,
+      },
+    });
+    setTimeout(() => setIsProcessing(false), 500);
+  };
+
+  const handleRemoveBM = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
+    if (isProcessing) return;
+    setIsProcessing(true);
+    onClose();
+    dispatch({
+      type: 'DELETE_ITEM_FROM_RECIPE_BOX',
+      payload: {
+        recipeBoxID: coreInfo?.recipeBoxID,
+        selectedRecipe: selectedRecipe,
+        profileID: coreInfo?.userID,
+        owner: selectedRecipe?.accountID === coreInfo?.accountID,
+      },
+    });
+    setTimeout(() => setIsProcessing(false), 500);
   };
 
   const handleShowOptions = () => {
@@ -101,9 +128,9 @@ const SelectedRecipe = ({
     }
   };
 
-  const handleRequestEditDelete = () => {};
-
+  // Edit Recipe - navigate to EditRecipe screen
   const handleEditRec = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
     onClose();
     navigation.navigate('EditRecipe', {
       recipeToEdit: selectedRecipe,
@@ -112,11 +139,9 @@ const SelectedRecipe = ({
     });
   };
 
-  const handleShareRec = () => {
-    // console.log('Share recipe', selectedRecipe?.title);
-  };
-
+  // Delete Recipe - confirm and dispatch
   const handleDeleteRec = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
     Alert.alert(
       'Delete Recipe',
       'Are you sure you want to delete this recipe?',
@@ -138,6 +163,7 @@ const SelectedRecipe = ({
                 },
               });
             } else {
+              // we need to change this. We would want to archive.
               dispatch({
                 type: 'DELETE_FROM_COMMUNITY_RECIPES',
                 payload: {
@@ -154,152 +180,16 @@ const SelectedRecipe = ({
     );
   };
 
-  const handleAddBM = () => {
-    if (isProcessing) return;
-    setIsProcessing(true);
-
-    onClose();
-    dispatch({
-      type: 'BOOKMARK_TO_RECIPE_BOX',
-      payload: {
-        recipeBoxID: coreInfo?.recipeBoxID,
-        selectedRecipe: selectedRecipe,
-        profileID: coreInfo?.userID,
-      },
-    });
-    setTimeout(() => setIsProcessing(false), 500);
+  const handleShareRec = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
+    console.log('Request Share Recipe');
+    // this shares the recipe to community
   };
-
-  const handleRemoveBM = () => {
-    if (isProcessing) return;
-    setIsProcessing(true);
-    onClose();
-    dispatch({
-      type: 'DELETE_ITEM_FROM_RECIPE_BOX',
-      payload: {
-        recipeBoxID: coreInfo?.recipeBoxID,
-        selectedRecipe: selectedRecipe,
-        profileID: coreInfo?.userID,
-        owner: selectedRecipe?.accountID === coreInfo?.accountID,
-      },
-    });
-    setTimeout(() => setIsProcessing(false), 500);
+  const handleRequestEditDelete = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
+    console.log('Request Edit/Delete Recipe');
+    // this requests admin to edit/delete the recipe
   };
-
-  const handleAdminEditRecipe = () => {};
-  const handleAdminDeleteRecipe = () => {};
-
-  const renderButtons = useMemo(() => {
-    const admin = coreInfo?.admin;
-    const btAccount = selectedRecipe?.accountID === coreInfo?.accountID; // belongs to account
-    const btAuthor = selectedRecipe?.authorID === coreInfo?.userID; // belongs to author
-    const bookmarked = isBookmarked;
-
-    if (selectedRecipe === null) return null;
-
-    console.log('selectedRecipe:', selectedRecipe);
-    // console.log('recipeBoxView:', recipeBoxView);
-
-    // 1. Recipe Box View
-    if (recipeBoxView) {
-    }
-
-    // 2. Community / Search View
-    if (!recipeBoxView) {
-    }
-
-    // // 1. Recipe Box View
-    if (recipeBoxView) {
-      if (btAccount) {
-        // Account owns this recipe → edit/delete/share
-        return (
-          <>
-            <TouchableOpacity
-              style={SelectedRecipeStyles.selectedTRButton}
-              onPress={handleShowOptions}>
-              <Icons.Options size={25} color={useColors('white')} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={SelectedRecipeStyles.selectedBRButton}
-              onPress={handleShareRec}>
-              <View style={{position: 'relative', top: -2}}>
-                <Icons.Share size={25} color={useColors('white')} />
-              </View>
-            </TouchableOpacity>
-          </>
-        );
-      } else {
-        // Not account owner → just bookmark toggle
-        return (
-          <TouchableOpacity
-            style={SelectedRecipeStyles.selectedTRButton}
-            onPress={bookmarked ? handleRemoveBM : handleAddBM}>
-            {bookmarked ? (
-              <Icons.BookmarkMinus size={25} color={useColors('white')} />
-            ) : (
-              <Icons.BookmarkPlus size={25} color={useColors('white')} />
-            )}
-          </TouchableOpacity>
-        );
-      }
-    }
-
-    // // 2. Community / Search View
-    if (!recipeBoxView) {
-      if (btAuthor) {
-        // Author of recipe → request edit/delete
-        return (
-          <>
-            <TouchableOpacity
-              style={SelectedRecipeStyles.selectedBRButton}
-              onPress={handleRequestEditDelete}>
-              <Icons.Account size={25} color={useColors('white')} />
-            </TouchableOpacity>
-            {admin && (
-              <TouchableOpacity
-                style={SelectedRecipeStyles.selectedBLButton}
-                onPress={handleShowOptions}>
-                <Icons.AdminEdit size={25} color={useColors('white')} />
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity
-              style={SelectedRecipeStyles.selectedTRButton}
-              onPress={bookmarked ? handleRemoveBM : handleAddBM}>
-              {bookmarked ? (
-                <Icons.BookmarkMinus size={25} color={useColors('white')} />
-              ) : (
-                <Icons.BookmarkPlus size={25} color={useColors('white')} />
-              )}
-            </TouchableOpacity>
-          </>
-        );
-      } else {
-        // Not author → just bookmark toggle
-        return (
-          <>
-            <TouchableOpacity
-              style={SelectedRecipeStyles.selectedTRButton}
-              onPress={bookmarked ? handleRemoveBM : handleAddBM}>
-              {bookmarked ? (
-                <Icons.BookmarkMinus size={25} color={useColors('white')} />
-              ) : (
-                <Icons.BookmarkPlus size={25} color={useColors('white')} />
-              )}
-            </TouchableOpacity>
-            {admin && (
-              <TouchableOpacity
-                style={SelectedRecipeStyles.selectedBLButton}
-                onPress={handleShowOptions}>
-                <Icons.AdminEdit size={25} color={useColors('white')} />
-              </TouchableOpacity>
-            )}
-          </>
-        );
-      }
-    }
-
-    // return null;
-  }, [coreInfo, selectedRecipe, isBookmarked, recipeBoxView]);
 
   return (
     <Modal
@@ -343,13 +233,17 @@ const SelectedRecipe = ({
         )}
       </View>
 
-      <TouchableOpacity
-        style={SelectedRecipeStyles.selectedCloseButton}
-        onPress={onClose}>
-        <Icons.Close size={25} color={useColors('white')} />
-      </TouchableOpacity>
-
-      {renderButtons}
+      {/* {renderButtons} */}
+      <HeaderButtons
+        selectedRecipe={selectedRecipe}
+        recipeBoxView={recipeBoxView}
+        handleAddBM={handleAddBM}
+        handleRemoveBM={handleRemoveBM}
+        handleShowOptions={handleShowOptions}
+        handleShareRec={handleShareRec}
+        handleRequestEditDelete={handleRequestEditDelete}
+        onClose={onClose}
+      />
 
       <View style={SelectedRecipeStyles.selectedViewWrapper} ph5>
         {/* {!recipeBoxView && (

@@ -27,7 +27,6 @@ const EditRecipe = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const {recipeToEdit, editingRecipe, fromCommunity} = route.params || {};
-  console.log('recipeToEdit:', recipeToEdit);
 
   const [validation1, setValidation1] = useState(false);
   const [validation2, setValidation2] = useState(false);
@@ -180,6 +179,11 @@ const EditRecipe = () => {
       : recipeToEdit?.ingredientList ?? [],
     keywords: keywords ?? recipeToEdit?.keywords ?? [],
     aboutRecipe: aboutRecipe?.trim() ?? recipeToEdit?.aboutRecipe ?? null,
+    // recipeShared: true,
+    // sharedStatus: 'approved',
+    // userEdit: false,
+    // ratingScore: 4.5,
+    // publicAuthor: true,
   };
 
   const isValidText = value =>
