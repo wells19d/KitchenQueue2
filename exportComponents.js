@@ -3,8 +3,12 @@ const path = require('path');
 
 const ROOT_DIR = __dirname;
 const COMPONENT_DIR = path.join(ROOT_DIR); // Start at project root
-const OUTPUT_STRUCTURE_FILE = path.join(ROOT_DIR, 'sandbox', 'y-structure.txt');
-const OUTPUT_CODE_FILE = path.join(ROOT_DIR, 'sandbox', 'z-export.txt');
+const OUTPUT_STRUCTURE_FILE = path.join(
+  ROOT_DIR,
+  'z-sandbox',
+  'y-structure.txt',
+);
+const OUTPUT_CODE_FILE = path.join(ROOT_DIR, 'z-sandbox', 'z-export.txt');
 
 const codeExtensions = ['.js', '.jsx', '.ts', '.tsx', '.json']; // for z-export
 const structureExtensions = [...codeExtensions, '.png']; // for y-structure
