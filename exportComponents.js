@@ -17,6 +17,7 @@ const ignoreFolders = [
   '__tests__',
   'node_modules',
   '.git',
+  'z-sandbox',
 ];
 const ignoreFiles = [
   '.DS_Store',
