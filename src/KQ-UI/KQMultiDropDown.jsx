@@ -128,9 +128,13 @@ const KQMultiDropdown = ({
       )}
       <View style={styles.dropWrapper}>
         <TouchableOpacity
+          disabled={props.disabled}
           onPress={handleOnPress}
           style={styles.textInputContainer(isIOS, onRow)}>
-          <Text style={renderStyles} numberOfLines={1}>
+          <Text
+            style={renderStyles}
+            kqColor={props.disabled ? 'dark50' : 'black'}
+            numberOfLines={1}>
             {Array.isArray(value) && value.length > 0
               ? value.map(v => v.label).join(', ')
               : placeholder}
@@ -139,6 +143,7 @@ const KQMultiDropdown = ({
 
         {value?.length > 0 && (
           <TouchableOpacity
+            disabled={props.disabled}
             onPress={handleClear}
             style={styles.textInputAccessory(isIOS, onRow)}>
             <Icons.Close />
@@ -146,6 +151,7 @@ const KQMultiDropdown = ({
         )}
 
         <TouchableOpacity
+          disabled={props.disabled}
           onPress={handleOnPress}
           style={styles.textInputAccessory(isIOS, onRow)}>
           <Icons.ChevronDown />

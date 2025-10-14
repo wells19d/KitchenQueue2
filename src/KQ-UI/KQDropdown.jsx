@@ -112,7 +112,7 @@ const KQDropdown = ({
           <Text
             style={renderStyles}
             numberOfLines={1}
-            kqColor={props.disabled ? 'dark50' : 'dark90'}>
+            kqColor={props.disabled ? 'dark50' : 'black'}>
             {value?.label || placeholder}
           </Text>
         </TouchableOpacity>

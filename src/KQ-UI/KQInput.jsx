@@ -88,7 +88,8 @@ const KQInput = ({
       <View style={[styles.inputWrapper, {...wrapperStyles}]}>
         <View style={[styles.textInputContainer, {...textInputStyles}]}>
           {props.disabled ? (
-            <Text style={[fontStyles, {padding: 0, color: '#c4c4c4'}]}>
+            <Text
+              style={[fontStyles, {padding: 0, color: useColors('dark50')}]}>
               {value}
             </Text>
           ) : (
