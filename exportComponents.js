@@ -19,6 +19,7 @@ const ignoreFolders = [
   '.git',
   'z-sandbox',
 ];
+
 const ignoreFiles = [
   '.DS_Store',
   '.eslintrc.js',
