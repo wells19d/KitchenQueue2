@@ -75,9 +75,4 @@ yarn-error.log
 !.yarn/versions
 
 # dev
-x-instructions.txt
-y-structure.txt
-z-export.txt
-notes.txt
-/myRecipe.js
-/recipebuttons.md
+/z-sandbox/
