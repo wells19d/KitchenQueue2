@@ -253,6 +253,92 @@ function* addToCommunityRecipes(action) {
   // }
 }
 
+function* shareToCommunityRecipes(action) {
+  const {recipeBoxID, selectedRecipe, recipeID} = action.payload;
+
+  try {
+    const communityRef = doc(db, 'community', recipeID);
+    const communityDoc = yield call(getDoc, communityRef);
+    const idExists = communityDoc.exists();
+
+    let finalID = recipeID;
+    let finalDoc = {...selectedRecipe};
+
+    if (idExists) {
+      let newID;
+      let newExists = true;
+      let attempts = 0;
+      const maxAttempts = 3;
+
+      while (newExists && attempts < maxAttempts) {
+        newID = uuid.v4();
+        const checkRef = doc(db, 'community', newID);
+        const checkDoc = yield call(getDoc, checkRef);
+        newExists = checkDoc.exists();
+        attempts++;
+      }
+
+      if (newExists) {
+        Toast.show({
+          type: 'danger',
+          text1: 'Recipe Share Failed',
+          text2: `An unexpected error occurred while sharing your recipe. Please try again later.`,
+        });
+        return;
+      }
+
+      finalID = newID;
+      finalDoc = {...selectedRecipe, id: newID};
+    }
+
+    const targetRef = doc(db, 'community', finalID);
+    yield call(setDoc, targetRef, finalDoc);
+
+    // Step 4: Mirror update in user's recipe box
+    const recipeBoxRef = doc(db, 'recipeBoxes', recipeBoxID);
+    const recipeBoxDoc = yield call(getDoc, recipeBoxRef);
+
+    if (recipeBoxDoc.exists) {
+      const recipeBoxData = recipeBoxDoc.data();
+
+      // remove old recipe and insert the shared version
+      const filteredItems = (recipeBoxData.items || []).filter(
+        item => item.id !== recipeID,
+      );
+
+      const updatedItems = [...filteredItems, finalDoc];
+
+      yield call(updateDoc, recipeBoxRef, {items: updatedItems});
+
+      yield put({
+        type: 'SET_RECIPE_BOX',
+        payload: {
+          ...recipeBoxData,
+          items: updatedItems,
+        },
+      });
+
+      Toast.show({
+        type: 'success',
+        text1: 'Recipe Shared',
+        text2: `${capEachWord(finalDoc?.title)} is now part of the community.`,
+      });
+    } else {
+      Toast.show({
+        type: 'danger',
+        text1: 'Recipe Share Failed',
+        text2: 'Could not update your recipe box. Please try again later.',
+      });
+    }
+  } catch (error) {
+    Toast.show({
+      type: 'danger',
+      text1: 'Recipe Share Failed',
+      text2: `An unexpected error occurred while sharing your recipe. Please try again later.`,
+    });
+  }
+}
+
 function* updateToCommunityRecipes(action) {
   const {editedRecipe, finalImage, profileID, pictureWasChanged, oldImageName} =
     action.payload;
@@ -736,6 +822,7 @@ function* resetRecipeBox(action) {}
 export default function* recipeSaga() {
   yield takeLatest('FETCH_COMMUNITY_RECIPES', fetchCommunityRecipes);
   yield takeLatest('ADD_TO_COMMUNITY_RECIPES', addToCommunityRecipes);
+  yield takeLatest('SHARE_TO_COMMUNITY_RECIPES', shareToCommunityRecipes);
   yield takeLatest('UPDATE_TO_COMMUNITY_RECIPES', updateToCommunityRecipes);
   yield takeLatest('DELETE_FROM_COMMUNITY_RECIPES', deleteFromCommunityRecipes);
   yield takeLatest('FETCH_RECIPE_BOX', fetchPersonalRecipes);

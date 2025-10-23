@@ -30,7 +30,6 @@ const HeaderButtons = ({
   const btAuthor = selectedRecipe?.authorID === coreInfo?.userID; // belongs to author
   const bookmarked = isBookmarked;
   const shared = selectedRecipe?.recipeShared;
-  console.log('shared:', shared);
 
   const CloseButton = () => {
     return (
@@ -71,7 +70,7 @@ const HeaderButtons = ({
   };
 
   const UserShareButton = () => {
-    if (!shared && btAccount && recipeBoxView) {
+    if (!shared && btAccount && btAuthor && recipeBoxView) {
       return (
         <TouchableOpacity
           style={SelectedRecipeStyles.selectedBRButton}
@@ -114,7 +113,7 @@ const HeaderButtons = ({
       <BookmarkButton />
       <UserEditButton />
       <UserShareButton />
-      <AuthorRequestButton />
+      {/* <AuthorRequestButton /> */}
       <AdminEditButton />
     </>
   );

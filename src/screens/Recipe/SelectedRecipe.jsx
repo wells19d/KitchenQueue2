@@ -43,8 +43,6 @@ const SelectedRecipe = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
 
-  console.log('selectedRecipe:', selectedRecipe);
-
   const SectionHead = ({title, value, style}) => {
     if (value) {
       return (
@@ -183,8 +181,37 @@ const SelectedRecipe = ({
   const handleShareRec = () => {
     useHaptics(profile?.userSettings?.hapticStrength || 'light');
     console.log('Request Share Recipe');
-    // this shares the recipe to community
+    Alert.alert(
+      'Share Recipe',
+      // `You’re about to share this recipe with the community. Once shared, it becomes part of the community and can no longer be edited by you. If you need to change or remove it later, you can submit a review request to the admin team. Would you like to continue?`,
+      `You’re about to share this recipe with the community. Once shared, it becomes part of the community and can no longer be edited. Would you like to continue?`,
+      [
+        {text: 'Cancel', style: 'destructive'},
+        {
+          text: 'Share',
+          onPress: () => {
+            const sharedRecipe = {
+              ...selectedRecipe,
+              recipeShared: true,
+              sharedStatus: 'approved',
+              userEdit: false,
+            };
+
+            dispatch({
+              type: 'SHARE_TO_COMMUNITY_RECIPES',
+              payload: {
+                recipeBoxID: coreInfo?.recipeBoxID,
+                selectedRecipe: sharedRecipe,
+                recipeID: sharedRecipe.id,
+              },
+            });
+          },
+        },
+      ],
+    );
   };
+
+  // This is a future feature. Right now we don't have anything in place for admins to get messages.
   const handleRequestEditDelete = () => {
     useHaptics(profile?.userSettings?.hapticStrength || 'light');
     console.log('Request Edit/Delete Recipe');
