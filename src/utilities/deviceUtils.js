@@ -11,6 +11,8 @@ export const hbDevices = [
 
 export const isHBDevice = model => hbDevices.includes(model);
 
+export const isTablet = device => device?.system?.device === 'Tablet';
+
 export const isAndroidPhone = device =>
   device?.system?.os === 'Android' && device?.system?.device === 'Handset';
 

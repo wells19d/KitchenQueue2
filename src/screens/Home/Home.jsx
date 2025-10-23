@@ -15,6 +15,8 @@ const Home = () => {
   const navigation = useNavigation();
 
   let screenWidth = device?.dimensions?.width;
+  if (!screenWidth || isNaN(screenWidth)) screenWidth = 1000;
+
   const imageCutRatio = 1000 / (screenWidth / 1.5);
   const imageWidth = 1000 / imageCutRatio;
   const imageHeight = 500 / imageCutRatio;

@@ -43,6 +43,8 @@ const SelectedRecipe = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
 
+  console.log('selectedRecipe', selectedRecipe);
+
   const SectionHead = ({title, value, style}) => {
     if (value) {
       return (

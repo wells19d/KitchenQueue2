@@ -282,7 +282,8 @@ function* shareToCommunityRecipes(action) {
         Toast.show({
           type: 'danger',
           text1: 'Recipe Share Failed',
-          text2: `An unexpected error occurred while sharing your recipe. Please try again later.`,
+          text2:
+            'An unexpected error occurred while sharing your recipe. Please try again later.',
         });
         return;
       }
@@ -291,8 +292,11 @@ function* shareToCommunityRecipes(action) {
       finalDoc = {...selectedRecipe, id: newID};
     }
 
+    // 🧹 Remove transient fields before saving
+    const {imageUri, lastUpdated, itemDate, ...cleanDoc} = finalDoc;
+
     const targetRef = doc(db, 'community', finalID);
-    yield call(setDoc, targetRef, finalDoc);
+    yield call(setDoc, targetRef, cleanDoc);
 
     // Step 4: Mirror update in user's recipe box
     const recipeBoxRef = doc(db, 'recipeBoxes', recipeBoxID);
@@ -306,7 +310,7 @@ function* shareToCommunityRecipes(action) {
         item => item.id !== recipeID,
       );
 
-      const updatedItems = [...filteredItems, finalDoc];
+      const updatedItems = [...filteredItems, cleanDoc];
 
       yield call(updateDoc, recipeBoxRef, {items: updatedItems});
 
@@ -321,7 +325,7 @@ function* shareToCommunityRecipes(action) {
       Toast.show({
         type: 'success',
         text1: 'Recipe Shared',
-        text2: `${capEachWord(finalDoc?.title)} is now part of the community.`,
+        text2: `${capEachWord(cleanDoc?.title)} is now part of the community.`,
       });
     } else {
       Toast.show({
@@ -334,7 +338,8 @@ function* shareToCommunityRecipes(action) {
     Toast.show({
       type: 'danger',
       text1: 'Recipe Share Failed',
-      text2: `An unexpected error occurred while sharing your recipe. Please try again later.`,
+      text2:
+        'An unexpected error occurred while sharing your recipe. Please try again later.',
     });
   }
 }
@@ -351,49 +356,58 @@ function* updateToCommunityRecipes(action) {
       let imageSuccess = false;
       let imageDeleted = false;
 
-      // 🔑 Step 1: Remove old image
+      // 🔑 Step 1: Remove the old image (if changed)
       if (pictureWasChanged && oldImageName) {
         try {
-          const oldImageRef = storage().ref(`recipes/${oldImageName}`);
-          yield call([oldImageRef, oldImageRef.delete]);
+          const oldRef = storage().ref(`recipes/${oldImageName}`);
+          yield call([oldRef, oldRef.delete]);
           imageDeleted = true;
         } catch {
-          imageDeleted = false;
+          imageDeleted = false; // ignore delete error
         }
       }
 
-      // 🔑 Step 2: Upload new image
+      // 🔑 Step 2: Upload new image (if changed)
       if (pictureWasChanged && finalImage) {
         try {
-          const reference = storage().ref(`recipes/${finalImage.name}`);
-          yield call([reference, reference.putFile], finalImage.uri);
-          const downloadURL = yield call([reference, reference.getDownloadURL]);
+          const newRef = storage().ref(`recipes/${finalImage.name}`);
+          yield call([newRef, newRef.putFile], finalImage.uri);
+          // Don’t use getDownloadURL() – we always build static URIs
+          imageSuccess = true;
 
-          editedRecipe.imageUri = downloadURL;
+          // Apply new image data (filename + date)
           editedRecipe.image = finalImage.name;
           editedRecipe.imageDate = finalImage.imageDate;
 
-          imageSuccess = true;
+          // Clean static public URI (no ?token)
+          editedRecipe.imageUri = `https://firebasestorage.googleapis.com/v0/b/kitchen-queue-fe2fe.firebasestorage.app/o/recipes%2F${encodeURIComponent(
+            finalImage.name,
+          )}?alt=media`;
         } catch {
           imageSuccess = false;
         }
       }
 
-      // 🔑 Step 3: Update Firestore doc
+      // 🔑 Step 3: Clean transient fields before writing
+      const {imageUri, ...cleanRecipe} = editedRecipe;
+
+      // 🔑 Step 4: Update the document
       yield call(updateDoc, communityRef, {
-        ...editedRecipe,
+        ...cleanRecipe,
+        image: editedRecipe.image,
+        imageDate: editedRecipe.imageDate,
         lastUpdated: serverTimestamp(),
         lastUpdatedBy: profileID,
       });
 
-      // 🔑 Step 4: Get updated snapshot
+      // 🔑 Step 5: Refresh local state
       const updatedDoc = yield call(getDoc, communityRef);
       const updatedRecipe = {id: updatedDoc.id, ...updatedDoc.data()};
 
-      // 🔑 Step 5: Update Redux state (replace recipe in array)
       const currentRecipes = yield select(
         state => state.recipe.communityRecipes,
       );
+
       const updatedList = currentRecipes.map(rec =>
         rec.id === updatedRecipe.id ? updatedRecipe : rec,
       );
@@ -403,7 +417,7 @@ function* updateToCommunityRecipes(action) {
         payload: updatedList,
       });
 
-      // 🔑 Step 6: Toast messages
+      // 🔑 Step 6: Toasts
       if (imageDeleted && imageSuccess && pictureWasChanged) {
         Toast.show({
           type: 'success',

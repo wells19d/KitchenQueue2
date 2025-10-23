@@ -4,7 +4,11 @@ import {Alert, TouchableOpacity, View} from 'react-native';
 import CurvedBottomBar from './CurvedBottomBar';
 import {Icons} from '../components/IconListRouter';
 import {useNavigation} from '@react-navigation/native';
-import {getMenuButtonHeight, getNavBarHeight} from '../utilities/deviceUtils';
+import {
+  getMenuButtonHeight,
+  getNavBarHeight,
+  isTablet,
+} from '../utilities/deviceUtils';
 import {
   CurvedBarStyles,
   MenuButtonStyles,
@@ -27,6 +31,8 @@ const NavMenu = props => {
   const useHaptics = setHapticFeedback();
   const navigation = useNavigation();
 
+  const tablet = isTablet(device);
+
   const menuButtonHeight = useMemo(
     () => getMenuButtonHeight(device, bottomHeight, navMode),
     [device, bottomHeight],
@@ -39,16 +45,33 @@ const NavMenu = props => {
 
   const userItems = [
     {
+      tablet: false,
       id: 'shopping',
       title: 'Shopping',
       icon: <Icons.Shopping size={25} color={'#000'} />,
       screen: 'ShoppingList',
     },
+
     {
+      tablet: true,
+      id: 'favorite',
+      title: 'Favorites',
+      icon: <Icons.Favorite size={25} color={'#000'} />,
+      screen: 'FavoritesList',
+    },
+    {
+      tablet: false,
       id: 'cupboard',
-      title: 'Cupboard',
+      title: 'Cupboards',
       icon: <Icons.Cupboards size={25} color={'#000'} />,
       screen: 'CupboardList-Single',
+    },
+    {
+      tablet: true,
+      id: 'recipeBox',
+      title: 'Recipe Box',
+      icon: <Icons.Recipe size={25} color={'#000'} />,
+      screen: 'RecipeBox',
     },
   ];
 
@@ -89,6 +112,8 @@ const NavMenu = props => {
       'ShoppingList',
       'CupboardList-Single',
       'Account',
+      'FavoritesList',
+      'RecipeBox',
     ];
 
     if (allowedScreens.includes(item.screen)) {
@@ -112,6 +137,7 @@ const NavMenu = props => {
         />
         <View style={MenuButtonStyles.wrapper}>
           {navItems.map((item, index) => {
+            if (item.tablet && !tablet) return null;
             if (item.id === 'spacer') {
               return (
                 <View key={index} style={MenuButtonStyles.container}>

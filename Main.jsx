@@ -103,6 +103,11 @@ const Main = props => {
   const [showPermModal, setShowPermModal] = useState(false);
 
   useEffect(() => {
+    FastImage.clearMemoryCache();
+    FastImage.clearDiskCache();
+  }, []);
+
+  useEffect(() => {
     const check = async () => {
       if (renderDisplay !== 'main') return;
 
