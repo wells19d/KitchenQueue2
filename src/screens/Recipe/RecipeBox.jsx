@@ -21,7 +21,6 @@ const RecipeBox = () => {
   const useHaptics = setHapticFeedback();
   const profile = useProfile();
   const recipesList = recipeBox?.items || [];
-  console.log('recipesList', recipesList);
   const deviceInfo = useDeviceInfo();
   const {view: deviceView, system} = deviceInfo || {};
   const deviceType = system?.device;

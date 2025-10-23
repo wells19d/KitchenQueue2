@@ -1,6 +1,6 @@
 //* SelectedRecips.jsx
 
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   ActionSheetIOS,
   Alert,
@@ -21,12 +21,13 @@ import {toFraction} from '../../utilities/fractionUnit';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {SelectedRecipeStyles} from '../../styles/Styles';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
-import {useProfile} from '../../hooks/useHooks';
+import {useDeviceInfo, useProfile} from '../../hooks/useHooks';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import KQTempRecipe from '../../svg/KitchenQueueTempRecipe';
 import HeaderButtons from './HeaderButtons';
+import {isTablet} from '../../utilities/deviceUtils';
 
 const SelectedRecipe = ({
   selectedRecipe,
@@ -42,8 +43,17 @@ const SelectedRecipe = ({
   const profile = useProfile();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
+  const deviceInfo = useDeviceInfo();
+  const tablet = deviceInfo?.system?.device === 'Tablet';
 
-  console.log('selectedRecipe', selectedRecipe);
+  const [columns, setColumns] = useState(tablet ? 3 : !tablet ? 2 : 1);
+
+  const handleTextLayout = useCallback(e => {
+    const {lines} = e.nativeEvent;
+    if (lines.length > 1) {
+      setColumns(prev => Math.max(1, prev - 1)); // reduce by one
+    }
+  }, []);
 
   const SectionHead = ({title, value, style}) => {
     if (value) {
@@ -321,17 +331,22 @@ const SelectedRecipe = ({
             {selectedRecipe?.ingredients?.map((ing, index) => (
               <View
                 key={index}
-                style={
-                  useOneColumn
-                    ? SelectedRecipeStyles.ingColOne
-                    : SelectedRecipeStyles.ingColTwo
-                }>
+                style={{
+                  width: `${100 / columns}%`,
+                  justifyContent: 'center',
+                  paddingVertical: 2,
+                  paddingLeft: tablet ? 25 : columns === 1 ? 15 : 7,
+                }}>
                 <View row>
                   <View style={SelectedRecipeStyles.ingDot}>
                     <Icons.Dot size={4} />
                   </View>
                   <View flex>
-                    <Text size="xSmall" font="open-7" numberOfLines={3}>
+                    <Text
+                      size="xSmall"
+                      font="open-7"
+                      numberOfLines={3}
+                      onTextLayout={handleTextLayout}>
                       {(() => {
                         if (ing.amount != null) {
                           const pluralUnit = formatPluralUnit(
