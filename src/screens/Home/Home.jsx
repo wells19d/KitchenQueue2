@@ -1,9 +1,9 @@
 //* Home.jsx
 import React, {useMemo} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {Layout, Text} from '../../KQ-UI';
+import {Layout, Text, View} from '../../KQ-UI';
 import {useCoreInfo} from '../../utilities/coreInfo';
-import {Image, TouchableOpacity, View} from 'react-native';
+import {Image, TouchableOpacity} from 'react-native';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {useDeviceInfo} from '../../hooks/useHooks';
 import {Icons} from '../../components/IconListRouter';
@@ -13,11 +13,23 @@ const Home = () => {
   const core = useCoreInfo();
   const device = useDeviceInfo();
   const navigation = useNavigation();
+  const isTablet = device?.system?.device === 'Tablet';
+  const sideWays = device?.view === 'Landscape';
 
   let screenWidth = device?.dimensions?.width;
   if (!screenWidth || isNaN(screenWidth)) screenWidth = 1000;
 
-  const imageCutRatio = 1000 / (screenWidth / 1.5);
+  // const imageCutRatio = 1000 / (screenWidth / 1.5);
+  const imageCutRatio = useMemo(() => {
+    if (isTablet && sideWays) {
+      return 2000 / (screenWidth / 1.5);
+    } else if (isTablet && !sideWays) {
+      return 1500 / (screenWidth / 1.5);
+    }
+    if (!isTablet) {
+      return 1000 / (screenWidth / 1.5);
+    }
+  }, [isTablet, sideWays, screenWidth]);
   const imageWidth = 1000 / imageCutRatio;
   const imageHeight = 500 / imageCutRatio;
 
@@ -114,9 +126,11 @@ const Home = () => {
         disabled={disabled}
         onPress={() => handleOnPress()}>
         {blank ? (
-          <View style={[{padding: 5}, blankStyle]}>{children}</View>
+          <View style={blankStyle} p5>
+            {children}
+          </View>
         ) : (
-          <View style={{flexDirection: 'row'}}>
+          <View row>
             <View
               style={{
                 height: fixedHeight,
@@ -127,17 +141,7 @@ const Home = () => {
                 borderRightWidth: 1,
                 borderRightColor: border,
               }}>
-              <View
-                style={[
-                  {
-                    height: 35,
-                    width: 35,
-                    margin: 5,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  },
-                  iconStyles,
-                ]}>
+              <View style={[{height: 35, width: 40}, iconStyles]} centerVH m5>
                 {icon}
               </View>
             </View>
@@ -177,12 +181,7 @@ const Home = () => {
 
   const DisplayRow = ({children}) => {
     return (
-      <View
-        style={{
-          flexDirection: 'row',
-          marginHorizontal: 5,
-          marginVertical: 5,
-        }}>
+      <View row m5>
         {children}
       </View>
     );
@@ -198,82 +197,82 @@ const Home = () => {
       sheetOpen={false}
       outerViewStyles={{paddingBottom: 0}}
       innerViewStyles={{}}>
-      <View
-        style={{
-          alignItems: 'center',
-          marginTop: 10,
-          marginBottom: 5,
-        }}>
-        <View>
-          <Image
-            source={require('../../images/AppLogo_1000.png')}
-            style={{width: imageWidth, height: imageHeight}}
-          />
+      <View flex={1} centerV>
+        <View centerVH mt10 mb5>
+          <View centerVH>
+            <Image
+              source={require('../../images/AppLogo_1000.png')}
+              style={{width: imageWidth, height: imageHeight}}
+            />
+          </View>
         </View>
       </View>
-      <DisplayRow>
-        <DisplayCell
-          infoCentered
-          title="Shopping"
-          subTitle="(Cart / List)"
-          value1={core?.shoppingAllItemsLength}
-          value2={core?.maxShoppingItems}
-          icon={<Icons.Shopping size={25} />}
-          onPress={() => navigation.navigate('ShoppingList')}
-        />
-        <DisplayCell
-          infoCentered
-          title="Cupboards"
-          subTitle="(Items)"
-          value1={core?.cupboardLength}
-          value2={core?.maxCupboardItems}
-          icon={<Icons.Cupboards size={25} />}
-          onPress={() => navigation.navigate('CupboardList-Single')}
-        />
-      </DisplayRow>
-      <DisplayRow>
-        <DisplayCell
-          infoCentered
-          title="Favorites"
-          subTitle="(Items)"
-          value1={core?.favoritesLength}
-          value2={core?.maxFavoriteItems}
-          // iconStyles={{marginTop: -1}}
-          icon={<Icons.Star size={25} />}
-          onPress={() => navigation.navigate('FavoritesList')}
-        />
-        <DisplayCell
-          infoCentered
-          title="Recipe Box"
-          subTitle="(Recipes)"
-          value1={core?.recipeBoxLength}
-          value2={core?.maxRecipeBoxItems}
-          // iconStyles={{marginTop: -4}}
-          icon={<Icons.Chest size={25} />}
-          onPress={() => navigation.navigate('RecipeBox')}
-        />
-      </DisplayRow>
-      <DisplayRow>
-        <DisplayCell
-          infoCentered
-          title="Item Scanner"
-          subTitle="(Daily Limit)"
-          value1={core?.dailyUPCCounter}
-          value2={core?.maxUPCSearchLimit}
-          icon={<Icons.Barcode size={20} />}
-          // onPress={() => navigation.navigate('FavoritesList')}
-          disabled
-        />
-        <DisplayCell
-          infoCentered
-          title="Find Recipes"
-          subTitle="(Daily Limit)"
-          value1={core?.dailyRecipeCounter}
-          value2={core?.maxRecipeSearchLimit}
-          icon={<Icons.Search size={25} />}
-          onPress={() => navigation.navigate('RecipeSearch')}
-        />
-      </DisplayRow>
+      <View centerV>
+        <DisplayRow>
+          <DisplayCell
+            infoCentered
+            title="Shopping"
+            subTitle="(Cart / List)"
+            value1={core?.shoppingAllItemsLength}
+            value2={core?.maxShoppingItems}
+            icon={<Icons.Shopping size={25} />}
+            onPress={() => navigation.navigate('ShoppingList')}
+          />
+          <DisplayCell
+            infoCentered
+            title="Cupboards"
+            subTitle="(Items)"
+            value1={core?.cupboardLength}
+            value2={core?.maxCupboardItems}
+            icon={<Icons.Cupboards size={25} />}
+            onPress={() => navigation.navigate('CupboardList-Single')}
+          />
+        </DisplayRow>
+        <DisplayRow>
+          <DisplayCell
+            infoCentered
+            title="Favorites"
+            subTitle="(Items)"
+            value1={core?.favoritesLength}
+            value2={core?.maxFavoriteItems}
+            // iconStyles={{marginTop: -1}}
+            icon={<Icons.Star size={25} />}
+            onPress={() => navigation.navigate('FavoritesList')}
+          />
+          <DisplayCell
+            infoCentered
+            title="Recipe Box"
+            subTitle="(Recipes)"
+            value1={core?.recipeBoxLength}
+            value2={core?.maxRecipeBoxItems}
+            // iconStyles={{marginTop: -4}}
+            icon={<Icons.Chest size={25} />}
+            onPress={() => navigation.navigate('RecipeBox')}
+          />
+        </DisplayRow>
+        <DisplayRow>
+          <DisplayCell
+            infoCentered
+            title="Item Scanner"
+            subTitle="(Daily Limit)"
+            value1={core?.dailyUPCCounter}
+            value2={core?.maxUPCSearchLimit}
+            icon={<Icons.Barcode size={20} />}
+            // onPress={() => navigation.navigate('FavoritesList')}
+            disabled
+          />
+          <DisplayCell
+            infoCentered
+            title="Find Recipes"
+            subTitle="(Daily Limit)"
+            value1={core?.dailyRecipeCounter}
+            value2={core?.maxRecipeSearchLimit}
+            icon={<Icons.Search size={25} />}
+            onPress={() => navigation.navigate('RecipeSearch')}
+          />
+        </DisplayRow>
+      </View>
+      <View flex={1} />
     </Layout>
   );
 };
