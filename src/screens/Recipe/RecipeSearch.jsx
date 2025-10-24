@@ -206,7 +206,7 @@ const RecipeSearch = () => {
                 {item?.readyIn ? `${item.readyIn} min` : ''}
               </Text>
             </View>
-            <View style={RecipeSearchStyles.listScoreContainer}>
+            {/* <View style={RecipeSearchStyles.listScoreContainer}>
               <View style={RecipeSearchStyles.listScoreLeft}>
                 <Text size="tiny" font="open-4" kqColor="dark90">
                   {item?.ratingScore || ''}
@@ -218,7 +218,7 @@ const RecipeSearch = () => {
                   <Icons.Star size={12} color={useColors('dark90')} />
                 )}
               </View>
-            </View>
+            </View> */}
           </View>
         </View>
       </TouchableOpacity>

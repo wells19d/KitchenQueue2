@@ -19,7 +19,6 @@ const Home = () => {
   let screenWidth = device?.dimensions?.width;
   if (!screenWidth || isNaN(screenWidth)) screenWidth = 1000;
 
-  // const imageCutRatio = 1000 / (screenWidth / 1.5);
   const imageCutRatio = useMemo(() => {
     if (isTablet && sideWays) {
       return 2000 / (screenWidth / 1.5);
@@ -161,14 +160,14 @@ const Home = () => {
                 }}>
                 <View
                   style={{alignItems: infoCentered ? 'center' : 'flex-start'}}>
-                  <Text size="small" font="mont-7">
+                  <Text size={isTablet ? 'medium' : 'small'} font="mont-7">
                     {title}
                   </Text>
-                  <Text size="tiny" font="mont-6">
+                  <Text size={isTablet ? 'xSmall' : 'tiny'} font="mont-6">
                     {subTitle}
                   </Text>
                 </View>
-                <Text size="small" font="mont-7">
+                <Text size={isTablet ? 'medium' : 'small'} font="mont-7">
                   {value1} of {value2}
                 </Text>
               </View>
@@ -179,13 +178,99 @@ const Home = () => {
     );
   });
 
-  const DisplayRow = ({children}) => {
+  const DisplayCellMap = useMemo(
+    () => [
+      {
+        title: 'Shopping',
+        subTitle: '(Cart / List)',
+        value1: core?.shoppingAllItemsLength,
+        value2: core?.maxShoppingItems,
+        icon: <Icons.Shopping size={25} />,
+        onPress: () => navigation.navigate('ShoppingList'),
+        isDisabled: false,
+      },
+      {
+        title: 'Cupboards',
+        subTitle: '(Items)',
+        value1: core?.cupboardLength,
+        value2: core?.maxCupboardItems,
+        icon: <Icons.Cupboards size={25} />,
+        onPress: () => navigation.navigate('CupboardList-Single'),
+        isDisabled: false,
+      },
+      {
+        title: 'Favorites',
+        subTitle: '(Items)',
+        value1: core?.favoritesLength,
+        value2: core?.maxFavoriteItems,
+        icon: <Icons.Star size={25} />,
+        onPress: () => navigation.navigate('FavoritesList'),
+        isDisabled: false,
+      },
+      {
+        title: 'Recipe Box',
+        subTitle: '(Recipes)',
+        value1: core?.recipeBoxLength,
+        value2: core?.maxRecipeBoxItems,
+        icon: <Icons.Chest size={25} />,
+        onPress: () => navigation.navigate('RecipeBox'),
+        isDisabled: false,
+      },
+      {
+        title: 'Item Scanner',
+        subTitle: '(Daily Limit)',
+        value1: core?.dailyUPCCounter,
+        value2: core?.maxUPCSearchLimit,
+        icon: <Icons.Barcode size={20} />,
+        isDisabled: true,
+      },
+      {
+        title: 'Find Recipes',
+        subTitle: '(Daily Limit)',
+        value1: core?.dailyRecipeCounter,
+        value2: core?.maxRecipeSearchLimit,
+        icon: <Icons.Search size={25} />,
+        onPress: () => navigation.navigate('RecipeSearch'),
+        isDisabled: false,
+      },
+    ],
+    [core, navigation],
+  );
+
+  const chunkArray = (array, size) => {
+    const result = [];
+    for (let i = 0; i < array.length; i += size) {
+      result.push(array.slice(i, i + size));
+    }
+    return result;
+  };
+
+  const DisplayCellArray = useMemo(() => {
+    const columns = isTablet ? 3 : 2;
+    const rows = chunkArray(DisplayCellMap, columns);
+
     return (
-      <View row m5>
-        {children}
+      <View centerV>
+        {rows.map((row, i) => (
+          <View row m5 key={i}>
+            {row.map((cell, j) => (
+              <DisplayCell
+                key={`${i}-${j}`}
+                infoCentered
+                title={cell.title}
+                subTitle={cell.subTitle}
+                value1={cell.value1}
+                value2={cell.value2}
+                icon={cell.icon}
+                onPress={cell.onPress}
+                disabled={cell.isDisabled}
+              />
+            ))}
+          </View>
+        ))}
       </View>
     );
-  };
+  }, [isTablet, DisplayCellMap]);
 
   return (
     <Layout
@@ -207,71 +292,7 @@ const Home = () => {
           </View>
         </View>
       </View>
-      <View centerV>
-        <DisplayRow>
-          <DisplayCell
-            infoCentered
-            title="Shopping"
-            subTitle="(Cart / List)"
-            value1={core?.shoppingAllItemsLength}
-            value2={core?.maxShoppingItems}
-            icon={<Icons.Shopping size={25} />}
-            onPress={() => navigation.navigate('ShoppingList')}
-          />
-          <DisplayCell
-            infoCentered
-            title="Cupboards"
-            subTitle="(Items)"
-            value1={core?.cupboardLength}
-            value2={core?.maxCupboardItems}
-            icon={<Icons.Cupboards size={25} />}
-            onPress={() => navigation.navigate('CupboardList-Single')}
-          />
-        </DisplayRow>
-        <DisplayRow>
-          <DisplayCell
-            infoCentered
-            title="Favorites"
-            subTitle="(Items)"
-            value1={core?.favoritesLength}
-            value2={core?.maxFavoriteItems}
-            // iconStyles={{marginTop: -1}}
-            icon={<Icons.Star size={25} />}
-            onPress={() => navigation.navigate('FavoritesList')}
-          />
-          <DisplayCell
-            infoCentered
-            title="Recipe Box"
-            subTitle="(Recipes)"
-            value1={core?.recipeBoxLength}
-            value2={core?.maxRecipeBoxItems}
-            // iconStyles={{marginTop: -4}}
-            icon={<Icons.Chest size={25} />}
-            onPress={() => navigation.navigate('RecipeBox')}
-          />
-        </DisplayRow>
-        <DisplayRow>
-          <DisplayCell
-            infoCentered
-            title="Item Scanner"
-            subTitle="(Daily Limit)"
-            value1={core?.dailyUPCCounter}
-            value2={core?.maxUPCSearchLimit}
-            icon={<Icons.Barcode size={20} />}
-            // onPress={() => navigation.navigate('FavoritesList')}
-            disabled
-          />
-          <DisplayCell
-            infoCentered
-            title="Find Recipes"
-            subTitle="(Daily Limit)"
-            value1={core?.dailyRecipeCounter}
-            value2={core?.maxRecipeSearchLimit}
-            icon={<Icons.Search size={25} />}
-            onPress={() => navigation.navigate('RecipeSearch')}
-          />
-        </DisplayRow>
-      </View>
+      <View centerV>{DisplayCellArray}</View>
       <View flex={1} />
     </Layout>
   );
