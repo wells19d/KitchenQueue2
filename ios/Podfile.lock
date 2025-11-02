@@ -2726,7 +2726,7 @@ PODS:
     - react-native-config/App (= 1.5.9)
   - react-native-config/App (1.5.9):
     - React-Core
-  - react-native-safe-area-context (5.6.1):
+  - react-native-safe-area-context (5.6.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2739,8 +2739,8 @@ PODS:
     - React-featureflags
     - React-graphics
     - React-ImageManager
-    - react-native-safe-area-context/common (= 5.6.1)
-    - react-native-safe-area-context/fabric (= 5.6.1)
+    - react-native-safe-area-context/common (= 5.6.2)
+    - react-native-safe-area-context/fabric (= 5.6.2)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -2749,7 +2749,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/common (5.6.1):
+  - react-native-safe-area-context/common (5.6.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2770,7 +2770,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/fabric (5.6.1):
+  - react-native-safe-area-context/fabric (5.6.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3128,27 +3128,27 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNFBAnalytics (23.4.1):
+  - RNFBAnalytics (23.5.0):
     - FirebaseAnalytics/Core (= 12.4.0)
     - FirebaseAnalytics/IdentitySupport (= 12.4.0)
     - React-Core
     - RNFBApp
-  - RNFBApp (23.4.1):
+  - RNFBApp (23.5.0):
     - Firebase/CoreOnly (= 12.4.0)
     - React-Core
-  - RNFBAuth (23.4.1):
+  - RNFBAuth (23.5.0):
     - Firebase/Auth (= 12.4.0)
     - React-Core
     - RNFBApp
-  - RNFBFirestore (23.4.1):
+  - RNFBFirestore (23.5.0):
     - Firebase/Firestore (= 12.4.0)
     - React-Core
     - RNFBApp
-  - RNFBRemoteConfig (23.4.1):
+  - RNFBRemoteConfig (23.5.0):
     - Firebase/RemoteConfig (= 12.4.0)
     - React-Core
     - RNFBApp
-  - RNFBStorage (23.4.1):
+  - RNFBStorage (23.5.0):
     - Firebase/Storage (= 12.4.0)
     - React-Core
     - RNFBApp
@@ -3175,7 +3175,7 @@ PODS:
     - Yoga
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.28.0):
+  - RNGestureHandler (2.29.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3197,7 +3197,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNImageCropPicker (0.51.0):
+  - RNImageCropPicker (0.51.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3218,10 +3218,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNImageCropPicker/QBImagePickerController (= 0.51.0)
-    - TOCropViewController (~> 2.7.4)
+    - RNImageCropPicker/QBImagePickerController (= 0.51.1)
+    - TOCropViewController (~> 2.8.0)
     - Yoga
-  - RNImageCropPicker/QBImagePickerController (0.51.0):
+  - RNImageCropPicker/QBImagePickerController (0.51.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3242,9 +3242,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - TOCropViewController (~> 2.7.4)
+    - TOCropViewController (~> 2.8.0)
     - Yoga
-  - RNPermissions (5.4.2):
+  - RNPermissions (5.4.4):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3405,7 +3405,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (4.16.0):
+  - RNScreens (4.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3426,9 +3426,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 4.16.0)
+    - RNScreens/common (= 4.18.0)
     - Yoga
-  - RNScreens/common (4.16.0):
+  - RNScreens/common (4.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3521,7 +3521,7 @@ PODS:
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
   - SocketRocket (0.7.1)
-  - TOCropViewController (2.7.4)
+  - TOCropViewController (2.8.0)
   - VisionCamera (4.7.2):
     - VisionCamera/Core (= 4.7.2)
     - VisionCamera/React (= 4.7.2)
@@ -3913,7 +3913,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: fd98e3e44af51599576705ec7a85a36e35978913
   react-native-cameraroll: e4baf7686acd8bb91e43aeb1031493b3bd3904ca
   react-native-config: d08b60865268872495a43e211059b4606131fe01
-  react-native-safe-area-context: afc464441362333ffe4cd96f3e623e374362a2f6
+  react-native-safe-area-context: 5b5d3eb6ec9ef848f16c064a4eab4a92c7d7895e
   React-NativeModulesApple: 5c61cef9e7f0e1d6216ff0af41a3b882806a5cec
   React-perflogger: 5f8fa36a8e168fb355efe72099efe77213bc2ac6
   React-performancetimeline: 4f3521ee6238c9caf1b0969da2c4f610ff72b922
@@ -3947,26 +3947,26 @@ SPEC CHECKSUMS:
   RNCClipboard: 9f7b908de4bf4353871fb454c15fc03db4917b88
   RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
-  RNFBAnalytics: 12c5e001b3a8f15f468eae4416de2e8365ad26e5
-  RNFBApp: d1f587866b6e188d95c5f541abedd8e4ce167bbe
-  RNFBAuth: b27ebeb2e99adaa2538b0660619381d0a3d3e72c
-  RNFBFirestore: ecb7eb55606d2bf4be530f52a5fa280613919277
-  RNFBRemoteConfig: 194adf6181b3044c03f7460113b22b48253f88a3
-  RNFBStorage: 9761059ade61d5162076bacc728152d79b0d050c
+  RNFBAnalytics: c8f3d38ea6cb396cac0265d9b077b9a98a7a0c9f
+  RNFBApp: 255fa19a91d6c1309e021ee75d5d209754e5961b
+  RNFBAuth: 7123a71a1fc8dec4aa4e6cb656562661b3ece9f7
+  RNFBFirestore: 82bca32eb782c08c54a21eadce88d5cf676afd9e
+  RNFBRemoteConfig: fd01bfffca19f0ac1f4f0b4391dfb04d80a84e0b
+  RNFBStorage: def85d336679fedc62bbf967026fa924a5163d37
   RNFlashList: b31c96e892debd3a53303ab3b6cb0b62891f3f4c
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
-  RNGestureHandler: 34f241199f5b2ce0225054450bf097287bb3abad
-  RNImageCropPicker: f713403ce891d9a702fab34bf07f3dd5fa05cf84
-  RNPermissions: 811110966fdaedba17bc1b0607ea09c6462bec09
+  RNGestureHandler: 0e35a1c193aa514d178fae05d1bcc88e9f63c95e
+  RNImageCropPicker: 14786c9e42b8d502f8fb03089005dfe6e6568337
+  RNPermissions: 766ed254c7ae64f98679ea329c93c662aacb2fd2
   RNReactNativeHapticFeedback: eb5395b503c7a8f10de5e6722ef8afd3c61bc4f5
   RNReanimated: a509af3946c3f6964bf9a2e3cee5bb5732b36b8b
-  RNScreens: 150e342212af4d9dd7ba8a2d786a32dbe15cca04
+  RNScreens: 4d82f330e5ee1b51efaa45c1d8603773e6cf28b0
   RNSVG: bb8cfac75649a133646f119ae3c9157e9485610d
   RNVectorIcons: a36e44cf650380fd1564ecf9d6c3f20ac910f04f
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
+  TOCropViewController: 797deaf39c90e6e9ddd848d88817f6b9a8a09888
   VisionCamera: 30b358b807324c692064f78385e9a732ce1bebfe
   Yoga: 6eb60fc2c0eef63e7d2ef4a56e0a3353534143a2
 
