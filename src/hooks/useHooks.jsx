@@ -61,6 +61,10 @@ export const useFoodData = () => {
   return useSelector(state => state.edamam?.foodData);
 };
 
+export const useUPCData = () => {
+  return useSelector(state => state.upc?.upcData);
+};
+
 export const useFoodDataError = () => {
   return useSelector(state => state.edamam?.error);
 };

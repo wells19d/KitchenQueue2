@@ -18,7 +18,6 @@ const KQCamera = props => {
   } = props;
 
   const deviceInfo = useDeviceInfo();
-  console.log('deviceInfo:', deviceInfo);
   const deviceHeight = deviceInfo?.dimensions?.height;
   const isTablet = deviceInfo?.system?.device === 'Tablet';
   const isPortrait = deviceInfo?.view === 'Portrait';

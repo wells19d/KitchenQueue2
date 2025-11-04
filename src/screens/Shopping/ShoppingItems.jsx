@@ -22,6 +22,7 @@ import {
   useFoodData,
   useFoodDataError,
   useShoppingCart,
+  useUPCData,
 } from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
 import {displayCategories} from '../../utilities/categories';
@@ -53,6 +54,8 @@ const ShoppingItems = () => {
   const device = useDeviceInfo();
   const foodData = useFoodData();
   const foodError = useFoodDataError();
+  const upcData = useUPCData();
+  console.log('UPC Data:', upcData);
   const [showAttModal, setShowAttModal] = useState(false);
   const [storedData, setStoredData] = useState(null);
   const [showAsContainer, setShowAsContainer] = useState(false);
@@ -117,14 +120,18 @@ const ShoppingItems = () => {
 
   useEffect(() => {
     if (scannedData) {
+      // dispatch({
+      //   type: 'FETCH_FOOD_DATA',
+      //   payload: {
+      //     barcode: scannedData?.value,
+      //     allowance: core?.dailyUPCCounter,
+      //     profileID: core?.profileID,
+      //     accountID: core?.accountID,
+      //   },
+      // });
       dispatch({
-        type: 'FETCH_FOOD_DATA',
-        payload: {
-          barcode: scannedData?.value,
-          allowance: core?.dailyUPCCounter,
-          profileID: core?.profileID,
-          accountID: core?.accountID,
-        },
+        type: 'FETCH_UPC_DATA',
+        payload: {barcode: scannedData?.value},
       });
       resetScanner();
     }
