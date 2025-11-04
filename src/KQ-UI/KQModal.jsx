@@ -142,8 +142,8 @@ const KQModal = ({
     return () => subscription?.remove();
   }, []);
 
-  const prsHeight = Math.min(Math.max(parseFloat(height), 75), 100);
-  const prsWidth = Math.min(Math.max(parseFloat(width), 75), 100);
+  const prsHeight = Math.min(Math.max(parseFloat(height), 55), 100);
+  const prsWidth = Math.min(Math.max(parseFloat(width), 55), 100);
 
   const topHeight = fullScreen
     ? 0

@@ -325,7 +325,7 @@ const RenderModal = React.memo(props => {
   const renderInviteContent = () => {
     if (isLoading) {
       return (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View flex={1} centerVH>
           <ActivityIndicator size="large" color="#29856c" />
           <Text size="medium" font="open-7">
             Generating Invite...
@@ -355,23 +355,16 @@ const RenderModal = React.memo(props => {
   };
 
   const renderCodeContent = () => (
-    <View
-      style={{
-        flex: 1,
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignContent: 'center',
-        alignItems: 'center',
-      }}>
+    <View flex={1} centerVH>
       {!showExceeding && (
-        <View style={{marginHorizontal: 20, marginVertical: 10}}>
+        <View m15>
           <Text size="large" font="open-7" centered>
             Invitation Code: {existingInvite?.inviteCode}
           </Text>
         </View>
       )}
       {showExceeding && (
-        <View style={{marginHorizontal: 20, marginVertical: 10}}>
+        <View m15>
           <Text size="medium" font="open-6" centered>
             Sorry, but you've reached the maximum number of invitations on your
             account.
@@ -379,14 +372,14 @@ const RenderModal = React.memo(props => {
         </View>
       )}
       {invitationMsg && (
-        <View style={{marginHorizontal: 20, marginVertical: 10}}>
+        <View m15>
           <Text size="medium" font="open-6" centered>
             {invitationMsg}
           </Text>
         </View>
       )}
       {!showExceeding && !invitationMsg && (
-        <View style={{marginHorizontal: 20, marginVertical: 10}}>
+        <View m15>
           <Text size="small" font="open-6" centered>
             An invitation has been generated and sent to {existingInvite?.email}
             . Use this code to invite them to your account.
@@ -410,7 +403,7 @@ const RenderModal = React.memo(props => {
         </View>
       )}
       {showExceeding && (
-        <View style={{marginHorizontal: 20, marginVertical: 10}}>
+        <View m15>
           <Text size="small" font="open-5" centered italic>
             You currently have {account?.allowedUsers?.length} of 4 users and{' '}
             {account?.accountInvites?.length} active invitations on your
@@ -419,7 +412,7 @@ const RenderModal = React.memo(props => {
         </View>
       )}
       {invitationMsg && (
-        <View style={{marginHorizontal: 20, marginVertical: 10}}>
+        <View m15>
           <Text size="xSmall" font="open-5" centered italic>
             {invitationMsg}
           </Text>
@@ -428,12 +421,37 @@ const RenderModal = React.memo(props => {
     </View>
   );
 
+  const deviceInfo = useDeviceInfo();
+  console.log('deviceInfo:', deviceInfo);
+  const isTablet = deviceInfo?.system?.device === 'Tablet';
+  const isPortrait = deviceInfo?.view === 'Portrait';
+
+  const heightMode = useMemo(() => {
+    if (isInviteModal) {
+      if (isTablet && isPortrait) {
+        return '57.5%';
+      } else if (isTablet && !isPortrait) {
+        return '60%';
+      } else {
+        return '63%';
+      }
+    } else if (isCodeModal) {
+      if (isTablet && isPortrait) {
+        return '65%';
+      } else if (isTablet && !isPortrait) {
+        return '70%';
+      } else {
+        return '70%';
+      }
+    }
+  }, [deviceInfo, isInviteModal, isCodeModal]);
+
   return (
     <Modal
       visible={isInviteModal || isCodeModal}
       title={getModalTitle()}
       onClose={closeModal}
-      height="80%"
+      height={heightMode}
       width="95%"
       headerFont="open-7">
       {isInviteModal && renderInviteContent()}

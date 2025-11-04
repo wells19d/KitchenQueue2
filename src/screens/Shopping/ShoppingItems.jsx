@@ -15,6 +15,7 @@ import {
   Modal,
   ScrollView,
   Text,
+  View,
 } from '../../KQ-UI';
 import {
   useDeviceInfo,
@@ -29,7 +30,7 @@ import {
   setNumericValue,
   titleCase,
 } from '../../utilities/helpers';
-import {View, Image, TouchableOpacity} from 'react-native';
+import {Image, TouchableOpacity} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import useBarcodeScanner from '../../hooks/useBarcodeScanner';
@@ -451,6 +452,9 @@ const ShoppingItems = () => {
         <Camera
           torchEnabled={torchEnabled}
           onReadCode={onReadCode}
+          onManualEntry={manualUPC => {
+            onReadCode([{type: 'manual', value: manualUPC}]);
+          }}
           height={device?.dimensions?.height}
         />
       ) : (

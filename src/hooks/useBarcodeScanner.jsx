@@ -1,10 +1,7 @@
 //* useBarcodeScanner.jsx
 import {useState, useRef} from 'react';
-import {dailyCheckLimit} from '../utilities/checkLimit';
-import {useDispatch} from 'react-redux';
 
 const useBarcodeScanner = core => {
-  const dispatch = useDispatch();
   const [showScanner, setShowScanner] = useState(false);
   const [torchEnabled, setTorchEnabled] = useState(false);
   const [scannedData, setScannedData] = useState(null);
@@ -20,11 +17,20 @@ const useBarcodeScanner = core => {
     if (count < limit) {
       if (debounceRef.current) return;
 
-      const supportedCodeFormats = ['ean-8', 'ean-13', 'upc-a', 'upc-e'];
+      const supportedCodeFormats = [
+        'ean-8',
+        'ean-13',
+        'upc-a',
+        'upc-e',
+        'manual',
+      ];
       for (const code of codes) {
         const codeFormat = code.type?.toLowerCase();
         const codeValue = code.value;
-        if (supportedCodeFormats.includes(codeFormat)) {
+        if (
+          supportedCodeFormats.includes(codeFormat) ||
+          codeFormat === 'manual'
+        ) {
           if (lastScannedCode.current === codeValue) return;
 
           debounceRef.current = true;
