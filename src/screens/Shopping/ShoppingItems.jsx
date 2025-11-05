@@ -42,6 +42,7 @@ import {transformNutritionFacts} from '../../utilities/transformNutritionFacts';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {dailyCheckLimit} from '../../utilities/checkLimit';
+import FatSecretAttribution from '../../components/FatSecretBadge';
 
 const ShoppingItems = () => {
   const route = useRoute();
@@ -120,19 +121,19 @@ const ShoppingItems = () => {
 
   useEffect(() => {
     if (scannedData) {
-      // dispatch({
-      //   type: 'FETCH_FOOD_DATA',
-      //   payload: {
-      //     barcode: scannedData?.value,
-      //     allowance: core?.dailyUPCCounter,
-      //     profileID: core?.profileID,
-      //     accountID: core?.accountID,
-      //   },
-      // });
       dispatch({
-        type: 'FETCH_UPC_DATA',
-        payload: {barcode: scannedData?.value},
+        type: 'FETCH_FOOD_DATA',
+        payload: {
+          barcode: scannedData?.value,
+          allowance: core?.dailyUPCCounter,
+          profileID: core?.profileID,
+          accountID: core?.accountID,
+        },
       });
+      // dispatch({
+      //   type: 'FETCH_UPC_DATA',
+      //   payload: {barcode: scannedData?.value},
+      // });
       resetScanner();
     }
   }, [scannedData]);
@@ -426,11 +427,26 @@ const ShoppingItems = () => {
               </Button>
             </View>
           </View>
-          <View style={{alignItems: 'center', paddingBottom: 10}}>
-            <EdamamAttribution
-              width={device?.dimensions.width - 50}
-              height={device?.dimensions.width / 10}
-            />
+          <View row>
+            <View flex centerVH pl5>
+              <FatSecretAttribution
+                width="85%"
+                height={40}
+                color={useColors('fatsecret')}
+              />
+            </View>
+            <View flex centerVH>
+              <Image
+                source={require('../../images/barcodespider-logo-blue.webp')}
+                style={{
+                  width: '75%',
+                  height: 40,
+                  resizeMode: 'contain',
+                  position: 'relative',
+                  right: 5,
+                }}
+              />
+            </View>
           </View>
         </View>
       );

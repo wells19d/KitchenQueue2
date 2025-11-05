@@ -65,6 +65,8 @@ export const useColors = color => {
     basic: '#C4C4C4',
     gold: '#FFAE42',
     transparent: 'transparent',
+    //--- attributes
+    fatsecret: '#259b24',
   };
 
   const normalizedColor = color.trim().toLowerCase();
