@@ -440,7 +440,7 @@ const ShoppingItems = () => {
                 source={require('../../images/barcodespider-logo-blue.webp')}
                 style={{
                   width: '75%',
-                  height: 40,
+                  height: 25,
                   resizeMode: 'contain',
                   position: 'relative',
                   right: 5,
