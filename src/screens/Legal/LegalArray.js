@@ -277,6 +277,16 @@ export const LegalArray = {
             },
           ],
         },
+        {
+          index: 14,
+          title: 'Enforcement & Reporting',
+          clauses: [
+            {
+              index: 1,
+              info: 'If you believe content on Kitchen Queue violates the Privacy Policy or your rights, contact support@kitchen-queue.com with details. We review reports and take action when appropriate, including removal of content and cooperating with lawful requests.',
+            },
+          ],
+        },
       ],
     },
   ],
@@ -534,6 +544,32 @@ export const LegalArray = {
             {
               index: 1,
               info: 'Questions? Contact: support@kitchen-queue.com (or see the Help screen for in-app contact options).',
+            },
+          ],
+        },
+        {
+          index: 17,
+          title: 'Reporting, Enforcement & DMCA',
+          clauses: [
+            {
+              index: 1,
+              info: 'If you see content that violates these Terms (including illegal content, copyright infringement, or content that presents an imminent safety risk) please report it to us at support@kitchen-queue.com with full details so we can investigate.',
+            },
+            {
+              index: 2,
+              info: 'We may remove or disable access to content that violates these Terms or appears unlawful, and we may suspend or terminate accounts responsible for violations. We may also retain records as required for legal or security purposes.',
+            },
+            {
+              index: 3,
+              info: 'DMCA Takedown Requests (Copyright): If you believe content on the Service infringes your copyright, send a notice that includes: (a) a physical or electronic signature of the copyright owner or agent; (b) identification of the copyrighted work claimed to be infringed; (c) identification of the material claimed to infringe and where it is located on the Service; (d) contact information for the complaining party; (e) a statement under penalty of perjury that the information in the notice is accurate and that you are the copyright owner or authorized to act on their behalf. Send DMCA notices to: support@kitchen-queue.com.',
+            },
+            {
+              index: 4,
+              info: 'Counter-Notices: If you believe content was removed in error, you may send a counter-notice to support@kitchen-queue.com including the required elements under 17 U.S.C. §512(g). We will follow applicable law in responding to valid counter-notices.',
+            },
+            {
+              index: 5,
+              info: 'Emergency or Dangerous Content: If content presents an immediate risk of physical harm or illegal activity (for example instructions to make explosives, or imminent violence), please contact local law enforcement immediately and then notify us at support@kitchen-queue.com. We will cooperate with law enforcement as required.',
             },
           ],
         },
