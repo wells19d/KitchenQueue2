@@ -177,6 +177,10 @@ export const LegalArray = {
                   index: 4,
                   info: 'Account: You can request account deletion. We will disable access and schedule associated personal data for deletion, subject to legal/operational requirements (for example, security logs or necessary records). Community content you published may persist unless a valid takedown basis applies.',
                 },
+                {
+                  index: 5,
+                  info: 'Disabled/Deactivated Accounts: If your account is disabled or deactivated (e.g., non-payment or by request), we retain associated account information for up to one (1) calendar year. After that period, the account and related personal data may be removed. Upon request, we may extend retention (for example, to preserve content) or complete removal sooner, subject to legal/operational requirements.',
+                },
               ],
             },
           ],
@@ -231,19 +235,23 @@ export const LegalArray = {
         },
         {
           index: 11,
-          title: 'Location of Processing (U.S.-Only Service)',
+          title: 'Location of Processing (U.S.-Based Service)',
           clauses: [
             {
               index: 1,
-              info: 'Kitchen Queue is operated in the United States and is intended for use by U.S. users. Personal data is stored and processed on U.S.-based systems.',
+              info: 'Kitchen Queue is operated from the United States and is intended for use by U.S. residents. We store and process personal data on U.S.-based systems.',
               subClause: [
                 {
                   index: 1,
-                  info: 'Service Providers: We contract providers to process data in the U.S. where feasible. If any provider stores or transmits data outside the U.S. (for example, backups or content delivery), we require appropriate safeguards. We will update this Policy if our data location practices materially change.',
+                  info: 'Third-Party Processing: To deliver certain features you request (for example, barcode lookups), trusted service providers may process or transmit limited data outside the United States. We do not represent those providers as U.S.-based.',
                 },
                 {
                   index: 2,
-                  info: 'Non-U.S. Access: The App is not intended for use outside the U.S. If you access it from another region, you understand your data will be processed in the U.S. and you are responsible for complying with local laws.',
+                  info: 'Safeguards: Where non-U.S. processing occurs, we require appropriate contractual and organizational safeguards. We will update this Policy if our data-location practices materially change.',
+                },
+                {
+                  index: 3,
+                  info: 'Non-U.S. Access: The App is intended for U.S. residents. If you access it from another region, you understand your data will be processed in the United States.',
                 },
               ],
             },
@@ -336,7 +344,7 @@ export const LegalArray = {
           clauses: [
             {
               index: 1,
-              info: 'Kitchen Queue integrates with third-party services to provide product and recipe-related data. As of version 0.9.2 and later, the App uses FatSecret and Barcode Spider for UPC lookup and related information. The App previously used Edamam; that integration has been deprecated.',
+              info: 'Kitchen Queue integrates with third-party services to provide product and recipe-related data.',
             },
             {
               index: 2,
@@ -350,7 +358,7 @@ export const LegalArray = {
           clauses: [
             {
               index: 1,
-              info: 'You retain ownership of recipes and other content you create or upload. You grant Kitchen Queue a worldwide, non-exclusive, royalty-free license to host, display, store, reproduce, and transmit your content solely to operate and improve the App and its features.',
+              info: 'You retain ownership of recipes and other content you create or upload. You grant Kitchen Queue a non-exclusive license to host, display, store, reproduce, and transmit your content solely as necessary to operate and improve the App and its features, without any payment to you.',
             },
             {
               index: 2,
@@ -401,6 +409,26 @@ export const LegalArray = {
                 {
                   index: 6,
                   info: 'Automate scraping, bulk-harvest data, or otherwise misuse the service or its content.',
+                },
+                {
+                  index: 7,
+                  info: 'Use the App for anything other than lawful, food/cooking, and household-related purposes appropriate for consumption planning and guidance.',
+                },
+                {
+                  index: 8,
+                  info: 'Post, promote, or provide instructions to create illegal drugs, explosives, weapons, or other materials intended to cause harm or property damage.',
+                },
+                {
+                  index: 9,
+                  info: 'Solicit, facilitate, or transact in illegal or regulated goods/services (including narcotics, weapons, or explosive components).',
+                },
+                {
+                  index: 10,
+                  info: 'Encourage or depict dangerous activities that are likely to result in injury or harm.',
+                },
+                {
+                  index: 11,
+                  info: 'Upload malware or engage in spam, phishing, or attempts to gain unauthorized access to accounts, data, or systems.',
                 },
               ],
             },
@@ -490,7 +518,7 @@ export const LegalArray = {
           clauses: [
             {
               index: 1,
-              info: 'These Terms are governed by the laws of the State of Illinois, USA, without regard to conflict-of-laws rules. You agree to the exclusive jurisdiction of courts located in Illinois for any dispute not subject to arbitration.',
+              info: 'These Terms are governed by the laws of the State of North Dakota, USA, without regard to conflict-of-laws rules. You agree to the exclusive jurisdiction of courts located in North Dakota for any dispute not subject to arbitration.',
             },
           ],
         },
