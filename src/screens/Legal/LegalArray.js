@@ -478,10 +478,15 @@ export const LegalArray = {
             },
             {
               index: 2,
-              info: 'You may stop using the App at any time. Some information may persist as required for legal, security, or transactional records.',
+              info: 'You may stop using the App at any time. If your account is disabled or deactivated (e.g., non-payment or by request), associated account information may be retained for up to one (1) calendar year, after which it may be removed, subject to legal/operational requirements.',
+            },
+            {
+              index: 3,
+              info: 'Community Content Persistence: Deleting your account or your private copy of a recipe does not automatically remove versions you previously shared to the Community. We may retain and continue to host Community content unless there is a legal conflict or the content was misrepresented as yours.',
             },
           ],
         },
+
         {
           index: 12,
           title: 'Disclaimer of Warranties',
@@ -575,7 +580,7 @@ export const LegalArray = {
           clauses: [
             {
               index: 1,
-              info: 'Kitchen Queue is operated in the United States and intended for U.S. users. If you access the app from another region, your data will be processed in the U.S.',
+              info: 'Kitchen Queue is operated in the United States and intended for U.S. residents. If you access the app from another region, your data will be processed in the U.S.',
             },
           ],
         },
