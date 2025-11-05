@@ -36,7 +36,6 @@ import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import useBarcodeScanner from '../../hooks/useBarcodeScanner';
 import {ListStyles} from '../../styles/Styles';
-import EdamamAttribution from '../../components/EdamanBadge';
 import Toast from 'react-native-toast-message';
 import {transformNutritionFacts} from '../../utilities/transformNutritionFacts';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
@@ -53,7 +52,10 @@ const ShoppingItems = () => {
   const navigation = useNavigation();
   const shopping = useShoppingCart();
   const device = useDeviceInfo();
+  const isTablet = device?.system?.device === 'Tablet';
+  const sideWays = device?.view === 'Landscape';
   const foodData = useFoodData();
+  console.log('foodData:', foodData);
   const foodError = useFoodDataError();
   const upcData = useUPCData();
   console.log('UPC Data:', upcData);
@@ -99,11 +101,11 @@ const ShoppingItems = () => {
   const [canSave, setCanSave] = useState(false);
 
   useEffect(() => {
-    if (foodData) {
-      if (!foodData?.hints || foodData?.hints.length === 0) {
+    if (upcData) {
+      if (!upcData) {
         setStoredData(null);
       } else {
-        setStoredData(foodData?.hints[0]);
+        setStoredData(upcData);
       }
     }
   }, [foodData]);
@@ -122,7 +124,7 @@ const ShoppingItems = () => {
   useEffect(() => {
     if (scannedData) {
       dispatch({
-        type: 'FETCH_FOOD_DATA',
+        type: 'FETCH_UPC_DATA',
         payload: {
           barcode: scannedData?.value,
           allowance: core?.dailyUPCCounter,
@@ -130,20 +132,17 @@ const ShoppingItems = () => {
           accountID: core?.accountID,
         },
       });
-      // dispatch({
-      //   type: 'FETCH_UPC_DATA',
-      //   payload: {barcode: scannedData?.value},
-      // });
       resetScanner();
     }
   }, [scannedData]);
 
   useEffect(() => {
     if (storedData) {
-      setItemName(titleCase(storedData?.food?.label));
-      setBrandName(titleCase(storedData?.food?.brand));
+      let foodObject = transformNutritionFacts(storedData) || {};
+      setItemName(titleCase(foodObject?.itemName));
+      setBrandName(titleCase(foodObject?.brandName));
       setDescription('');
-      setPackageSize('1');
+      setPackageSize(foodObject?.packageSize || '1');
       setQuantity('1');
       setMeasurement(null);
       setCategory(null);
@@ -278,34 +277,38 @@ const ShoppingItems = () => {
 
   const RenderModalContent = () => {
     if (storedData) {
-      let foodObject = transformNutritionFacts(storedData?.food) || {};
+      let foodObject = transformNutritionFacts(storedData) || {};
+      console.log('foodObject:', foodObject);
 
       return (
         <View style={ListStyles.rmcContainer}>
           <View
-            style={{borderBottomWidth: 1, borderColor: useColors('dark10')}}>
-            {foodObject.image ? (
-              <Image
-                source={{uri: `${foodObject.image}`}}
-                style={{
-                  width: '100%',
-                  height: 250,
-                }}
-              />
-            ) : (
-              <View
-                style={{
-                  width: '100%',
-                  height: 150,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text>No Image Available</Text>
-              </View>
-            )}
+            style={{borderBottomWidth: 1, borderColor: useColors('dark50')}}>
+            <View m10>
+              {foodObject.images?.length > 0 ? (
+                <Image
+                  source={{uri: `${foodObject.images[0]}`}}
+                  style={{
+                    resizeMode: 'contain',
+                    height: isTablet ? 400 : 250,
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    resizeMode: 'contain',
+                    height: 150,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text>No Image Available</Text>
+                </View>
+              )}
+            </View>
           </View>
+
           <ScrollView style={ListStyles.rmcScroll}>
-            <View style={ListStyles.rmcScrollShellTop} />
+            {/*  <View style={ListStyles.rmcScrollShellTop} />
             <View style={[ListStyles.rmcScrollWrapper]}>
               <TouchableOpacity
                 style={{
@@ -315,7 +318,7 @@ const ShoppingItems = () => {
                 }}
                 onPress={() => setShowAsContainer(!showAsContainer)}>
                 <Text
-                  size="tiny"
+                  size={isTablet ? 'xSmall' : 'tiny'}
                   font="open-5"
                   kqColor="rgb(56, 71, 234)"
                   centered>
@@ -324,12 +327,12 @@ const ShoppingItems = () => {
               </TouchableOpacity>
               <View style={{flexDirection: 'row'}}>
                 <View style={ListStyles.rmcNutrientLabel}>
-                  <Text size="xSmall" numberOfLines={1}>
+                  <Text size={isTablet ? 'small' : 'xSmall'} numberOfLines={1}>
                     Container Size:
                   </Text>
                 </View>
                 <View style={ListStyles.rmcNutrientValue}>
-                  <Text size="xSmall">
+                  <Text size={isTablet ? 'small' : 'xSmall'}>
                     {foodObject?.packageSize?.quantity}{' '}
                     {formatPluralUnit(
                       foodObject?.packageSize?.quantity,
@@ -340,12 +343,12 @@ const ShoppingItems = () => {
               </View>
               <View style={{flexDirection: 'row'}}>
                 <View style={ListStyles.rmcNutrientLabel}>
-                  <Text size="xSmall" numberOfLines={1}>
+                  <Text size={isTablet ? 'small' : 'xSmall'} numberOfLines={1}>
                     Serving Size:
                   </Text>
                 </View>
                 <View style={ListStyles.rmcNutrientValue}>
-                  <Text size="xSmall">
+                  <Text size={isTablet ? 'small' : 'xSmall'}>
                     {foodObject?.servingSizes[0]?.quantity}{' '}
                     {formatPluralUnit(
                       foodObject?.servingSizes[0]?.quantity,
@@ -360,12 +363,14 @@ const ShoppingItems = () => {
                     ([key, value]) => (
                       <View key={key} style={{flexDirection: 'row'}}>
                         <View style={ListStyles.rmcNutrientLabel}>
-                          <Text size="xSmall" numberOfLines={1}>
+                          <Text
+                            size={isTablet ? 'small' : 'xSmall'}
+                            numberOfLines={1}>
                             {value.label}:
                           </Text>
                         </View>
                         <View style={ListStyles.rmcNutrientValue}>
-                          <Text size="xSmall">
+                          <Text size={isTablet ? 'small' : 'xSmall'}>
                             {Math.round(value.value * 100) / 100}
                             {value.unit ? ` ${value.unit}` : null}
                           </Text>
@@ -377,12 +382,14 @@ const ShoppingItems = () => {
                     ([key, value]) => (
                       <View key={key} style={{flexDirection: 'row'}}>
                         <View style={ListStyles.rmcNutrientLabel}>
-                          <Text size="xSmall" numberOfLines={1}>
+                          <Text
+                            size={isTablet ? 'small' : 'xSmall'}
+                            numberOfLines={1}>
                             {value.label}:
                           </Text>
                         </View>
                         <View style={ListStyles.rmcNutrientValue}>
-                          <Text size="xSmall">
+                          <Text size={isTablet ? 'small' : 'xSmall'}>
                             {Math.round(value.value * 100) / 100}
                             {value.unit ? ` ${value.unit}` : null}
                           </Text>
@@ -390,11 +397,11 @@ const ShoppingItems = () => {
                       </View>
                     ),
                   )}
-            </View>
+            </View>*/}
             <View style={ListStyles.rmcDisclaimer}>
-              <Text size="tiny" italic justified>
+              <Text size={isTablet ? 'xSmall' : 'tiny'} italic justified>
                 The nutritional information displayed is based on data provided
-                by Edamam and is intended for reference purposes only. This
+                by FatSecret and is intended for reference purposes only. This
                 information may not reflect the exact values on the current
                 product label, as manufacturers may have updated or changed the
                 product's formulation or packaging since the data was recorded.
@@ -403,8 +410,8 @@ const ShoppingItems = () => {
               </Text>
             </View>
             <View style={ListStyles.rmcContents}>
-              <Text size="xSmall">
-                Contains: {titleCase(foodObject.foodContentsLabel)}
+              <Text size={isTablet ? 'small' : 'xSmall'}>
+                {/* Contains: {titleCase(foodObject.foodContentsLabel)} */}
               </Text>
             </View>
           </ScrollView>
@@ -427,11 +434,11 @@ const ShoppingItems = () => {
               </Button>
             </View>
           </View>
-          <View row>
+          <View row style={isTablet ? {margin: 15} : {margin: 5}}>
             <View flex centerVH pl5>
               <FatSecretAttribution
                 width="85%"
-                height={40}
+                height={isTablet ? 25 : 30}
                 color={useColors('fatsecret')}
               />
             </View>
@@ -440,7 +447,7 @@ const ShoppingItems = () => {
                 source={require('../../images/barcodespider-logo-blue.webp')}
                 style={{
                   width: '75%',
-                  height: 25,
+                  height: isTablet ? 30 : 25,
                   resizeMode: 'contain',
                   position: 'relative',
                   right: 5,
