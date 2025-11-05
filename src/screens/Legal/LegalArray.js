@@ -111,8 +111,27 @@ export const LegalArray = {
                 },
               ],
             },
+            {
+              index: 2,
+              info: 'Subscriptions & Payments',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'All subscription purchases and payments made through the iOS App Store or Google Play Store are processed and billed by those platforms, not by Kitchen Queue.',
+                },
+                {
+                  index: 2,
+                  info: 'We receive only limited transactional metadata from Apple or Google (for example, an active status token, tier, or renewal date) so your subscription status can be reflected accurately in your Kitchen Queue account.',
+                },
+                {
+                  index: 3,
+                  info: 'Billing, renewals, refunds, and cancellations follow the respective store’s terms and policies. Kitchen Queue does not process or store full payment information.',
+                },
+              ],
+            },
           ],
         },
+
         {
           index: 5,
           title: 'Sharing and Disclosure',
@@ -476,6 +495,10 @@ export const LegalArray = {
               index: 1,
               info: 'Certain features may be subject to daily limits or subscription tiers. Limits and tiers may change to maintain service quality and third-party compliance.',
             },
+            {
+              index: 2,
+              info: 'Subscriptions and payments made through the iOS App Store or Google Play Store are managed by those platforms. Billing, renewals, and cancellations follow the respective store’s policies and settings.',
+            },
           ],
         },
         {
@@ -596,7 +619,7 @@ export const LegalArray = {
           clauses: [
             {
               index: 1,
-              info: 'Favorites, UPC (barcode) scanning, Community Recipe search, and your personal Recipe Box are built-in features of the app.',
+              info: 'Shopping Lists / Carts, Cupboards, Favorites, UPC (barcode) scanning, Community Recipe search, and your personal Recipe Box are built-in features of the app.',
             },
           ],
         },
