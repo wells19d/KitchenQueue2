@@ -1,9 +1,8 @@
 //* TermsService.jsx
-import React from 'react';
-import {View} from 'react-native';
+import React, {useState} from 'react';
 import {LegalStyles} from '../../styles/Styles';
 import {LegalArray} from './LegalArray';
-import {Text, Button, ScrollView} from '../../KQ-UI';
+import {Text, Button, ScrollView, View} from '../../KQ-UI';
 
 export default function TermsService({
   handleTOSConfirm,
@@ -11,6 +10,18 @@ export default function TermsService({
   hideConfirm,
 }) {
   let terms = LegalArray.TOS[0];
+  const [scrolledToBottom, setScrolledToBottom] = useState(false);
+
+  const handleScroll = event => {
+    const {layoutMeasurement, contentOffset, contentSize} = event.nativeEvent;
+
+    const scrollPosition = layoutMeasurement.height + contentOffset.y;
+    const scrollThreshold = contentSize.height * 0.75; // 75% down the page
+
+    if (scrollPosition >= scrollThreshold && !scrolledToBottom) {
+      setScrolledToBottom(true);
+    }
+  };
 
   const RenderTermData = ({terms}) => {
     return terms.sections.map(section => (
@@ -28,7 +39,7 @@ export default function TermsService({
             <View style={LegalStyles.clauseHeader}>
               <View style={LegalStyles.clauseIndexSpacing}></View>
               <View style={LegalStyles.clauseTextWrapper}>
-                <Text size="small">{clause.info}</Text>
+                <Text size="small">- {clause.info}</Text>
               </View>
             </View>
             {clause.subClause?.length > 0 && (
@@ -58,7 +69,7 @@ export default function TermsService({
           LegalStyles.body,
           hideConfirm ? {paddingBottom: 20} : {paddingBottom: 10},
         ]}>
-        <ScrollView>
+        <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
           <RenderTermData terms={terms} />
         </ScrollView>
       </View>
@@ -76,7 +87,8 @@ export default function TermsService({
             <Button
               color="success"
               size="small"
-              onPress={() => handleTOSConfirm()}>
+              onPress={() => handleTOSConfirm()}
+              disabled={!scrolledToBottom}>
               Confirm
             </Button>
           </View>

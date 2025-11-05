@@ -2,7 +2,13 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {ScrollView, View, StyleSheet} from 'react-native';
 
-const KQScrollView = ({children, style, noBar = false, hideBar = false}) => {
+const KQScrollView = ({
+  children,
+  style,
+  noBar = false,
+  hideBar = false,
+  ...props
+}) => {
   const [scrollBarHeight, setScrollBarHeight] = useState(0);
   const [scrollBarTop, setScrollBarTop] = useState(0);
   const [layoutHeight, setLayoutHeight] = useState(0);
@@ -45,7 +51,10 @@ const KQScrollView = ({children, style, noBar = false, hideBar = false}) => {
     <View style={[styles.container(hideBar), style]}>
       <ScrollView
         ref={scrollViewRef}
-        onScroll={handleScroll}
+        onScroll={event => {
+          handleScroll(event);
+          if (typeof props?.onScroll === 'function') props.onScroll(event);
+        }}
         onLayout={handleLayout}
         onContentSizeChange={handleContentSizeChange}
         scrollEventThrottle={16}

@@ -2,8 +2,8 @@
 export const LegalArray = {
   PP: [
     {
-      dates: { effective: 'November 5, 2025', written: 'November 5, 2025' },
-      version: { previous: '1.0.0', current: '1.1.0' },
+      dates: {effective: 'November 5, 2025', written: 'November 5, 2025'},
+      version: {previous: '1.0.0', current: '1.1.0'},
       sections: [
         {
           index: 1,
@@ -292,8 +292,8 @@ export const LegalArray = {
   ],
   TOS: [
     {
-      dates: { effective: 'November 5, 2025', written: 'November 5, 2025' },
-      version: { previous: '1.0.0', current: '1.1.0' },
+      dates: {effective: 'November 5, 2025', written: 'November 5, 2025'},
+      version: {previous: '1.0.0', current: '1.1.0'},
 
       sections: [
         {
@@ -302,7 +302,7 @@ export const LegalArray = {
           clauses: [
             {
               index: 1,
-              info: 'By creating an account or using Kitchen Queue (the “App”), you agree to these Terms of Service (“Terms”). If you do not agree, do not use the App.',
+              info: 'By creating an account or using Kitchen Queue, you agree to these Terms of Service (“Terms”). If you do not agree, do not use the App.',
             },
             {
               index: 2,
@@ -340,7 +340,7 @@ export const LegalArray = {
           clauses: [
             {
               index: 1,
-              info: 'Core features currently include: Favorites, UPC (Barcode) Scanning, Recipe Search (Community Recipes), and Recipe Box (Personal).',
+              info: 'Core features currently include: Shopping Lists / Carts, Cupboards List, Favorites, UPC (Barcode) Scanning, Recipe Search (Community Recipes), and a Recipe Box (Personal).',
             },
             {
               index: 2,
