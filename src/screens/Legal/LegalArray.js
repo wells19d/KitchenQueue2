@@ -183,6 +183,34 @@ export const LegalArray = {
         },
         {
           index: 8,
+          title: 'Device Permissions (Camera & Photos)',
+          clauses: [
+            {
+              index: 1,
+              info: 'The app requests access to your camera and photo library only so you can use features you initiate (for example, scanning barcodes or adding recipe photos). We do not access these features for our own benefit.',
+              subClause: [
+                {
+                  index: 1,
+                  info: 'Camera: Used when you choose to scan a barcode or take a photo for a recipe. Access occurs only during that action.',
+                },
+                {
+                  index: 2,
+                  info: 'Photo Library/Media: Used when you choose to select, crop, or upload an image for a recipe. We do not scan or collect unrelated photos.',
+                },
+                {
+                  index: 3,
+                  info: 'User Control: Permissions are granted/denied via your device settings and can be changed at any time. Some features may not work without these permissions.',
+                },
+                {
+                  index: 4,
+                  info: 'Data Handling: Images or scan results are used only to operate the requested feature (for example, attaching a photo to your recipe or looking up a product). We do not sell or rent your personal data.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          index: 9,
           title: 'Children’s Privacy',
           clauses: [
             {
@@ -192,7 +220,7 @@ export const LegalArray = {
           ],
         },
         {
-          index: 9,
+          index: 10,
           title: 'Security',
           clauses: [
             {
@@ -202,7 +230,7 @@ export const LegalArray = {
           ],
         },
         {
-          index: 10,
+          index: 11,
           title: 'Location of Processing (U.S.-Only Service)',
           clauses: [
             {
@@ -222,7 +250,7 @@ export const LegalArray = {
           ],
         },
         {
-          index: 11,
+          index: 12,
           title: 'Changes to This Policy',
           clauses: [
             {
@@ -232,7 +260,7 @@ export const LegalArray = {
           ],
         },
         {
-          index: 12,
+          index: 13,
           title: 'Contact Us',
           clauses: [
             {
