@@ -306,7 +306,7 @@ export const LegalArray = {
           clauses: [
             {
               index: 1,
-              info: 'You must be at least 13 years old (or the minimum age of digital consent in your region) to use the App. If you are under 18, you represent that you have permission from a parent or legal guardian.',
+              info: 'You must be at least 13 years old to use the App. If you are under 18, you represent that you have permission from a parent or legal guardian. Kitchen Queue is intended for U.S. residents only.',
             },
           ],
         },
