@@ -37,11 +37,9 @@ import useBarcodeScanner from '../../hooks/useBarcodeScanner';
 import {ListStyles} from '../../styles/Styles';
 import Toast from 'react-native-toast-message';
 import {transformNutritionFacts} from '../../utilities/transformNutritionFacts';
-import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {dailyCheckLimit} from '../../utilities/checkLimit';
 import FatSecretAttribution from '../../components/FatSecretBadge';
-import {displayLabel} from '../../utilities/labelTools';
 import NutritionalLabel from '../../components/NutritionalLabel';
 
 const ShoppingItems = () => {
@@ -142,7 +140,10 @@ const ShoppingItems = () => {
       setDescription('');
       setPackageSize(foodObject?.packageSize || '1');
       setQuantity('1');
-      setMeasurement(null);
+      setMeasurement(
+        displayMeasurements.find(m => m.key === foodObject?.measurement) ||
+          null,
+      );
       setCategory(null);
       setNotes('');
       const timer = setTimeout(() => {
@@ -307,11 +308,6 @@ const ShoppingItems = () => {
 
           <ScrollView style={ListStyles.rmcScroll}>
             <NutritionalLabel data={foodObject} />
-            <View style={ListStyles.rmcContents}>
-              <Text size={isTablet ? 'small' : 'xSmall'}>
-                {/* Contains: {titleCase(foodObject.foodContentsLabel)} */}
-              </Text>
-            </View>
           </ScrollView>
           <View style={ListStyles.rmcButtonWrapper}>
             <View style={ListStyles.rmcButtonContainer}>

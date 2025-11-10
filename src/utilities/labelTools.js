@@ -1,8 +1,4 @@
-import {info} from 'firebase-functions/logger';
-import {Text, View} from '../KQ-UI';
-import {useColors} from '../KQ-UI/KQUtilities';
-import {ListStyles} from '../styles/Styles';
-
+//* labelTools.js
 export const servPerContainer = info => {
   if (!info || info === 1) return null;
 

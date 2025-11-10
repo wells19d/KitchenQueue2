@@ -5,7 +5,6 @@ import {Text, View} from '../KQ-UI';
 import {useColors} from '../KQ-UI/KQUtilities';
 import {
   calculatePercentDV,
-  nutritionDisplaySchema,
   nutritionFCCPDisplay,
   nutritionVitDisplay,
   servPerContainer,
@@ -15,8 +14,6 @@ const NutritionalLabel = ({data}) => {
   const device = useDeviceInfo();
   const isTablet = device?.system?.device === 'Tablet';
   const sideWays = device?.view === 'Landscape';
-  console.log('NutritionalLabel data:', data);
-  console.log('test', data?.nutrients?.perServing);
 
   const Sup = ({children}) => (
     <Text
