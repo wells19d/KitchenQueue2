@@ -17,7 +17,12 @@ import {
   Text,
   View,
 } from '../../KQ-UI';
-import {useDeviceInfo, useShoppingCart, useUPCData} from '../../hooks/useHooks';
+import {
+  useDeviceInfo,
+  useShoppingCart,
+  useUPCData,
+  useUPCDataError,
+} from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
 import {displayCategories} from '../../utilities/categories';
 import {
@@ -49,6 +54,7 @@ const ShoppingItems = () => {
   const isTablet = device?.system?.device === 'Tablet';
   const sideWays = device?.view === 'Landscape';
   const upcData = useUPCData();
+  const upcError = useUPCDataError();
   const [showAttModal, setShowAttModal] = useState(false);
   const [storedData, setStoredData] = useState(null);
   const [showAsContainer, setShowAsContainer] = useState(false);
@@ -101,7 +107,7 @@ const ShoppingItems = () => {
   }, [upcData]);
 
   useEffect(() => {
-    if (foodError !== null) {
+    if (upcError !== null) {
       Toast.show({
         type: 'warning',
         text1: 'UPC Not Found in Database.',
@@ -109,7 +115,7 @@ const ShoppingItems = () => {
       });
       dispatch({type: 'RESET_FOOD_DATA'});
     }
-  }, [foodError]);
+  }, [upcError]);
 
   useEffect(() => {
     if (scannedData) {

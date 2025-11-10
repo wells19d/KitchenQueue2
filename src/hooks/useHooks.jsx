@@ -61,6 +61,10 @@ export const useUPCData = () => {
   return useSelector(state => state.upc?.upcData);
 };
 
+export const useUPCDataError = () => {
+  return useSelector(state => state.upc?.error);
+};
+
 export const useRecipesData = () => {
   return useSelector(
     state => state.recipe?.communityRecipes || [],

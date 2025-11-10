@@ -6,14 +6,41 @@ import {
   useRoute,
 } from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {Dropdown, Input, Layout} from '../../KQ-UI';
-import {useCupboard} from '../../hooks/useHooks';
+import {
+  Button,
+  Camera,
+  Dropdown,
+  Input,
+  Layout,
+  Modal,
+  ScrollView,
+  Text,
+  View,
+} from '../../KQ-UI';
+import {
+  useCupboard,
+  useDeviceInfo,
+  useUPCData,
+  useUPCDataError,
+} from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
 import {displayCategories} from '../../utilities/categories';
-import {displayDropField, setNumericValue} from '../../utilities/helpers';
-import {View} from 'react-native';
+import {
+  displayDropField,
+  setNumericValue,
+  titleCase,
+} from '../../utilities/helpers';
+import {Image, TouchableOpacity} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
+import useBarcodeScanner from '../../hooks/useBarcodeScanner';
+import {ListStyles} from '../../styles/Styles';
+import Toast from 'react-native-toast-message';
+import {transformNutritionFacts} from '../../utilities/transformNutritionFacts';
+import {useColors} from '../../KQ-UI/KQUtilities';
+import {dailyCheckLimit} from '../../utilities/checkLimit';
+import FatSecretAttribution from '../../components/FatSecretBadge';
+import NutritionalLabel from '../../components/NutritionalLabel';
 
 const CupboardItems = () => {
   const route = useRoute();
@@ -23,6 +50,27 @@ const CupboardItems = () => {
   const core = useCoreInfo();
   const navigation = useNavigation();
   const cupboard = useCupboard();
+  const device = useDeviceInfo();
+  const isTablet = device?.system?.device === 'Tablet';
+  const sideWays = device?.view === 'Landscape';
+  const upcData = useUPCData();
+  const upcError = useUPCDataError();
+  const [showAttModal, setShowAttModal] = useState(false);
+  const [storedData, setStoredData] = useState(null);
+  const [showAsContainer, setShowAsContainer] = useState(false);
+
+  const count = core?.dailyUPCCounter || 0;
+  const limit = core?.maxUPCSearchLimit || 0;
+
+  const {
+    showScanner,
+    setShowScanner,
+    torchEnabled,
+    toggleTorch,
+    scannedData,
+    onReadCode,
+    resetScanner,
+  } = useBarcodeScanner(core);
 
   const itemToUpdate =
     cupboard?.items?.find(item => item.itemId === itemId) ?? null;
@@ -52,6 +100,70 @@ const CupboardItems = () => {
   const [validation, setValidation] = useState(false);
   const [remainValidation, setRemainValidation] = useState(false);
   const [canSave, setCanSave] = useState(false);
+
+  // Watch for UPC data updates
+  useEffect(() => {
+    if (upcData) {
+      if (!upcData) {
+        setStoredData(null);
+      } else {
+        setStoredData(upcData);
+      }
+    }
+  }, [upcData]);
+
+  // Handle UPC fetch errors
+  useEffect(() => {
+    if (upcError !== null) {
+      Toast.show({
+        type: 'warning',
+        text1: 'UPC Not Found in Database.',
+        text2: `Please enter the item manually.`,
+      });
+      dispatch({type: 'RESET_FOOD_DATA'});
+    }
+  }, [upcError]);
+
+  useEffect(() => {
+    if (scannedData) {
+      // Dispatch the UPC lookup
+      dispatch({
+        type: 'FETCH_UPC_DATA',
+        payload: {
+          barcode: scannedData?.value,
+          allowance: core?.dailyUPCCounter,
+          profileID: core?.profileID,
+          accountID: core?.accountID,
+        },
+      });
+
+      setShowScanner(false);
+      resetScanner();
+    }
+  }, [scannedData]);
+  useEffect(() => {
+    if (storedData) {
+      let foodObject = transformNutritionFacts(storedData) || {};
+      setItemName(titleCase(foodObject?.itemName));
+      setBrandName(titleCase(foodObject?.brandName));
+      setDescription('');
+      const pkg = foodObject?.packageSize || '1';
+      setPackageSize(pkg);
+      setRemainingAmount(pkg);
+      setQuantity('1');
+      setMeasurement(
+        displayMeasurements.find(m => m.key === foodObject?.measurement) ||
+          null,
+      );
+      setCategory(null);
+      setNotes('');
+      const timer = setTimeout(() => {
+        setShowAttModal(true);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [storedData]);
 
   useEffect(() => {
     if (itemName === null) {
@@ -180,10 +292,16 @@ const CupboardItems = () => {
   };
 
   const handleClose = () => {
-    // dispatch({type: 'RESET_UPC_DATA'}); // this is for upc later
+    dispatch({type: 'RESET_UPC_DATA'});
     resetForm();
-    // setStoredData(null); // this is for upc later
+    setStoredData(null);
     navigation.goBack();
+  };
+
+  const handleClear = () => {
+    dispatch({type: 'RESET_UPC_DATA'});
+    resetForm();
+    setStoredData(null);
   };
 
   const displayRemaining = (packageSize, remainingAmount) => {
@@ -193,96 +311,214 @@ const CupboardItems = () => {
 
   useFocusEffect(useCallback(() => () => resetForm(), []));
 
+  const ScanAction = () => {
+    if (count < limit) {
+      if (showScanner) {
+        toggleTorch();
+      } else {
+        setShowScanner(true);
+      }
+    } else {
+      dailyCheckLimit({
+        current: count,
+        max: limit,
+        label: 'UPC',
+      });
+    }
+  };
+
+  const CloseScanner = () => {
+    setShowScanner(false);
+  };
+
+  const RenderModalContent = () => {
+    if (storedData) {
+      let foodObject = transformNutritionFacts(storedData) || {};
+
+      return (
+        <View style={ListStyles.rmcContainer}>
+          <View
+            style={{borderBottomWidth: 0.5, borderColor: useColors('dark90')}}>
+            <View m10>
+              {foodObject.images?.length > 0 ? (
+                <Image
+                  source={{uri: `${foodObject.images[0]}`}}
+                  style={{
+                    resizeMode: 'contain',
+                    height: isTablet ? 400 : 250,
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    resizeMode: 'contain',
+                    height: 150,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text>No Image Available</Text>
+                </View>
+              )}
+            </View>
+          </View>
+
+          <ScrollView style={ListStyles.rmcScroll}>
+            <NutritionalLabel data={foodObject} />
+          </ScrollView>
+          <View style={ListStyles.rmcButtonWrapper}>
+            <View style={ListStyles.rmcButtonContainer}>
+              <Button
+                color="danger"
+                type="outline"
+                size="small"
+                onPress={handleClear}>
+                Clear
+              </Button>
+            </View>
+            <View style={ListStyles.rmcButtonContainer}>
+              <Button
+                size="small"
+                status="success"
+                onPress={() => setShowAttModal(false)}>
+                Confirm
+              </Button>
+            </View>
+          </View>
+          <View centerVH style={isTablet ? {margin: 15} : {margin: 10}}>
+            <FatSecretAttribution
+              width="85%"
+              height={isTablet ? 25 : 20}
+              color={useColors('fatsecret')}
+            />
+          </View>
+        </View>
+      );
+    }
+  };
+
   return (
     <Layout
       headerTitle="Cupboard Item"
-      LeftButton="Close"
-      RightButton={canSave ? 'Save' : null}
-      LeftAction={handleClose}
-      RightAction={canSave ? SaveItem : null}
+      LeftButton={showScanner ? 'Cancel-Scan' : 'Close'}
+      RightButton={
+        canSave
+          ? 'Save'
+          : showScanner
+          ? torchEnabled
+            ? 'Torch-On'
+            : 'Torch-Off'
+          : 'Scan'
+      }
+      LeftAction={showScanner ? CloseScanner : handleClose}
+      RightAction={canSave ? SaveItem : ScanAction}
       sheetOpen={false}
       outerViewStyles={{paddingBottom: 0}}
-      mode="keyboard-scroll">
-      <Input
-        required
-        label="Item Name"
-        value={itemName}
-        onChangeText={setItemName}
-        validation={validation}
-        validationMessage="Item Name is required"
-        capitalize
-        capitalMode="words"
-      />
-      <Input
-        label="Brand Name"
-        value={brandName}
-        onChangeText={setBrandName}
-        capitalize
-        capitalMode="words"
-      />
-      <Input
-        label="Description"
-        value={description}
-        onChangeText={setDescription}
-        capitalize
-        capitalMode="sentences"
-      />
-      <View style={{flexDirection: 'row'}}>
-        <View style={{flex: 1.25}}>
+      mode={showScanner ? 'keyboard-static' : 'keyboard-scroll'}>
+      {showScanner ? (
+        <Camera
+          torchEnabled={torchEnabled}
+          onReadCode={onReadCode}
+          onManualEntry={manualUPC =>
+            onReadCode([{type: 'manual', value: manualUPC}])
+          }
+          height={device?.dimensions?.height}
+        />
+      ) : (
+        <>
           <Input
-            label="Qty"
-            value={quantity}
-            onChangeText={setNumericValue(setQuantity)}
-            caption="# of Pkgs"
-            // capitalMode="sentences"
+            required
+            label="Item Name"
+            value={itemName}
+            onChangeText={setItemName}
+            validation={validation}
+            validationMessage="Item Name is required"
+            capitalize
+            capitalMode="words"
           />
-        </View>
-        <View style={{flex: 1.75}}>
           <Input
-            label="Package Size"
-            value={packageSize}
-            onChangeText={handlePackageChange}
-            caption="Total in Pkg"
+            label="Brand Name"
+            value={brandName}
+            onChangeText={setBrandName}
+            capitalize
+            capitalMode="words"
+          />
+          <Input
+            label="Description"
+            value={description}
+            onChangeText={setDescription}
+            capitalize
             capitalMode="sentences"
           />
-        </View>
-        <View style={{flex: 1.75}}>
-          <Input
-            label="Remaining"
-            value={remainingAmount}
-            onChangeText={handleRemainingAmountChange}
-            caption={displayRemaining(packageSize, remainingAmount)}
-            // capitalMode="sentences"
+          <View style={{flexDirection: 'row'}}>
+            <View style={{flex: 1.25}}>
+              <Input
+                label="Qty"
+                value={quantity}
+                onChangeText={setNumericValue(setQuantity)}
+                caption="# of Pkgs"
+                // capitalMode="sentences"
+              />
+            </View>
+            <View style={{flex: 1.75}}>
+              <Input
+                label="Package Size"
+                value={packageSize}
+                onChangeText={handlePackageChange}
+                caption="Total in Pkg"
+                capitalMode="sentences"
+              />
+            </View>
+            <View style={{flex: 1.75}}>
+              <Input
+                label="Remaining"
+                value={remainingAmount}
+                onChangeText={handleRemainingAmountChange}
+                caption={displayRemaining(packageSize, remainingAmount)}
+                // capitalMode="sentences"
+              />
+            </View>
+          </View>
+          <Dropdown
+            label="Measurement"
+            customLabel="Custom Measurement"
+            placeholder="Select a measurement"
+            value={measurement}
+            setValue={setMeasurement}
+            caption={'Single is for individual items. Ex: Eggs'}
+            mapData={displayMeasurements}
           />
-        </View>
-      </View>
-      <Dropdown
-        label="Measurement"
-        customLabel="Custom Measurement"
-        placeholder="Select a measurement"
-        value={measurement}
-        setValue={setMeasurement}
-        caption={'Single is for individual items. Ex: Eggs'}
-        mapData={displayMeasurements}
-      />
-      <Dropdown
-        label="Category"
-        customLabel="Custom Category"
-        placeholder="Select a category"
-        value={category}
-        setValue={setCategory}
-        mapData={displayCategories}
-      />
-      <Input
-        label="Notes"
-        value={notes}
-        onChangeText={setNotes}
-        multiline
-        multiHeight="large"
-        caption="Add notes here"
-        counter
-        maxCount={250}
-      />
+          <Dropdown
+            label="Category"
+            customLabel="Custom Category"
+            placeholder="Select a category"
+            value={category}
+            setValue={setCategory}
+            mapData={displayCategories}
+          />
+          <Input
+            label="Notes"
+            value={notes}
+            onChangeText={setNotes}
+            multiline
+            multiHeight="large"
+            caption="Add notes here"
+            counter
+            maxCount={250}
+          />
+        </>
+      )}
+      <Modal
+        title={`${brandName ? brandName + ' ' : ''}${itemName || 'Item'}`}
+        visible={showAttModal}
+        headerFont="open-6"
+        headerSize="small"
+        height="99.5%"
+        width="96%"
+        headerColor="orange"
+        hideClose
+        onClose={handleClose}>
+        <RenderModalContent />
+      </Modal>
     </Layout>
   );
 };
