@@ -17,12 +17,7 @@ import {
   Text,
   View,
 } from '../../KQ-UI';
-import {
-  useDeviceInfo,
-  useFoodDataError,
-  useShoppingCart,
-  useUPCData,
-} from '../../hooks/useHooks';
+import {useDeviceInfo, useShoppingCart, useUPCData} from '../../hooks/useHooks';
 import {displayMeasurements} from '../../utilities/measurements';
 import {displayCategories} from '../../utilities/categories';
 import {
@@ -53,9 +48,7 @@ const ShoppingItems = () => {
   const device = useDeviceInfo();
   const isTablet = device?.system?.device === 'Tablet';
   const sideWays = device?.view === 'Landscape';
-  const foodError = useFoodDataError();
   const upcData = useUPCData();
-  console.log('upcData in ShoppingItems:', upcData);
   const [showAttModal, setShowAttModal] = useState(false);
   const [storedData, setStoredData] = useState(null);
   const [showAsContainer, setShowAsContainer] = useState(false);
@@ -278,7 +271,6 @@ const ShoppingItems = () => {
   const RenderModalContent = () => {
     if (storedData) {
       let foodObject = transformNutritionFacts(storedData) || {};
-      console.log('foodObject:', foodObject);
 
       return (
         <View style={ListStyles.rmcContainer}>

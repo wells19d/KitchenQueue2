@@ -8,7 +8,6 @@ import cupboardReducer from './cupboard.reducer';
 import deviceReducer from './device.reducer';
 import invitesReducer from './invites.reducer';
 import joinInviteReducer from './join.reducer';
-import edamamReducer from './edamam.reducer';
 import upcReducer from './upc.reducer';
 import recipeReducer from './recipe.reducer';
 import favoriteReducer from './favorites.reducer';
@@ -22,7 +21,6 @@ const rootReducer = combineReducers({
   deviceInfo: deviceReducer,
   invites: invitesReducer,
   joinInvite: joinInviteReducer,
-  edamam: edamamReducer,
   upc: upcReducer,
   recipe: recipeReducer,
   favorites: favoriteReducer,

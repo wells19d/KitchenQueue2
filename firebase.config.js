@@ -11,8 +11,6 @@ export const fetchRemoteKeys = async () => {
   const config = getRemoteConfig(app);
 
   await setDefaults(config, {
-    EDAMAM_FOOD_ID: '',
-    EDAMAM_FOOD_KEY: '',
     ALGOLIA_APP_ID: '',
     ALGOLIA_APP_SEARCH_KEY: '',
     ALGOLIA_APP_WRITE_KEY: '',
@@ -26,10 +24,7 @@ export const fetchRemoteKeys = async () => {
   await config.activate();
 
   return {
-    food: {
-      appId: getValue(config, 'EDAMAM_FOOD_ID').asString(),
-      appKey: getValue(config, 'EDAMAM_FOOD_KEY').asString(),
-    },
+    food: {},
     algolia: {
       appID: getValue(config, 'ALGOLIA_APP_ID').asString(),
       searchKey: getValue(config, 'ALGOLIA_APP_SEARCH_KEY').asString(),

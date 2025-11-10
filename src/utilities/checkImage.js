@@ -1,7 +1,7 @@
 import storage from '@react-native-firebase/storage';
 
 export const checkImage = async path => {
-  console.log('📦 checkImage got path:', path);
+  // console.log('📦 checkImage got path:', path);
   try {
     const ref = storage().ref(path);
     // console.log('📦 got ref, fetching download URL...');

@@ -192,7 +192,6 @@ const SelectedRecipe = ({
 
   const handleShareRec = () => {
     useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    console.log('Request Share Recipe');
     Alert.alert(
       'Share Recipe',
       // `You’re about to share this recipe with the community. Once shared, it becomes part of the community and can no longer be edited by you. If you need to change or remove it later, you can submit a review request to the admin team. Would you like to continue?`,
@@ -226,7 +225,6 @@ const SelectedRecipe = ({
   // This is a future feature. Right now we don't have anything in place for admins to get messages.
   const handleRequestEditDelete = () => {
     useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    console.log('Request Edit/Delete Recipe');
     // this requests admin to edit/delete the recipe
   };
 

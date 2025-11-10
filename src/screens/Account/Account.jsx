@@ -422,7 +422,6 @@ const RenderModal = React.memo(props => {
   );
 
   const deviceInfo = useDeviceInfo();
-  console.log('deviceInfo:', deviceInfo);
   const isTablet = deviceInfo?.system?.device === 'Tablet';
   const isPortrait = deviceInfo?.view === 'Portrait';
 

@@ -180,9 +180,9 @@ const CupboardItems = () => {
   };
 
   const handleClose = () => {
-    // dispatch({type: 'RESET_FOOD_DATA'}); // this is for edamam later
+    // dispatch({type: 'RESET_UPC_DATA'}); // this is for upc later
     resetForm();
-    // setStoredData(null); // this is for edamam later
+    // setStoredData(null); // this is for upc later
     navigation.goBack();
   };
 
