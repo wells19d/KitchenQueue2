@@ -19,7 +19,6 @@ const InstructionForm = props => {
 
   useEffect(() => {
     const showSub = Keyboard.addListener('keyboardDidShow', e => {
-      console.log('Keyboard height:', e.endCoordinates.height);
       // you can store this in state and use it for offset
     });
 
