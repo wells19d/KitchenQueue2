@@ -18,7 +18,7 @@ const NutritionalLabel = ({data}) => {
   const Sup = ({children}) => (
     <Text
       size={isTablet ? 'xSmall' : 'tiny'}
-      style={{postion: 'relative', top: -1, marginLeft: 1}}>
+      style={{position: 'relative', top: -1, marginLeft: 1}}>
       {children}
     </Text>
   );
