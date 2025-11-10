@@ -140,6 +140,7 @@ export const transformNutritionFacts = (merged = {}) => {
   const upc = spider?.item_attributes?.upc || null;
   const ean = spider?.item_attributes?.ean || null;
   const foodURL = fat.food_url || null;
+  const storeURL = spider?.Stores?.[0]?.link || null;
 
   // --- Package size ---
   let sizeResult = null;
@@ -291,5 +292,6 @@ export const transformNutritionFacts = (merged = {}) => {
     },
     foodURL,
     servingSize,
+    storeURL,
   };
 };

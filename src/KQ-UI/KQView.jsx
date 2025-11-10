@@ -52,7 +52,9 @@ const KQView = ({
   bottomAlign = false,
   topAlign = false,
   border = false,
-  borderWidth = 1,
+  borderWidth = 0,
+  borderBottomWidth = 0,
+  borderTopWidth = 0,
   borderColor = 'black',
 
   // Margin and padding (numeric or shorthand)
@@ -83,7 +85,16 @@ const KQView = ({
     if (row) s.flexDirection = 'row';
     if (column) s.flexDirection = 'column';
     if (flex !== undefined) s.flex = flex === true ? 1 : flex;
-    if (border) s.borderWidth = borderWidth;
+    if (border) s.borderWidth = 1;
+    if (borderWidth) s.borderWidth = borderWidth;
+    if (borderBottomWidth !== 0) {
+      s.borderBottomWidth = borderBottomWidth;
+      s.borderWidth = 0;
+    }
+    if (borderTopWidth !== 0) {
+      s.borderTopWidth = borderTopWidth;
+      s.borderWidth = 0;
+    }
     if (borderColor) s.borderColor = borderColor;
 
     if (centerVH) {

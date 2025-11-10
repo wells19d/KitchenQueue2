@@ -19,7 +19,6 @@ import {
 } from '../../KQ-UI';
 import {
   useDeviceInfo,
-  useFoodData,
   useFoodDataError,
   useShoppingCart,
   useUPCData,
@@ -42,6 +41,8 @@ import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {dailyCheckLimit} from '../../utilities/checkLimit';
 import FatSecretAttribution from '../../components/FatSecretBadge';
+import {displayLabel} from '../../utilities/labelTools';
+import NutritionalLabel from '../../components/NutritionalLabel';
 
 const ShoppingItems = () => {
   const route = useRoute();
@@ -54,11 +55,8 @@ const ShoppingItems = () => {
   const device = useDeviceInfo();
   const isTablet = device?.system?.device === 'Tablet';
   const sideWays = device?.view === 'Landscape';
-  const foodData = useFoodData();
-  console.log('foodData:', foodData);
   const foodError = useFoodDataError();
   const upcData = useUPCData();
-  console.log('UPC Data:', upcData);
   const [showAttModal, setShowAttModal] = useState(false);
   const [storedData, setStoredData] = useState(null);
   const [showAsContainer, setShowAsContainer] = useState(false);
@@ -108,7 +106,7 @@ const ShoppingItems = () => {
         setStoredData(upcData);
       }
     }
-  }, [foodData]);
+  }, [upcData]);
 
   useEffect(() => {
     if (foodError !== null) {
@@ -283,7 +281,7 @@ const ShoppingItems = () => {
       return (
         <View style={ListStyles.rmcContainer}>
           <View
-            style={{borderBottomWidth: 1, borderColor: useColors('dark50')}}>
+            style={{borderBottomWidth: 0.5, borderColor: useColors('dark90')}}>
             <View m10>
               {foodObject.images?.length > 0 ? (
                 <Image
@@ -308,107 +306,7 @@ const ShoppingItems = () => {
           </View>
 
           <ScrollView style={ListStyles.rmcScroll}>
-            {/*  <View style={ListStyles.rmcScrollShellTop} />
-            <View style={[ListStyles.rmcScrollWrapper]}>
-              <TouchableOpacity
-                style={{
-                  marginTop: 2,
-                  marginBottom: 10,
-                  marginHorizontal: 15,
-                }}
-                onPress={() => setShowAsContainer(!showAsContainer)}>
-                <Text
-                  size={isTablet ? 'xSmall' : 'tiny'}
-                  font="open-5"
-                  kqColor="rgb(56, 71, 234)"
-                  centered>
-                  {showAsContainer ? 'Show Per Serving' : 'Show Per Container'}
-                </Text>
-              </TouchableOpacity>
-              <View style={{flexDirection: 'row'}}>
-                <View style={ListStyles.rmcNutrientLabel}>
-                  <Text size={isTablet ? 'small' : 'xSmall'} numberOfLines={1}>
-                    Container Size:
-                  </Text>
-                </View>
-                <View style={ListStyles.rmcNutrientValue}>
-                  <Text size={isTablet ? 'small' : 'xSmall'}>
-                    {foodObject?.packageSize?.quantity}{' '}
-                    {formatPluralUnit(
-                      foodObject?.packageSize?.quantity,
-                      foodObject?.packageSize?.unit,
-                    )}
-                  </Text>
-                </View>
-              </View>
-              <View style={{flexDirection: 'row'}}>
-                <View style={ListStyles.rmcNutrientLabel}>
-                  <Text size={isTablet ? 'small' : 'xSmall'} numberOfLines={1}>
-                    Serving Size:
-                  </Text>
-                </View>
-                <View style={ListStyles.rmcNutrientValue}>
-                  <Text size={isTablet ? 'small' : 'xSmall'}>
-                    {foodObject?.servingSizes[0]?.quantity}{' '}
-                    {formatPluralUnit(
-                      foodObject?.servingSizes[0]?.quantity,
-                      foodObject?.servingSizes[0]?.label,
-                    )}
-                  </Text>
-                </View>
-              </View>
-
-              {showAsContainer
-                ? Object.entries(foodObject.nutrients?.perContainer).map(
-                    ([key, value]) => (
-                      <View key={key} style={{flexDirection: 'row'}}>
-                        <View style={ListStyles.rmcNutrientLabel}>
-                          <Text
-                            size={isTablet ? 'small' : 'xSmall'}
-                            numberOfLines={1}>
-                            {value.label}:
-                          </Text>
-                        </View>
-                        <View style={ListStyles.rmcNutrientValue}>
-                          <Text size={isTablet ? 'small' : 'xSmall'}>
-                            {Math.round(value.value * 100) / 100}
-                            {value.unit ? ` ${value.unit}` : null}
-                          </Text>
-                        </View>
-                      </View>
-                    ),
-                  )
-                : Object.entries(foodObject.nutrients?.perServing).map(
-                    ([key, value]) => (
-                      <View key={key} style={{flexDirection: 'row'}}>
-                        <View style={ListStyles.rmcNutrientLabel}>
-                          <Text
-                            size={isTablet ? 'small' : 'xSmall'}
-                            numberOfLines={1}>
-                            {value.label}:
-                          </Text>
-                        </View>
-                        <View style={ListStyles.rmcNutrientValue}>
-                          <Text size={isTablet ? 'small' : 'xSmall'}>
-                            {Math.round(value.value * 100) / 100}
-                            {value.unit ? ` ${value.unit}` : null}
-                          </Text>
-                        </View>
-                      </View>
-                    ),
-                  )}
-            </View>*/}
-            <View style={ListStyles.rmcDisclaimer}>
-              <Text size={isTablet ? 'xSmall' : 'tiny'} italic justified>
-                The nutritional information displayed is based on data provided
-                by FatSecret and is intended for reference purposes only. This
-                information may not reflect the exact values on the current
-                product label, as manufacturers may have updated or changed the
-                product's formulation or packaging since the data was recorded.
-                For the most accurate and up-to-date information, please refer
-                to the actual product label.
-              </Text>
-            </View>
+            <NutritionalLabel data={foodObject} />
             <View style={ListStyles.rmcContents}>
               <Text size={isTablet ? 'small' : 'xSmall'}>
                 {/* Contains: {titleCase(foodObject.foodContentsLabel)} */}
@@ -434,26 +332,12 @@ const ShoppingItems = () => {
               </Button>
             </View>
           </View>
-          <View row style={isTablet ? {margin: 15} : {margin: 5}}>
-            <View flex centerVH pl5>
-              <FatSecretAttribution
-                width="85%"
-                height={isTablet ? 25 : 30}
-                color={useColors('fatsecret')}
-              />
-            </View>
-            <View flex centerVH>
-              <Image
-                source={require('../../images/barcodespider-logo-blue.webp')}
-                style={{
-                  width: '75%',
-                  height: isTablet ? 30 : 25,
-                  resizeMode: 'contain',
-                  position: 'relative',
-                  right: 5,
-                }}
-              />
-            </View>
+          <View centerVH style={isTablet ? {margin: 15} : {margin: 10}}>
+            <FatSecretAttribution
+              width="85%"
+              height={isTablet ? 25 : 20}
+              color={useColors('fatsecret')}
+            />
           </View>
         </View>
       );

@@ -25,9 +25,9 @@ export const displayNutrients = [
   {index: 11, key: 'fiber', label: 'Fiber', unit: 'g'},
   {index: 12, key: 'sugar', label: 'Total Sugars', unit: 'g'},
   {index: 13, key: 'added_sugars', label: 'Added Sugars', unit: 'g'},
-  {index: 14, key: 'vitamin_a', label: 'Vitamin A', unit: 'µg'},
+  {index: 14, key: 'vitamin_a', label: 'Vitamin A', unit: 'mcg'},
   {index: 15, key: 'vitamin_c', label: 'Vitamin C', unit: 'mg'},
-  {index: 16, key: 'vitamin_d', label: 'Vitamin D', unit: 'µg'},
+  {index: 16, key: 'vitamin_d', label: 'Vitamin D', unit: 'mcg'},
   {index: 17, key: 'calcium', label: 'Calcium', unit: 'mg'},
   {index: 18, key: 'iron', label: 'Iron', unit: 'mg'},
 ];
