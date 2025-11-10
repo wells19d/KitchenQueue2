@@ -55,6 +55,7 @@ const ShoppingItems = () => {
   const sideWays = device?.view === 'Landscape';
   const foodError = useFoodDataError();
   const upcData = useUPCData();
+  console.log('upcData in ShoppingItems:', upcData);
   const [showAttModal, setShowAttModal] = useState(false);
   const [storedData, setStoredData] = useState(null);
   const [showAsContainer, setShowAsContainer] = useState(false);
@@ -240,14 +241,14 @@ const ShoppingItems = () => {
   };
 
   const handleClose = () => {
-    dispatch({type: 'RESET_FOOD_DATA'});
+    dispatch({type: 'RESET_UPC_DATA'});
     resetForm();
     setStoredData(null);
     navigation.goBack();
   };
 
   const handleClear = () => {
-    dispatch({type: 'RESET_FOOD_DATA'});
+    dispatch({type: 'RESET_UPC_DATA'});
     resetForm();
     setStoredData(null);
   };
@@ -443,7 +444,7 @@ const ShoppingItems = () => {
         </>
       )}
       <Modal
-        title={storedData?.food?.label}
+        title={`${brandName ? brandName + ' ' : ''}${itemName || 'Item'}`}
         visible={showAttModal}
         headerFont="open-6"
         headerSize="small"
