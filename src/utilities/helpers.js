@@ -107,9 +107,9 @@ export const compareByDate = (date1, date2) => {
 
 export const formatMeasurementWithPlural = (
   packageSize,
-  quantity,
   unit,
   itemName,
+  remainingAmount,
 ) => {
   if (packageSize == null || unit == null) return '';
 
@@ -124,7 +124,11 @@ export const formatMeasurementWithPlural = (
         : pluralize?.plural
         ? pluralize.plural(base)
         : `${base}s`;
-    return `${packageSize} ${name}`;
+    if (typeof remainingAmount === 'number') {
+      return `${remainingAmount} of ${packageSize} ${name}`;
+    } else {
+      return `${packageSize} ${name}`;
+    }
   }
 
   // measured units

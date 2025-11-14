@@ -21,7 +21,7 @@ import {toFraction} from '../../utilities/fractionUnit';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {SelectedRecipeStyles} from '../../styles/Styles';
 import {setHapticFeedback} from '../../hooks/setHapticFeedback';
-import {useDeviceInfo, useProfile} from '../../hooks/useHooks';
+import {useCupboard, useDeviceInfo, useProfile} from '../../hooks/useHooks';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -45,6 +45,7 @@ const SelectedRecipe = ({
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
   const deviceInfo = useDeviceInfo();
   const tablet = deviceInfo?.system?.device === 'Tablet';
+  const cupboard = useCupboard();
 
   const [columns, setColumns] = useState(tablet ? 3 : !tablet ? 2 : 1);
 

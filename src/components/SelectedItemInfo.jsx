@@ -105,6 +105,7 @@ const SelectedItemInfo = props => {
       itemId,
       navigateBackTo: navigate?.backTo,
       statusTo: navigate?.statusTo,
+      updatingItem: true,
     });
     setShowItemInfo(false);
   };

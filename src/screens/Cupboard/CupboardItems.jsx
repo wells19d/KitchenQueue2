@@ -44,7 +44,7 @@ import NutritionalLabel from '../../components/NutritionalLabel';
 
 const CupboardItems = () => {
   const route = useRoute();
-  const {itemId} = route.params || {};
+  const {itemId, updatingItem} = route.params || {};
 
   const dispatch = useDispatch();
   const core = useCoreInfo();
@@ -450,15 +450,17 @@ const CupboardItems = () => {
             capitalMode="sentences"
           />
           <View style={{flexDirection: 'row'}}>
-            <View style={{flex: 1.25}}>
-              <Input
-                label="Qty"
-                value={quantity}
-                onChangeText={setNumericValue(setQuantity)}
-                caption="# of Pkgs"
-                // capitalMode="sentences"
-              />
-            </View>
+            {!updatingItem && (
+              <View style={{flex: 1.25}}>
+                <Input
+                  label="Qty"
+                  value={quantity}
+                  onChangeText={setNumericValue(setQuantity)}
+                  caption="# of Pkgs"
+                  // capitalMode="sentences"
+                />
+              </View>
+            )}
             <View style={{flex: 1.75}}>
               <Input
                 label="Package Size"

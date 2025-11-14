@@ -19,7 +19,7 @@ const CupboardGroup = () => {
       setRefreshFlag(prev => !prev);
     }, [cupboard?.items]),
   );
-  const cupboardItems = cupboard?.items ?? [];
+  const cupboardItems = Array.isArray(cupboard?.items) ? cupboard?.items : [];
 
   const groupedList = useMemo(() => {
     const map = new Map();

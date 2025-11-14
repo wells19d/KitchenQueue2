@@ -40,6 +40,7 @@ const CupboardSingle = () => {
       title: 'Update Item',
       itemId,
       navigateBackTo: 'CupboardList-Single',
+      updatingItem: true,
     });
   };
 
