@@ -8,6 +8,7 @@ import SwipeableItem from '../../components/SwipeableItem';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {useFocusEffect} from '@react-navigation/native';
+import {groupedData} from '../../utilities/conversions';
 
 const CupboardGroup = () => {
   const core = useCoreInfo();
@@ -19,52 +20,11 @@ const CupboardGroup = () => {
       setRefreshFlag(prev => !prev);
     }, [cupboard?.items]),
   );
+
   const cupboardItems = Array.isArray(cupboard?.items) ? cupboard?.items : [];
 
   const groupedList = useMemo(() => {
-    const map = new Map();
-
-    for (const item of cupboardItems) {
-      const {
-        itemName,
-        brandName,
-        category,
-        description,
-        measurement,
-        packageSize,
-        remainingAmount,
-      } = item;
-
-      const key = `${itemName}__${category || ''}__${measurement || ''}`;
-
-      if (map.has(key)) {
-        const group = map.get(key);
-        group.count++;
-        group.items.push(item);
-
-        group.brandName = group.brandName === brandName ? brandName : undefined;
-        group.description =
-          group.description === description ? description : undefined;
-
-        group.packageSize += Number(packageSize || 0);
-        group.remainingAmount += Number(remainingAmount || 0);
-      } else {
-        map.set(key, {
-          itemName,
-          itemId: item.itemId,
-          count: 1,
-          brandName,
-          category,
-          description,
-          measurement,
-          packageSize: Number(packageSize || 0),
-          remainingAmount: Number(remainingAmount || 0),
-          items: [item],
-        });
-      }
-    }
-
-    return Array.from(map.values());
+    return groupedData(cupboardItems);
   }, [cupboardItems]);
 
   const [showItemInfo, setShowItemInfo] = useState(false);
@@ -99,7 +59,7 @@ const CupboardGroup = () => {
       RightAction={null}
       sheetOpen={false}
       outerViewStyles={{paddingBottom: 0}}>
-      {groupedList.length === 0 ? (
+      {groupedList?.length === 0 ? (
         <View
           style={[
             ListStyles.viewContainer,

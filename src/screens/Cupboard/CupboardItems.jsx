@@ -5,7 +5,7 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Button,
   Camera,
@@ -41,6 +41,7 @@ import {useColors} from '../../KQ-UI/KQUtilities';
 import {dailyCheckLimit} from '../../utilities/checkLimit';
 import FatSecretAttribution from '../../components/FatSecretBadge';
 import NutritionalLabel from '../../components/NutritionalLabel';
+import {exportData} from '../../utilities/conversions';
 
 const CupboardItems = () => {
   const route = useRoute();
@@ -225,6 +226,14 @@ const CupboardItems = () => {
     setQuantity('1');
   };
 
+  const convertedItem = useMemo(() => {
+    return exportData(
+      measurement?.key,
+      Number(packageSize),
+      Number(remainingAmount),
+    );
+  }, [measurement, packageSize, remainingAmount]);
+
   const SaveItem = () => {
     const parsedQuantity = parseInt(quantity, 10);
 
@@ -243,10 +252,19 @@ const CupboardItems = () => {
       itemName: itemName || '',
       brandName: brandName || '',
       description: description || '',
-      packageSize: Number(packageSize) > 0 ? Number(packageSize) : 1,
-      remainingAmount:
-        parseFloat(remainingAmount) > 0 ? parseFloat(remainingAmount) : 1,
-      measurement: measurement?.key?.trim() || 'each',
+
+      packageSize: convertedItem
+        ? convertedItem.packageSize
+        : Number(packageSize) || 1,
+
+      remainingAmount: convertedItem
+        ? convertedItem.remainingAmount
+        : Number(remainingAmount) || 1,
+
+      measurement: convertedItem
+        ? convertedItem.measurement
+        : measurement?.key?.trim() || 'each',
+
       category: category?.key?.trim() || 'other',
       notes: notes || '',
     };

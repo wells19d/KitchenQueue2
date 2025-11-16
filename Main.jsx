@@ -551,7 +551,7 @@ const Main = props => {
             title="Permissions Required"
             headerFont="open-6"
             headerSize="small"
-            height="50%"
+            height="75%"
             width="90%"
             // fullScreen
             hideClose>

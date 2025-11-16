@@ -113,34 +113,38 @@ export const formatMeasurementWithPlural = (
 ) => {
   if (packageSize == null || unit == null) return '';
 
-  // 'each' → always show PACK SIZE + SINGULAR item name (e.g., "1 Tomato", "6 Onion")
-  if (unit === 'each') {
-    const base = (
-      pluralize?.singular ? pluralize.singular(itemName || '') : itemName || ''
-    ).trim();
-    const name =
-      packageSize === 1
-        ? base
-        : pluralize?.plural
-        ? pluralize.plural(base)
-        : `${base}s`;
-    if (typeof remainingAmount === 'number') {
-      return `${remainingAmount} of ${packageSize} ${name}`;
-    } else {
-      return `${packageSize} ${name}`;
+  const pkg = Number(packageSize);
+  const rem = remainingAmount != null ? Number(remainingAmount) : null;
+
+  // SHOPPING LIST — no remaining amount
+  if (rem === null || isNaN(rem)) {
+    if (unit === 'each') {
+      const singular = pluralize.singular(itemName || '').trim();
+      const plural = pluralize.plural(singular);
+      return pkg === 1 ? `${pkg} ${singular}` : `${pkg} ${plural}`;
     }
+
+    const match = displayMeasurements.find(m => m.key === unit);
+    const label = match ? match.label : unit;
+    const pluralLabel = pkg === 1 ? label : pluralize(label);
+
+    return `${pkg} ${pluralLabel}`;
   }
 
-  // measured units
+  // CUPBOARD / GROUPED — has remaining amount
+  if (unit === 'each') {
+    const singular = pluralize.singular(itemName || '').trim();
+    const plural = pluralize.plural(singular);
+    const label = pkg === 1 ? singular : plural;
+
+    return `${rem} of ${pkg} ${label}`;
+  }
+
   const match = displayMeasurements.find(m => m.key === unit);
-  if (match) {
-    const label = match.label;
-    return `${packageSize} ${packageSize > 1 ? pluralize(label) : label}`;
-  }
+  const label = match ? match.label : unit;
+  const pluralLabel = pkg === 1 ? label : pluralize(label);
 
-  // custom fallback
-  const formatted = formatMeasurement(unit);
-  return `${packageSize} ${packageSize > 1 ? pluralize(formatted) : formatted}`;
+  return `${rem} of ${pkg} ${pluralLabel}`;
 };
 
 export const formatParagraph = (str = '') => {

@@ -10,6 +10,7 @@ import {AppInfo} from '../../../AppInfo';
 import TermsService from '../Legal/TermsService';
 import PrivacyPolicy from '../Legal/PrivacyPolicy';
 import About from '../Legal/About';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Help = () => {
   const profile = useProfile();
@@ -66,6 +67,19 @@ const Help = () => {
             action={() => navigation.navigate('Resets')}
             tt1="Resetting Your Lists"
             tt2="Clear your cupboard / shopping lists."
+          />
+          <TellMeButton
+            profile={profile?.userSettings?.hapticStrength}
+            action={async () => {
+              await AsyncStorage.removeItem('permissionsModalShown');
+              alert(
+                'Permission prompts have been reset.\n\n' +
+                  'Note: This only resets the in-app popup. If camera or photo permissions are already set, you must change them in your device settings.\n\n' +
+                  'Please fully close and reopen the app to see the prompts again.',
+              );
+            }}
+            tt1="Reset Permissions"
+            tt2="Reset the in-app permission prompts."
           />
         </ScrollView>
       </View>
