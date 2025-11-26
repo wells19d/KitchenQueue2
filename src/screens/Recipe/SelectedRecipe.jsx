@@ -40,6 +40,12 @@ const SelectedRecipe = ({
   const profile = useProfile();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
+  const [showWDIH, setShowWDIH] = useState(false);
+
+  const WDIHToggle = () => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
+    setShowWDIH(!showWDIH);
+  };
 
   const SectionHead = ({title, value, style}) => {
     if (value) {
@@ -274,8 +280,24 @@ const SelectedRecipe = ({
             {providedBy}
           </Text>
         )} */}
+        {showWDIH && (
+          <View centerVH pt10 pb15>
+            <TouchableOpacity
+              style={{borderBottomWidth: 1, borderColor: '#0000ff'}}
+              onPress={WDIHToggle}>
+              <Text
+                italic
+                size="small"
+                font="open-7"
+                kqColor="rgb(56, 71, 234)">
+                Back to Recipe
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <ScrollView>
-          {!recipeBoxView &&
+          {!showWDIH &&
+            !recipeBoxView &&
             selectedRecipe?.publicAuthor &&
             selectedRecipe?.aboutRecipe && (
               <>
@@ -300,53 +322,66 @@ const SelectedRecipe = ({
               </>
             )}
 
-          <SectionHead
-            title="Ingredients"
-            value={selectedRecipe?.ingredients?.length > 0}
-            style={{
-              marginTop: recipeBoxView
-                ? 10
-                : selectedRecipe?.publicAuthor
-                ? 5
-                : 10,
-            }}
-          />
+          {!showWDIH && (
+            <SectionHead
+              title="Ingredients"
+              value={selectedRecipe?.ingredients?.length > 0}
+              style={{
+                marginTop: recipeBoxView
+                  ? 10
+                  : selectedRecipe?.publicAuthor
+                  ? 5
+                  : 10,
+              }}
+            />
+          )}
           <View style={SelectedRecipeStyles.ingWrapper}>
-            <IngredientList selectedRecipe={selectedRecipe} />
+            <IngredientList
+              selectedRecipe={selectedRecipe}
+              showWDIH={showWDIH}
+              setShowWDIH={setShowWDIH}
+              WDIHToggle={WDIHToggle}
+            />
           </View>
-          <SectionHead
-            title="Instructions"
-            value={selectedRecipe?.instructions?.length > 0}
-          />
-          <View m={5} mb={10}>
-            {Array.isArray(selectedRecipe?.instructions) &&
-              selectedRecipe.instructions.length > 0 &&
-              selectedRecipe.instructions.map((group, gIndex) => (
-                <View key={`group-${gIndex}`} mb={25}>
-                  {group.name ? (
-                    <View pl={10} pb={2}>
-                      <Text size="small" font="open-7">
-                        {capEachWord(group.name)}
-                      </Text>
-                    </View>
-                  ) : null}
-                  {group.steps.map((ins, sIndex) => (
-                    <View
-                      key={`${gIndex}-${sIndex}`}
-                      style={SelectedRecipeStyles.stepWrapper}>
-                      <View style={SelectedRecipeStyles.stepNumber}>
-                        <Text size="xSmall" font="open-7">
-                          Step {ins.step + 1}:
+          {!showWDIH && (
+            <SectionHead
+              title="Instructions"
+              value={selectedRecipe?.instructions?.length > 0}
+            />
+          )}
+          {!showWDIH && (
+            <View m={5} mb={10}>
+              {Array.isArray(selectedRecipe?.instructions) &&
+                selectedRecipe.instructions.length > 0 &&
+                selectedRecipe.instructions.map((group, gIndex) => (
+                  <View key={`group-${gIndex}`} mb={25}>
+                    {group.name ? (
+                      <View pl={10} pb={2}>
+                        <Text size="small" font="open-7">
+                          {capEachWord(group.name)}
                         </Text>
                       </View>
-                      <View style={SelectedRecipeStyles.stepText}>
-                        <Text size="xSmall">{formatParagraph(ins.action)}</Text>
+                    ) : null}
+                    {group.steps.map((ins, sIndex) => (
+                      <View
+                        key={`${gIndex}-${sIndex}`}
+                        style={SelectedRecipeStyles.stepWrapper}>
+                        <View style={SelectedRecipeStyles.stepNumber}>
+                          <Text size="xSmall" font="open-7">
+                            Step {ins.step + 1}:
+                          </Text>
+                        </View>
+                        <View style={SelectedRecipeStyles.stepText}>
+                          <Text size="xSmall">
+                            {formatParagraph(ins.action)}
+                          </Text>
+                        </View>
                       </View>
-                    </View>
-                  ))}
-                </View>
-              ))}
-          </View>
+                    ))}
+                  </View>
+                ))}
+            </View>
+          )}
         </ScrollView>
       </View>
     </Modal>

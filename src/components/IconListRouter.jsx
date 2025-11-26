@@ -20,6 +20,9 @@ export const Icons = {
   AdminEdit: props => (
     <MCIcons name="shield-lock-outline" size={20} color="#000" {...props} />
   ),
+  AddCart: props => (
+    <FAIcons name="cart-plus" size={20} color="#000" {...props} />
+  ),
   AddList: props => (
     <MCIcons name="playlist-plus" size={20} color="#000" {...props} />
   ),
@@ -89,6 +92,9 @@ export const Icons = {
   Help: props => (
     <MCIcons name="help-circle" size={20} color="#000" {...props} />
   ),
+  InCart: props => (
+    <FAIcons name="cart-arrow-down" size={20} color="#000" {...props} />
+  ),
   Keyboard: props => (
     <MCIcons name="keyboard-variant" size={20} color="#000" {...props} />
   ),
@@ -115,6 +121,9 @@ export const Icons = {
   Recipe: props => (
     <MCIcons name="treasure-chest" size={20} color="#000" {...props} />
   ),
+  Receipt: props => (
+    <MIIcons name="receipt-long" size={20} color="#000" {...props} />
+  ),
   Save: props => (
     <MCIcons name="content-save" size={20} color="#000" {...props} />
   ),
@@ -131,6 +140,10 @@ export const Icons = {
   ),
   Star: props => <MCIcons name="star" size={20} color="#000" {...props} />,
   Upload: props => <FEIcons name="upload" size={20} color="#000" {...props} />,
+  Warning: props => <IIcons name="warning" size={20} color="#000" {...props} />,
+  WarningOutline: props => (
+    <IIcons name="warning-outline" size={20} color="#000" {...props} />
+  ),
   Wave: props => <MCIcons name="wave" size={20} color="#000" {...props} />,
   Waves: props => <MCIcons name="waves" size={20} color="#000" {...props} />,
 };

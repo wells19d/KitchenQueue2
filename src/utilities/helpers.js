@@ -247,6 +247,45 @@ export const unitReplacement = unit => {
   return UNIT_REPLACEMENT[key] || unit;
 };
 
+export const getIndicator = ing => {
+  const {matchType, hasEnough, inCart, inList, isOptional} = ing;
+
+  // OPTIONAL (always takes priority unless it's exactMatch)
+  if (isOptional && matchType !== 'exactMatch') {
+    return {color: 'info', status: 'optional'};
+  }
+
+  // EXACT MATCH → GREEN
+  if (matchType === 'exactMatch' && hasEnough) {
+    return {color: 'success70', status: 'match'};
+  }
+
+  // PARTIAL MATCHES
+  if (matchType === 'partialMatch') {
+    if (inCart) {
+      return {color: 'dark70', status: 'inCart'};
+    }
+    if (inList) {
+      return {color: 'dark70', status: 'inList'};
+    }
+    return {color: 'warning', status: 'notEnough'};
+  }
+
+  // NO MATCHES
+  if (matchType === 'noMatch') {
+    if (inCart) {
+      return {color: 'dark70', status: 'inCart'};
+    }
+    if (inList) {
+      return {color: 'dark70', status: 'inList'};
+    }
+    return {color: 'danger', status: 'noMatch'};
+  }
+
+  // Safety fallback
+  return {color: 'danger', status: 'unknown'};
+};
+
 // Logger function to handle console output with color coding and time stamps
 // Use this function as a normal kqconsole.log using kqconsole.log('message', data);
 // Be sure to import it from the helpers file to use this functionality
