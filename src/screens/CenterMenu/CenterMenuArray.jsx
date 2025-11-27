@@ -7,11 +7,19 @@ export const menuArray = [
     defaultOpen: true,
     items: [
       // future feature
-      // {
-      //   title: 'Scan to',
-      //   icon: <Icons.Barcode />,
-      //   action: 'console',
-      // },
+      {
+        title: 'Scan to',
+        icon: <Icons.Barcode />,
+        action: {
+          screen: 'ShoppingItems',
+          params: {
+            title: 'Scan Item',
+            itemId: null,
+            navigateBackTo: 'ShoppingList',
+            scanAction: true,
+          },
+        },
+      },
       {
         title: 'Add to',
         icon: <Icons.AddList />,
@@ -21,6 +29,7 @@ export const menuArray = [
             title: 'Add Item(s)',
             itemId: null,
             navigateBackTo: 'ShoppingList',
+            scanAction: false,
           },
         },
       },
@@ -42,11 +51,19 @@ export const menuArray = [
     defaultOpen: true,
     items: [
       // future feature
-      // {
-      //   title: 'Scan to',
-      //   icon: <Icons.Barcode />,
-      //   action: 'console',
-      // },
+      {
+        title: 'Scan to',
+        icon: <Icons.Barcode />,
+        action: {
+          screen: 'CupboardItems',
+          params: {
+            title: 'Scan Item',
+            itemId: null,
+            navigateBackTo: 'CupboardList-Single',
+            scanAction: true,
+          },
+        },
+      },
       {
         title: 'Add to',
         icon: <Icons.AddList />,
@@ -56,6 +73,7 @@ export const menuArray = [
             title: 'Add Item(s)',
             itemId: null,
             navigateBackTo: 'CupboardList-Single',
+            scanAction: false,
           },
         },
       },

@@ -45,7 +45,8 @@ import {exportData} from '../../utilities/conversions';
 
 const CupboardItems = () => {
   const route = useRoute();
-  const {itemId, updatingItem} = route.params || {};
+  const {itemId, updatingItem, scanAction} = route.params || {};
+  console.log('scanAction:', scanAction);
 
   const dispatch = useDispatch();
   const core = useCoreInfo();
@@ -59,6 +60,7 @@ const CupboardItems = () => {
   const [showAttModal, setShowAttModal] = useState(false);
   const [storedData, setStoredData] = useState(null);
   const [showAsContainer, setShowAsContainer] = useState(false);
+  const [scanActionActive, setScanActionActive] = useState(scanAction);
 
   const count = core?.dailyUPCCounter || 0;
   const limit = core?.maxUPCSearchLimit || 0;
@@ -72,6 +74,18 @@ const CupboardItems = () => {
     onReadCode,
     resetScanner,
   } = useBarcodeScanner(core);
+
+  useEffect(() => {
+    if (scanActionActive && upcData === null) {
+      setShowScanner(true);
+      setScanActionActive(false); // <-- consume the flag
+    }
+
+    if (upcData) {
+      setShowScanner(false);
+      setScanActionActive(false);
+    }
+  }, [scanActionActive, upcData]);
 
   const itemToUpdate =
     cupboard?.items?.find(item => item.itemId === itemId) ?? null;

@@ -5,7 +5,7 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Button,
   Camera,
@@ -44,7 +44,8 @@ import NutritionalLabel from '../../components/NutritionalLabel';
 
 const ShoppingItems = () => {
   const route = useRoute();
-  const {itemId, statusTo} = route.params || {};
+  const {itemId, statusTo, scanAction} = route.params || {};
+  console.log('scanAction:', scanAction);
 
   const dispatch = useDispatch();
   const core = useCoreInfo();
@@ -58,6 +59,7 @@ const ShoppingItems = () => {
   const [showAttModal, setShowAttModal] = useState(false);
   const [storedData, setStoredData] = useState(null);
   const [showAsContainer, setShowAsContainer] = useState(false);
+  const [scanActionActive, setScanActionActive] = useState(scanAction);
 
   const count = core?.dailyUPCCounter || 0;
   const limit = core?.maxUPCSearchLimit || 0;
@@ -71,6 +73,18 @@ const ShoppingItems = () => {
     onReadCode,
     resetScanner,
   } = useBarcodeScanner(core);
+
+  useEffect(() => {
+    if (scanActionActive && upcData === null) {
+      setShowScanner(true);
+      setScanActionActive(false); // <-- consume the flag
+    }
+
+    if (upcData) {
+      setShowScanner(false);
+      setScanActionActive(false);
+    }
+  }, [scanActionActive, upcData]);
 
   const itemToUpdate =
     shopping?.items?.find(item => item.itemId === itemId) ?? null;
