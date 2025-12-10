@@ -335,7 +335,7 @@ export const useButtonStyles = (type = 'filled', color = 'primary') => {
       backgroundColor: statusColor,
       elevation: 4,
       shadowColor: '#373d43',
-      shadowOffset: {width: 2, height: 3},
+      shadowOffset: {width: 0.5, height: 1},
       shadowOpacity: 0.3,
     },
     outline: {

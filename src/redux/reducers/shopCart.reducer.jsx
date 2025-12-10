@@ -18,7 +18,11 @@ const shoppingReducer = (state = initialState, action) => {
     // ➕ Add Item
     case 'ADD_ITEM_TO_SHOP_CART':
       return {...state, loading: true, error: null};
+    case 'ADD_ALL_ITEMS_TO_SHOP_CART':
+      return {...state, loading: true, error: null};
     case 'SHOP_CART_ADD_ITEM_FAILED':
+      return {...state, loading: false, error: action.payload};
+    case 'SHOP_CART_ADD_ALL_ITEMS_FAILED':
       return {...state, loading: false, error: action.payload};
 
     // ✏️ Update Item

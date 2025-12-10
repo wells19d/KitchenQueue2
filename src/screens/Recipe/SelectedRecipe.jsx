@@ -280,21 +280,7 @@ const SelectedRecipe = ({
             {providedBy}
           </Text>
         )} */}
-        {showWDIH && (
-          <View centerVH pt10 pb15>
-            <TouchableOpacity
-              style={{borderBottomWidth: 1, borderColor: '#0000ff'}}
-              onPress={WDIHToggle}>
-              <Text
-                italic
-                size="small"
-                font="open-7"
-                kqColor="rgb(56, 71, 234)">
-                Back to Recipe
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
+
         <ScrollView>
           {!showWDIH &&
             !recipeBoxView &&
@@ -341,6 +327,7 @@ const SelectedRecipe = ({
               showWDIH={showWDIH}
               setShowWDIH={setShowWDIH}
               WDIHToggle={WDIHToggle}
+              onClose={onClose}
             />
           </View>
           {!showWDIH && (

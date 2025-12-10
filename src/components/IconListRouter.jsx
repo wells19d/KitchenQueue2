@@ -48,6 +48,7 @@ export const Icons = {
   EmptyCircle: props => (
     <OctIcons name="circle" size={20} color="#000" {...props} />
   ),
+  XNoOutline: props => <OctIcons name="x" size={20} color="#000" {...props} />,
   XCircle: props => (
     <OctIcons name="x-circle-fill" size={20} color="#000" {...props} />
   ),

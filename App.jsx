@@ -83,12 +83,3 @@ const App = () => {
 };
 
 export default App;
-
-/* 
-
-Next Stable Trio
-"react": "19.1.0",
-"react-native": "0.79.0",
-"@react-native-community/cli": "18.0.0"
-
-*/

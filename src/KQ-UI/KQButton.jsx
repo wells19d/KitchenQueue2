@@ -25,6 +25,7 @@ const KQButton = ({
   fontType = 'open-6',
   hapticFeedback = 'light',
   disabled = false,
+  disabledColor = 'basic',
   underline = false,
   underlineColor = null,
   underlineWidth = 1,
@@ -34,7 +35,7 @@ const KQButton = ({
 }) => {
   const useHaptics = setHapticFeedback();
   const core = useCoreInfo();
-  const buttonColor = useColors(disabled ? 'basic' : color);
+  const buttonColor = useColors(disabled ? disabledColor : color);
   const buttonStyle = useButtonStyles(type, buttonColor);
   const buttonSize = useButtonSizes(size);
 

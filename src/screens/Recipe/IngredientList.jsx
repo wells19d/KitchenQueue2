@@ -1,8 +1,8 @@
 //* IngredientList.jsx
 
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useEffect} from 'react';
 import {useCupboard, useShoppingCart} from '../../hooks/useHooks';
-import {Text, View} from '../../KQ-UI';
+import {Button, Text, View} from '../../KQ-UI';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {useDispatch} from 'react-redux';
@@ -13,8 +13,9 @@ import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {toFraction} from '../../utilities/fractionUnit';
 import {Icons} from '../../components/IconListRouter';
 import {TouchableOpacity, StyleSheet} from 'react-native';
+import {renderIcon, renderSubInfo} from './listHelpers';
 
-const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle}) => {
+const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle, onClose}) => {
   const dispatch = useDispatch();
   const core = useCoreInfo();
   const cupboard = useCupboard();
@@ -22,6 +23,16 @@ const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle}) => {
   const useColor = useColors;
 
   const [recentlyAdded, setRecentlyAdded] = useState({});
+  const [recentlyAddedAll, setRecentlyAddedAll] = useState(false);
+
+  useEffect(() => {
+    if (onClose) {
+      return () => {
+        setRecentlyAdded({});
+        setRecentlyAddedAll(false);
+      };
+    }
+  }, [onClose]);
 
   const cupboardList = Array.isArray(cupboard?.items) ? cupboard.items : [];
   const shoppingList = Array.isArray(shopping?.items) ? shopping.items : [];
@@ -90,92 +101,6 @@ const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle}) => {
     });
   }, [selectedRecipe, groupedList, shoppingList]);
 
-  const getIconBorder = color => ({
-    borderWidth: 3,
-    borderRadius: 50,
-    width: 35,
-    height: 35,
-    borderColor: useColor(color),
-  });
-
-  const getNoBorder = () => ({
-    width: 35,
-    height: 35,
-  });
-
-  const renderIcon = indicator => {
-    const c = useColor(indicator.color);
-
-    switch (indicator.status) {
-      case 'match':
-        return (
-          <View style={getIconBorder(indicator.color)} centerVH mh10>
-            <Icons.Check color={c} size={16} />
-          </View>
-        );
-
-      case 'notEnough':
-        return (
-          <View style={getIconBorder(indicator.color)} centerVH mh10>
-            <View style={{top: -1}}>
-              <Icons.Warning color={c} size={20} />
-            </View>
-          </View>
-        );
-
-      case 'inCart':
-        return (
-          <View style={getIconBorder(indicator.color)} centerVH mh10>
-            <View style={{left: -1}}>
-              <Icons.InCart color={c} size={21} />
-            </View>
-          </View>
-        );
-
-      case 'inList':
-        return (
-          <View style={getIconBorder(indicator.color)} centerVH mh10>
-            <View style={{left: -1}}>
-              <Icons.Receipt color={c} size={21} />
-            </View>
-          </View>
-        );
-
-      case 'optional':
-        return (
-          <View style={getIconBorder(indicator.color)} centerVH mh10>
-            <View style={{top: -1}}>
-              <Icons.WarningOutline color={c} size={22} />
-            </View>
-          </View>
-        );
-
-      case 'noMatch':
-        return (
-          <View style={getNoBorder()} centerVH mh10>
-            <Icons.XCircleOutline color={c} size={35} />
-          </View>
-        );
-    }
-  };
-
-  const renderSubInfo = (indicator, ing) => {
-    switch (indicator.status) {
-      case 'match':
-        return `You have enough ${capEachWord(ing.name)}`;
-      case 'notEnough':
-        return `You need more ${capEachWord(ing.name)}`;
-      case 'inCart':
-        return `${capEachWord(ing.name)} is in your shopping cart`;
-      case 'inList':
-        return `${capEachWord(ing.name)} is in your shopping list`;
-      case 'optional':
-        return `${capEachWord(ing.name)} is optional`;
-      case 'noMatch':
-        return `You don’t have any ${capEachWord(ing.name)}`;
-    }
-  };
-
   const AddItem = ing => {
     const ingSingular = pluralize.singular(ing.name.toLowerCase());
 
@@ -227,14 +152,43 @@ const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle}) => {
       });
     }
 
-    setRecentlyAdded(prev => ({...prev, [ing.name]: true}));
-    setTimeout(() => {
-      setRecentlyAdded(prev => {
-        const copy = {...prev};
-        delete copy[ing.name];
-        return copy;
-      });
-    }, 2500);
+    setRecentlyAdded(prev => {
+      const updated = {...prev, [ing.name]: true};
+      const allAdded = enhancedIngredients.every(ing => updated[ing.name]);
+      if (allAdded) setRecentlyAddedAll(true);
+      return updated;
+    });
+  };
+
+  const AddAllItems = () => {
+    let itemsToAdd = [];
+    let itemsToUpdate = [];
+
+    enhancedIngredients.forEach(ing => {
+      if (!ing.inCart && !ing.inList) {
+        itemsToAdd.push(ing);
+      } else if (ing.inCart || ing.inList) {
+        itemsToUpdate.push(ing);
+      }
+    });
+
+    dispatch({
+      type: 'ADD_ALL_ITEMS_TO_SHOP_CART',
+      payload: {
+        itemsToAdd,
+        itemsToUpdate,
+        shoppingCartID: core.shoppingCartID,
+        profileID: core.profileID,
+      },
+    });
+
+    const all = {};
+    enhancedIngredients.forEach(ing => {
+      all[ing.name] = true;
+    });
+
+    setRecentlyAdded(all);
+    setRecentlyAddedAll(true);
   };
 
   const ItemAdd = ({ing}) => {
@@ -243,57 +197,95 @@ const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle}) => {
 
     const style = [
       styles.addButton,
-      isAdded && {borderWidth: 3, borderColor: success},
+      isAdded && {borderWidth: 2, borderColor: success},
     ];
 
     return (
       <View centerVH pr5 pl10>
-        <TouchableOpacity
+        <Button
+          type="outline"
+          color={isAdded ? 'Success' : 'Dark'}
           disabled={isAdded}
+          disabledColor="Success"
           onPress={() => AddItem(ing)}
           style={style}>
           <View row centerVH pr={5}>
             {isAdded ? (
-              <Icons.Check color={success} size={16} />
+              <Icons.Check color={success} size={15} />
             ) : (
               <Icons.Plus />
             )}
-            <Text>{isAdded ? ' Added' : 'Add'}</Text>
+            <Text size="xSmall">{isAdded ? ' Added' : 'Add'}</Text>
           </View>
-        </TouchableOpacity>
+        </Button>
       </View>
     );
   };
 
   if (showWDIH) {
+    const success = useColor('success');
+    const style = [
+      styles.addButton,
+      recentlyAddedAll && {borderWidth: 2, borderColor: success},
+    ];
+
     return (
-      <View flex borderTopWidth={1}>
-        {enhancedIngredients?.map((ing, i) => {
-          const indicator = getIndicator(ing);
-          return (
-            <View key={i} row borderBottomWidth={1} style={{height: 60}}>
-              <View centerVH>{renderIcon(indicator)}</View>
-
-              <View flex centerV>
-                <Text size="small" font="open-7" numberOfLines={3}>
-                  {ing.amount
-                    ? `${toFraction(ing.amount)} ${formatPluralUnit(
-                        ing.amount,
-                        ing.unit,
-                      )} `
-                    : ''}
-                  {capEachWord(ing.name)}
-                </Text>
-
-                <Text size="tiny" italic>
-                  {renderSubInfo(indicator, ing)}
+      <View flex>
+        <View row>
+          {showWDIH && (
+            <View flex pv={5}>
+              <Button
+                color="orange"
+                style={styles.backButton}
+                onPress={WDIHToggle}
+                textSize="xSmall">
+                Back to Recipe
+              </Button>
+            </View>
+          )}
+          <View flex pv={5}>
+            <Button
+              type="outline"
+              color={recentlyAddedAll ? 'Success' : 'Dark'}
+              disabled={recentlyAddedAll}
+              disabledColor="Success"
+              onPress={AddAllItems}
+              style={style}>
+              <View row pr={5} centerVH>
+                {recentlyAddedAll ? (
+                  <Icons.Check color={success} size={15} />
+                ) : (
+                  <Icons.Plus size={15} />
+                )}
+                <Text size="xSmall">
+                  {recentlyAddedAll ? ' Added All' : ' Add All Ingredients'}
                 </Text>
               </View>
-
-              <ItemAdd ing={ing} />
-            </View>
-          );
-        })}
+            </Button>
+          </View>
+        </View>
+        <View flex borderTopWidth={0.25} pb={15}>
+          {enhancedIngredients?.map((ing, i) => {
+            const indicator = getIndicator(ing);
+            const amt = ing.amount ? toFraction(ing.amount) : '';
+            const unit = formatPluralUnit(ing.amount, ing.unit);
+            return (
+              <View key={i} row borderBottomWidth={0.25} style={{height: 60}}>
+                <View centerVH>{renderIcon(indicator)}</View>
+                <View flex centerV>
+                  <Text size="small" font="open-7" numberOfLines={3}>
+                    {amt && unit ? `${amt} ${unit} ` : amt ? `${amt} ` : ''}
+                    {capEachWord(ing.name)}
+                  </Text>
+                  <Text size="tiny" italic>
+                    {renderSubInfo(indicator, ing)}
+                  </Text>
+                </View>
+                <ItemAdd ing={ing} />
+              </View>
+            );
+          })}
+        </View>
       </View>
     );
   }
@@ -322,13 +314,13 @@ const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle}) => {
       </View>
 
       <View centerVH mt10 mb5>
-        <TouchableOpacity
-          style={{borderBottomWidth: 1, borderColor: '#0000ff'}}
-          onPress={WDIHToggle}>
-          <Text italic size="xSmall" font="open-7" kqColor="rgb(56, 71, 234)">
-            What Ingredients Do I Have / Need?
-          </Text>
-        </TouchableOpacity>
+        <Button
+          type="outline"
+          style={styles.widin}
+          onPress={WDIHToggle}
+          textSize="xSmall">
+          What Ingredients Do I Have / Need?
+        </Button>
       </View>
     </View>
   );
@@ -338,12 +330,11 @@ export default __DEV__ ? IngredientList : React.memo(IngredientList);
 
 const styles = StyleSheet.create({
   addButton: {
-    borderWidth: 1.5,
-    borderRadius: 25,
-    height: 40,
-    paddingHorizontal: 10,
-    alignContent: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
+    borderWidth: 1.25,
+    borderRadius: 10,
+    height: 35,
   },
+  backButton: {borderRadius: 10, height: 35},
+  widin: {borderWidth: 1.5, borderRadius: 10, height: 35},
+  wdin: {borderBottomWidth: 1, borderColor: '#0000ff'},
 });

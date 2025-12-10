@@ -77,7 +77,7 @@ const ShoppingItems = () => {
   useEffect(() => {
     if (scanActionActive && upcData === null) {
       setShowScanner(true);
-      setScanActionActive(false); // <-- consume the flag
+      setScanActionActive(false);
     }
 
     if (upcData) {

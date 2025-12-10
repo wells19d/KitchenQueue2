@@ -13,6 +13,8 @@ import {
 import {getApp} from '@react-native-firebase/app';
 import {select} from 'redux-saga/effects';
 import {checkLimit} from '../../utilities/checkLimit';
+import pluralize from 'pluralize';
+import {capEachWord} from '../../utilities/helpers';
 
 const db = getFirestore(getApp());
 
@@ -111,13 +113,115 @@ function* addItemToShopCart(action) {
       });
     }
   } catch (error) {
-    yield put({type: 'SHOP_CART_ADD_ITEM_FAILED', payload: error.message});
+    yield put({type: 'SHOP_CART_ADD_ITEMS_FAILED', payload: error.message});
 
     Toast.show({
       type: 'danger',
       text1: 'Failed to Add Item',
       text2: `${newItem.itemName} could not be added. Please try again later.`,
     });
+  }
+}
+
+function* addAllItemsToShopCart(action) {
+  const {itemsToAdd, itemsToUpdate, shoppingCartID, profileID} = action.payload;
+
+  try {
+    const account = yield select(state => state.account.account);
+    const shopping = yield select(state => state.shopping.shopping);
+
+    const maxShoppingItems = account?.shoppingCartLimit || 0;
+    const currentCount = shopping?.items?.length || 0;
+
+    const numItemsToAdd = itemsToAdd.length;
+    const numItemsToUpdate = itemsToUpdate.length;
+
+    if (currentCount + numItemsToAdd > maxShoppingItems) {
+      Toast.show({
+        type: 'danger',
+        text1: 'Shopping Limit Will Be Exceeded',
+        text2:
+          'Adding these ingredients would exceed your shopping list limit. Please remove or adjust items and try again. If you need more space, consider upgrading your account.',
+      });
+      return;
+    }
+
+    const shopCartRef = doc(db, 'shoppingCarts', shoppingCartID);
+    const shopCartDoc = yield call(getDoc, shopCartRef);
+    const data = shopCartDoc.data();
+    let currentItems = data?.items || [];
+    let finalItems = [...currentItems];
+
+    for (const updatedIng of itemsToUpdate) {
+      const ingName = pluralize.singular(updatedIng.name.toLowerCase());
+      finalItems = finalItems.map(item => {
+        const itemName = pluralize.singular(item.itemName.toLowerCase());
+
+        if (itemName === ingName) {
+          return {...item, quantity: Number(item.quantity) + 1};
+        }
+
+        return item;
+      });
+    }
+
+    const newItems = itemsToAdd.map(item => {
+      const {unit, name, note, amount} = item;
+
+      return {
+        itemName: capEachWord(name) || '',
+        brandName: '',
+        description: '',
+        packageSize: amount || 1,
+        measurement: unit || '',
+        category: 'na',
+        notes: note || '',
+        itemId: uuid.v4(),
+        itemDate: new Date().toISOString(),
+        quantity: 1,
+        createdBy: profileID,
+        status: 'shopping-list',
+      };
+    });
+
+    finalItems = [...finalItems, ...newItems];
+
+    const batch = writeBatch(db);
+
+    batch.update(shopCartRef, {
+      items: finalItems,
+      lastUpdated: serverTimestamp(),
+      lastUpdatedBy: profileID,
+    });
+
+    yield call(() => batch.commit());
+
+    yield put({type: 'SET_SHOP_CART', payload: {shoppingCartID}});
+
+    const showMsg = (add, update) => {
+      const parts = [];
+
+      if (add > 0) {
+        parts.push(`${add} ${pluralize('item', add)} added`);
+      }
+
+      if (update > 0) {
+        parts.push(`${update} ${pluralize('item', update)} updated`);
+      }
+
+      if (parts.length === 0) {
+        return 'No changes made.';
+      }
+
+      return parts.join(', ') + '.';
+    };
+    Toast.show({
+      type: 'success',
+      text1: 'Shopping List / Cart Updated',
+      text2: `${showMsg(numItemsToAdd, numItemsToUpdate)}`,
+    });
+  } catch (error) {
+    console.log('🔥 SAGA ERROR:', error);
   }
 }
 
@@ -427,6 +531,7 @@ export default function* shopCartSaga() {
   yield takeLatest('UPDATE_ITEM_IN_SHOP_CART', updateItemInShopCart);
   yield takeLatest('DELETE_ITEM_FROM_SHOP_CART', deleteItemFromShopCart);
   yield takeLatest('DELETE_LIST_FROM_SHOP_CART', deleteListFromShopCart);
+  yield takeLatest('ADD_ALL_ITEMS_TO_SHOP_CART', addAllItemsToShopCart);
   yield takeLatest('BATCH_TO_SHOP_CART', batchToShopping);
   yield takeLatest('RESET_SHOP_CART', resetShopCart);
 }
