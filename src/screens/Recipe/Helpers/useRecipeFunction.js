@@ -170,6 +170,10 @@ const useRecipeFunction = ({selectedRecipe, recipeBoxView, onClose}) => {
     // this requests admin to edit/delete the recipe
   };
 
+  const handleMakeRecipe = () => {
+    console.log('button fired');
+  };
+
   return {
     handleAddBM,
     handleRemoveBM,
@@ -178,6 +182,7 @@ const useRecipeFunction = ({selectedRecipe, recipeBoxView, onClose}) => {
     handleDeleteRec,
     handleShareRec,
     handleRequestEditDelete,
+    handleMakeRecipe,
   };
 };
 

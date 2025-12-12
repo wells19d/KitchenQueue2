@@ -19,6 +19,7 @@ import HeaderButtons from './HeaderButtons';
 import IngredientList from './IngredientList';
 import {useRecipeIngStatus} from './Helpers/useRecipeIngStatus';
 import {Icons} from '../../components/IconListRouter';
+import MakeRecipe from './MakeRecipe';
 
 const SelectedRecipe = ({selectedRecipe, visible, recipeBoxView, onClose}) => {
   const useHaptics = setHapticFeedback();
@@ -157,7 +158,7 @@ const SelectedRecipe = ({selectedRecipe, visible, recipeBoxView, onClose}) => {
           </Text>
         )} */}
         <View row>
-          {showWDIH && (
+          {showWDIH ? (
             <>
               <View flex pv={5}>
                 <Button
@@ -190,6 +191,12 @@ const SelectedRecipe = ({selectedRecipe, visible, recipeBoxView, onClose}) => {
                 </Button>
               </View>
             </>
+          ) : (
+            <MakeRecipe
+              recipeIngredients={recipeIngredients}
+              selectedRecipe={selectedRecipe}
+              onClose={onClose}
+            />
           )}
         </View>
 

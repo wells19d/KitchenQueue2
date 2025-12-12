@@ -248,19 +248,30 @@ export const unitReplacement = unit => {
 };
 
 export const getIndicator = ing => {
-  const {matchType, hasEnough, inCart, inList, isOptional} = ing;
+  const {matchType, hasEnough, convertible, inCart, inList, isOptional} = ing;
 
-  // OPTIONAL (always takes priority unless it's exactMatch)
-  if (isOptional && matchType !== 'exactMatch') {
+  const enough = hasEnough || convertible;
+
+  // 🔵 OPTIONAL
+  if (isOptional) {
+    if (inCart) {
+      return {color: 'dark70', status: 'inCart'};
+    }
+    if (inList) {
+      return {color: 'dark70', status: 'inList'};
+    }
+    if (enough) {
+      return {color: 'success70', status: 'match'};
+    }
     return {color: 'info', status: 'optional'};
   }
 
-  // EXACT MATCH → GREEN
-  if (matchType === 'exactMatch' && hasEnough) {
+  // 🟢 GREEN — required + enough OR convertibly enough
+  if (enough) {
     return {color: 'success70', status: 'match'};
   }
 
-  // PARTIAL MATCHES
+  // 🟡 YELLOW — exists but not enough / not convertible
   if (matchType === 'partialMatch') {
     if (inCart) {
       return {color: 'dark70', status: 'inCart'};
@@ -271,7 +282,7 @@ export const getIndicator = ing => {
     return {color: 'warning', status: 'notEnough'};
   }
 
-  // NO MATCHES
+  // 🔴 RED — name not found
   if (matchType === 'noMatch') {
     if (inCart) {
       return {color: 'dark70', status: 'inCart'};
@@ -282,7 +293,6 @@ export const getIndicator = ing => {
     return {color: 'danger', status: 'noMatch'};
   }
 
-  // Safety fallback
   return {color: 'danger', status: 'unknown'};
 };
 

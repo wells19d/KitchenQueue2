@@ -24,6 +24,12 @@ export const renderIcon = indicator => {
     </View>
   );
 
+  // 🔑 EDGE CASE FIX:
+  // Convertible but not enough → treat as MATCH (green)
+  if (indicator.status === 'notEnough' && indicator.convertible) {
+    return wrap(<Icons.Check color={useColor('success')} size={16} />);
+  }
+
   switch (indicator.status) {
     case 'match':
       return wrap(<Icons.Check color={c} size={16} />);
@@ -62,6 +68,10 @@ export const renderIcon = indicator => {
 };
 
 export const renderSubInfo = (indicator, ing) => {
+  if (indicator.status === 'notEnough' && indicator.convertible) {
+    return `You have enough ${capEachWord(ing.name)}`;
+  }
+
   switch (indicator.status) {
     case 'match':
       return `You have enough ${capEachWord(ing.name)}`;

@@ -46,7 +46,6 @@ import {exportData} from '../../utilities/conversions';
 const CupboardItems = () => {
   const route = useRoute();
   const {itemId, updatingItem, scanAction} = route.params || {};
-  console.log('scanAction:', scanAction);
 
   const dispatch = useDispatch();
   const core = useCoreInfo();
