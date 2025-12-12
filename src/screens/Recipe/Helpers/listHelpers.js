@@ -1,9 +1,9 @@
 // listHelpers.js
 
-import {Icons} from '../../components/IconListRouter';
-import {View} from '../../KQ-UI';
-import {useColors} from '../../KQ-UI/KQUtilities';
-import {capEachWord} from '../../utilities/helpers';
+import {Icons} from '../../../components/IconListRouter';
+import {View} from '../../../KQ-UI';
+import {useColors} from '../../../KQ-UI/KQUtilities';
+import {capEachWord} from '../../../utilities/helpers';
 
 const useColor = useColors;
 

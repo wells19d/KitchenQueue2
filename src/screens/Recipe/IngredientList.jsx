@@ -1,105 +1,33 @@
 //* IngredientList.jsx
 
-import React, {useState, useMemo, useEffect} from 'react';
-import {useCupboard, useShoppingCart} from '../../hooks/useHooks';
+import React from 'react';
+import {useShoppingCart} from '../../hooks/useHooks';
 import {Button, Text, View} from '../../KQ-UI';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {useDispatch} from 'react-redux';
 import pluralize from 'pluralize';
-import {groupedData, matchConversion} from '../../utilities/conversions';
 import {capEachWord, getIndicator, titleCase} from '../../utilities/helpers';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {toFraction} from '../../utilities/fractionUnit';
 import {Icons} from '../../components/IconListRouter';
-import {TouchableOpacity, StyleSheet} from 'react-native';
-import {renderIcon, renderSubInfo} from './listHelpers';
+import {StyleSheet} from 'react-native';
+import {renderIcon, renderSubInfo} from './Helpers/listHelpers';
 
-const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle, onClose}) => {
+const IngredientList = ({
+  showWDIH,
+  WDIHToggle,
+  recentlyAdded,
+  setRecentlyAdded,
+  setRecentlyAddedAll,
+  recipeIngredients,
+}) => {
   const dispatch = useDispatch();
   const core = useCoreInfo();
-  const cupboard = useCupboard();
   const shopping = useShoppingCart();
   const useColor = useColors;
 
-  const [recentlyAdded, setRecentlyAdded] = useState({});
-  const [recentlyAddedAll, setRecentlyAddedAll] = useState(false);
-
-  useEffect(() => {
-    if (onClose) {
-      return () => {
-        setRecentlyAdded({});
-        setRecentlyAddedAll(false);
-      };
-    }
-  }, [onClose]);
-
-  const cupboardList = Array.isArray(cupboard?.items) ? cupboard.items : [];
   const shoppingList = Array.isArray(shopping?.items) ? shopping.items : [];
-
-  const groupedList = useMemo(() => groupedData(cupboardList), [cupboardList]);
-
-  const enhancedIngredients = useMemo(() => {
-    const cupboardNames = new Set(
-      groupedList.map(i => pluralize.singular(i.itemName.toLowerCase())),
-    );
-
-    const shoppingCartNames = new Set(
-      shoppingList
-        .filter(i => i.status === 'shopping-cart')
-        .map(i => pluralize.singular(i.itemName.toLowerCase())),
-    );
-
-    const shoppingListNames = new Set(
-      shoppingList
-        .filter(i => i.status === 'shopping-list')
-        .map(i => pluralize.singular(i.itemName.toLowerCase())),
-    );
-
-    return selectedRecipe?.ingredients?.map(ing => {
-      const ingSingular = pluralize.singular(ing.name.toLowerCase());
-      const isOptional =
-        typeof ing.note === 'string' &&
-        ing.note.toLowerCase().includes('optional');
-
-      let matchType = cupboardNames.has(ingSingular)
-        ? 'exactMatch'
-        : 'partialMatch';
-
-      if (!cupboardNames.has(ingSingular)) matchType = 'noMatch';
-
-      const match = groupedList.find(
-        g => pluralize.singular(g.itemName.toLowerCase()) === ingSingular,
-      );
-
-      if (!match) {
-        return {
-          ...ing,
-          matchType: 'noMatch',
-          hasEnough: false,
-          inCart: shoppingCartNames.has(ingSingular),
-          inList: shoppingListNames.has(ingSingular),
-          isOptional,
-        };
-      }
-
-      const enough = matchConversion(
-        match.measurement,
-        match.remainingAmount,
-        ing.unit,
-        ing.amount,
-      );
-
-      return {
-        ...ing,
-        matchType: enough ? 'exactMatch' : 'partialMatch',
-        hasEnough: enough,
-        inCart: shoppingCartNames.has(ingSingular),
-        inList: shoppingListNames.has(ingSingular),
-        isOptional,
-      };
-    });
-  }, [selectedRecipe, groupedList, shoppingList]);
 
   const AddItem = ing => {
     const ingSingular = pluralize.singular(ing.name.toLowerCase());
@@ -154,41 +82,10 @@ const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle, onClose}) => {
 
     setRecentlyAdded(prev => {
       const updated = {...prev, [ing.name]: true};
-      const allAdded = enhancedIngredients.every(ing => updated[ing.name]);
+      const allAdded = recipeIngredients.every(ing => updated[ing.name]);
       if (allAdded) setRecentlyAddedAll(true);
       return updated;
     });
-  };
-
-  const AddAllItems = () => {
-    let itemsToAdd = [];
-    let itemsToUpdate = [];
-
-    enhancedIngredients.forEach(ing => {
-      if (!ing.inCart && !ing.inList) {
-        itemsToAdd.push(ing);
-      } else if (ing.inCart || ing.inList) {
-        itemsToUpdate.push(ing);
-      }
-    });
-
-    dispatch({
-      type: 'ADD_ALL_ITEMS_TO_SHOP_CART',
-      payload: {
-        itemsToAdd,
-        itemsToUpdate,
-        shoppingCartID: core.shoppingCartID,
-        profileID: core.profileID,
-      },
-    });
-
-    const all = {};
-    enhancedIngredients.forEach(ing => {
-      all[ing.name] = true;
-    });
-
-    setRecentlyAdded(all);
-    setRecentlyAddedAll(true);
   };
 
   const ItemAdd = ({ing}) => {
@@ -223,49 +120,10 @@ const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle, onClose}) => {
   };
 
   if (showWDIH) {
-    const success = useColor('success');
-    const style = [
-      styles.addButton,
-      recentlyAddedAll && {borderWidth: 2, borderColor: success},
-    ];
-
     return (
       <View flex>
-        <View row>
-          {showWDIH && (
-            <View flex pv={5}>
-              <Button
-                color="orange"
-                style={styles.backButton}
-                onPress={WDIHToggle}
-                textSize="xSmall">
-                Back to Recipe
-              </Button>
-            </View>
-          )}
-          <View flex pv={5}>
-            <Button
-              type="outline"
-              color={recentlyAddedAll ? 'Success' : 'Dark'}
-              disabled={recentlyAddedAll}
-              disabledColor="Success"
-              onPress={AddAllItems}
-              style={style}>
-              <View row pr={5} centerVH>
-                {recentlyAddedAll ? (
-                  <Icons.Check color={success} size={15} />
-                ) : (
-                  <Icons.Plus size={15} />
-                )}
-                <Text size="xSmall">
-                  {recentlyAddedAll ? ' Added All' : ' Add All Ingredients'}
-                </Text>
-              </View>
-            </Button>
-          </View>
-        </View>
         <View flex borderTopWidth={0.25} pb={15}>
-          {enhancedIngredients?.map((ing, i) => {
+          {recipeIngredients?.map((ing, i) => {
             const indicator = getIndicator(ing);
             const amt = ing.amount ? toFraction(ing.amount) : '';
             const unit = formatPluralUnit(ing.amount, ing.unit);
@@ -293,7 +151,7 @@ const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle, onClose}) => {
   return (
     <View flex>
       <View flex ph5>
-        {enhancedIngredients?.map((ing, i) => (
+        {recipeIngredients?.map((ing, i) => (
           <View key={i} row centerVH pv={2}>
             <View ml10 mr5>
               <Icons.Dot size={7} />
@@ -326,7 +184,7 @@ const IngredientList = ({selectedRecipe, showWDIH, WDIHToggle, onClose}) => {
   );
 };
 
-export default __DEV__ ? IngredientList : React.memo(IngredientList);
+export default IngredientList;
 
 const styles = StyleSheet.create({
   addButton: {
@@ -334,7 +192,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: 35,
   },
-  backButton: {borderRadius: 10, height: 35},
   widin: {borderWidth: 1.5, borderRadius: 10, height: 35},
-  wdin: {borderBottomWidth: 1, borderColor: '#0000ff'},
 });

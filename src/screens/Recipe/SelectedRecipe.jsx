@@ -1,15 +1,8 @@
 //* SelectedRecipes.jsx
 
-import React, {useState} from 'react';
-import {
-  ActionSheetIOS,
-  Alert,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
-import {Modal, Text, Image, View} from '../../KQ-UI';
+import React, {useEffect, useState} from 'react';
+import {ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
+import {Modal, Text, Image, View, Button} from '../../KQ-UI';
 import {useColors} from '../../KQ-UI/KQUtilities';
 import {
   capEachWord,
@@ -21,31 +14,38 @@ import {setHapticFeedback} from '../../hooks/setHapticFeedback';
 import {useProfile} from '../../hooks/useHooks';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import {useDispatch} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
 import KQTempRecipe from '../../svg/KitchenQueueTempRecipe';
 import HeaderButtons from './HeaderButtons';
 import IngredientList from './IngredientList';
+import {useRecipeIngStatus} from './Helpers/useRecipeIngStatus';
+import {Icons} from '../../components/IconListRouter';
 
-const SelectedRecipe = ({
-  selectedRecipe,
-  visible,
-  useOneColumn,
-  recipeBoxView,
-  onClose,
-}) => {
+const SelectedRecipe = ({selectedRecipe, visible, recipeBoxView, onClose}) => {
   const useHaptics = setHapticFeedback();
   const dispatch = useDispatch();
-  const navigation = useNavigation();
-  const coreInfo = useCoreInfo();
+  const core = useCoreInfo();
   const profile = useProfile();
-  const [isProcessing, setIsProcessing] = useState(false);
   const [showAboutRecipe, setShowAboutRecipe] = useState(false);
   const [showWDIH, setShowWDIH] = useState(false);
+  const useColor = useColors;
+  const recipeIngredients = useRecipeIngStatus(selectedRecipe);
+
+  const [recentlyAdded, setRecentlyAdded] = useState({});
+  const [recentlyAddedAll, setRecentlyAddedAll] = useState(false);
 
   const WDIHToggle = () => {
     useHaptics(profile?.userSettings?.hapticStrength || 'light');
     setShowWDIH(!showWDIH);
   };
+
+  useEffect(() => {
+    if (onClose) {
+      return () => {
+        setRecentlyAdded({});
+        setRecentlyAddedAll(false);
+      };
+    }
+  }, [onClose]);
 
   const SectionHead = ({title, value, style}) => {
     if (value) {
@@ -64,161 +64,42 @@ const SelectedRecipe = ({
     return null;
   };
 
-  const handleAddBM = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    if (isProcessing) return;
-    setIsProcessing(true);
+  const AddAllItems = () => {
+    let itemsToAdd = [];
+    let itemsToUpdate = [];
 
-    onClose();
+    recipeIngredients.forEach(ing => {
+      if (!ing.inCart && !ing.inList) {
+        itemsToAdd.push(ing);
+      } else if (ing.inCart || ing.inList) {
+        itemsToUpdate.push(ing);
+      }
+    });
+
     dispatch({
-      type: 'BOOKMARK_TO_RECIPE_BOX',
+      type: 'ADD_ALL_ITEMS_TO_SHOP_CART',
       payload: {
-        recipeBoxID: coreInfo?.recipeBoxID,
-        selectedRecipe: selectedRecipe,
-        profileID: coreInfo?.userID,
+        itemsToAdd,
+        itemsToUpdate,
+        shoppingCartID: core.shoppingCartID,
+        profileID: core.profileID,
       },
     });
-    setTimeout(() => setIsProcessing(false), 500);
-  };
 
-  const handleRemoveBM = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    if (isProcessing) return;
-    setIsProcessing(true);
-    onClose();
-    dispatch({
-      type: 'DELETE_ITEM_FROM_RECIPE_BOX',
-      payload: {
-        recipeBoxID: coreInfo?.recipeBoxID,
-        selectedRecipe: selectedRecipe,
-        profileID: coreInfo?.userID,
-        owner: selectedRecipe?.accountID === coreInfo?.accountID,
-      },
+    const all = {};
+    recipeIngredients.forEach(ing => {
+      all[ing.name] = true;
     });
-    setTimeout(() => setIsProcessing(false), 500);
+
+    setRecentlyAdded(all);
+    setRecentlyAddedAll(true);
   };
 
-  const handleShowOptions = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ['Cancel', 'Edit', 'Delete'],
-          destructiveButtonIndex: 2, // Delete in red
-          cancelButtonIndex: 0,
-        },
-        buttonIndex => {
-          if (buttonIndex === 1) handleEditRec?.(selectedRecipe);
-          if (buttonIndex === 2) handleDeleteRec?.(selectedRecipe);
-        },
-      );
-    } else {
-      Alert.alert(
-        'More Options',
-        'Choose an option below:',
-        [
-          {text: 'Cancel', style: 'cancel'},
-          {text: 'Edit', onPress: () => handleEditRec?.(selectedRecipe)},
-          {
-            text: 'Delete',
-            style: 'destructive',
-            onPress: () => handleDeleteRec?.(selectedRecipe),
-          },
-        ],
-        {cancelable: true},
-      );
-    }
-  };
-
-  // Edit Recipe - navigate to EditRecipe screen
-  const handleEditRec = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    onClose();
-    navigation.navigate('EditRecipe', {
-      recipeToEdit: selectedRecipe,
-      editingRecipe: true,
-      fromCommunity: recipeBoxView ? false : true,
-    });
-  };
-
-  // Delete Recipe - confirm and dispatch
-  const handleDeleteRec = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    Alert.alert(
-      'Delete Recipe',
-      'Are you sure you want to delete this recipe?',
-      [
-        {text: 'Cancel', style: 'cancel'},
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            onClose();
-            if (recipeBoxView) {
-              dispatch({
-                type: 'DELETE_ITEM_FROM_RECIPE_BOX',
-                payload: {
-                  recipeBoxID: coreInfo?.recipeBoxID,
-                  selectedRecipe: selectedRecipe,
-                  profileID: coreInfo?.userID,
-                  owner: selectedRecipe?.accountID === coreInfo?.accountID,
-                },
-              });
-            } else {
-              // we need to change this. We would want to archive.
-              dispatch({
-                type: 'DELETE_FROM_COMMUNITY_RECIPES',
-                payload: {
-                  recipeBoxID: coreInfo?.recipeBoxID,
-                  selectedRecipe: selectedRecipe,
-                  profileID: coreInfo?.userID,
-                  owner: selectedRecipe?.accountID === coreInfo?.accountID,
-                },
-              });
-            }
-          },
-        },
-      ],
-    );
-  };
-
-  const handleShareRec = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    Alert.alert(
-      'Share Recipe',
-      // `You’re about to share this recipe with the community. Once shared, it becomes part of the community and can no longer be edited by you. If you need to change or remove it later, you can submit a review request to the admin team. Would you like to continue?`,
-      `You’re about to share this recipe with the community. Once shared, it becomes part of the community and can no longer be edited. Would you like to continue?`,
-      [
-        {text: 'Cancel', style: 'destructive'},
-        {
-          text: 'Share',
-          onPress: () => {
-            const sharedRecipe = {
-              ...selectedRecipe,
-              recipeShared: true,
-              sharedStatus: 'approved',
-              userEdit: false,
-            };
-
-            dispatch({
-              type: 'SHARE_TO_COMMUNITY_RECIPES',
-              payload: {
-                recipeBoxID: coreInfo?.recipeBoxID,
-                selectedRecipe: sharedRecipe,
-                recipeID: sharedRecipe.id,
-              },
-            });
-          },
-        },
-      ],
-    );
-  };
-
-  // This is a future feature. Right now we don't have anything in place for admins to get messages.
-  const handleRequestEditDelete = () => {
-    useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    // this requests admin to edit/delete the recipe
-  };
+  const success = useColor('success');
+  const style = [
+    styles.addButton,
+    recentlyAddedAll && {borderWidth: 2, borderColor: success},
+  ];
 
   return (
     <Modal
@@ -266,11 +147,6 @@ const SelectedRecipe = ({
       <HeaderButtons
         selectedRecipe={selectedRecipe}
         recipeBoxView={recipeBoxView}
-        handleAddBM={handleAddBM}
-        handleRemoveBM={handleRemoveBM}
-        handleShowOptions={handleShowOptions}
-        handleShareRec={handleShareRec}
-        handleRequestEditDelete={handleRequestEditDelete}
         onClose={onClose}
       />
 
@@ -280,6 +156,42 @@ const SelectedRecipe = ({
             {providedBy}
           </Text>
         )} */}
+        <View row>
+          {showWDIH && (
+            <>
+              <View flex pv={5}>
+                <Button
+                  color="orange"
+                  style={styles.backButton}
+                  onPress={WDIHToggle}
+                  textSize="xSmall">
+                  Back to Recipe
+                </Button>
+              </View>
+
+              <View flex pv={5}>
+                <Button
+                  type="outline"
+                  color={recentlyAddedAll ? 'Success' : 'Dark'}
+                  disabled={recentlyAddedAll}
+                  disabledColor="Success"
+                  onPress={AddAllItems}
+                  style={style}>
+                  <View row pr={5} centerVH>
+                    {recentlyAddedAll ? (
+                      <Icons.Check color={success} size={15} />
+                    ) : (
+                      <Icons.Plus size={15} />
+                    )}
+                    <Text size="xSmall">
+                      {recentlyAddedAll ? ' Added All' : ' Add All Ingredients'}
+                    </Text>
+                  </View>
+                </Button>
+              </View>
+            </>
+          )}
+        </View>
 
         <ScrollView>
           {!showWDIH &&
@@ -323,11 +235,12 @@ const SelectedRecipe = ({
           )}
           <View style={SelectedRecipeStyles.ingWrapper}>
             <IngredientList
-              selectedRecipe={selectedRecipe}
               showWDIH={showWDIH}
-              setShowWDIH={setShowWDIH}
               WDIHToggle={WDIHToggle}
-              onClose={onClose}
+              recentlyAdded={recentlyAdded}
+              setRecentlyAdded={setRecentlyAdded}
+              setRecentlyAddedAll={setRecentlyAddedAll}
+              recipeIngredients={recipeIngredients}
             />
           </View>
           {!showWDIH && (
@@ -376,3 +289,12 @@ const SelectedRecipe = ({
 };
 
 export default __DEV__ ? SelectedRecipe : React.memo(SelectedRecipe);
+
+const styles = StyleSheet.create({
+  addButton: {
+    borderWidth: 1.25,
+    borderRadius: 10,
+    height: 35,
+  },
+  backButton: {borderRadius: 10, height: 35},
+});

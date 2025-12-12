@@ -6,20 +6,24 @@ import {useColors} from '../../KQ-UI/KQUtilities';
 import {Icons} from '../../components/IconListRouter';
 import {View} from '../../KQ-UI';
 import {TouchableOpacity} from 'react-native';
+import useRecipeFunction from './Helpers/useRecipeFunction';
 
-const HeaderButtons = ({
-  selectedRecipe,
-  recipeBoxView,
-  handleAddBM,
-  handleRemoveBM,
-  handleShowOptions,
-  handleShareRec,
-  handleRequestEditDelete,
-  onClose,
-}) => {
+const HeaderButtons = ({selectedRecipe, recipeBoxView, onClose}) => {
   const coreInfo = useCoreInfo();
   const recipeBox = useRecipeBox();
   const recipesListIDs = recipeBox?.items?.map(rec => rec?.id) || [];
+
+  const {
+    handleAddBM,
+    handleRemoveBM,
+    handleShowOptions,
+    handleShareRec,
+    handleRequestEditDelete,
+  } = useRecipeFunction({
+    selectedRecipe,
+    recipeBoxView,
+    onClose,
+  });
 
   const isBookmarked = useMemo(() => {
     return recipesListIDs.includes(selectedRecipe?.id);
