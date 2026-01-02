@@ -45,7 +45,6 @@ import NutritionalLabel from '../../components/NutritionalLabel';
 const ShoppingItems = () => {
   const route = useRoute();
   const {itemId, statusTo, scanAction} = route.params || {};
-  console.log('scanAction:', scanAction);
 
   const dispatch = useDispatch();
   const core = useCoreInfo();
@@ -85,6 +84,11 @@ const ShoppingItems = () => {
       setScanActionActive(false);
     }
   }, [scanActionActive, upcData]);
+
+  const foodObject = useMemo(() => {
+    if (!storedData) return null;
+    return transformNutritionFacts(storedData);
+  }, [storedData]);
 
   const itemToUpdate =
     shopping?.items?.find(item => item.itemId === itemId) ?? null;
@@ -147,8 +151,7 @@ const ShoppingItems = () => {
   }, [scannedData]);
 
   useEffect(() => {
-    if (storedData) {
-      let foodObject = transformNutritionFacts(storedData) || {};
+    if (foodObject) {
       setItemName(titleCase(foodObject?.itemName));
       setBrandName(titleCase(foodObject?.brandName));
       setDescription('');
@@ -166,7 +169,7 @@ const ShoppingItems = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [storedData]);
+  }, [foodObject]);
 
   useEffect(() => {
     if (itemName === null) {
@@ -218,6 +221,13 @@ const ShoppingItems = () => {
         category: category?.key?.trim() || 'na',
         notes: notes || '',
         status: itemToUpdate?.status ?? statusTo ?? 'shopping-list',
+
+        // Metadata from UPC scan
+        ean: foodObject?.ean || null,
+        upc: foodObject?.upc || null,
+        foodID: foodObject?.foodID || null,
+        foodURL: foodObject?.foodURL || null,
+        images: foodObject?.images || [],
       };
 
       const updatedItem = {
@@ -289,9 +299,7 @@ const ShoppingItems = () => {
   };
 
   const RenderModalContent = () => {
-    if (storedData) {
-      let foodObject = transformNutritionFacts(storedData) || {};
-
+    if (foodObject) {
       return (
         <View style={ListStyles.rmcContainer}>
           <View

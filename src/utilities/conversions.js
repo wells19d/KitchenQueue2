@@ -1,4 +1,21 @@
 // * conversions.js
+//
+// Measurement normalization and conversion logic
+// for cupboard items and recipe usage
+
+// Core idea:
+// - Always convert values down to the smallest base unit first
+// - Perform all math at that level
+// - Then convert back up to the highest sensible display unit
+//
+// Important behavior to remember:
+// - Conversions may change the item's measurement type
+//   (e.g. pounds → ounces, gallons → quarts)
+// - packageSize and remainingAmount are intentionally recalculated
+//   to stay consistent with the new measurement
+//
+// Do NOT treat remainingAmount as immutable or tied to the original unit.
+// It always reflects the current normalized measurement.
 
 let liquidLadder = [
   'gallon',
@@ -114,7 +131,7 @@ export const exportData = (measurement, packageSize, remainingAmount) => {
     if (pkg[unit] >= 1 && rem[unit] >= 1) {
       return {
         measurement: unit,
-        packageSize: pkg[unit],
+        packageSize: Number(pkg[unit].toFixed(2)),
         remainingAmount: Number(rem[unit].toFixed(2)),
       };
     }

@@ -86,6 +86,11 @@ const CupboardItems = () => {
     }
   }, [scanActionActive, upcData]);
 
+  const foodObject = useMemo(() => {
+    if (!storedData) return null;
+    return transformNutritionFacts(storedData);
+  }, [storedData]);
+
   const itemToUpdate =
     cupboard?.items?.find(item => item.itemId === itemId) ?? null;
 
@@ -155,9 +160,9 @@ const CupboardItems = () => {
       resetScanner();
     }
   }, [scannedData]);
+
   useEffect(() => {
-    if (storedData) {
-      let foodObject = transformNutritionFacts(storedData) || {};
+    if (foodObject) {
       setItemName(titleCase(foodObject?.itemName));
       setBrandName(titleCase(foodObject?.brandName));
       setDescription('');
@@ -177,7 +182,7 @@ const CupboardItems = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [storedData]);
+  }, [foodObject]);
 
   useEffect(() => {
     if (itemName === null) {
@@ -280,6 +285,13 @@ const CupboardItems = () => {
 
       category: category?.key?.trim() || 'other',
       notes: notes || '',
+
+      // Metadata from UPC scan
+      ean: foodObject?.ean || null,
+      upc: foodObject?.upc || null,
+      foodID: foodObject?.foodID || null,
+      foodURL: foodObject?.foodURL || null,
+      images: foodObject?.images || [],
     };
 
     const updatedItem = {
@@ -363,9 +375,7 @@ const CupboardItems = () => {
   };
 
   const RenderModalContent = () => {
-    if (storedData) {
-      let foodObject = transformNutritionFacts(storedData) || {};
-
+    if (foodObject) {
       return (
         <View style={ListStyles.rmcContainer}>
           <View
