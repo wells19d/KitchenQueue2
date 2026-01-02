@@ -84,7 +84,7 @@ const KQButton = ({
 
 const ButtonStyles = StyleSheet.create({
   buttonOC: {
-    borderRadius: 5,
+    borderRadius: 8,
     marginHorizontal: 5,
     marginVertical: 5,
     alignContent: 'center',

@@ -98,7 +98,7 @@ const SelectedRecipe = ({selectedRecipe, visible, recipeBoxView, onClose}) => {
 
   const success = useColor('success');
   const style = [
-    styles.addButton,
+    {borderWidth: 1.25},
     recentlyAddedAll && {borderWidth: 2, borderColor: success},
   ];
 
@@ -152,20 +152,11 @@ const SelectedRecipe = ({selectedRecipe, visible, recipeBoxView, onClose}) => {
       />
 
       <View style={SelectedRecipeStyles.selectedViewWrapper} ph5>
-        {/* {!recipeBoxView && (
-          <Text size="tiny" centered font="open-7" kqColor="dark90">
-            {providedBy}
-          </Text>
-        )} */}
         <View row>
           {showWDIH ? (
             <>
               <View flex pv={5}>
-                <Button
-                  color="orange"
-                  style={styles.backButton}
-                  onPress={WDIHToggle}
-                  textSize="xSmall">
+                <Button color="orange" onPress={WDIHToggle} textSize="xSmall">
                   Back to Recipe
                 </Button>
               </View>
@@ -296,12 +287,3 @@ const SelectedRecipe = ({selectedRecipe, visible, recipeBoxView, onClose}) => {
 };
 
 export default __DEV__ ? SelectedRecipe : React.memo(SelectedRecipe);
-
-const styles = StyleSheet.create({
-  addButton: {
-    borderWidth: 1.25,
-    borderRadius: 10,
-    height: 35,
-  },
-  backButton: {borderRadius: 10, height: 35},
-});

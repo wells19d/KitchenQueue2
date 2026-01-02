@@ -11,7 +11,6 @@ import {capEachWord, getIndicator, titleCase} from '../../utilities/helpers';
 import {formatPluralUnit} from '../../utilities/formatPluralUnit';
 import {toFraction} from '../../utilities/fractionUnit';
 import {Icons} from '../../components/IconListRouter';
-import {StyleSheet} from 'react-native';
 import {renderIcon, renderSubInfo} from './Helpers/listHelpers';
 
 const IngredientList = ({
@@ -93,7 +92,7 @@ const IngredientList = ({
     const success = useColor('success');
 
     const style = [
-      styles.addButton,
+      {borderWidth: 1.25},
       isAdded && {borderWidth: 2, borderColor: success},
     ];
 
@@ -174,7 +173,7 @@ const IngredientList = ({
       <View centerVH mt10 mb5>
         <Button
           type="outline"
-          style={styles.widin}
+          style={{borderWidth: 1.5}}
           onPress={WDIHToggle}
           textSize="xSmall">
           What Ingredients Do I Have / Need?
@@ -185,12 +184,3 @@ const IngredientList = ({
 };
 
 export default IngredientList;
-
-const styles = StyleSheet.create({
-  addButton: {
-    borderWidth: 1.25,
-    borderRadius: 10,
-    height: 35,
-  },
-  widin: {borderWidth: 1.5, borderRadius: 10, height: 35},
-});

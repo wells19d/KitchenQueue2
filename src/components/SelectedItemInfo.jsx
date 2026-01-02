@@ -29,6 +29,7 @@ const SelectedItemInfo = props => {
 
   const handleAddToFavorites = () => {
     const newItem = {
+      ...selectedItem,
       itemName: selectedItem?.itemName || '',
       brandName: selectedItem?.brandName || '',
       description: selectedItem?.description || '',
@@ -51,13 +52,14 @@ const SelectedItemInfo = props => {
 
   const handleAddFavToShopList = item => {
     const newItem = {
+      ...item,
       itemName: item?.itemName || '',
       brandName: item?.brandName || '',
       description: item?.description || '',
       packageSize:
         Number(item?.packageSize) > 0 ? Number(item?.packageSize) : 1,
       quantity: Number(quantity) > 0 ? Number(quantity) : 1,
-      measurement: item?.measurement || '',
+      measurement: item?.measurement || 'each',
       category: item?.category || '',
       notes: item?.notes || '',
       status: 'shopping-list',

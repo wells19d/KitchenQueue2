@@ -170,8 +170,12 @@ const useRecipeFunction = ({selectedRecipe, recipeBoxView, onClose}) => {
     // this requests admin to edit/delete the recipe
   };
 
-  const handleMakeRecipe = () => {
+  const handleMakeRecipe = (items, ingredients, recipe, onClose) => {
+    useHaptics(profile?.userSettings?.hapticStrength || 'light');
     console.log('button fired');
+    console.log('Cupboards:', items);
+    console.log('Recipe Ingredients:', ingredients);
+    console.log('Selected Recipe:', recipe);
   };
 
   return {

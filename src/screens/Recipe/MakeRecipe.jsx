@@ -9,19 +9,19 @@ const MakeRecipe = ({recipeIngredients, selectedRecipe, onClose}) => {
   const cupboard = useCupboard();
 
   const cupboardItems = Array.isArray(cupboard?.items) ? cupboard?.items : [];
-  console.log('Cupboards:', cupboardItems);
-
-  console.log('Recipe Ingredients:', recipeIngredients);
 
   return (
-    <View flex pt={5}>
+    <View flex pt={5} mb={-5}>
       <Button
         textSize="xSmall"
-        onPress={handleMakeRecipe}
-        style={{
-          borderRadius: 10,
-          height: 35,
-        }}>
+        onPress={() =>
+          handleMakeRecipe(
+            cupboardItems,
+            recipeIngredients,
+            selectedRecipe,
+            onClose,
+          )
+        }>
         Make This Recipe
       </Button>
     </View>
