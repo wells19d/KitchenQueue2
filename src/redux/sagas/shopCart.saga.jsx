@@ -14,7 +14,7 @@ import {getApp} from '@react-native-firebase/app';
 import {select} from 'redux-saga/effects';
 import {checkLimit} from '../../utilities/checkLimit';
 import pluralize from 'pluralize';
-import {capEachWord} from '../../utilities/helpers';
+import {capEachWord, itemOrderFormat} from '../../utilities/helpers';
 
 const db = getFirestore(getApp());
 
@@ -79,12 +79,12 @@ function* addItemToShopCart(action) {
 
       const updatedItems = [
         ...(shopCartData.items || []),
-        {
+        itemOrderFormat({
           ...newItem,
           itemId: uuid.v4(),
           createdBy: profileID,
           itemDate: new Date().toISOString(),
-        },
+        }),
       ];
 
       yield call(() =>
@@ -168,7 +168,7 @@ function* addAllItemsToShopCart(action) {
     const newItems = itemsToAdd.map(item => {
       const {unit, name, note, amount} = item;
 
-      return {
+      return itemOrderFormat({
         itemName: capEachWord(name) || '',
         brandName: '',
         description: '',
@@ -181,7 +181,7 @@ function* addAllItemsToShopCart(action) {
         quantity: 1,
         createdBy: profileID,
         status: 'shopping-list',
-      };
+      });
     });
 
     finalItems = [...finalItems, ...newItems];
@@ -438,7 +438,7 @@ function* batchToShopping(action) {
               status === 'shopping-list' ? 'shopping-list' : 'shopping-cart',
           };
 
-          updatedItems.push(newItem);
+          updatedItems.push(itemOrderFormat(newItem));
         }
       });
 

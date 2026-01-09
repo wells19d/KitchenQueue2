@@ -111,6 +111,13 @@ const ShoppingItems = () => {
     displayDropField(itemToUpdate?.category, displayCategories) ?? null,
   );
   const [notes, setNotes] = useState(itemToUpdate?.notes ?? '');
+  const [metaData, setMetaData] = useState({
+    ean: itemToUpdate?.ean || null,
+    upc: itemToUpdate?.upc || null,
+    foodID: itemToUpdate?.foodID || null,
+    foodURL: itemToUpdate?.foodURL || null,
+    images: itemToUpdate?.images || [],
+  });
   const [validation, setValidation] = useState(false);
   const [canSave, setCanSave] = useState(false);
 
@@ -163,6 +170,13 @@ const ShoppingItems = () => {
       );
       setCategory(null);
       setNotes('');
+      setMetaData({
+        ean: foodObject?.ean || null,
+        upc: foodObject?.upc || null,
+        foodID: foodObject?.foodID || null,
+        foodURL: foodObject?.foodURL || null,
+        images: foodObject?.images || [],
+      });
       const timer = setTimeout(() => {
         setShowAttModal(true);
       }, 1000);
@@ -203,6 +217,7 @@ const ShoppingItems = () => {
     setCategory(null);
     setNotes('');
     setShowAttModal(false);
+    setMetaData({});
   };
 
   const SaveItem = () => {
@@ -221,13 +236,7 @@ const ShoppingItems = () => {
         category: category?.key?.trim() || 'na',
         notes: notes || '',
         status: itemToUpdate?.status ?? statusTo ?? 'shopping-list',
-
-        // Metadata from UPC scan
-        ean: foodObject?.ean || null,
-        upc: foodObject?.upc || null,
-        foodID: foodObject?.foodID || null,
-        foodURL: foodObject?.foodURL || null,
-        images: foodObject?.images || [],
+        ...metaData,
       };
 
       const updatedItem = {

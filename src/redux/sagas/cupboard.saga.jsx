@@ -13,6 +13,7 @@ import {
 import {getApp} from '@react-native-firebase/app';
 import {select} from 'redux-saga/effects';
 import {checkLimit} from '../../utilities/checkLimit';
+import {itemOrderFormat} from '../../utilities/helpers';
 
 const db = getFirestore(getApp());
 
@@ -76,12 +77,12 @@ function* addItemToCupboard(action) {
 
       const updatedItems = [
         ...(cupboardData.items || []),
-        {
+        itemOrderFormat({
           ...newItem,
           itemId: uuid.v4(),
           createdBy: profileID,
           itemDate: new Date().toISOString(),
-        },
+        }),
       ];
 
       yield call(() =>
@@ -260,6 +261,11 @@ function* batchToCupboard(action) {
           measurement,
           category,
           notes,
+          ean,
+          upc,
+          foodID,
+          foodURL,
+          images,
         } = item;
 
         for (let i = 0; i < item.quantity; i++) {
@@ -272,12 +278,17 @@ function* batchToCupboard(action) {
             measurement: measurement || '',
             category: category || '',
             notes: notes || '',
+            ean: ean || null,
+            upc: upc || null,
+            foodID: foodID || null,
+            foodURL: foodURL || null,
+            images: images || [],
             itemId: uuid.v4(),
             itemDate: new Date().toISOString(),
             createdBy: profileID,
           };
 
-          updatedItems.push(newItem);
+          updatedItems.push(itemOrderFormat(newItem));
         }
       });
 
@@ -367,6 +378,11 @@ function* batchAddToCupboard(action) {
         measurement,
         category,
         notes,
+        ean,
+        upc,
+        foodID,
+        foodURL,
+        images,
       } = newItem;
 
       for (let i = 0; i < quantity; i++) {
@@ -379,12 +395,17 @@ function* batchAddToCupboard(action) {
           measurement: measurement || '',
           category: category || '',
           notes: notes || '',
+          ean: ean || null,
+          upc: upc || null,
+          foodID: foodID || null,
+          foodURL: foodURL || null,
+          images: images || [],
           itemId: uuid.v4(),
           itemDate: new Date().toISOString(),
           createdBy: profileID,
         };
 
-        updatedItems.push(item);
+        updatedItems.push(itemOrderFormat(item));
       }
 
       batch.update(cupboardRef, {

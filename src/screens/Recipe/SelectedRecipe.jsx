@@ -30,6 +30,8 @@ const SelectedRecipe = ({selectedRecipe, visible, recipeBoxView, onClose}) => {
   const [showWDIH, setShowWDIH] = useState(false);
   const useColor = useColors;
   const recipeIngredients = useRecipeIngStatus(selectedRecipe);
+  // console.log('selectedRecipe:', selectedRecipe);
+  // console.log('Recipe Ingredients with Status:', recipeIngredients);
 
   const [recentlyAdded, setRecentlyAdded] = useState({});
   const [recentlyAddedAll, setRecentlyAddedAll] = useState(false);

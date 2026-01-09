@@ -293,3 +293,38 @@ export const matchConversion = (measurement, remainingAmount, unit, amount) => {
   // Compare
   return converted >= amount;
 };
+
+export const convertToUnit = (item, targetUnit) => {
+  if (!item?.measurement || item.remainingAmount == null || !targetUnit) {
+    return null;
+  }
+
+  const measurement = item.measurement.toLowerCase();
+  const unit = targetUnit.toLowerCase();
+
+  const ladder = liquidLadder.includes(measurement)
+    ? liquidLadder
+    : weightLadder.includes(measurement)
+    ? weightLadder
+    : null;
+
+  // Non-convertible (each, count-based, etc.)
+  if (!ladder) {
+    return measurement === unit ? {...item} : null;
+  }
+
+  // Target unit not in same ladder → invalid
+  if (!ladder.includes(unit)) {
+    return null;
+  }
+
+  const pkgAll = buildAll(measurement, item.packageSize);
+  const remAll = buildAll(measurement, item.remainingAmount);
+
+  return {
+    ...item,
+    measurement: unit,
+    packageSize: pkgAll[unit],
+    remainingAmount: remAll[unit],
+  };
+};

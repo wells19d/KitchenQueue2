@@ -17,19 +17,15 @@ export function useRecipeIngStatus(selectedRecipe) {
   const ingredientStatus = useMemo(() => {
     if (!selectedRecipe?.ingredients) return [];
 
-    const shoppingCartNames = new Set(
-      shoppingList
-        .filter(i => i.status === 'shopping-cart')
-        .map(i => pluralize.singular(i.itemName.toLowerCase())),
-    );
-
-    const shoppingListNames = new Set(
-      shoppingList
-        .filter(i => i.status === 'shopping-list')
-        .map(i => pluralize.singular(i.itemName.toLowerCase())),
-    );
-
-    const volumeUnits = ['teaspoon', 'tablespoon', 'cup', 'fluidounce'];
+    const volumeUnits = [
+      'gallon',
+      'quart',
+      'pint',
+      'cup',
+      'fluidounce',
+      'tablespoon',
+      'teaspoon',
+    ];
     const weightUnits = ['ounce', 'pound', 'gram', 'kilogram'];
 
     return selectedRecipe.ingredients.map(ing => {
@@ -39,12 +35,43 @@ export function useRecipeIngStatus(selectedRecipe) {
         typeof ing.note === 'string' &&
         ing.note.toLowerCase().includes('optional');
 
-      const match = groupedList.find(
-        g => pluralize.singular(g.itemName.toLowerCase()) === ingSingular,
-      );
+      const match = groupedList.find(g => {
+        const itemName = pluralize.singular(g.itemName.toLowerCase());
+        const ingName = ingSingular;
+        const firstWord = ingName.split(' ')[0];
 
-      const inCart = shoppingCartNames.has(ingSingular);
-      const inList = shoppingListNames.has(ingSingular);
+        return (
+          itemName === ingName ||
+          itemName.includes(ingName) ||
+          itemName.includes(firstWord)
+        );
+      });
+
+      const inCart = shoppingList.some(i => {
+        if (i.status !== 'shopping-cart') return false;
+
+        const itemName = pluralize.singular(i.itemName.toLowerCase());
+        const firstWord = ingSingular.split(' ')[0];
+
+        return (
+          itemName === ingSingular ||
+          itemName.includes(ingSingular) ||
+          itemName.includes(firstWord)
+        );
+      });
+
+      const inList = shoppingList.some(i => {
+        if (i.status !== 'shopping-list') return false;
+
+        const itemName = pluralize.singular(i.itemName.toLowerCase());
+        const firstWord = ingSingular.split(' ')[0];
+
+        return (
+          itemName === ingSingular ||
+          itemName.includes(ingSingular) ||
+          itemName.includes(firstWord)
+        );
+      });
 
       // 🔴 NAME NOT FOUND
       if (!match) {

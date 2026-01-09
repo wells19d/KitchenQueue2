@@ -9,6 +9,7 @@ import SwipeableItem from '../../components/SwipeableItem';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
+import {itemStoredOrder} from '../../utilities/helpers';
 
 const ShoppingCart = () => {
   const core = useCoreInfo();
@@ -28,6 +29,8 @@ const ShoppingCart = () => {
   const shoppingCart = Array.isArray(shopping?.items)
     ? shopping.items.filter(item => item.status === 'shopping-cart')
     : [];
+
+  // console.log('shoppingList', itemStoredOrder(shoppingCart));
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);

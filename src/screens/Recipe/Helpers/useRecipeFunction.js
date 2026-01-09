@@ -6,6 +6,9 @@ import {useCoreInfo} from '../../../utilities/coreInfo';
 import {useProfile} from '../../../hooks/useHooks';
 import {useState} from 'react';
 import {ActionSheetIOS, Alert, Platform} from 'react-native';
+import {convertToUnit} from '../../../utilities/conversions';
+import pluralize from 'pluralize';
+import {itemStoredOrder} from '../../../utilities/helpers';
 
 const useRecipeFunction = ({selectedRecipe, recipeBoxView, onClose}) => {
   const useHaptics = setHapticFeedback();
@@ -172,10 +175,55 @@ const useRecipeFunction = ({selectedRecipe, recipeBoxView, onClose}) => {
 
   const handleMakeRecipe = (items, ingredients, recipe, onClose) => {
     useHaptics(profile?.userSettings?.hapticStrength || 'light');
-    console.log('button fired');
-    console.log('Cupboards:', items);
-    console.log('Recipe Ingredients:', ingredients);
-    console.log('Selected Recipe:', recipe);
+    // console.log('button fired');
+    console.log('All Cupboard Items:', items);
+    // console.log('All Ingredients Matched:', ingredients);
+    console.log('Selected Recipe:', recipe); // might not need this.
+
+    let updatedItems = [];
+    let itemsToConvert = [];
+
+    // 1. Loop through ingredients needed for recipe
+    recipe?.ingredients.forEach(ing => {
+      // Keeping the details, but lets force the ingredient name to singular for matching
+      let foundIng = {
+        ...ing,
+        name: pluralize.singular(ing.name.toLowerCase()),
+      };
+
+      // Keeping the details, let's force the items name to singular for matching
+      let normalizedItems = items?.map(it => ({
+        ...it,
+        _normalizedName: pluralize.singular(it.itemName.toLowerCase()),
+      }));
+
+      // 2. First pass: strict full-name match
+      let foundItem = normalizedItems?.filter(
+        it => it._normalizedName === foundIng.name,
+      );
+
+      // 3. Fallback pass: first-word match (only if nothing found)
+      if (!foundItem?.length) {
+        const firstWord = foundIng.name.split(' ')[0];
+        foundItem = normalizedItems?.filter(it =>
+          it._normalizedName.includes(firstWord),
+        );
+      }
+
+      // using the items found
+      if (foundItem?.length) {
+        foundItem.forEach(foundItem => {
+          if (foundIng.unit === foundItem.measurement) {
+            updatedItems.push(foundItem);
+          } else {
+            itemsToConvert.push(foundItem);
+          }
+        });
+      }
+    });
+
+    console.log('Items ready, no conversion', itemStoredOrder(updatedItems));
+    console.log('Items needing conversion:', itemStoredOrder(itemsToConvert));
   };
 
   return {

@@ -115,7 +115,13 @@ const CupboardItems = () => {
     displayDropField(itemToUpdate?.category, displayCategories) ?? null,
   );
   const [notes, setNotes] = useState(itemToUpdate?.notes ?? '');
-
+  const [metaData, setMetaData] = useState({
+    ean: itemToUpdate?.ean || null,
+    upc: itemToUpdate?.upc || null,
+    foodID: itemToUpdate?.foodID || null,
+    foodURL: itemToUpdate?.foodURL || null,
+    images: itemToUpdate?.images || [],
+  });
   const [validation, setValidation] = useState(false);
   const [remainValidation, setRemainValidation] = useState(false);
   const [canSave, setCanSave] = useState(false);
@@ -176,6 +182,13 @@ const CupboardItems = () => {
       );
       setCategory(null);
       setNotes('');
+      setMetaData({
+        ean: foodObject?.ean || null,
+        upc: foodObject?.upc || null,
+        foodID: foodObject?.foodID || null,
+        foodURL: foodObject?.foodURL || null,
+        images: foodObject?.images || [],
+      });
       const timer = setTimeout(() => {
         setShowAttModal(true);
       }, 1000);
@@ -242,6 +255,7 @@ const CupboardItems = () => {
     setCategory(null);
     setNotes('');
     setQuantity('1');
+    setMetaData({});
   };
 
   const convertedItem = useMemo(() => {
@@ -286,12 +300,7 @@ const CupboardItems = () => {
       category: category?.key?.trim() || 'other',
       notes: notes || '',
 
-      // Metadata from UPC scan
-      ean: foodObject?.ean || null,
-      upc: foodObject?.upc || null,
-      foodID: foodObject?.foodID || null,
-      foodURL: foodObject?.foodURL || null,
-      images: foodObject?.images || [],
+      ...metaData,
     };
 
     const updatedItem = {

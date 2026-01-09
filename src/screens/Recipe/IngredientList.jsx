@@ -67,6 +67,11 @@ const IngredientList = ({
         category: 'na',
         notes: '',
         status: 'shopping-list',
+        ean: null,
+        upc: null,
+        foodID: null,
+        foodURL: null,
+        images: [],
       };
 
       dispatch({
@@ -159,8 +164,10 @@ const IngredientList = ({
             <View ml5 flex>
               <Text size="xSmall" font="open-7" numberOfLines={3}>
                 {ing.amount
-                  ? `${toFraction(ing.amount)} ${
-                      formatPluralUnit(ing.amount, ing.unit) || ''
+                  ? `${toFraction(ing.amount)}${
+                      ing.unit !== 'each'
+                        ? ` ${formatPluralUnit(ing.amount, ing.unit) || ''}`
+                        : ''
                     } `
                   : ''}
                 {capEachWord(ing.name)}

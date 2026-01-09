@@ -296,6 +296,84 @@ export const getIndicator = ing => {
   return {color: 'danger', status: 'unknown'};
 };
 
+export const itemOrderFormat = data => {
+  const order = [
+    'itemName',
+    'brandName',
+    'description',
+    'quantity',
+    'packageSize',
+    'remainingAmount',
+    'measurement',
+    'category',
+    'notes',
+    'status',
+    'ean',
+    'upc',
+    'foodID',
+    'foodURL',
+    'images',
+    'itemId',
+    'itemDate',
+    'createdBy',
+    'createdDate',
+    'lastUpdatedBy',
+    'lastUpdatedDate',
+  ];
+
+  const result = {};
+
+  for (const key of order) {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      result[key] = data[key];
+    }
+  }
+
+  return result;
+};
+
+export const itemStoredOrder = data => {
+  const order = [
+    'itemName',
+    'brandName',
+    'description',
+    'quantity',
+    'packageSize',
+    'remainingAmount',
+    'measurement',
+    'category',
+    'notes',
+    'status',
+    'ean',
+    'upc',
+    'foodID',
+    'foodURL',
+    'images',
+    'itemId',
+    'itemDate',
+    'createdBy',
+    'createdDate',
+    'lastUpdatedBy',
+    'lastUpdatedDate',
+  ];
+
+  const orderObject = obj => {
+    const ordered = {};
+    order.forEach(key => {
+      if (obj?.[key] !== undefined) {
+        ordered[key] = obj[key];
+      }
+    });
+    return ordered;
+  };
+
+  if (Array.isArray(data)) {
+    return data.map(orderObject);
+  }
+
+  return orderObject(data);
+};
+
 // Logger function to handle console output with color coding and time stamps
 // Use this function as a normal kqconsole.log using kqconsole.log('message', data);
 // Be sure to import it from the helpers file to use this functionality

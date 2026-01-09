@@ -9,6 +9,7 @@ import SwipeableItem from '../../components/SwipeableItem';
 import {useDispatch} from 'react-redux';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
+import {itemStoredOrder} from '../../utilities/helpers';
 
 const FavoritesList = () => {
   const favorites = useFavorites();
@@ -25,6 +26,7 @@ const FavoritesList = () => {
   );
 
   const favoritesList = favorites?.items ?? [];
+  console.log('favoritesList', itemStoredOrder(favoritesList));
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);

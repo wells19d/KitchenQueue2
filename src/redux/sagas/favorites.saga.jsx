@@ -12,6 +12,7 @@ import {
 import {getApp} from '@react-native-firebase/app';
 import {select} from 'redux-saga/effects';
 import {checkLimit} from '../../utilities/checkLimit';
+import {itemOrderFormat} from '../../utilities/helpers';
 
 const db = getFirestore(getApp());
 
@@ -76,12 +77,12 @@ function* addItemToFavorites(action) {
 
       const updatedItems = [
         ...(favoritesData.items || []),
-        {
+        itemOrderFormat({
           ...newItem,
           itemId: uuid.v4(),
           createdBy: profileID,
           itemDate: new Date().toISOString(),
-        },
+        }),
       ];
 
       yield call(() =>

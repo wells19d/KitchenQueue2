@@ -9,6 +9,7 @@ import {View} from 'react-native';
 import SwipeableItem from '../../components/SwipeableItem';
 import {useCoreInfo} from '../../utilities/coreInfo';
 import SelectedItemInfo from '../../components/SelectedItemInfo';
+import {itemStoredOrder} from '../../utilities/helpers';
 
 const CupboardSingle = () => {
   const core = useCoreInfo();
@@ -25,6 +26,7 @@ const CupboardSingle = () => {
   );
 
   const cupboardList = Array.isArray(cupboard?.items) ? cupboard?.items : [];
+  console.log('cupboardList', itemStoredOrder(cupboardList));
 
   const [showItemInfo, setShowItemInfo] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
