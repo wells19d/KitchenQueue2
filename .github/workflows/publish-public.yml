@@ -1,0 +1,68 @@
+name: Publish Public Repo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout private repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare public folder (whitelist copy)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public
+
+          copy_dir_if_exists() { if [ -d "$1" ]; then mkdir -p "public/$(dirname "$1")"; cp -R "$1" "public/$1"; fi; }
+          copy_file_if_exists() { if [ -f "$1" ]; then cp "$1" public/; fi; }
+
+          # Root files (safe only)
+          for f in App.jsx Main.jsx index.js app.json babel.config.js metro.config.js react-native.config.js jest.config.js; do
+            [ -f "$f" ] && cp "$f" public/
+          done
+
+          # src/ whitelist
+          copy_dir_if_exists src/KQ-UI
+          copy_dir_if_exists src/components
+          copy_dir_if_exists src/hooks
+          copy_dir_if_exists src/redux/reducers
+          copy_dir_if_exists src/screens
+          copy_dir_if_exists src/utilities
+          copy_dir_if_exists src/styles
+
+          # Remove private subtrees we don't want
+          rm -rf public/src/utilities/realtime || true
+          rm -rf public/src/svg || true
+          rm -rf public/src/images || true
+
+          # Copy the public readme
+          if [ -f "README_PUBLIC.md" ]; then
+            cp README_PUBLIC.md public/README.md
+          fi
+
+      - name: Push to public repo
+        env:
+          PUBLIC_REPO_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd public
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B main
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to publish"
+            exit 0
+          fi
+          git commit -m "Sync from private repo"
+          git remote add origin https://x-access-token:${PUBLIC_REPO_TOKEN}@github.com/wells19d/KitchenQueuePublic.git
+          git push --force origin main
