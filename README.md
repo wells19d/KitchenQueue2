@@ -4,7 +4,7 @@
 
 **Kitchen Queue** was conceived and built as a large-scale solo project exploring real-time household coordination around shopping lists, shared inventory, and meal planning.
 
-While the idea itself was strong, the scope of the problem and the pace of the market ultimately favored large-scale platforms. As development progressed, it became clear that this space would inevitably be absorbed by companies with the resources to integrate deeply with hardware, ecosystems, and long-term consumer workflows—such as **:contentReference[oaicite:0]{index=0}**.
+While the idea itself was strong, the scope of the problem and the pace of the market ultimately favored large-scale platforms. As development progressed, it became clear that this space would inevitably be absorbed by companies with the resources to integrate deeply with hardware, ecosystems, and long-term consumer workflows.
 
 As a sole developer, I made the intentional decision to stop further feature expansion rather than compete in a category where timing, scale, and enterprise backing would determine the outcome. This was not a technical limitation, but a strategic one.
 
