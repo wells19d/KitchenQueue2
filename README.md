@@ -133,3 +133,5 @@ The repository is preserved as a portfolio piece—demonstrating production-scal
 © 2025 Kitchen Queue. All rights reserved.
 
 This software is proprietary and confidential. Unauthorized copying, distribution, or modification of this code, in whole or in part, is strictly prohibited.
+
+(c)
