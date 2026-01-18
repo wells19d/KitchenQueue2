@@ -19,7 +19,6 @@ import HeaderButtons from './HeaderButtons';
 import IngredientList from './IngredientList';
 import {useRecipeIngStatus} from './Helpers/useRecipeIngStatus';
 import {Icons} from '../../components/IconListRouter';
-import MakeRecipe from './MakeRecipe';
 
 const SelectedRecipe = ({selectedRecipe, visible, recipeBoxView, onClose}) => {
   const useHaptics = setHapticFeedback();
@@ -155,42 +154,32 @@ const SelectedRecipe = ({selectedRecipe, visible, recipeBoxView, onClose}) => {
 
       <View style={SelectedRecipeStyles.selectedViewWrapper} ph5>
         <View row>
-          {showWDIH ? (
-            <>
-              <View flex pv={5}>
-                <Button color="orange" onPress={WDIHToggle} textSize="xSmall">
-                  Back to Recipe
-                </Button>
-              </View>
+          <View flex pv={5}>
+            <Button color="orange" onPress={WDIHToggle} textSize="xSmall">
+              Back to Recipe
+            </Button>
+          </View>
 
-              <View flex pv={5}>
-                <Button
-                  type="outline"
-                  color={recentlyAddedAll ? 'Success' : 'Dark'}
-                  disabled={recentlyAddedAll}
-                  disabledColor="Success"
-                  onPress={AddAllItems}
-                  style={style}>
-                  <View row pr={5} centerVH>
-                    {recentlyAddedAll ? (
-                      <Icons.Check color={success} size={15} />
-                    ) : (
-                      <Icons.Plus size={15} />
-                    )}
-                    <Text size="xSmall">
-                      {recentlyAddedAll ? ' Added All' : ' Add All Ingredients'}
-                    </Text>
-                  </View>
-                </Button>
+          <View flex pv={5}>
+            <Button
+              type="outline"
+              color={recentlyAddedAll ? 'Success' : 'Dark'}
+              disabled={recentlyAddedAll}
+              disabledColor="Success"
+              onPress={AddAllItems}
+              style={style}>
+              <View row pr={5} centerVH>
+                {recentlyAddedAll ? (
+                  <Icons.Check color={success} size={15} />
+                ) : (
+                  <Icons.Plus size={15} />
+                )}
+                <Text size="xSmall">
+                  {recentlyAddedAll ? ' Added All' : ' Add All Ingredients'}
+                </Text>
               </View>
-            </>
-          ) : (
-            <MakeRecipe
-              recipeIngredients={recipeIngredients}
-              selectedRecipe={selectedRecipe}
-              onClose={onClose}
-            />
-          )}
+            </Button>
+          </View>
         </View>
 
         <ScrollView>
@@ -228,8 +217,8 @@ const SelectedRecipe = ({selectedRecipe, visible, recipeBoxView, onClose}) => {
                 marginTop: recipeBoxView
                   ? 10
                   : selectedRecipe?.publicAuthor
-                  ? 5
-                  : 10,
+                    ? 5
+                    : 10,
               }}
             />
           )}
